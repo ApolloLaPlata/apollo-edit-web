@@ -1,0 +1,96 @@
+[
+    {
+        "id": "c1f7a3b2",
+        "provider": "modal",
+        "name": "Conta 1 - Roxingo",
+        "workspace": "roxingo",
+        "token_id": "ak-6pDTu1xBPp1jPG08LXK1K8",
+        "token_secret": "as-f8CE8vvKRJdL8BODP1FSkj",
+        "is_active": false,
+        "last_balance": 0.0,
+        "last_spend": 43.10025604999999
+    },
+    {
+        "id": "b8d4e9c1",
+        "provider": "modal",
+        "name": "Conta 2 - Apollo (Atual)",
+        "workspace": "apollolaplata",
+        "token_id": "ak-CKDiZCpjvSID4kKFqHDTLW",
+        "token_secret": "as-BVr4kDdhZe0cfsN72G6afz",
+        "is_active": false,
+        "last_balance": 27.06414076,
+        "last_spend": 2.93585924
+    },
+    {
+        "id": "c3f8e5d2",
+        "provider": "modal",
+        "name": "Conta 3 - Descarga News",
+        "workspace": "descarganews",
+        "token_id": "ak-R0l3SdA2jE4WhX4BMVY9ji",
+        "token_secret": "as-NwJ7LOI9N3K7Fy982sMKEm",
+        "is_active": false,
+        "last_balance": 29.30595723,
+        "last_spend": 0.69404277
+    },
+    {
+        "id": "a5e2d1f9",
+        "provider": "lightning",
+        "name": "Lightning AI (Workspace)",
+        "workspace": "v5est",
+        "token_id": "1b69eea9-4475-4558-b8ff-191692f0d7a3",
+        "token_secret": "a26bf6c5-7c2d-4889-8645-5917a33c6ddc",
+        "is_active": true,
+        "last_balance": 30.0,
+        "last_spend": 0.0
+    },
+    {
+        "id": "f3b1e7c5",
+        "provider": "lightning",
+        "name": "Lightning AI (Chat/Studio)",
+        "workspace": "v5est",
+        "token_id": "roxingo/apollo-maquinas-virtuais",
+        "token_secret": "16338b74-3f36-4c89-84db-a8e00b099058",
+        "is_active": false,
+        "last_balance": 30.0,
+        "last_spend": 0.0
+    },
+    {
+        "id": "d4a9f8b3",
+        "provider": "modal",
+        "name": "Conta 4 - Historias de 7 Dias",
+        "workspace": "historiasde7dias",
+        "token_id": "ak-AXtOSYJJ0RTN3bItvgrma9",
+        "token_secret": "as-8E1C4r7BsOE07iYcvXmOlx",
+        "is_active": false,
+        "last_balance": 29.39335745,
+        "last_spend": 0.60664255,
+        "proxy_key": "wk-Y2wC64cedn5Y75ewJD4bxu",
+        "proxy_secret": "ws-Zu99tXLwbyVdMoPkctMQKr"
+    },
+    {
+        "id": "macaco123",
+        "provider": "modal",
+        "name": "Conta 5 - Macaco Driver",
+        "workspace": "macacodriver",
+        "token_id": "ak-MUU4bUBLOAANEwu1cvy0tu",
+        "token_secret": "as-rPvCfnaB00uAhuctXXS3sT",
+        "is_active": false,
+        "last_balance": 30.0,
+        "last_spend": 0.0,
+        "proxy_key": "wk-RLTVYlQj5X0lu72KQYelQf",
+        "proxy_secret": "ws-xw08GEQcaE4mYDEq6PAaeV"
+    },
+    {
+        "id": "tuto6",
+        "provider": "modal",
+        "name": "Conta 6 - Tutorial das Coisas",
+        "workspace": "canaltutorialdascoisas",
+        "token_id": "ak-H7MxjPh7n9FH4ij0GYNEB2",
+        "token_secret": "as-V4Y5ecuc7F8kBAQI325Oca",
+        "is_active": true,
+        "last_balance": 30.0,
+        "last_spend": 0.0,
+        "proxy_key": "wk-mrTpFy5N3TqKyjvVESDAnT",
+        "proxy_secret": "ws-kdsrElfoXzqOwifhCR3v4Y"
+    }
+]

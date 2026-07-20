@@ -1,0 +1,143 @@
+[32m[INFO][0m Enabled pinned memory 870290.0
+[32m[INFO][0m Using xformers attention
+[32m[INFO][0m Python version: 3.10.17 (main, May 21 2025, 23:32:05) [GCC 12.2.0]
+[32m[INFO][0m ComfyUI version: 0.27.0
+[32m[INFO][0m comfy-aimdo version: 0.4.10
+[32m[INFO][0m comfy-kitchen version: 0.2.17
+[32m[INFO][0m comfyui-frontend-package version: 1.45.20
+[32m[INFO][0m comfyui-workflow-templates version: 0.11.6
+[32m[INFO][0m comfyui-embedded-docs version: 0.5.7
+[32m[INFO][0m comfy-kitchen version: 0.2.17
+[32m[INFO][0m comfy-aimdo version: 0.4.10
+[32m[INFO][0m [Prompt Server] web root: /usr/local/lib/python3.10/site-packages/comfyui_frontend_package/static
+[32m[INFO][0m Asset seeder disabled
+[32m[INFO][0m [START] ComfyUI-Manager
+[ComfyUI-Manager] Using GitPython backend
+[32m[INFO][0m [ComfyUI-Manager] network_mode: public
+[1m[33m[WARNING][0m [ComfyUI-Manager] The matrix sharing feature has been disabled because the `matrix-nio` dependency is not installed.
+	To use this feature, please run the following command:
+	/usr/local/bin/python -m pip install matrix-nio
+
+[32m[INFO][0m No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+
+[92m[rgthree-comfy] Loaded 48 exciting nodes. 🎉[0m
+
+[33m[rgthree-comfy] ComfyUI's new Node 2.0 rendering may be incompatible with some rgthree-comfy nodes and features, breaking some rendering as well as losing the ability to access a node's properties (a vital part of many nodes). It also appears to run MUCH more slowly spiking CPU usage and causing jankiness and unresponsiveness, especially with large workflows. Personally I am not planning to use the new Nodes 2.0 and, unfortunately, am not able to invest the time to investigate and overhaul rgthree-comfy where needed. If you have issues when Nodes 2.0 is enabled, I'd urge you to switch it off as well and join me in hoping ComfyUI is not planning to deprecate the existing, stable canvas rendering all together.
+[0m
+[34m[ComfyUI-Easy-Use] server: [0mv1.3.7 [92mLoaded[0m
+[34m[ComfyUI-Easy-Use] web root: [0m/comfyui/custom_nodes/ComfyUI-Easy-Use/web_version/v2 [92mLoaded[0m
+[32m[INFO][0m ### Loading: ComfyUI-Impact-Pack (V8.28.3)
+[32m[INFO][0m [Impact Pack] Wildcard total size (0.00 MB) is within cache limit (50.00 MB). Using full cache mode.
+[32m[INFO][0m [Impact Pack] Wildcards loading done.
+⚠️  SeedVR2 optimizations check: SageAttention ❌ | Flash Attention ❌ | Triton ✅
+💡 Optional: pip install sageattention flash-attn
+📊 Initial CUDA memory: 78.47GB free / 79.18GB total
+/usr/local/lib/python3.10/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Nvidia APEX normalization not installed, using PyTorch LayerNorm
+[32m[INFO][0m Original USDU script not found, downloading it from https://github.com/Coyote-A/ultimate-upscale-for-automatic1111
+[32m[INFO][0m Original USDU script downloaded successfully
+USDU batch patches applied successfully.
+[32m[INFO][0m USDU batch patches applied successfully.
+[34mWAS Node Suite: [0mCreated default conf file at `/comfyui/custom_nodes/was-node-suite-comfyui/was_suite_config.json`.[0m
+[34mWAS Node Suite: [0mOpenCV Python FFMPEG support is enabled[0m
+[34mWAS Node Suite [93mWarning: [0m`ffmpeg_bin_path` is not set in `/comfyui/custom_nodes/was-node-suite-comfyui/was_suite_config.json` config file. Will attempt to use system ffmpeg binaries if available.[0m
+[34mWAS Node Suite: [0mFinished.[0m [32mLoaded[0m [0m220[0m [32mnodes successfully.[0m
+
+	[3m[93m"Art is the most beautiful of all lies."[0m[3m - Claude Debussy[0m
+
+Downloading https://us.aws.cdn.hf.co/xet-bridge-us/644877453e498d66919f36ec/caabb1f274e56d11d815195c849679aefa391e603190b6d24ce17f570827b2c9?user_id=public&X-Xet-Cas-Uid=public&response-content-disposition=inline%3B+filename*%3DUTF-8%27%27face_yolov8m.pt%3B+filename%3D%22face_yolov8m.pt%22%3B&Expires=1783655694&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5hd3MuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjQ0ODc3NDUzZTQ5OGQ2NjkxOWYzNmVjL2NhYWJiMWYyNzRlNTZkMTFkODE1MTk1Yzg0OTY3OWFlZmEzOTFlNjAzMTkwYjZkMjRjZTE3ZjU3MDgyN2IyYzlcXD91c2VyX2lkPXB1YmxpYyZYLVhldC1DYXMtVWlkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPWlubGluZSUzQitmaWxlbmFtZSUyQSUzRFVURi04JTI3JTI3ZmFjZV95b2xvdjhtLnB0JTNCK2ZpbGVuYW1lJTNEJTIyZmFjZV95b2xvdjhtLnB0JTIyJTNCIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3ODM2NTU2OTR9fX1dfQ__&Signature=MEQCIH2ySXuUYPx42J8sL7kn6CP6V5L2xOGcJp6ikbItuHySAiAJdj9ABTO--4m0dv4BU%7EABGuvrHrVR6JvHpWXT3LASEg__&Key-Pair-Id=01KAYHXK2CBJSW0YZTMNXK9W1M to /comfyui/models/ultralytics/bbox/face_yolov8m.pt
+
+[1A  0%|          | 0/52026019 [00:00<?, ?it/s]
+[1A  0%|          | 131072/52026019 [00:00<00:41, 1250872.16it/s]
+[1A  2%|▏         | 1081344/52026019 [00:00<00:08, 5981555.52it/s]
+[1A 12%|█▏        | 6193152/52026019 [00:00<00:01, 26073790.85it/s]
+[1A 23%|██▎       | 12189696/52026019 [00:00<00:01, 39232724.03it/s]
+[1A 35%|███▍      | 18055168/52026019 [00:00<00:00, 46069311.50it/s]
+[1A 45%|████▌     | 23658496/52026019 [00:00<00:00, 49120661.01it/s]
+[1A 57%|█████▋    | 29720576/52026019 [00:00<00:00, 52844658.78it/s]
+[1A 68%|██████▊   | 35586048/52026019 [00:00<00:00, 54653199.81it/s]
+[1A 79%|███████▉  | 41091072/52026019 [00:00<00:00, 53518250.26it/s]
+[1A 89%|████████▉ | 46465024/52026019 [00:01<00:00, 53433866.37it/s]
+[1A100%|██████████| 52026019/52026019 [00:01<00:00, 46497863.63it/s]
+[1m[33m[WARNING][0m Traceback (most recent call last):
+  File "/comfyui/nodes.py", line 2246, in load_custom_node
+    module_spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/comfyui/custom_nodes/comfyui_face_parsing/__init__.py", line 29, in <module>
+    import pkg_resources
+ModuleNotFoundError: No module named 'pkg_resources'
+
+[1m[33m[WARNING][0m Cannot import /comfyui/custom_nodes/comfyui_face_parsing module for custom nodes: No module named 'pkg_resources'
+[32m[INFO][0m 
+Import times for custom nodes:
+[32m[INFO][0m    0.0 seconds: /comfyui/custom_nodes/websocket_image_save.py
+[32m[INFO][0m    0.0 seconds: /comfyui/custom_nodes/ComfyUI_essentials
+[32m[INFO][0m    0.0 seconds: /comfyui/custom_nodes/comfyui-tooling-nodes
+[32m[INFO][0m    0.1 seconds: /comfyui/custom_nodes/ComfyUI-VideoHelperSuite
+[32m[INFO][0m    0.1 seconds: /comfyui/custom_nodes/rgthree-comfy
+[32m[INFO][0m    0.1 seconds: /comfyui/custom_nodes/Comfyui_TTP_Toolset
+[32m[INFO][0m    0.2 seconds: /comfyui/custom_nodes/ComfyUI-KJNodes
+[32m[INFO][0m    0.3 seconds: /comfyui/custom_nodes/ComfyUI_LayerStyle
+[32m[INFO][0m    0.4 seconds: /comfyui/custom_nodes/ComfyUI-Impact-Pack
+[32m[INFO][0m    0.5 seconds: /comfyui/custom_nodes/ComfyUI_UltimateSDUpscale
+[32m[INFO][0m    0.8 seconds: /comfyui/custom_nodes/ComfyUI-SeedVR2_VideoUpscaler
+[32m[INFO][0m    1.1 seconds: /comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll
+[32m[INFO][0m    1.5 seconds: /comfyui/custom_nodes/ComfyUI-Easy-Use
+[32m[INFO][0m    1.9 seconds: /comfyui/custom_nodes/was-node-suite-comfyui
+[32m[INFO][0m    2.0 seconds (IMPORT FAILED): /comfyui/custom_nodes/comfyui_face_parsing
+[32m[INFO][0m 
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Running upgrade  -> 0001_assets, Initial assets schema
+Revision ID: 0001_assets
+Revises: None
+Create Date: 2025-12-10 00:00:00
+[32m[INFO][0m Running upgrade 0001_assets -> 0002_merge_to_asset_references, Merge AssetInfo and AssetCacheState into unified asset_references table.
+[32m[INFO][0m Running upgrade 0002_merge_to_asset_references -> 0003_add_metadata_job_id, Add system_metadata and job_id columns to asset_references.
+Change preview_id FK from assets.id to asset_references.id.
+[32m[INFO][0m Running upgrade 0003_add_metadata_job_id -> 0004_drop_tag_type, Drop the vestigial tags.tag_type column.
+[32m[INFO][0m Running upgrade 0004_drop_tag_type -> 0005_allow_case_sensitive_tags, Allow case-sensitive tag names.
+[32m[INFO][0m Running upgrade 0005_allow_case_sensitive_tags -> 0006_add_loader_path, Add loader_path column to asset_references.
+[32m[INFO][0m Database upgraded from None to 0006_add_loader_path
+[32m[INFO][0m Using RAM pressure cache.
+[32m[INFO][0m Starting server
+
+[32m[INFO][0m To see the GUI go to: http://127.0.0.1:8189
+[UniversalComfyEngine] SNAPSHOT V_HTTP OK! ComfyUI porta 8189 pronto em 30.06s.
+[UniversalComfyEngine] Iniciando requisicao Universal...
+[UniversalComfyEngine] Multi-Pass ativado. Total de imagens (1 Base + 3 Chars).
+[UniversalComfyEngine] Multi-Pass: Iteracao 1/3
+[32m[INFO][0m got prompt
+[32m[INFO][0m Using xformers attention in VAE
+[32m[INFO][0m Using xformers attention in VAE
+[32m[INFO][0m VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+[32m[INFO][0m Requested to load AutoencodingEngine
+[32m[INFO][0m loaded completely;  159.87 MB loaded, full load: True
+[32m[INFO][0m Requested to load CLIPVisionModelProjection
+[32m[INFO][0m loaded completely;  787.72 MB loaded, full load: True
+[1m[33m[WARNING][0m clip missing: ['text_projection.weight']
+[32m[INFO][0m CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cpu, dtype: torch.float16
+[32m[INFO][0m Requested to load FluxClipModel_
+[32m[INFO][0m loaded completely;  9319.23 MB loaded, full load: True
+[1m[31m[ERROR][0m !!! Exception during processing !!! local variable 'os' referenced before assignment
+[1m[31m[ERROR][0m Traceback (most recent call last):
+  File "/comfyui/execution.py", line 543, in execute
+    output_data, output_ui, has_subgraph, has_pending_tasks = await get_output_data(prompt_id, unique_id, obj, input_data_all, execution_block_cb=execution_block_cb, pre_execute_cb=pre_execute_cb, v3_data=v3_data)
+  File "/comfyui/execution.py", line 342, in get_output_data
+    return_values = await _async_map_node_over_list(prompt_id, unique_id, obj, input_data_all, obj.FUNCTION, allow_interrupt=True, execution_block_cb=execution_block_cb, pre_execute_cb=pre_execute_cb, v3_data=v3_data)
+  File "/comfyui/execution.py", line 316, in _async_map_node_over_list
+    await process_inputs(input_dict, i)
+  File "/comfyui/execution.py", line 304, in process_inputs
+    result = f(**inputs)
+  File "/comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll/pulidflux.py", line 184, in load_insightface
+    download_insightface_model("models", name, root=INSIGHTFACE_DIR)
+  File "/comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll/pulidflux.py", line 149, in download_insightface_model
+    _root = os.path.expanduser(root)
+UnboundLocalError: local variable 'os' referenced before assignment
+
+[32m[INFO][0m [32mPrompt executed in 15.97 seconds[0m
+   POST /generate/multipass -> 200 OK  (duration: 83.7 s, execution: 83.6 s)

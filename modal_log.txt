@@ -1,0 +1,144 @@
+✓ Initialized. View run at 
+https://modal.com/apps/historiasde7dias/main/ap-wKQi7GFEnvt9eMzzJRvdad
+✓ Created objects.
+├── 🔨 Created mount PythonPackage:backend
+├── 🔨 Created mount backend\cloud_tools\engines\pulid_patch.py
+└── 🔨 Created function UniversalComfyEngine.*.
+Memory snapshots are disabled for ephemeral apps. Deploy your app with `modal deploy` to enable memory snapshots.
+[Teste] Workflow lido. Tamanho: 6466
+[Teste] Imagens convertidas para B64. Acionando Motor Universal...
+[UniversalComfyEngine] Lancando ComfyUI como subprocesso (porta 8189)...
+
+Launching ComfyUI from: /comfyui
+
+[32m[INFO][0m setup plugin alembic.autogenerate.schemas
+[32m[INFO][0m setup plugin alembic.autogenerate.tables
+[32m[INFO][0m setup plugin alembic.autogenerate.types
+[32m[INFO][0m setup plugin alembic.autogenerate.constraints
+[32m[INFO][0m setup plugin alembic.autogenerate.defaults
+[32m[INFO][0m setup plugin alembic.autogenerate.comments
+[32m[INFO][0m Adding extra search path checkpoints /comfyui_models/checkpoints
+[32m[INFO][0m Adding extra search path loras /comfyui_models/loras
+[32m[INFO][0m Adding extra search path vae /comfyui_models/vae
+[32m[INFO][0m Adding extra search path clip /comfyui_models/clip
+[32m[INFO][0m Adding extra search path unet /comfyui_models/unet
+[32m[INFO][0m Adding extra search path controlnet /comfyui_models/controlnet
+[32m[INFO][0m Adding extra search path pulid /comfyui_models/pulid
+[32m[INFO][0m Adding extra search path clip_vision /comfyui_models/clip_vision
+[32m[INFO][0m Adding extra search path style_models /comfyui_models/style_models
+/usr/local/lib/python3.10/site-packages/huggingface_hub/constants.py:298: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+[START] Security scan
+[DONE] Security scan
+** ComfyUI startup time: 2026-07-04 08:33:04.494
+** Platform: Linux
+** Python version: 3.10.17 (main, May 21 2025, 23:32:05) [GCC 12.2.0]
+** Python executable: /usr/local/bin/python
+** ComfyUI Path: /comfyui
+** ComfyUI Base Folder Path: /comfyui
+** User directory: /comfyui/user
+** ComfyUI-Manager config path: /comfyui/user/__manager/config.ini
+** Log path: /comfyui/user/comfyui.log
+[32m[INFO][0m [PRE] ComfyUI-Manager
+[1m[33m[WARNING][0m WARNING: You need pytorch with cu130 or higher to use optimized CUDA operations.
+[32m[INFO][0m Found comfy_kitchen backend eager: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope_split_half', 'apply_rope_split_half1', 'dequantize_int8_convrot_weight', 'dequantize_int8_convrot_weight_dtype', 'dequantize_int8_simple', 'dequantize_int8_simple_dtype', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'gemv_awq_w4a16', 'int8_linear', 'quantize_and_rotate_rowwise', 'quantize_int8_convrot_weight', 'quantize_int8_rowwise', 'quantize_int8_tensorwise', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'quantize_svdquant_w4a4', 'scaled_mm_nvfp4', 'scaled_mm_svdquant_w4a4', 'stochastic_rounding_fp8']}
+[32m[INFO][0m Found comfy_kitchen backend cuda: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope_split_half', 'apply_rope_split_half1', 'dequantize_int8_convrot_weight', 'dequantize_int8_convrot_weight_dtype', 'dequantize_int8_simple', 'dequantize_int8_simple_dtype', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'gemv_awq_w4a16', 'quantize_and_rotate_rowwise', 'quantize_int8_convrot_weight', 'quantize_int8_rowwise', 'quantize_int8_tensorwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'quantize_svdquant_w4a4', 'scaled_mm_svdquant_w4a4', 'stochastic_rounding_fp8']}
+[32m[INFO][0m Found comfy_kitchen backend triton: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope_split_half', 'apply_rope_split_half1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'int8_linear', 'quantize_and_rotate_rowwise', 'quantize_int8_rowwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8']}
+[32m[INFO][0m Checkpoint files will always be loaded safely.
+[32m[INFO][0m Total VRAM 81079 MB, total RAM 1048576 MB
+[32m[INFO][0m pytorch version: 2.4.0+cu121
+/usr/local/lib/python3.10/site-packages/xformers/ops/fmha/flash.py:211: FutureWarning: `torch.library.impl_abstract` was renamed to `torch.library.register_fake`. Please use that instead; we will remove `torch.library.impl_abstract` in a future version of PyTorch.
+  @torch.library.impl_abstract("xformers_flash::flash_fwd")
+/usr/local/lib/python3.10/site-packages/xformers/ops/fmha/flash.py:344: FutureWarning: `torch.library.impl_abstract` was renamed to `torch.library.register_fake`. Please use that instead; we will remove `torch.library.impl_abstract` in a future version of PyTorch.
+  @torch.library.impl_abstract("xformers_flash::flash_bwd")
+[32m[INFO][0m xformers version: 0.0.27.post2
+[32m[INFO][0m Set vram state to: HIGH_VRAM
+[32m[INFO][0m Device: cuda:0 NVIDIA H100 80GB HBM3 : cudaMallocAsync
+[32m[INFO][0m Using async weight offloading with 2 streams
+[32m[INFO][0m Enabled pinned memory 943718.0
+[32m[INFO][0m Using xformers attention
+[32m[INFO][0m Python version: 3.10.17 (main, May 21 2025, 23:32:05) [GCC 12.2.0]
+[32m[INFO][0m ComfyUI version: 0.27.0
+[32m[INFO][0m comfy-aimdo version: 0.4.10
+[32m[INFO][0m comfy-kitchen version: 0.2.16
+[32m[INFO][0m comfyui-frontend-package version: 1.45.20
+[32m[INFO][0m comfyui-workflow-templates version: 0.11.2
+[32m[INFO][0m comfyui-embedded-docs version: 0.5.6
+[32m[INFO][0m comfy-kitchen version: 0.2.16
+[32m[INFO][0m comfy-aimdo version: 0.4.10
+[32m[INFO][0m [Prompt Server] web root: /usr/local/lib/python3.10/site-packages/comfyui_frontend_package/static
+[32m[INFO][0m Asset seeder disabled
+[32m[INFO][0m [START] ComfyUI-Manager
+[ComfyUI-Manager] Using GitPython backend
+[32m[INFO][0m [ComfyUI-Manager] network_mode: public
+[1m[33m[WARNING][0m [ComfyUI-Manager] The matrix sharing feature has been disabled because the `matrix-nio` dependency is not installed.
+        To use this feature, please run the following command:
+        /usr/local/bin/python -m pip install matrix-nio
+
+[32m[INFO][0m No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+/usr/local/lib/python3.10/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Nvidia APEX normalization not installed, using PyTorch LayerNorm
+[32m[INFO][0m 
+Import times for custom nodes:
+[32m[INFO][0m    0.0 seconds: /comfyui/custom_nodes/websocket_image_save.py
+[32m[INFO][0m    0.1 seconds: /comfyui/custom_nodes/ComfyUI-VideoHelperSuite
+[32m[INFO][0m    0.3 seconds: /comfyui/custom_nodes/comfyui-tooling-nodes
+[32m[INFO][0m    0.6 seconds: /comfyui/custom_nodes/ComfyUI-PuLID-Flux
+[32m[INFO][0m 
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Running upgrade  -> 0001_assets, Initial assets schema
+Revision ID: 0001_assets
+Revises: None
+Create Date: 2025-12-10 00:00:00
+[32m[INFO][0m Running upgrade 0001_assets -> 0002_merge_to_asset_references, Merge AssetInfo and AssetCacheState into unified asset_references table.
+[32m[INFO][0m Running upgrade 0002_merge_to_asset_references -> 0003_add_metadata_job_id, Add system_metadata and job_id columns to asset_references.
+Change preview_id FK from assets.id to asset_references.id.
+[32m[INFO][0m Running upgrade 0003_add_metadata_job_id -> 0004_drop_tag_type, Drop the vestigial tags.tag_type column.
+[32m[INFO][0m Database upgraded from None to 0004_drop_tag_type
+[32m[INFO][0m Using RAM pressure cache.
+[32m[INFO][0m Starting server
+
+[32m[INFO][0m To see the GUI go to: http://127.0.0.1:8189
+[UniversalComfyEngine] SNAPSHOT OK! ComfyUI porta 8189 pronto em 33.05s (T2).
+[UniversalComfyEngine] Iniciando requisicao Universal...
+[UniversalComfyEngine] Imagem 0 salva: apollo_universal_input_0.png
+[UniversalComfyEngine] Imagem 1 salva: apollo_universal_input_1.png
+[UniversalComfyEngine] Workflow adaptado. Nos modificados: ['Seed(62:25)', 'LoadImage_1to1(42)', 'LoadImage_1to1(46)']
+[32m[INFO][0m got prompt
+[1m[31m[ERROR][0m Failed to validate prompt for output 9:
+[1m[31m[ERROR][0m * CLIPLoader 62:38:
+[1m[31m[ERROR][0m   - Value not in list: clip_name: 'mistral_3_small_flux2_fp8.safetensors' not in ['clip_l.safetensors', 't5xxl_fp16.safetensors']
+[1m[31m[ERROR][0m * VAELoader 62:10:
+[1m[31m[ERROR][0m   - Value not in list: vae_name: 'flux2-vae.safetensors' not in ['ae.safetensors', 'pixel_space']
+[1m[31m[ERROR][0m * UNETLoader 62:12:
+[1m[31m[ERROR][0m   - Value not in list: unet_name: 'flux2_dev_fp8mixed.safetensors' not in ['flux1-dev.safetensors']
+[1m[31m[ERROR][0m * LoraLoaderModelOnly 62:88:
+[1m[31m[ERROR][0m   - Value not in list: lora_name: 'Flux2TurboComfyv2.safetensors' not in []
+[1m[31m[ERROR][0m Output will be ignored
+[1m[33m[WARNING][0m invalid prompt: {'type': 'prompt_outputs_failed_validation', 'message': 'Prompt outputs failed validation', 'details': '', 'extra_info': {}}
+[UniversalComfyEngine] ERROR: Traceback (most recent call last):
+  File "/root/backend/cloud_tools/engines/universal_engine.py", line 275, in generate
+    resp = urllib.request.urlopen(req)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 216, in urlopen
+    return opener.open(url, data, timeout)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 525, in open
+    response = meth(req, response)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+  File "/usr/local/lib/python3.10/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+
+[Teste] FALHA!
+{'status': 'error', 'message': 'HTTP Error 400: Bad Request', 'traceback': 'Traceback (most recent call last):\n  File "/root/backend/cloud_tools/engines/universal_engine.py", line 275, in generate\n    resp = urllib.request.urlopen(req)\n  File "/usr/local/lib/python3.10/urllib/request.py", line 216, in urlopen\n    return opener.open(url, data, timeout)\n  File "/usr/local/lib/python3.10/urllib/request.py", line 525, in open\n    response = meth(req, response)\n  File "/usr/local/lib/python3.10/urllib/request.py", line 634, in http_response\n    response = self.parent.error(\n  File "/usr/local/lib/python3.10/urllib/request.py", line 563, in error\n    return self._call_chain(*args)\n  File "/usr/local/lib/python3.10/urllib/request.py", line 496, in _call_chain\n    result = func(*args)\n  File "/usr/local/lib/python3.10/urllib/request.py", line 643, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 400: Bad Request\n'}
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/historiasde7dias/main/ap-wKQi7GFEnvt9eMzzJRvdad

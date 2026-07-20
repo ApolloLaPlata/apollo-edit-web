@@ -1,0 +1,333 @@
+\n--- TENTATIVA 1 com chave AIzaSyCszc... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 503\nResponse: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+\nABORTANDO devido a erro: 503\n\n--- TENTATIVA 1 com chave AIzaSyCszc... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_con\n\n--- TENTATIVA 2 com chave AIzaSyC50F... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:657428716981'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.\n\n--- TENTATIVA 3 com chave AIzaSyCzMJ... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:727103822148'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "service": "generativelanguage.\n\n--- TENTATIVA 4 com chave AIzaSyA43_... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:403121374158'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 5 com chave AIzaSyABq0... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:517021397103'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 6 com chave AIzaSyAz-R... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:100199916158'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_unit": "1/min/{project}/\n\n--- TENTATIVA 7 com chave AIzaSyAxRd... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent\nStatus Code: 403\nResponse: {
+  "error": {
+    "code": 403,
+    "message": "Gemini API has not been used in project 76658595355 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview?project=76658595355 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+\nABORTANDO devido a erro: 403\n\n--- TENTATIVA 1 com chave AIzaSyCszc... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 56.293092726s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "\n\n--- TENTATIVA 2 com chave AIzaSyC50F... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:657428716981'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_unit": "1/min/{project}/\n\n--- TENTATIVA 3 com chave AIzaSyCzMJ... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:727103822148'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 4 com chave AIzaSyA43_... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:403121374158'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 5 com chave AIzaSyABq0... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:517021397103'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 6 com chave AIzaSyAz-R... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:100199916158'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_location": "us-south1",
+\n\n--- TENTATIVA 7 com chave AIzaSyAxRd... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 403\nResponse: {
+  "error": {
+    "code": 403,
+    "message": "Gemini API has not been used in project 76658595355 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview?project=76658595355 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+\n\n--- TENTATIVA 8 com chave AIzaSyANlg... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:419386012192'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_unit": "1/min/{project}/\n\n--- TENTATIVA 9 com chave AIzaSyBmK1... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:192153607822'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_metric": "generativelang\n\n--- TENTATIVA 10 com chave AIzaSyCukf... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:355035570789'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_unit": "1/min/{project}/\n\n--- TENTATIVA 11 com chave AIzaSyBC7u... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:1024084209516'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_limit_value": "0",
+    \n\n--- TENTATIVA 12 com chave AIzaSyC0n2... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:893712172793'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 13 com chave AIzaSyA63x... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 44.736982972s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "\n\n--- TENTATIVA 14 com chave AIzaSyDX4n... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 43.464387001s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "\n\n--- TENTATIVA 1 com chave AIzaSyCszc... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 938.391139ms.",
+    "status": "RESOURCE_EXHAUSTED",
+    "d\n\n--- TENTATIVA 2 com chave AIzaSyC50F... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:657428716981'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "consumer": "projects/657428716\n\n--- TENTATIVA 3 com chave AIzaSyCzMJ... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:727103822148'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 4 com chave AIzaSyA43_... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:403121374158'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_limit_value": "0",
+     \n\n--- TENTATIVA 5 com chave AIzaSyABq0... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:517021397103'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 6 com chave AIzaSyAz-R... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:100199916158'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 7 com chave AIzaSyAxRd... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 403\nResponse: {
+  "error": {
+    "code": 403,
+    "message": "Gemini API has not been used in project 76658595355 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview?project=76658595355 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+\n\n--- TENTATIVA 8 com chave AIzaSyANlg... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:419386012192'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 9 com chave AIzaSyBmK1... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:192153607822'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_unit": "1/min/{project}/\n\n--- TENTATIVA 10 com chave AIzaSyCukf... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:355035570789'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_location": "us-south1",
+\n\n--- TENTATIVA 11 com chave AIzaSyBC7u... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'API requests' and limit 'Request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:1024084209516'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata": {
+          "quota_location": "us-south1",\n\n--- TENTATIVA 12 com chave AIzaSyC0n2... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:893712172793'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "RATE_LIMIT_EXCEEDED",
+        "domain": "googleapis.com",
+        "metadata":\n\n--- TENTATIVA 13 com chave AIzaSyA63x... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 47.304510253s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "\n\n--- TENTATIVA 14 com chave AIzaSyDX4n... ---\nURL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent\nStatus Code: 429\nResponse: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 46.714025834s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "\n

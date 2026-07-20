@@ -1,0 +1,81 @@
+{
+    "3": {
+        "class_type": "KSampler",
+        "inputs": {
+            "seed": 12345,
+            "steps": 20,
+            "cfg": 3.5,
+            "sampler_name": "euler",
+            "scheduler": "simple",
+            "denoise": 1.0,
+            "model": ["10", 0],
+            "positive": ["6", 0],
+            "negative": ["7", 0],
+            "latent_image": ["5", 0]
+        }
+    },
+    "4": {
+        "class_type": "CheckpointLoaderSimple",
+        "inputs": {
+            "ckpt_name": "flux-2-klein-base-4b-fp8.safetensors"
+        }
+    },
+    "5": {
+        "_meta": {
+            "title": "APOLLO_BASE_IMAGE"
+        },
+        "class_type": "EmptyLatentImage",
+        "inputs": {
+            "batch_size": 1,
+            "width": 1024,
+            "height": 1024
+        }
+    },
+    "12": {
+        "_meta": {
+            "title": "APOLLO_CHAR_IMAGE"
+        },
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "default_char.png"
+        }
+    },
+    "6": {
+        "_meta": {
+            "title": "APOLLO_PROMPT"
+        },
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+            "text": "A cinematic shot of a cyberpunk bar",
+            "clip": ["4", 1]
+        }
+    },
+    "7": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+            "text": "",
+            "clip": ["4", 1]
+        }
+    },
+    "8": {
+        "class_type": "VAEDecode",
+        "inputs": {
+            "samples": ["3", 0],
+            "vae": ["4", 2]
+        }
+    },
+    "9": {
+        "class_type": "SaveImage",
+        "inputs": {
+            "filename_prefix": "apollo_multipass",
+            "images": ["8", 0]
+        }
+    },
+    "10": {
+        "class_type": "FluxGuidance",
+        "inputs": {
+            "guidance": 3.5,
+            "conditioning": ["4", 0]
+        }
+    }
+}

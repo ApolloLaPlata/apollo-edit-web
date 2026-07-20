@@ -1,0 +1,163 @@
+2026-06-20 01:55:53,074 - [INFO] - root - setup_system_logger:48 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 01:55:53,729 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 01:55:53,739 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 01:55:53,966 - [INFO] - CoinLedger - init_ledger:563 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 01:55:54,120 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 01:55:54,156 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 01:56:24,056 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 01:56:24,698 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 01:56:24,699 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 01:56:24,919 - [INFO] - CoinLedger - init_ledger:563 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 01:56:25,066 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 01:56:25,099 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 02:02:48,624 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 02:02:49,275 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 02:02:49,275 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 02:02:49,504 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 02:02:49,678 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 02:02:49,721 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 02:03:29,253 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 02:03:29,981 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 02:03:29,981 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 02:03:30,217 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 02:03:30,371 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 02:03:30,411 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 02:03:54,099 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 02:03:54,842 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 02:03:54,843 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 02:03:55,090 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 02:03:55,248 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 02:03:55,288 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:23:12,209 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:23:14,976 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:23:14,977 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:23:16,042 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:23:16,564 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:23:16,674 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:27:47,486 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:27:48,196 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:27:48,197 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:27:48,428 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:27:48,596 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:27:48,639 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:37:08,619 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:37:11,003 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:37:11,003 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:51:56,713 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:51:57,365 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:51:57,365 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:51:57,584 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:51:57,730 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:52:26,519 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:52:27,158 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:52:27,158 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:52:27,376 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:52:27,520 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:52:54,435 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:52:55,155 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:52:55,155 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:52:55,403 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:52:55,563 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:52:58,902 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:55:25,745 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:55:26,420 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:55:26,420 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:55:26,642 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:55:26,788 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:55:30,073 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:56:24,829 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:56:25,470 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:56:25,471 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:56:25,695 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:56:25,841 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:56:29,057 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:57:26,159 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:57:26,799 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:57:26,799 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:57:27,043 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:57:27,187 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:57:30,401 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 11:57:46,730 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 11:57:47,389 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 11:57:47,389 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 11:57:47,619 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 11:57:47,770 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 11:57:51,095 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 12:02:22,558 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:03:30,041 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:03:30,740 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 12:03:30,740 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 12:03:30,969 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 12:03:31,118 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 12:03:34,593 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 12:09:39,628 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:10:34,969 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:10:35,617 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 12:10:35,617 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 12:10:35,840 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 12:10:36,001 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 12:10:39,303 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do gemini: 'DummyConfig' object has no attribute 'get_api_config'
+2026-06-20 12:10:39,304 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do chatgpt: 'DummyConfig' object has no attribute 'get_api_config'
+2026-06-20 12:10:39,304 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do openrouter: 'DummyConfig' object has no attribute 'get_api_config'
+2026-06-20 12:10:39,304 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do grok: 'DummyConfig' object has no attribute 'get_api_config'
+2026-06-20 12:10:39,308 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 12:11:56,782 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:12:24,352 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:12:25,014 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 12:12:25,014 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 12:12:25,237 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 12:12:25,420 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 12:12:28,693 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do gemini: DummyConfig.get_api_config() takes 2 positional arguments but 3 were given
+2026-06-20 12:12:28,693 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do chatgpt: DummyConfig.get_api_config() takes 2 positional arguments but 3 were given
+2026-06-20 12:12:28,694 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do openrouter: DummyConfig.get_api_config() takes 2 positional arguments but 3 were given
+2026-06-20 12:12:28,694 - [WARNING] - root - _load_provider_keys:67 - [IA Pipeline] Erro ao carregar chaves do grok: DummyConfig.get_api_config() takes 2 positional arguments but 3 were given
+2026-06-20 12:12:28,703 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 12:21:49,788 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:22:36,514 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 12:22:37,196 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 12:22:37,196 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 12:22:37,423 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 12:22:37,595 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 12:22:40,972 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:03:29,223 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:03:29,932 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:03:29,932 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:03:30,173 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:03:30,329 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:03:33,915 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:04:58,941 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:04:59,600 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:04:59,601 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:04:59,825 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:04:59,976 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:05:03,265 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:05:26,927 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:05:27,576 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:05:27,576 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:05:27,794 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:05:27,940 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:05:31,154 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:06:05,941 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:06:06,578 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:06:06,579 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:06:06,797 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:06:06,944 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:06:10,199 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:06:26,304 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:06:26,948 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:06:26,949 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:06:27,182 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:06:27,328 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:06:30,538 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:07:01,667 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:07:02,341 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:07:02,341 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:07:02,560 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:07:02,705 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:07:05,941 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-06-20 13:07:19,070 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-06-20 13:07:19,710 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Conta Principal (general)
+2026-06-20 13:07:19,710 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 1 conta(s). Estratégia: least_used
+2026-06-20 13:07:19,928 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-06-20 13:07:20,071 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-06-20 13:07:23,303 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.

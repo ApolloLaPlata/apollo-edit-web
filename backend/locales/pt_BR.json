@@ -1,0 +1,14 @@
+{
+    "auth": {
+        "email_registered": "E-mail já cadastrado.",
+        "user_created": "Usuário criado com sucesso",
+        "invalid_credentials": "E-mail ou senha incorretos."
+    },
+    "emails": {
+        "welcome_subject": "Bem-vindo ao Apollo Edit Web! 🚀",
+        "password_reset_subject": "Recuperação de Senha"
+    },
+    "errors": {
+        "generic": "Ocorreu um erro interno. Tente novamente mais tarde."
+    }
+}

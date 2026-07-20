@@ -1,0 +1,14 @@
+{
+    "auth": {
+        "email_registered": "Email is already registered.",
+        "user_created": "User created successfully",
+        "invalid_credentials": "Invalid email or password."
+    },
+    "emails": {
+        "welcome_subject": "Welcome to Apollo Edit Web! 🚀",
+        "password_reset_subject": "Password Recovery"
+    },
+    "errors": {
+        "generic": "An internal error occurred. Please try again later."
+    }
+}

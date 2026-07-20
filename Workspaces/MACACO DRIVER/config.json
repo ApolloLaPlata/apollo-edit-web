@@ -1,0 +1,116 @@
+{
+  "app_info": {
+    "name": "Descarga News Editor",
+    "version": "1.0.0",
+    "description": "Editor de vídeo automatizado para o canal Descarga News"
+  },
+  "personagens": {
+    "Apresentador Macaco": {
+      "video_source": "",
+      "idioma_padrao": "pt-BR",
+      "engine": "proplus",
+      "efeito_padrao": "default",
+      "volume_ajuste": 0.0,
+      "posicao_pip": {
+        "x": 25,
+        "y": "bottom",
+        "offset": 25,
+        "escala": 0.25
+      },
+      "vozes_voicemaker": "",
+      "voz_google_tts": "Algieba",
+      "voz_openaifm": "Ash",
+      "modelo_rvc": "MacacoDriver_1000e_12000s.pth",
+      "index_rvc": "C:/pinokio/api/applio.git/app/logs/MacacoDriver/MacacoDriver.index",
+      "pitch_rvc": 0,
+      "index_rate_rvc": 1.0,
+      "embedder_rvc": "chinese-hubert-base",
+      "audio_ref_moss": "G:/YOUTUBE/MACACO DRIVER/Clonagem de Voz MACACO DRIVER/base de clonagem macaco driver.MP3",
+      "instrucao_base_tts": "\"Male voice, medium-low pitch, highly articulate and pedantic. Starts with extreme arrogance, superiority, and condescending educational calmness, sounding like a genius explaining obvious things. As impossible events occur, the confidence violently shatters. The rhythm becomes erratic, stammering with denial and disbelief. Toward the climax, the voice completely loses all professionalism, escalating into absolute hysterical panic, screaming at the top of his lungs, and displaying childish, explosive fury at inanimate objects.\""
+    }
+  },
+  "backgrounds": {
+    "Padrão": "../Midias\\BG PARA VIDEOS DO DESCARGA NEWS\\BG PARA VIDEOS DO DESCARGA NEWS_1.mp4",
+    "Notícias": "../Midias\\BG PARA VIDEOS DO DESCARGA NEWS\\BG PARA VIDEOS DO DESCARGA NEWS_1.mp4",
+    "Urgente": "../Midias\\BG PARA VIDEOS DO DESCARGA NEWS\\BG PARA VIDEOS DO DESCARGA NEWS_1.mp4"
+  },
+  "paths": {
+    "output_dir": "../Midias\\Outputs",
+    "temp_dir": "../Midias\\Temp",
+    "assets_dir": "../Midias",
+    "transitions": {
+      "horizontal_dir": "../Midias\\Imagens Transição\\HORIZONTAL",
+      "vertical_dir": "../Midias\\Imagens Transição\\VERTICAL"
+    },
+    "logo_path": "../Midias\\Logo Descarga Noticias\\Horizontal_logo\\Logo_Horizontal_1.mp4"
+  },
+  "video_settings": {
+    "default_resolution": "1920x1080",
+    "fps": 30,
+    "codec": "h264",
+    "audio_codec": "aac",
+    "bitrate": "5000k"
+  },
+  "use_compressor": true,
+  "use_smart_pacing": true,
+  "use_ducking": true,
+  "global_tts_model": 3,
+  "modo_madrugada": false,
+  "tratamento_audio": {
+    "usar_filtro_estudio": true,
+    "usar_speechbrain": false,
+    "compressor_threshold": -18.0,
+    "compressor_ratio": 4.0,
+    "limiter_threshold": -1.0,
+    "highpass_cutoff": 80.0,
+    "lowpass_cutoff": 12000.0
+  },
+  "app_logo_path": "E:\\MEUS PROGRAMAS\\MACACO DRIVER CODIGOS\\macaco_logo.png",
+  "app_icon_path": "E:\\MEUS PROGRAMAS\\MACACO DRIVER CODIGOS\\macaco_logo.ico",
+  "music_factory": {
+    "channel_context": "Este é um canal de instrumentais e beats. As músicas não possuem vocais. O objetivo é vender o beat na BeatStars.",
+    "metadata_example": "Title: [Original Name] | Type Beat\\nDescription: Buy this beat on BeatStars! Link: https://beatstars.com/meucanal\\nTags: type beat, instrumental"
+  },
+  "shortcuts": {},
+  "perfis_diretor": {},
+  "theme_colors": {
+    "bg": "#FFE135",
+    "app_bg": "#FFE135",
+    "app_fg": "#1A1A1A",
+    "header_bg": "#0F172A",
+    "header_fg": "#FFE135",
+    "accent": "#ff4600",
+    "btn_bg": "#0F172A",
+    "btn_fg": "#FFFFFF",
+    "btn_active_bg": "#1E3A8A",
+    "btn_active_fg": "#FFFFFF",
+    "tab_bg": "#0F172A",
+    "tab_fg": "#FFFFFF",
+    "tab_selected_bg": "#FFE135",
+    "tab_selected_fg": "#1A1A1A",
+    "tab_active_bg": "#FFC107",
+    "tab_active_fg": "#1A1A1A",
+    "section_bg": "#FFE135",
+    "section_fg": "#1A1A1A",
+    "style_configure_TLabel": {
+      "background": "#FFE135",
+      "foreground": "#1A1A1A"
+    },
+    "style_configure_TLabelframe": {
+      "background": "#FFE135"
+    },
+    "style_configure_TLabelframe.Label": {
+      "background": "#FFE135",
+      "foreground": "#1A1A1A"
+    },
+    "style_configure_TCheckbutton": {
+      "background": "#FFE135",
+      "foreground": "#1A1A1A"
+    },
+    "style_configure_TRadiobutton": {
+      "background": "#FFE135",
+      "foreground": "#1A1A1A"
+    }
+  },
+  "whatsapp_group_id": "120363408388377439@g.us"
+}

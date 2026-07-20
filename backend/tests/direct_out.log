@@ -1,0 +1,503 @@
+✓ Initialized. View run at 
+https://modal.com/apps/descarganews/main/ap-j63q6KJQ6uT7KSYQ2LJ4NK
+✓ Created objects.
+├── 🔨 Created mount PythonPackage:cloud_tools
+├── 🔨 Created web function apollo_api => 
+│   https://descarganews--apollo-render-router-apollo-api-dev.modal.run
+├── 🔨 Created mount backend\cloud_tools\engines\pulid_ll_patch.py
+└── 🔨 Created function UniversalComfyEngine.*.
+Memory snapshots are disabled for ephemeral apps. Deploy your app with `modal deploy` to enable memory snapshots.
+--- 1. Orquestracao Autonoma (LLM) ---
+[LLM] Gerando prompt do cenario base...
+
+-> Cenario Base:
+"An intricately designed steampunk bar, filled with brass and copper fixtures, glowing with the warm hues of gaslight. The bar top is polished mahogany, reflecting the soft ambient glow of ornate brass lights hanging from above. Behind the bar, an impressive array of vintage bottles with ornate labels is displayed on shelves made from riveted metal and dark wood. Clockwork gears and steam gauges decorate the walls, while a massive window to the left reveals a bustling cityscape of towering smokestacks and dirigibles floating in the evening sky. The floor is a patchwork of rich, dark hardwood interspersed with small metallic gears set as decorative inlays. The atmosphere is both inviting and mysterious, with an air of adventure and innovation."
+
+[LLM] Adicionando Personagem 1...
+
+-> Prompt Inpaint Iteracao 1:
+An intricately designed steampunk bar, filled with brass and copper fixtures, glowing with the warm hues of gaslight. The bar top is polished mahogany, reflecting the soft ambient glow of ornate brass lights hanging from above. Behind the bar, an impressive array of vintage bottles with ornate labels is displayed on shelves made from riveted metal and dark wood. Clockwork gears and steam gauges decorate the walls, while a massive window to the left reveals a bustling cityscape of towering smokestacks and dirigibles floating in the evening sky. The floor is a patchwork of rich, dark hardwood interspersed with small metallic gears set as decorative inlays. The atmosphere is both inviting and mysterious, with an air of adventure and innovation.
+
+To the left of the scene, Jinx sits at the bar, her presence vibrant and distinct without altering the scene's fundamental lighting. Her striking blue braided hair cascades over her shoulders, contrasting sharply with her pale skin. Large, striking pink eyes scan the room with curious energy, and cloud tattoos swirl artistically on her arms. She is dressed in a dark leather halter top, adorned with gold eyelets, paired with purple-striped pants that add to her eclectic appearance. Jinx sits comfortably, immersing herself in the steampunk ambiance, yet distinctly apart, contributing to the sense of adventure and innovation that permeates the bar.
+
+[LLM] Adicionando Personagem 2...
+
+-> Prompt Inpaint Iteracao 2:
+An intricately designed steampunk bar, filled with brass and copper fixtures, glowing with the warm hues of gaslight. The bar top is polished mahogany, reflecting the soft ambient glow of ornate brass lights hanging from above. Behind the bar, an impressive array of vintage bottles with ornate labels is displayed on shelves made from riveted metal and dark wood. Clockwork gears and steam gauges decorate the walls, while a massive window to the left reveals a bustling cityscape of towering smokestacks and dirigibles floating in the evening sky. The floor is a patchwork of rich, dark hardwood interspersed with small metallic gears set as decorative inlays. The atmosphere is both inviting and mysterious, with an air of adventure and innovation.
+
+To the left of the scene, Jinx sits at the bar, her presence vibrant and distinct without altering the scene's fundamental lighting. Her striking blue braided hair cascades over her shoulders, contrasting sharply with her pale skin. Large, striking pink eyes scan the room with curious energy, and cloud tattoos swirl artistically on her arms. She is dressed in a dark leather halter top, adorned with gold eyelets, paired with purple-striped pants that add to her eclectic appearance. Jinx sits comfortably, immersing herself in the steampunk ambiance, yet distinctly apart, contributing to the sense of adventure and innovation that permeates the bar.
+
+In the center of the scene, Elon Musk is seated at the bar. He wears a casual pink button-down shirt that reflects the warm, ambient glow of the room without altering its lighting. His expression is thoughtful, with an air of curiosity as he takes in the unique surroundings. His presence adds a modern twist to the steampunk setting, complementing the innovative atmosphere without blending into the other characters, maintaining clear spatial isolation.
+
+[LLM] Adicionando Personagem 3...
+
+-> Prompt Inpaint Iteracao 3:
+An intricately designed steampunk bar, filled with brass and copper fixtures, glowing with the warm hues of gaslight. The bar top is polished mahogany, reflecting the soft ambient glow of ornate brass lights hanging from above. Behind the bar, an impressive array of vintage bottles with ornate labels is displayed on shelves made from riveted metal and dark wood. Clockwork gears and steam gauges decorate the walls, while a massive window to the left reveals a bustling cityscape of towering smokestacks and dirigibles floating in the evening sky. The floor is a patchwork of rich, dark hardwood interspersed with small metallic gears set as decorative inlays. The atmosphere is both inviting and mysterious, with an air of adventure and innovation.
+
+To the left of the scene, Jinx sits at the bar, her presence vibrant and distinct without altering the scene's fundamental lighting. Her striking blue braided hair cascades over her shoulders, contrasting sharply with her pale skin. Large, striking pink eyes scan the room with curious energy, and cloud tattoos swirl artistically on her arms. She is dressed in a dark leather halter top, adorned with gold eyelets, paired with purple-striped pants that add to her eclectic appearance. Jinx sits comfortably, immersing herself in the steampunk ambiance, yet distinctly apart, contributing to the sense of adventure and innovation that permeates the bar.
+
+In the center of the scene, Elon Musk is seated at the bar. He wears a casual pink button-down shirt that reflects the warm, ambient glow of the room without altering its lighting. His expression is thoughtful, with an air of curiosity as he takes in the unique surroundings. His presence adds a modern twist to the steampunk setting, complementing the innovative atmosphere without blending into the other characters, maintaining clear spatial isolation.
+
+On the right side of the scene, a chimpanzee sits at the bar, wearing a beige safari shirt. The chimpanzee’s expression is animated, adding a playful yet sophisticated presence to the steampunk bar. The chimpanzee appears to be observing the surroundings with keen interest, contributing to the bar's eclectic and adventurous atmosphere. The placement of the chimpanzee ensures clear spatial isolation from the other characters, preserving the unique attributes and features of each individual without any blending of elements.
+
+
+--- 2. Gerando Imagem Base Direto ---
+Chamando engine.generate.remote() para Imagem Base...
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+ModuleNotFoundError: No module named 'backend'
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Function cloud_tools.engines.universal_engine.UniversalComfyEngine.* is crash-looping: containers are repeatedly failing to start.
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Webhook label stolen: a newer app 'ap-QHdo49GPO9JBeQeWyt1Iqm' acquired https://descarganews--apollo-render-router-apollo-api-dev.modal.run
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 360, in hydrate_function
+    service = get_class_service(container_args, function_def, _client)
+  File "/pkg/modal/_container_entrypoint.py", line 325, in get_class_service
+    service = import_class_service(
+  File "/pkg/modal/_runtime/user_code_imports.py", line 590, in import_class_service
+    _get_cls_or_user_cls(function_def, ser_user_cls),
+  File "/pkg/modal/_runtime/user_code_imports.py", line 551, in _get_cls_or_user_cls
+    module = importlib.import_module(function_def.module_name)
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/cloud_tools/engines/universal_engine.py", line 69, in <module>
+    from backend.cloud_tools.modal_app import app
+ModuleNotFoundError: No module named 'backend'
+

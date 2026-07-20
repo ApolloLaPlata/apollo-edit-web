@@ -1,0 +1,458 @@
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1178 ---
+"        return {\"status\": \"success\", \"message\": f\"Template renomeado para {req.new_name}.\"}\n\n# ==========================================\n# O MONTADOR\n# ==========================================\nCACHE_MONTADOR = os.path.join(BASE_DIR, \"cache_montador.json\")\n\n@app.get(\"/api/montador/cache\")\nasync def get_montador_cache():\n    if os.path.exists(CACHE_MONTADOR):\n        try:\n            with open(CACHE_MONTADOR, \"r\", encoding=\"utf-8\") as f:\n                return json.
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2061 ---
+"        if job_file is None:\n            break\n            \n        print(f\"\\n[Fila de Renderização] 🎬 Iniciando processamento do projeto: {os.path.basename(job_file)}\")\n        # Declara status_path ANTES do try para estar disponível no except\n        status_path = os.path.join(BASE_DIR, 'render_status.json')\n        try:\n            if 'diretor_export_job' in job_file:\n                # Diretor Job -> Usa o aba_dark_facil.py headless\n                render_script = os.path.join(BA
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 346 ---
+"                audio_file = audio_clip.get('file_path')\n                if not audio_file:\n                    raise ValueError(\"Clipe de áudio na trilha A1 não possui 'file_path' definido.\")\n                if not os.path.exists(audio_file):\n                    raise ValueError(f\"Arquivo de áudio não encontrado no HD: {audio_file}\")"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2064 ---
+"        elif parsed_path.path == '/api/send_to_timeline':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n            try:\n                data = json.loads(post_data)\n                filepath = data.get('path')\n                if filepath and os.path.exists(filepath):\n                    global timeline_inbox\n                    if 'timeline_inbox' not in globals():\n                        timeline_inbox =
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 613 ---
+"        if parsed_path.path == '/api/check_inbox':\n            global timeline_inbox\n            if 'timeline_inbox' not in globals():\n                timeline_inbox = []\n            \n            files_to_send = list(timeline_inbox)\n            timeline_inbox.clear()\n            \n            self.send_response(200)\n            self.send_header('Content-type', 'application/json')\n            self.end_headers()\n            self.wfile.write(json.dumps({\"status\": \"success\", \"files\"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2064 ---
+"        elif parsed_path.path == '/api/send_to_timeline':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n            try:\n                data = json.loads(post_data)\n                filepath = data.get('path')\n                if filepath and os.path.exists(filepath):\n                    global timeline_inbox\n                    if 'timeline_inbox' not in globals():\n                        timeline_inbox =
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 613 ---
+"        if parsed_path.path == '/api/check_inbox':\n            global timeline_inbox\n            if 'timeline_inbox' not in globals():\n                timeline_inbox = []\n            \n            files_to_send = list(timeline_inbox)\n            timeline_inbox.clear()\n            \n            self.send_response(200)\n            self.send_header('Content-type', 'application/json')\n            self.end_headers()\n            self.wfile.write(json.dumps({\"status\": \"success\", \"files\"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1698 ---
+"        elif parsed_path.path == '/api/browse_file':\n            import subprocess, sys\n            try:\n                script = \"\"\"\nimport tkinter as tk\nimport tkinter.filedialog as fd\nimport json\nroot = tk.Tk()\nroot.withdraw()\nroot.attributes('-topmost', True)\npaths = fd.askopenfilenames(title='Selecionar Mídia Apollo')\nif not paths: paths = []\nelif isinstance(paths, str): paths = [paths]\nelse: paths = list(paths)\nprint(\"===JSON_START===\")\nprint(json.dumps(paths))\nprint(
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1918 ---
+"        elif parsed_path.path == '/api/browse_file':\n            import subprocess, sys, os\n            try:\n                script = \"\"\"\nimport tkinter as tk\nimport tkinter.filedialog as fd\nimport json\nroot = tk.Tk()\nroot.withdraw()\nroot.attributes('-topmost', True)\nroot.lift()\npaths = fd.askopenfilenames(parent=root, title='Selecionar Mídia Apollo')\nif not paths: paths = []\nelif isinstance(paths, str): paths = [paths]\nelse: paths = list(paths)\nprint(\"===JSON_START===\")\npr
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1808 ---
+"import os\nfrom fastapi import FastAPI, Request\nfrom fastapi.staticfiles import StaticFiles\nfrom fastapi.responses import HTMLResponse\nfrom fastapi.templating import Jinja2Templates\nfrom pydantic import BaseModel\nimport json\n\napp = FastAPI(title=\"Apollo Studio Web Engine\")\n\n# Caminhos\nBASE_DIR = os.path.dirname(os.path.abspath(__file__))\nWEB_UI_DIR = os.path.join(BASE_DIR, \"web_ui\")\nSTATIC_DIR = os.path.join(WEB_UI_DIR, \"static\")\nTEMPLATES_DIR = os.path.join(WEB_UI_DIR, \"tem
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2066 ---
+"<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio - {{ workspace }}</title>\n    <!-- Importando Fonte 'Outfit' para visual moderno/game -->\n    <link href=\"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap\" rel=\"stylesheet\">\n    <link rel=\"stylesheet\" href=\"/static/css/style.css\">\n</head>\n<body>\n    <div class=\"app-co
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2024 ---
+"<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio - {{ workspace }}</title>\n    <!-- Importando Fonte 'Outfit' para visual moderno/game -->\n    <link href=\"https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap\" rel=\"stylesheet\">\n    <link rel=\"stylesheet\" href=\"/static/css/style.css\">\n</head>\n<body>\n    <div class=\"app-co
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 180 ---
+"@app.get(\"/\")\nasync def read_root(request: Request):\n    return templates.TemplateResponse(request=request, name=\"index.html\", context={\"workspace\": CURRENT_WORKSPACE})\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 972 ---
+"@app.get(\"/api/workspace\")\nasync def get_workspace_info():\n    return {\"workspace\": CURRENT_WORKSPACE, \"path\": CURRENT_WORKSPACE_PATH}\n\n@app.get(\"/api/config\")\nasync def get_config():\n    # Instanciar o ConfigManager lendo o config.json atual\n    import os\n    from config_manager import ConfigManager\n    config_file = os.path.join(CURRENT_WORKSPACE_PATH, \"config.json\")\n    cm = ConfigManager(config_file)\n    # Retorna o dicionário inteiro\n    return cm.config\n\n@app.post(
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2067 ---
+"                <div id=\"view-configuracoes\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\">\n                        <h3>O Cofre (Configurações Globais)</h3>\n                        <p class=\"text-muted\">Centralize todas as chaves de API para os robôs do Apollo Studio.</p>\n                        \n                        <div class=\"settings-grid\">\n                            <div class=\"settings-section\">\n                                <h4>1. C
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2010 ---
+"        <!-- Barra Lateral -->\n        <nav class=\"sidebar\">\n            <div class=\"logo-area\">\n                <img src=\"https://cdn-icons-png.flaticon.com/512/3252/3252988.png\" alt=\"Logo do Canal\" class=\"logo\" id=\"workspace-logo\">\n                <h2 id=\"workspace-title\">{{ workspace }}</h2>\n                <p>Workspace: <span id=\"ws-name\">{{ workspace }}</span></p>\n            </div>\n            \n            <div class=\"menu-items\">\n                <button class=\
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 899 ---
+"        cm.set(key, value)\n        \n    return {\"status\": \"success\", \"message\": \"Configurações salvas!\"}\n\nfrom fastapi.responses import FileResponse\n@app.get(\"/api/logo\")\nasync def get_workspace_logo():\n    import os\n    import json\n    config_file = os.path.join(CURRENT_WORKSPACE_PATH, \"config.json\")\n    logo_path = None\n    if os.path.exists(config_file):\n        try:\n            with open(config_file, 'r', encoding='utf-8') as f:\n                cfg = json.load(f)\n
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2010 ---
+"        <!-- Barra Lateral -->\n        <nav class=\"sidebar\">\n            <div class=\"logo-area\">\n                <img src=\"https://cdn-icons-png.flaticon.com/512/3252/3252988.png\" alt=\"Logo do Canal\" class=\"logo\" id=\"workspace-logo\">\n                <h2 id=\"workspace-title\">{{ workspace }}</h2>\n                <p>Workspace: <span id=\"ws-name\">{{ workspace }}</span></p>\n            </div>\n            \n            <div class=\"menu-items\">\n                <button class=\
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 899 ---
+"        cm.set(key, value)\n        \n    return {\"status\": \"success\", \"message\": \"Configurações salvas!\"}\n\nfrom fastapi.responses import FileResponse\n@app.get(\"/api/logo\")\nasync def get_workspace_logo():\n    import os\n    import json\n    config_file = os.path.join(CURRENT_WORKSPACE_PATH, \"config.json\")\n    logo_path = None\n    if os.path.exists(config_file):\n        try:\n            with open(config_file, 'r', encoding='utf-8') as f:\n                cfg = json.load(f)\n
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2044 ---
+"                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <!-- Cabeçalho de Abas Internas -->\n                        <div class=\"config-header\">\n                            <button class=\"config-tab-btn active\" data-conf-target=\"apis\">🌐 Serviços & APIs</button>\n                            <button class=\"config-tab-btn\" data-conf-target=\"personagens\">🎭 Personagens / Perfis</button>\n      
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2065 ---
+"                        <!-- 2. ABA PERSONAGENS (TabPersonagens) -->\n                        <div id=\"conf-personagens\" class=\"config-tab-content\">\n                            \n                            <!-- Controle Global -->\n                            <div class=\"tk-frame\">\n                                <span class=\"tk-frame-title\">🌍 CONTROLE GLOBAL: Selecione o Motor Principal de TTS</span>\n                                <div class=\"tk-row\" style=\"margin-top: 15px; ju
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2061 ---
+"                        <!-- 3. ABA VPS (TabVPS) -->\n                        <div id=\"conf-vps\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                Configure abaixo os endereços (URLs e Portas) dos servidores onde<br>suas IA's de vanguarda estão hospedadas (Local ou Nuvem).\n                            </p>\n\n                            <!-- Servidor Moss TTS -->\n       
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2052 ---
+"                        <!-- 4. ABA AUDIO (TabTratamentoAudio) -->\n                        <div id=\"conf-audio\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                🎛️ IA de Polimento e Des-robotização de Voz (SpeechBrain + Pedalboard)\n                            </p>\n\n                            <div class=\"tk-frame\">\n                                <span class=\"tk-
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2045 ---
+"                        <!-- 5. ABA ESTÉTICA E LEGENDAS (TabEsteticaLegenda) -->\n                        <div id=\"conf-estetica\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                🎨 Padronização Visual do Canal\n                            </p>\n\n                            <!-- Gerenciador de Perfis -->\n                            <div class=\"tk-frame\" style=\"displa
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2053 ---
+"                        <!-- 6. ABA TEMPLATES (TabTemplates) -->\n                        <div id=\"conf-templates\" class=\"config-tab-content\">\n                            <!-- Reaproveitaremos para as Legendas, mas vamos renomear os IDs e Labels -->\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                📝 Gerenciador de Perfis de Legenda\n                            </p>\n\n                            <
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 1222 ---
+"                        <!-- Cabeçalho de Abas Internas -->\n                        <div class=\"config-header\">\n                            <button class=\"config-tab-btn active\" data-conf-target=\"apis\">🌐 Serviços & APIs</button>\n                            <button class=\"config-tab-btn\" data-conf-target=\"personagens\">🎭 Personagens / Perfis</button>\n                            <button class=\"config-tab-btn\" data-conf-target=\"vps\">🌍 Rede e VPS</button>\n                         
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2053 ---
+"                        <!-- 6. ABA LEGENDAS -->\n                        <div id=\"conf-legendas\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                📝 Gerenciador de Perfis de Legenda\n                            </p>\n\n                            <div style=\"display:flex; gap: 20px;\">\n                                <!-- Lista de Perfis -->\n                          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2046 ---
+"                        <!-- 7. ABA TEMPLATES (TabTemplates) -->\n                        <div id=\"conf-templates\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                🖼️ Gerenciador de Transições de Template (Web)\n                            </p>\n\n                            <div style=\"display:flex; gap: 20px;\">\n                                <!-- Lista de Perfis --
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2061 ---
+"                        <!-- 8. ABA WHITELABEL -->\n                        <div id=\"conf-whitelabel\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                🎭 Identidade Visual do Canal (White-Label)\n                            </p>\n                            <p style=\"text-align: center; color: #888; font-size: 13px; margin-bottom: 20px;\">\n                              
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2065 ---
+"                        <!-- 9. ABA SHORTCUTS -->\n                        <div id=\"conf-shortcuts\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var(--text-muted); margin-bottom: 20px;\">\n                                🔗 Atalhos de Mídia (Shortcuts)\n                            </p>\n                            <p style=\"text-align: center; color: #888; font-size: 13px; margin-bottom: 20px;\">\n                                Configure at
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2061 ---
+"@app.get(\"/api/dashboard\")\nasync def get_dashboard():\n    from database_manager import db\n    import shutil\n    import subprocess\n    from config_manager import ConfigManager\n    \n    canal_id = db.get_canal_id(CURRENT_WORKSPACE)\n    \n    # 1. Health\n    # FFmpeg\n    try:\n        subprocess.run([\"ffmpeg\", \"-version\"], capture_output=True, check=True, creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, 'CREATE_NO_WINDOW') else 0)\n        fs = \"✅ Pronto\"\n    exc
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2048 ---
+"                <!-- View: Dashboard -->\n                <div id=\"view-dashboard\" class=\"view-panel active\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        \n                        <!-- Cabeçalho de Abas Internas (Dashboard) -->\n                        <div class=\"config-header\" style=\"margin-bottom: 0; border-bottom: 1px solid rgba(255,255,255,0.1);\">\n                          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2068 ---
+"class TTSRequest(BaseModel):\n    personagem: str\n    texto: str\n    engine: str = \"proplus\"\n    idioma: str = \"pt-BR\"\n    efeito: str = \"default\"\n    volume: int = 0\n    velocidade: int = 0\n    pitch: int = 0\n    sample_rate: str = \"48000\"\n    emocao_adicional: str = \"\"\n    is_google: bool = False\n\n@app.post(\"/api/tts/generate\")\nasync def generate_tts(req: TTSRequest):\n    import os\n    import datetime\n    from config_manager import ConfigManager\n    from database_
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2049 ---
+"                <!-- View: TTS -->\n                <div id=\"view-tts\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <div class=\"config-header\">\n                            <h3 style=\"margin: 0; font-size: 1.2rem;\">🎤 Gerador de Voz (TTS)</h3>\n                        </div>\n\n                        <div class=\"tk-split\" style=\"flex: 1; margin: 0; pa
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2066 ---
+"@app.post(\"/api/narrador/generate\")\nasync def generate_narrador(\n    personagem: str = Form(...),\n    estado: str = Form(...),\n    audio_file: UploadFile = File(...)\n):\n    import os\n    import datetime\n    import random\n    import subprocess\n    from config_manager import ConfigManager\n    \n    config_file = os.path.join(CURRENT_WORKSPACE_PATH, \"config.json\")\n    config = ConfigManager(config_file)\n    \n    # Valida o personagem e estado emocional\n    personagem_config = co
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 62 ---
+"from fastapi import FastAPI, Request, Form, UploadFile, File"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2052 ---
+"                <!-- View: Narrador -->\n                <div id=\"view-narrador\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <div class=\"config-header\">\n                            <h3 style=\"margin: 0; font-size: 1.2rem;\">🎬 Gerador de Vídeo do Narrador</h3>\n                        </div>\n\n                        <div class=\"tk-split\" style=\"flex
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 97 ---
+"from fastapi import FastAPI, Request, Form, UploadFile, File\nfrom typing import List, Optional"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2057 ---
+"                <!-- View: Controle de Volume -->\n                <div id=\"view-volume\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <div class=\"config-header\">\n                            <h3 style=\"margin: 0; font-size: 1.2rem;\">🔊 Controle de Volume - Ajustar Volume dos Blocos</h3>\n                        </div>\n\n                        <div class
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2042 ---
+"                <!-- View: Ferramentas -->\n                <div id=\"view-ferramentas\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <div class=\"config-header\">\n                            <h3 style=\"margin: 0; font-size: 1.2rem;\">🔧 Ferramentas de Edição Rápida</h3>\n                        </div>\n\n                        <div class=\"tk-split\" style=
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2064 ---
+"                <!-- View: Gerador de Legendas -->\n                <div id=\"view-legendas\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <div class=\"config-header\">\n                            <h3 style=\"margin: 0; font-size: 1.2rem;\">📝 Gerador de Legendas (Karaoke)</h3>\n                        </div>\n\n                        <div class=\"tk-split\" 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2056 ---
+"                <!-- View: Podcast -->\n                <div id=\"view-podcast\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        \n                        <div class=\"ferramentas-header\" style=\"flex: 0 0 auto;\">\n                            <h2>🎙️ Gerador de Podcast - VoiceMaker & Tags</h2>\n                        </div>\n                        \n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2059 ---
+"                <!-- View: Ajustador de Mídia -->\n                <div id=\"view-midia\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        \n                        <div class=\"ferramentas-header\" style=\"flex: 0 0 auto;\">\n                            <h2>🎬 Ajustador de Mídia</h2>\n                            <p style=\"color: #aaa; margin-top: 5px; font-size: 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2051 ---
+"                <!-- View: Dublagem Externa -->\n                <div id=\"view-dublagem\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        \n                        <div class=\"ferramentas-header\" style=\"flex: 0 0 auto;\">\n                            <h2>🎬 Dublagem Externa de Vídeo (RVC + Demucs)</h2>\n                        </div>\n                        \
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2056 ---
+"                <!-- View: Fábrica de Músicas -->\n                <div id=\"view-musicas\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        \n                        <!-- Sub-Abas -->\n                        <div class=\"config-header\" style=\"flex: 0 0 auto;\">\n                            <button class=\"config-tab-btn active\" data-conf-target=\"mus-gerador\
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 147 ---
+"        \"custos\": {\n            \"total\": custo_total,\n            \"lista\": custos_lista\n        }\n    }\n\nclass TTSRequest(BaseModel):"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1989 ---
+"    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n\n# ── TANQUE DE COMBUSTÍVEL (BIBLIOTECA) ──────────────────────────────────────\n\nclass BibliotecaScanRequest(BaseModel):\n    pasta_extra: Optional[str] = \"\"  # pasta adicional opcional\n\n@app.post(\"/api/biblioteca/scan\")\nasync def scan_biblioteca(req: BibliotecaScanRequest):\n    \"\"\"Escaneia o workspace e retorna lista de todos os arquivos de mídia.\"\"\"\n    import asyncio\n    loop = asyncio
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2054 ---
+"                <div id=\"view-tanque\" class=\"view-panel hidden\">\n                    <div class=\"panel-header\">\n                        <div class=\"panel-title-row\">\n                            <span class=\"panel-icon\">🪣</span>\n                            <div>\n                                <h2 class=\"panel-title\">Tanque de Combustível</h2>\n                                <p class=\"panel-subtitle\">Explore suas mídias geradas no Workspace. Dê duplo-clique para abrir ou cliq
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 102 ---
+"        }\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2050 ---
+"                <div id=\"view-diretor\" class=\"view-panel hidden\">\n                    <!-- HEADER -->\n                    <div class=\"card glass-panel\" style=\"margin-bottom:10px;padding:12px 20px;\">\n                        <h3 style=\"margin:0;\">🎬 O DIRETOR (Mapeamento Automático)</h3>\n                        <p style=\"margin:2px 0 0;opacity:.7;font-size:.85rem;\">Fatie a narração e aplique múltiplos perfis visuais automaticamente.</p>\n                    </div>\n\n              
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 1684 ---
+"                <div id=\"view-estudio\" class=\"view-panel hidden\">\n                    <div class=\"estudio-header card glass-panel\" style=\"text-align: center;\">\n                        <h2 style=\"font-size: 1.8rem; margin-bottom: 10px; color: #FFD32A;\">🎨 Criador de Templates Visual</h2>\n                        <p class=\"text-muted\">Acesse o Estúdio Apollo pelo seu navegador para desenhar as camadas livremente.</p>\n                        <p class=\"text-muted\" style=\"margin-bot
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2030 ---
+"                <div id=\"view-fila\" class=\"view-panel hidden\" style=\"display: flex; flex-direction: column; height: 100%;\">\n                    <div class=\"card glass-panel fila-header\" style=\"padding: 15px; margin-bottom: 10px; flex-shrink: 0;\">\n                        <h2 style=\"font-size: 1.4rem; color: #FFD32A; margin: 0 0 5px 0;\">⚡ Fila de Renderização Autônoma (Batch Queue)</h2>\n                        <p class=\"text-muted\" style=\"margin: 0; font-size: 0.9rem;\">Adicione
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1990 ---
+"            \"output\": out_path\n        }\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n\n\n# ── O DIRETOR (MAPEAMENTO AUTOMÁTICO) ──────────────────────────────────────\n\n# 1. Cache do Mapeador (auto-save)\n@app.get(\"/api/diretor/cache\")\nasync def get_diretor_cache():\n    \"\"\"Retorna o cache_mapeador.json (estado salvo da aba Diretor).\"\"\"\n    cache_file = os.path.join(BASE_DIR, \"cache_mapeador.json\")\n    if os.path.exists(cache_file):
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\FERRAMENTAS\\AutoFlowAPOLLO\\src\\ui\\side-panel\\index.html" | LENGTH: 86 ---
+"    <div id=\"app\"></div>\n    <script src=\"../../../apollo_panel.js\"></script>\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\FERRAMENTAS\\AutoFlowAPOLLO\\src\\ui\\side-panel\\index.html" | LENGTH: 86 ---
+"    <div id=\"app\"></div>\n    <script src=\"../../../apollo_panel.js\"></script>\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 1894 ---
+"        elif parsed_path.path == '/api/chat_copilot':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n            \n            try:\n                data = json.loads(post_data)\n                user_msg = data.get('message', '')\n                timeline_state = data.get('timeline', {})\n                history = data.get('history', [])\n                \n                print(f\"🤖 [Copiloto IA] Recebida mensag
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 2067 ---
+"        elif parsed_path.path == '/api/stream':\n            import re\n            query = urllib.parse.parse_qs(parsed_path.query)\n            file_path = query.get('path', [''])[0]\n            \n            if not file_path or not os.path.exists(file_path):\n                self.send_response(404)\n                self.end_headers()\n                return\n                \n            try:\n                file_size = os.path.getsize(file_path)\n                ext = os.path.splitext(fil
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 273 ---
+"                with open(file_path, 'rb') as f:\n                    self.wfile.write(f.read())\n            except Exception as e:\n                import traceback\n                print(\"[STREAM ERROR]\", e)\n                traceback.print_exc()\n            return"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 172 ---
+"                import traceback\n                print(\"[STREAM ERROR]\", e)\n                with open('erro_video.txt', 'w') as f_err: traceback.print_exc(file=f_err)"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 1075 ---
+"                duration = float(probe_data.get('format', {}).get('duration', 10.0))\n                streams = probe_data.get('streams', [])\n                video_stream = next((s for s in streams if s.get('codec_type') == 'video'), None)\n                has_video = video_stream is not None\n                has_audio = any(s.get('codec_type') == 'audio' for s in streams)\n                \n                width = video_stream.get('width', 1920) if has_video else 0\n                height = v
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 446 ---
+"            except (ConnectionAbortedError, BrokenPipeError):\n                # Erro normal quando o cliente (navegador) pula a agulha e cancela o download do frame antigo\n                pass\n            except Exception as e:\n                import traceback\n                print(f\"[STREAM ERROR] {type(e).__name__}: {e}\")\n                with open('erro_video.txt', 'w') as f_err: traceback.print_exc(file=f_err)\n            return"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 446 ---
+"            except (ConnectionAbortedError, BrokenPipeError):\n                # Erro normal quando o cliente (navegador) pula a agulha e cancela o download do frame antigo\n                pass\n            except Exception as e:\n                import traceback\n                print(f\"[STREAM ERROR] {type(e).__name__}: {e}\")\n                with open('erro_video.txt', 'w') as f_err: traceback.print_exc(file=f_err)\n            return"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2066 ---
+"        elif parsed_path.path == '/api/generate_broll':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n            \n            try:\n                data = json.loads(post_data)\n                prompt = data.get('prompt', '')\n                \n                if not prompt:\n                    raise ValueError(\"Prompt não fornecido para gerar imagem.\")\n                    \n                print(f\"🎨 Ger
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1729 ---
+"                print(f\"🎨 Gerando imagem B-Roll com Gemini (Imagen) para: '{prompt}'...\")\n                \n                import time\n                from config_manager import ConfigManager\n                from gemini_api import GeminiAPI\n                \n                cfg = ConfigManager()\n                gemini_api = GeminiAPI(cfg)\n                \n                midias_dir = os.path.join(BASE_DIR, \"Midias\", \"Geradas_IA\")\n                os.makedirs(midias_dir, exist_ok=T
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2065 ---
+"                print(f\"🎨 Gerando imagem B-Roll para: '{prompt}'...\")\n                \n                import time\n                import requests\n                import base64\n                from config_manager import ConfigManager\n                \n                cfg = ConfigManager()\n                \n                midias_dir = os.path.join(BASE_DIR, \"Midias\", \"Geradas_IA\")\n                os.makedirs(midias_dir, exist_ok=True)\n                \n                filename = 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 57 ---
+"        elif parsed_path.path == '/api/generate_broll':"
+...

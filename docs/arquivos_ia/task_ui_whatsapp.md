@@ -1,0 +1,4 @@
+- `[x]` Remover filtros e comandos secretos do `whatsapp_bot/index.js`
+- `[x]` Atualizar `servidor_web.py` para injetar o System Prompt do Canal no chat do Painel Web
+- `[x]` Atualizar `apollo_agents.js` para buscar o nome do Workspace e alterar o nome e saudação do robô no Painel Web
+- `[x]` Testar integração e documentar no Walkthrough

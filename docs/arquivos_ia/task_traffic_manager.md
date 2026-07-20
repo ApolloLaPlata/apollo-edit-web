@@ -1,0 +1,4 @@
+- [x] Add ad telemetry endpoints `/view` and `/click` to `servidor_web.py`.
+- [x] Update frontend `noticias_scripts.html` to rotate ads every 30s and call telemetry endpoints.
+- [x] Create `traffic_manager_agent.py` to analyze CTR and pause low-performing ads.
+- [x] Enhance `marketing_agent.py` with image generation API structure.

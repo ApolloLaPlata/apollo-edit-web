@@ -1,0 +1,38 @@
+============================================================
+  TESTE: PuLID 3 Faces — Consistência Máxima
+============================================================
+
+[1] Carregando workflow PuLID 3 faces...
+[2] Carregando imagens de referência...
+  ✅ Jinx:       84 KB
+  ✅ Elon:       1440 KB
+  ✅ Crying Man: 11235 KB
+[3] Injetando referências e prompt no workflow...
+
+[4] Enviando para Modal PuLID engine diretamente via Modal...
+Traceback (most recent call last):
+  File "E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\tests\test_pulid_3faces.py", line 147, in <module>
+    main()
+  File "E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\tests\test_pulid_3faces.py", line 126, in main
+    with app.run():
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 204, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\site-packages\modal\app.py", line 483, in run
+    async with _run_app(
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 204, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\site-packages\modal\runner.py", line 405, in _run_app
+    running_app: RunningApp = await _init_local_app_new(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\site-packages\modal\runner.py", line 99, in _init_local_app_new
+    app_resp, _ = await gather_cancel_on_exc(  # TODO: use TaskGroup?
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\site-packages\modal\_utils\async_utils.py", line 1140, in gather_cancel_on_exc
+    await asyncio.gather(*input_tasks, return_exceptions=False)  # handle cancellations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\site-packages\modal\_utils\async_utils.py", line 1136, in gather_cancel_on_exc
+    return await asyncio.gather(*input_tasks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modal.exception.ResourceExhaustedError: App creation failed: workspace billing cycle spend limit reached

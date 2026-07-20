@@ -1,0 +1,5 @@
+{
+  "name": "Gerador de Historias por Imagem - Apollo La Plata",
+  "description": "A powerful automation tool for generating consistent character images using Google Gemini API. Manage character references, batch process prompts, and handle multiple API keys for high-volume generation.",
+  "requestFramePermissions": []
+}

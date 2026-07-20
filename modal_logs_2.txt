@@ -1,0 +1,99 @@
+
+** User directory: /comfyui/user
+** ComfyUI-Manager config path: /comfyui/user/__manager/config.ini
+** Log path: /comfyui/user/comfyui.log
+[32m[INFO][0m [PRE] ComfyUI-Manager
+[1m[33m[WARNING][0m WARNING: You need pytorch with cu130 or higher to use optimized CUDA operations.
+[32m[INFO][0m Found comfy_kitchen backend eager: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope_split_half', 'apply_rope_split_half1', 'dequantize_int8_convrot_weight', 'dequantize_int8_convrot_weight_dtype', 'dequantize_int8_simple', 'dequantize_int8_simple_dtype', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'gemv_awq_w4a16', 'int8_linear', 'quantize_and_rotate_rowwise', 'quantize_int8_convrot_weight', 'quantize_int8_rowwise', 'quantize_int8_tensorwise', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'quantize_svdquant_w4a4', 'scaled_mm_nvfp4', 'scaled_mm_svdquant_w4a4', 'stochastic_rounding_fp8']}
+[32m[INFO][0m Found comfy_kitchen backend cuda: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope_split_half', 'apply_rope_split_half1', 'dequantize_int8_convrot_weight', 'dequantize_int8_convrot_weight_dtype', 'dequantize_int8_simple', 'dequantize_int8_simple_dtype', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'gemv_awq_w4a16', 'quantize_and_rotate_rowwise', 'quantize_int8_convrot_weight', 'quantize_int8_rowwise', 'quantize_int8_tensorwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'quantize_svdquant_w4a4', 'scaled_mm_svdquant_w4a4', 'stochastic_rounding_fp8']}
+[32m[INFO][0m Found comfy_kitchen backend triton: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope_split_half', 'apply_rope_split_half1', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'int8_linear', 'quantize_and_rotate_rowwise', 'quantize_int8_rowwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8']}
+[32m[INFO][0m Checkpoint files will always be loaded safely.
+[32m[INFO][0m Total VRAM 81079 MB, total RAM 1048576 MB
+[32m[INFO][0m pytorch version: 2.4.0+cu121
+/usr/local/lib/python3.10/site-packages/xformers/ops/fmha/flash.py:211: FutureWarning: `torch.library.impl_abstract` was renamed to `torch.library.register_fake`. Please use that instead; we will remove `torch.library.impl_abstract` in a future version of PyTorch.
+  @torch.library.impl_abstract("xformers_flash::flash_fwd")
+/usr/local/lib/python3.10/site-packages/xformers/ops/fmha/flash.py:344: FutureWarning: `torch.library.impl_abstract` was renamed to `torch.library.register_fake`. Please use that instead; we will remove `torch.library.impl_abstract` in a future version of PyTorch.
+  @torch.library.impl_abstract("xformers_flash::flash_bwd")
+[32m[INFO][0m xformers version: 0.0.27.post2
+[32m[INFO][0m Set vram state to: HIGH_VRAM
+[32m[INFO][0m Device: cuda:0 NVIDIA H100 80GB HBM3 : cudaMallocAsync
+[32m[INFO][0m Using async weight offloading with 2 streams
+[32m[INFO][0m Enabled pinned memory 943718.0
+[32m[INFO][0m Using xformers attention
+[32m[INFO][0m Python version: 3.10.17 (main, May 21 2025, 23:32:05) [GCC 12.2.0]
+[32m[INFO][0m ComfyUI version: 0.27.0
+[32m[INFO][0m comfy-aimdo version: 0.4.10
+[32m[INFO][0m comfy-kitchen version: 0.2.16
+[32m[INFO][0m comfyui-frontend-package version: 1.45.20
+[32m[INFO][0m comfyui-workflow-templates version: 0.11.6
+[32m[INFO][0m comfyui-embedded-docs version: 0.5.7
+[32m[INFO][0m comfy-kitchen version: 0.2.16
+[32m[INFO][0m comfy-aimdo version: 0.4.10
+[32m[INFO][0m [Prompt Server] web root: /usr/local/lib/python3.10/site-packages/comfyui_frontend_package/static
+[32m[INFO][0m Asset seeder disabled
+[32m[INFO][0m [START] ComfyUI-Manager
+[ComfyUI-Manager] Using GitPython backend
+[32m[INFO][0m [ComfyUI-Manager] network_mode: public
+[1m[33m[WARNING][0m [ComfyUI-Manager] The matrix sharing feature has been disabled because the `matrix-nio` dependency is not installed.
+	To use this feature, please run the following command:
+	/usr/local/bin/python -m pip install matrix-nio
+
+[32m[INFO][0m No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[32m[INFO][0m 
+Import times for custom nodes:
+[32m[INFO][0m    0.0 seconds: /comfyui/custom_nodes/websocket_image_save.py
+[32m[INFO][0m    0.6 seconds: /comfyui/custom_nodes/comfyui-tooling-nodes
+[32m[INFO][0m 
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Running upgrade  -> 0001_assets, Initial assets schema
+Revision ID: 0001_assets
+Revises: None
+Create Date: 2025-12-10 00:00:00
+[32m[INFO][0m Running upgrade 0001_assets -> 0002_merge_to_asset_references, Merge AssetInfo and AssetCacheState into unified asset_references table.
+[32m[INFO][0m Running upgrade 0002_merge_to_asset_references -> 0003_add_metadata_job_id, Add system_metadata and job_id columns to asset_references.
+Change preview_id FK from assets.id to asset_references.id.
+[32m[INFO][0m Running upgrade 0003_add_metadata_job_id -> 0004_drop_tag_type, Drop the vestigial tags.tag_type column.
+[32m[INFO][0m Running upgrade 0004_drop_tag_type -> 0005_allow_case_sensitive_tags, Allow case-sensitive tag names.
+[32m[INFO][0m Running upgrade 0005_allow_case_sensitive_tags -> 0006_add_loader_path, Add loader_path column to asset_references.
+[32m[INFO][0m Database upgraded from None to 0006_add_loader_path
+[32m[INFO][0m Using RAM pressure cache.
+[32m[INFO][0m Starting server
+
+[32m[INFO][0m To see the GUI go to: http://127.0.0.1:8188
+[Flux2Txt2ImgEngine] SNAPSHOT COM SUCESSO! Servidor aguardando requisições.
+[Flux2Txt2ImgEngine] Request Txt2Img: A photorealistic, cinematic scene: Inside a futuri... | Formato: square
+[Flux2Txt2ImgEngine] Enviando job para API do ComfyUI...
+[32m[INFO][0m got prompt
+[Flux2Txt2ImgEngine] Job c9bd68fa-e7a7-4972-bd60-4f75cdacf063 criado, aguardando conclusao...
+[32m[INFO][0m Using xformers attention in VAE
+[32m[INFO][0m Using xformers attention in VAE
+[32m[INFO][0m VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+[32m[INFO][0m CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cpu, dtype: torch.float16
+[32m[INFO][0m Requested to load MochiTEModel_
+[32m[INFO][0m loaded completely;  9083.39 MB loaded, full load: True
+[32m[INFO][0m model weight dtype torch.bfloat16, manual cast: None
+[32m[INFO][0m model_type FLUX
+[32m[INFO][0m Requested to load Flux
+[32m[INFO][0m loaded completely;  22700.13 MB loaded, full load: True
+
+[1A  0%|          | 0/20 [00:00<?, ?it/s]
+[1A  5%|▌         | 1/20 [00:00<00:07,  2.40it/s]
+[1A 15%|█▌        | 3/20 [00:00<00:02,  6.49it/s]
+[1A 25%|██▌       | 5/20 [00:00<00:01,  8.99it/s]
+[1A 35%|███▌      | 7/20 [00:00<00:01, 10.62it/s]
+[1A 45%|████▌     | 9/20 [00:00<00:00, 11.66it/s]
+[1A 55%|█████▌    | 11/20 [00:01<00:00, 12.44it/s]
+[1A 65%|██████▌   | 13/20 [00:01<00:00, 12.87it/s]
+[1A 75%|███████▌  | 15/20 [00:01<00:00, 13.27it/s]
+[1A 85%|████████▌ | 17/20 [00:01<00:00, 13.45it/s]
+[1A 95%|█████████▌| 19/20 [00:01<00:00, 13.70it/s]100%|██████████| 20/20 [00:01<00:00, 11.42it/s]
+[32m[INFO][0m Requested to load AutoencodingEngine
+[32m[INFO][0m loaded completely;  159.87 MB loaded, full load: True
+[32m[INFO][0m [32mPrompt executed in 35.01 seconds[0m
+[Flux2Txt2ImgEngine] Geracao finalizada com sucesso em 36.78s
+   POST /generate/image -> 200 OK  (duration: 851.0 s, execution: 846.3 s)
+Function 'apollo_api' (fu-LWddZwYmoBD4ivac0qntew) is waiting to be scheduled on a CPU worker. We are actively working on acquiring more capacity for your workload.
+Function 'apollo_api' (fu-LWddZwYmoBD4ivac0qntew) is waiting to be scheduled on a CPU worker. We are actively working on acquiring more capacity for your workload.

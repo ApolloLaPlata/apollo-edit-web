@@ -1,0 +1,969 @@
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1178 ---
+"        return {\"status\": \"success\", \"message\": f\"Template renomeado para {req.new_name}.\"}\n\n# ==========================================\n# O MONTADOR\n# ==================================
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 1046 ---
+"// Atalhos de Teclado\nwindow.addEventListener('keydown', (e) => {\n    // Espaço para Play/Pause (sem interrupcao de foco)\n    if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tag
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2061 ---
+"        if job_file is None:\n            break\n            \n        print(f\"\\n[Fila de Renderização] 🎬 Iniciando processamento do projeto: {os.path.basename(job_file)}\")\n        # Declara stat
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 1130 ---
+"    track.addEventListener('drop', (e) => {\n        e.preventDefault();\n        track.style.backgroundColor = 'transparent';\n        let data;\n        try {\n            data = JSON.parse(e.dataT
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 1082 ---
+"    saveState() {\n        if (this.isRestoring) return;\n        if (this.currentIndex < this.history.length - 1) {\n            this.history = this.history.slice(0, this.currentIndex + 1);\n       
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 346 ---
+"                audio_file = audio_clip.get('file_path')\n                if not audio_file:\n                    raise ValueError(\"Clipe de áudio na trilha A1 não possui 'file_path' definido.\")\n 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2064 ---
+"        elif parsed_path.path == '/api/send_to_timeline':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 613 ---
+"        if parsed_path.path == '/api/check_inbox':\n            global timeline_inbox\n            if 'timeline_inbox' not in globals():\n                timeline_inbox = []\n            \n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2063 ---
+"updateGlobalDuration();\n\n// --- INBOX POLLER: Verifica se há mídias enviadas via /api/send_to_timeline ---\nsetInterval(() => {\n    fetch('/api/check_inbox')\n        .then(r => r.json())\n       
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2063 ---
+"}\n\n// --- INBOX POLLER: Verifica se há mídias enviadas via /api/send_to_timeline ---\nsetInterval(() => {\n    fetch('/api/check_inbox')\n        .then(r => r.json())\n        .then(data => {\n    
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2064 ---
+"        elif parsed_path.path == '/api/send_to_timeline':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 613 ---
+"        if parsed_path.path == '/api/check_inbox':\n            global timeline_inbox\n            if 'timeline_inbox' not in globals():\n                timeline_inbox = []\n            \n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2063 ---
+"updateGlobalDuration();\n\n// --- INBOX POLLER: Verifica se há mídias enviadas via /api/send_to_timeline ---\nsetInterval(() => {\n    fetch('/api/check_inbox')\n        .then(r => r.json())\n       
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2063 ---
+"}\n\n// --- INBOX POLLER: Verifica se há mídias enviadas via /api/send_to_timeline ---\nsetInterval(() => {\n    fetch('/api/check_inbox')\n        .then(r => r.json())\n        .then(data => {\n    
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 770 ---
+"                <button class=\"btn-track-vis btn-icon\" title=\"Ocultar\" data-track-id=\"${trackId}\">👁️</button>\n                <button class=\"btn-icon\" title=\"Remover trilha\" onclick=\"\n  
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2065 ---
+"function setupRazorHover(trackContent) {\n    const onMouseMove = (e) => {\n        if (State.activeTool !== 'razor') return;\n\n        const trackEl = trackContent.closest('.track');\n        const
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2065 ---
+"// --- 5. LÓGICA DE INTERAÇÃO (Mover e Recortar) ---\nfunction setupClipInteractions(clip) {\n    let mode = null; // 'move', 'trim-left', 'trim-right'\n    let startX = 0;\n    let initialStart = 0;
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 770 ---
+"                <button class=\"btn-track-vis btn-icon\" title=\"Ocultar\" data-track-id=\"${trackId}\">👁️</button>\n                <button class=\"btn-icon\" title=\"Remover trilha\" onclick=\"\n  
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2065 ---
+"function setupRazorHover(trackContent) {\n    const onMouseMove = (e) => {\n        if (State.activeTool !== 'razor') return;\n\n        const trackEl = trackContent.closest('.track');\n        const
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2065 ---
+"// --- 5. LÓGICA DE INTERAÇÃO (Mover e Recortar) ---\nfunction setupClipInteractions(clip) {\n    let mode = null; // 'move', 'trim-left', 'trim-right'\n    let startX = 0;\n    let initialStart = 0;
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1698 ---
+"        elif parsed_path.path == '/api/browse_file':\n            import subprocess, sys\n            try:\n                script = \"\"\"\nimport tkinter as tk\nimport tkinter.filedialog as fd\nimp
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 554 ---
+"    // Sincroniza o tempo interno do vídeo com a posição relativa dentro do clipe\n    const clipLocalTime = (State.currentTime - videoClip.start) + (videoClip.trimIn || 0);\n    \n    // Só corrige 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1918 ---
+"        elif parsed_path.path == '/api/browse_file':\n            import subprocess, sys, os\n            try:\n                script = \"\"\"\nimport tkinter as tk\nimport tkinter.filedialog as fd\
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1808 ---
+"import os\nfrom fastapi import FastAPI, Request\nfrom fastapi.staticfiles import StaticFiles\nfrom fastapi.responses import HTMLResponse\nfrom fastapi.templating import Jinja2Templates\nfrom pydantic
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2066 ---
+"<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio - {{ workspace }
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 2071 ---
+":root {\n    --bg-dark: #0f0f13;\n    --panel-bg: rgba(24, 24, 28, 0.7);\n    --primary: #7c3aed;\n    --primary-glow: rgba(124, 58, 237, 0.5);\n    --secondary: #2dd4bf;\n    --text-main: #f8fafc;\n
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1232 ---
+"document.addEventListener('DOMContentLoaded', () => {\n    const navBtns = document.querySelectorAll('.nav-btn');\n    const views = document.querySelectorAll('.view-panel');\n    const pageTitle = d
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2024 ---
+"<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio - {{ workspace }
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 180 ---
+"@app.get(\"/\")\nasync def read_root(request: Request):\n    return templates.TemplateResponse(request=request, name=\"index.html\", context={\"workspace\": CURRENT_WORKSPACE})\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 972 ---
+"@app.get(\"/api/workspace\")\nasync def get_workspace_info():\n    return {\"workspace\": CURRENT_WORKSPACE, \"path\": CURRENT_WORKSPACE_PATH}\n\n@app.get(\"/api/config\")\nasync def get_config():\n 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2067 ---
+"                <div id=\"view-configuracoes\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\">\n                        <h3>O Cofre (Configurações Globais)</h3>\n  
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2066 ---
+"    // Buscar informações reais do Workspace da API do FastAPI\n    fetch('/api/workspace')\n        .then(response => response.json())\n        .then(data => {\n            console.log(\"Workspace c
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2010 ---
+"        <!-- Barra Lateral -->\n        <nav class=\"sidebar\">\n            <div class=\"logo-area\">\n                <img src=\"https://cdn-icons-png.flaticon.com/512/3252/3252988.png\" alt=\"Logo
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 899 ---
+"        cm.set(key, value)\n        \n    return {\"status\": \"success\", \"message\": \"Configurações salvas!\"}\n\nfrom fastapi.responses import FileResponse\n@app.get(\"/api/logo\")\nasync def ge
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 692 ---
+"    // Buscar informações reais do Workspace da API do FastAPI\n    fetch('/api/workspace')\n        .then(response => response.json())\n        .then(data => {\n            console.log(\"Workspace c
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2010 ---
+"        <!-- Barra Lateral -->\n        <nav class=\"sidebar\">\n            <div class=\"logo-area\">\n                <img src=\"https://cdn-icons-png.flaticon.com/512/3252/3252988.png\" alt=\"Logo
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 899 ---
+"        cm.set(key, value)\n        \n    return {\"status\": \"success\", \"message\": \"Configurações salvas!\"}\n\nfrom fastapi.responses import FileResponse\n@app.get(\"/api/logo\")\nasync def ge
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 692 ---
+"    // Buscar informações reais do Workspace da API do FastAPI\n    fetch('/api/workspace')\n        .then(response => response.json())\n        .then(data => {\n            console.log(\"Workspace c
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 2067 ---
+".input-field:focus {\n    border-color: var(--primary);\n    background: rgba(255,255,255,0.1);\n}\n\n/* Configurações Tabs (Clone do Notebook Tkinter) */\n.config-header {\n    display: flex;\n    b
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2044 ---
+"                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direction: column; height: 100%;\">\n                        <!-- Cabeçalho de Abas Internas -->\n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2060 ---
+"    // --- LÓGICA DAS ABAS INTERNAS DE CONFIGURAÇÃO ---\n    const confBtns = document.querySelectorAll('.config-tab-btn');\n    const confViews = document.querySelectorAll('.config-tab-content');\n\
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2065 ---
+"                        <!-- 2. ABA PERSONAGENS (TabPersonagens) -->\n                        <div id=\"conf-personagens\" class=\"config-tab-content\">\n                            \n               
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2068 ---
+"            p.then(() => {\n                if (is_valid) {\n                    keyObj.status = \"ok\";\n                    lblApiStatus.innerText = \"Teste: Conexão bem sucedida (OK) !\";\n       
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2061 ---
+"                        <!-- 3. ABA VPS (TabVPS) -->\n                        <div id=\"conf-vps\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: var
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2068 ---
+"            fetch('/api/config', {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify({ \n                    \"p
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2052 ---
+"                        <!-- 4. ABA AUDIO (TabTratamentoAudio) -->\n                        <div id=\"conf-audio\" class=\"config-tab-content\">\n                            <p style=\"text-align: ce
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2069 ---
+"    // --- LÓGICA DA ABA: TRATAMENTO DE ÁUDIO ---\n    const chkAudioFiltro = document.getElementById('chk-audio-filtro');\n    const chkAudioIa = document.getElementById('chk-audio-ia');\n    const 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2045 ---
+"                        <!-- 5. ABA ESTÉTICA E LEGENDAS (TabEsteticaLegenda) -->\n                        <div id=\"conf-estetica\" class=\"config-tab-content\">\n                            <p style
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2067 ---
+"            fetch('/api/config', {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify(dataToSave)\n            })
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2053 ---
+"                        <!-- 6. ABA TEMPLATES (TabTemplates) -->\n                        <div id=\"conf-templates\" class=\"config-tab-content\">\n                            <!-- Reaproveitaremos p
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 1222 ---
+"                        <!-- Cabeçalho de Abas Internas -->\n                        <div class=\"config-header\">\n                            <button class=\"config-tab-btn active\" data-conf-targe
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2053 ---
+"                        <!-- 6. ABA LEGENDAS -->\n                        <div id=\"conf-legendas\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: va
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2067 ---
+"            fetch('/api/config', {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify({ \"estetica_canal\": curre
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 205 ---
+"                loadVpsForm();\n                loadAudioForm();\n                loadEsteticaForm();\n                loadLegendasForm();\n                \n                // Preencher select de pe
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2046 ---
+"                        <!-- 7. ABA TEMPLATES (TabTemplates) -->\n                        <div id=\"conf-templates\" class=\"config-tab-content\">\n                            <p style=\"text-align: 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2068 ---
+"        fetch('/api/config', {\n            method: 'POST',\n            headers: { 'Content-Type': 'application/json' },\n            body: JSON.stringify({ \"perfis_legenda\": window.apolloConfig.p
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 237 ---
+"                loadVpsForm();\n                loadAudioForm();\n                loadEsteticaForm();\n                loadLegendasForm();\n                loadTplForm();\n                \n         
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2061 ---
+"                        <!-- 8. ABA WHITELABEL -->\n                        <div id=\"conf-whitelabel\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2063 ---
+"        fetch('/api/config', {\n            method: 'POST',\n            headers: { 'Content-Type': 'application/json' },\n            body: JSON.stringify({ \"perfis_transicao_template\": window.apo
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 210 ---
+"                loadEsteticaForm();\n                loadLegendasForm();\n                loadTplForm();\n                loadWhiteLabelForm();\n                \n                // Preencher select 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2065 ---
+"                        <!-- 9. ABA SHORTCUTS -->\n                        <div id=\"conf-shortcuts\" class=\"config-tab-content\">\n                            <p style=\"text-align: center; color: 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2062 ---
+"    // Bypassing file picker since web doesn't have native open file dialog without server interaction\n    document.getElementById('btn-wl-logo')?.addEventListener('click', () => alert('File Picker 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 214 ---
+"                loadLegendasForm();\n                loadTplForm();\n                loadWhiteLabelForm();\n                renderShortcutsTable();\n                \n                // Preencher sel
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2061 ---
+"@app.get(\"/api/dashboard\")\nasync def get_dashboard():\n    from database_manager import db\n    import shutil\n    import subprocess\n    from config_manager import ConfigManager\n    \n    canal_
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2048 ---
+"                <!-- View: Dashboard -->\n                <div id=\"view-dashboard\" class=\"view-panel active\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2062 ---
+"                renderShortcutsTable();\n                \n                // Preencher select de perfis\n                if (estPerfil) {\n                    estPerfil.innerHTML = '';\n            
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2068 ---
+"class TTSRequest(BaseModel):\n    personagem: str\n    texto: str\n    engine: str = \"proplus\"\n    idioma: str = \"pt-BR\"\n    efeito: str = \"default\"\n    volume: int = 0\n    velocidade: int 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2049 ---
+"                <!-- View: TTS -->\n                <div id=\"view-tts\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; flex-direc
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2068 ---
+"    }\n\n    // Inicializa carregando a configuração global e o Dashboard\n    loadFullConfig();\n    loadDashboard();\n    \n    // Auto-refresh do Dashboard a cada 60s\n    setInterval(loadDashboar
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1405 ---
+"                // Preencher select de perfis\n                if (estPerfil) {\n                    estPerfil.innerHTML = '';\n                    const perfis = config.perfis_estetica || {};\n     
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2066 ---
+"@app.post(\"/api/narrador/generate\")\nasync def generate_narrador(\n    personagem: str = Form(...),\n    estado: str = Form(...),\n    audio_file: UploadFile = File(...)\n):\n    import os\n    imp
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 62 ---
+"from fastapi import FastAPI, Request, Form, UploadFile, File"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2052 ---
+"                <!-- View: Narrador -->\n                <div id=\"view-narrador\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1689 ---
+"                // Preencher select de TTS Personagem\n                const ttsPers = document.getElementById('tts-personagem');\n                if (ttsPers) {\n                    const selectedPe
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2064 ---
+"        document.getElementById('tts-status').style.color = \"#2ED573\";\n        document.getElementById('tts-player-container').style.display = 'none';\n    });\n\n    // --- LÓGICA DO NARRADOR (Ab
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 97 ---
+"from fastapi import FastAPI, Request, Form, UploadFile, File\nfrom typing import List, Optional"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2057 ---
+"                <!-- View: Controle de Volume -->\n                <div id=\"view-volume\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2067 ---
+"    // --- LÓGICA DO CONTROLE DE VOLUME (Aba 4) ---\n    \n    // Atualizar labels dos sliders\n    const updateSliderLabel = (sliderId, labelId) => {\n        const slider = document.getElementById(
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2065 ---
+"            .catch(err => {\n                btnGerarNar.disabled = false;\n                statusLabel.style.color = '#FF4757';\n                statusLabel.innerText = \"❌ Erro de rede ao conectar 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2042 ---
+"                <!-- View: Ferramentas -->\n                <div id=\"view-ferramentas\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2005 ---
+"    // --- LÓGICA DA ABA FERRAMENTAS (Aba 5) ---\n    \n    const ferramentas = [\n        { id: 'capa', nome: \"🖼️ Adicionar Capa\", desc: \"Adiciona uma capa de 1 segundo no início do vídeo\", para
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2014 ---
+"            .catch(err => {\n                btnAplicarVol.disabled = false;\n                statusLabel.style.color = '#FF4757';\n                statusLabel.innerText = \"❌ Erro de conexão com o s
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2064 ---
+"                <!-- View: Gerador de Legendas -->\n                <div id=\"view-legendas\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; disp
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2070 ---
+"    // --- LÓGICA DA ABA GERADOR DE LEGENDAS (Aba 6) ---\n    \n    const legVideo = document.getElementById('leg-video');\n    const legSrt = document.getElementById('leg-srt');\n    const legMapa =
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2070 ---
+"        document.querySelectorAll('.btn-confirm-ferramenta').forEach(btn => {\n            btn.addEventListener('click', (e) => {\n                const id = e.target.getAttribute('data-id');\n      
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2056 ---
+"                <!-- View: Podcast -->\n                <div id=\"view-podcast\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display: flex; fl
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2067 ---
+"            .catch(err => {\n                btnGerarLegendas.disabled = false;\n                status.style.color = '#FF4757';\n                status.innerText = \"❌ Erro de conexão com o servidor
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2059 ---
+"                <!-- View: Ajustador de Mídia -->\n                <div id=\"view-midia\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display:
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2065 ---
+"            .catch(err => {\n                btnGerarPodcast.disabled = false;\n                podStatus.style.color = '#FF4757';\n                podStatus.innerText = \"❌ Erro de conexão com o ser
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2051 ---
+"                <!-- View: Dublagem Externa -->\n                <div id=\"view-dublagem\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; display
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2066 ---
+"            .catch(err => {\n                btnProcessarMidia.disabled = false;\n                adjStatus.style.color = '#FF4757';\n                adjStatus.innerText = \"❌ Erro de conexão com o s
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2056 ---
+"                <!-- View: Fábrica de Músicas -->\n                <div id=\"view-musicas\" class=\"view-panel hidden\">\n                    <div class=\"card glass-panel\" style=\"padding:0; displa
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2067 ---
+"    }\n    \n    // Initialize Dublagem\n    if (document.getElementById('view-dublagem')) loadDubPersonagens();\n\n    // --- LÓGICA DA ABA FÁBRICA DE MÚSICAS ---\n    \n    let musicasData = []; //
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1670 ---
+"    // --- LÓGICA DAS ABAS INTERNAS DE CONFIGURAÇÃO ---\n    const confBtns = document.querySelectorAll('.config-tab-btn');\n\n    confBtns.forEach(btn => {\n        btn.addEventListener('click', () 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 147 ---
+"        \"custos\": {\n            \"total\": custo_total,\n            \"lista\": custos_lista\n        }\n    }\n\nclass TTSRequest(BaseModel):"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1989 ---
+"    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n\n# ── TANQUE DE COMBUSTÍVEL (BIBLIOTECA) ──────────────────────────────────────\n\nclass BibliotecaScanReques
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2054 ---
+"                <div id=\"view-tanque\" class=\"view-panel hidden\">\n                    <div class=\"panel-header\">\n                        <div class=\"panel-title-row\">\n                      
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 1966 ---
+".tk-listbox-item.selected {\n    background: var(--primary);\n}\n\n/* ─── TANQUE DE COMBUSTÍVEL ──────────────────────────────────────────────── */\n\n/* view-tanque uses flex column to fill height *
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1944 ---
+"    // Initialize Fábrica de Músicas\n    if (document.getElementById('view-musicas')) {\n        loadMusConfig();\n        loadMusTemplates();\n    }\n\n    // ─── TANQUE DE COMBUSTÍVEL ────────────
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 459 ---
+"    background: var(--primary);\n}\n\n/* ─── LAST DIR HINT (Sistema de Memória de Diretórios) ──────────────────── */\n.lastdir-hint {\n    display: block;\n    font-size: 11px;\n    color: var(--tex
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 4 ---
+"\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1972 ---
+"    // Initialize Fábrica de Músicas\n    if (document.getElementById('view-musicas')) {\n        loadMusConfig();\n        loadMusTemplates();\n    }\n\n    // ─── SISTEMA DE MEMÓRIA DE DIRETÓRIOS ─
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 102 ---
+"        }\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2050 ---
+"                <div id=\"view-diretor\" class=\"view-panel hidden\">\n                    <!-- HEADER -->\n                    <div class=\"card glass-panel\" style=\"margin-bottom:10px;padding:12px
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 1943 ---
+".lastdir-hint::before {\n    content: '📂 Último: ';\n    opacity: 0.7;\n}\n\n/* ═══ O DIRETOR ═══════════════════════════════════════════════════════════ */\n.diretor-split {\n    display: flex;\n   
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1782 ---
+"    // Carrega tudo no início\n    loadAllLastDirs();\n\n    // ═══════════════════════════════════════════════════════════════════\n    //  O DIRETOR (Mapeamento Automático)\n    // ════════════════
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 1684 ---
+"                <div id=\"view-estudio\" class=\"view-panel hidden\">\n                    <div class=\"estudio-header card glass-panel\" style=\"text-align: center;\">\n                        <h2 s
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 1955 ---
+".diretor-console .log-warn { color: #ffd32a; }\n.diretor-console .log-info { color: #2dd4bf; }\n.diretor-console .log-cmd { color: #7c3aed; }\n\n/* ═══ ESTÚDIO VISUAL ════════════════════════════════
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 1813 ---
+"    // ═══════════════════════════════════════════════════════════════\n    // ESTÚDIO VISUAL\n    // ═══════════════════════════════════════════════════════════════\n    (function initEstudioVisual(
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\templates\\index.html" | LENGTH: 2030 ---
+"                <div id=\"view-fila\" class=\"view-panel hidden\" style=\"display: flex; flex-direction: column; height: 100%;\">\n                    <div class=\"card glass-panel fila-header\" styl
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\css\\style.css" | LENGTH: 1895 ---
+".estudio-empty {\n    grid-column: 1 / -1;\n    text-align: center;\n    padding: 40px;\n    color: var(--text-muted);\n    font-style: italic;\n    background: rgba(0,0,0,0.2);\n    border-radius: 8
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2071 ---
+"        // Auto load when tab is visible\n        let hasLoaded = false;\n        const observer = new MutationObserver(() => {\n            const panel = document.getElementById('view-estudio');\n  
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2066 ---
+"    })();\n\n    // --- LÓGICA DA ABA: O MONTADOR & EDITOR WEB ---\n    const btnOpenEditor = document.getElementById('btn-open-editor');\n    if (btnOpenEditor) {\n        btnOpenEditor.addEventList
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\static\\js\\app.js" | LENGTH: 2069 ---
+"    // --- LÓGICA DA ABA: TANQUE DE COMBUSTÍVEL (BIBLIOTECA) ---\n    (function initBiblioteca() {\n        const ui = {\n            btnAtualizar: document.getElementById('bib-btn-atualizar'),\n    
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\hub.html" | LENGTH: 2069 ---
+"<!DOCTYPE html>\n<html lang=\"pt-br\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio — Hub Central</t
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2067 ---
+"import os\nimport sys\nimport json\nimport glob\nfrom fastapi import FastAPI, Request\nfrom fastapi.staticfiles import StaticFiles\nfrom fastapi.responses import HTMLResponse, FileResponse, JSONRespo
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\tts.html" | LENGTH: 2068 ---
+"<!DOCTYPE html>\n<html lang=\"pt-br\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio — Gerador de Áud
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\config.html" | LENGTH: 2059 ---
+"<!DOCTYPE html>\n<html lang=\"pt-br\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Apollo Studio — Configurações 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1990 ---
+"            \"output\": out_path\n        }\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": str(e)}\n\n\n# ── O DIRETOR (MAPEAMENTO AUTOMÁTICO) ──────────────────────
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 1894 ---
+"        elif parsed_path.path == '/api/chat_copilot':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n            \n
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.html" | LENGTH: 1356 ---
+"        <!-- Right Sidebar: Properties (Inspector) -->\n        <aside class=\"inspector\">\n            <div class=\"panel-header tabs-header\">\n                <button class=\"tab-btn active\" id=
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.css" | LENGTH: 1924 ---
+"/* Inspector */\n.inspector {\n    width: 280px; background: #0f172a; border-left: 1px solid #334155; display: flex; flex-direction: column;\n}\n\n/* Tabs */\n.tabs-header { padding: 0; display: flex
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.js" | LENGTH: 2068 ---
+"});\n\n// ============================================================\n// === PASSO 18: COPILOTO IA (CHAT E EDIÇÃO AUTOMÁTICA)     ===\n// ===========================================================
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.js" | LENGTH: 2068 ---
+"    }\n});\n\n// ============================================================\n// === PASSO 18: COPILOTO IA (CHAT E EDIÇÃO AUTOMÁTICA)     ===\n// ====================================================
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.js" | LENGTH: 198 ---
+"    // Só troca o src se mudou de clipe\n    if (previewCurrentClipId !== videoClip.id) {\n        previewCurrentClipId = videoClip.id;\n        mainPlayer.src = videoClip.name.startsWith('http') "
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 2067 ---
+"        elif parsed_path.path == '/api/stream':\n            import re\n            query = urllib.parse.parse_qs(parsed_path.query)\n            file_path = query.get('path', [''])[0]\n            \
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 273 ---
+"                with open(file_path, 'rb') as f:\n                    self.wfile.write(f.read())\n            except Exception as e:\n                import traceback\n                print(\"[STREAM
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 172 ---
+"                import traceback\n                print(\"[STREAM ERROR]\", e)\n                with open('erro_video.txt', 'w') as f_err: traceback.print_exc(file=f_err)"
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 1075 ---
+"                duration = float(probe_data.get('format', {}).get('duration', 10.0))\n                streams = probe_data.get('streams', [])\n                video_stream = next((s for s in streams 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.html" | LENGTH: 1092 ---
+"            <div class=\"player-controls\" style=\"display: flex; gap: 15px; align-items: center; flex-wrap: wrap;\">\n                <span id=\"current-time-display\">00:00:00:00</span>\n          
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.css" | LENGTH: 206 ---
+"video {\n    max-width: 100%; max-height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid #334155;\n    background-color: #000; min-width: 320px; min-height: 180p
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 446 ---
+"            except (ConnectionAbortedError, BrokenPipeError):\n                # Erro normal quando o cliente (navegador) pula a agulha e cancela o download do frame antigo\n                pass\n   
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\web_ui\\timeline.css" | LENGTH: 206 ---
+"video {\n    max-width: 100%; max-height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid #334155;\n    background-color: #000; min-width: 320px; min-height: 180p
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\TUTORIAL DAS COISAS CODIGOS\\servidor_web.py" | LENGTH: 446 ---
+"            except (ConnectionAbortedError, BrokenPipeError):\n                # Erro normal quando o cliente (navegador) pula a agulha e cancela o download do frame antigo\n                pass\n   
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\web_ui\\timeline.js" | LENGTH: 2025 ---
+"            else if (op.type === 'clear_timeline') {\n                State.clips.forEach(c => c.element.remove());\n                State.clips = [];\n                State.selectedClip = null;\n   
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2066 ---
+"        elif parsed_path.path == '/api/generate_broll':\n            content_length = int(self.headers.get('Content-Length', 0))\n            post_data = self.rfile.read(content_length)\n            
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 1729 ---
+"                print(f\"🎨 Gerando imagem B-Roll com Gemini (Imagen) para: '{prompt}'...\")\n                \n                import time\n                from config_manager import ConfigManager\n 
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 2065 ---
+"                print(f\"🎨 Gerando imagem B-Roll para: '{prompt}'...\")\n                \n                import time\n                import requests\n                import base64\n               
+...
+
+
+=======================
+
+--- FILE: "E:\\MEUS PROGRAMAS\\APOLLO_STUDIO\\servidor_web.py" | LENGTH: 57 ---
+"        elif parsed_path.path == '/api/generate_broll':"
+...

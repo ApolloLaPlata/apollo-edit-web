@@ -1,0 +1,6 @@
+- `[x]` Modificar `whatsapp_bot/index.js`
+  - `[x]` Criar rota `/api/create_group` (recebe nome e cria grupo)
+- `[x]` Modificar `servidor_web.py`
+  - `[x]` Atualizar `whatsapp_webhook` para iterar sobre todos os `config.json` de todos os workspaces e achar o dono do `whatsapp_group_id`.
+  - `[x]` Adicionar endpoint para chamar o Node.js e registrar o `whatsapp_group_id` no workspace atual.
+- `[x]` Integrar criação do grupo na interface Web.

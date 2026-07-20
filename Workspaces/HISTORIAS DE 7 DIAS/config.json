@@ -1,0 +1,138 @@
+{
+    "app_info": {
+        "name": "Descarga News Editor",
+        "version": "1.0.0",
+        "description": "Editor de vídeo automatizado para o canal Descarga News"
+    },
+    "personagens": {
+        "Darius": {
+            "video_source": "C:/H7D/assets/narradores/darius_gargula.mp4",
+            "vozes_voicemaker": "proplus-Darius",
+            "idioma_padrao": "pt-BR",
+            "engine": "neural",
+            "efeito_padrao": "default",
+            "posicao_pip": {
+                "x": 25,
+                "y": "bottom",
+                "offset": 25,
+                "escala": 0.25
+            }
+        },
+        "Hugo": {
+            "video_source": "C:/H7D/assets/narradores/hugo_dragao.mp4",
+            "vozes_voicemaker": "proplus-Hugo",
+            "idioma_padrao": "pt-BR",
+            "engine": "neural",
+            "efeito_padrao": "conversational",
+            "posicao_pip": {
+                "x": 25,
+                "y": "bottom",
+                "offset": 25,
+                "escala": 0.25
+            }
+        },
+        "Joye": {
+            "video_source": "C:/H7D/assets/narradores/joye_fada.mp4",
+            "vozes_voicemaker": "proplus-Joye",
+            "idioma_padrao": "pt-BR",
+            "engine": "neural",
+            "efeito_padrao": "happy",
+            "posicao_pip": {
+                "x": 25,
+                "y": "bottom",
+                "offset": 25,
+                "escala": 0.25
+            }
+        },
+        "Elph": {
+            "video_source": "",
+            "vozes_voicemaker": "proplus-JakeTurner",
+            "idioma_padrao": "en-US",
+            "engine": "proplus",
+            "efeito_padrao": "default",
+            "volume_ajuste": 0.0,
+            "posicao_pip": {
+                "x": 25,
+                "y": "bottom",
+                "offset": 25,
+                "escala": 0.25
+            }
+        }
+    },
+    "backgrounds": {
+        "Padrão": "assets/backgrounds/background_padrao.mp4"
+    },
+    "paths": {
+        "output_dir": "outputs",
+        "temp_dir": "temp",
+        "assets_dir": "assets"
+    },
+    "app_logo_path": "E:\\MEUS PROGRAMAS\\HISTORIAS DE 7 DIAS CODIGOS\\logohistoriasde7dias.ico",
+    "app_icon_path": "E:\\MEUS PROGRAMAS\\HISTORIAS DE 7 DIAS CODIGOS\\logohistoriasde7dias.ico",
+    "vps_config": {
+        "moss_tts": {
+            "url": "http://localhost:8000",
+            "token": ""
+        },
+        "applio_rvc": {
+            "url": "http://localhost:8001",
+            "token": ""
+        }
+    },
+    "api_config": {
+        "chatgpt": {
+            "api_keys": []
+        },
+        "openrouter": {
+            "api_keys": []
+        },
+        "grok": {
+            "api_keys": []
+        }
+    },
+    "music_factory": {
+        "channel_context": "Este é um canal de instrumentais e beats. As músicas não possuem vocais. O objetivo é vender o beat na BeatStars.",
+        "metadata_example": "Title: [Original Name] | Type Beat\\nDescription: Buy this beat on BeatStars! Link: https://beatstars.com/meucanal\\nTags: type beat, instrumental"
+    },
+    "shortcuts": {},
+    "perfis_diretor": {},
+    "theme_colors": {
+        "bg": "#2D0A5E",
+        "app_bg": "#2D0A5E",
+        "app_fg": "#EDE9FE",
+        "header_bg": "#130026",
+        "header_fg": "#FFD700",
+        "accent": "#140f0f",
+        "btn_bg": "#4B1088",
+        "btn_fg": "#FFFFFF",
+        "btn_active_bg": "#7C3AED",
+        "btn_active_fg": "#FFFFFF",
+        "tab_bg": "#130026",
+        "tab_fg": "#EDE9FE",
+        "tab_selected_bg": "#FFD700",
+        "tab_selected_fg": "#000000",
+        "tab_active_bg": "#4B1088",
+        "tab_active_fg": "#FFFFFF",
+        "section_bg": "#2D0A5E",
+        "section_fg": "#FFFFFF",
+        "style_configure_TLabel": {
+            "background": "#2D0A5E",
+            "foreground": "#FFD700"
+        },
+        "style_configure_TLabelframe": {
+            "background": "#2D0A5E"
+        },
+        "style_configure_TLabelframe.Label": {
+            "background": "#2D0A5E",
+            "foreground": "#FFD700"
+        },
+        "style_configure_TCheckbutton": {
+            "background": "#2D0A5E",
+            "foreground": "#FFFFFF"
+        },
+        "style_configure_TRadiobutton": {
+            "background": "#2D0A5E",
+            "foreground": "#FFFFFF"
+        }
+    }
+}

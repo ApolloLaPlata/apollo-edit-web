@@ -1,0 +1,9 @@
+{
+    "agent_id": "Concierge",
+    "status": "idle",
+    "last_action": null,
+    "alerts": [],
+    "data": {
+        "active_sessions": {}
+    }
+}

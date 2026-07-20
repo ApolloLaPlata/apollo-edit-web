@@ -1,0 +1,11 @@
+Provedor,Identificacao,E-mail,Senha,Status,Creditos_Disponiveis,Funcao_Atribuida,Observacoes
+Lightning AI,Conta 1 (Apollo La Plata),roxingo@gmail.com,[DIGITE_A_SENHA_AQUI],Bloqueada (Em analise),15.00,Teste LitServe (FLUX),Aguardando resposta do suporte
+Lightning AI,Conta 2 (Historias de 7 Dias),historiasde7dias@gmail.com,[DIGITE_A_SENHA_AQUI],Ativa,13.04,Motor de Voz (TTS) e FFmpeg,Criar maquina L4
+Lightning AI,Conta 3 (Descarga News),descarganews@gmail.com,[DIGITE_A_SENHA_AQUI],Ativa,15.00,Efeitos Sonoros (SFX),
+Lightning AI,Conta 4 (Tutorial das Coisas),[EMAIL_TUTORIAL_AQUI],[DIGITE_A_SENHA_AQUI],Ativa,15.00,Fallback / Backup Geral,
+Modal.com,Conta Principal,[SEU_EMAIL],[DIGITE_A_SENHA_AQUI],Ativa,30.00,Credit Farming (Fallback),
+RunPod.io,Conta Principal,[SEU_EMAIL],[DIGITE_A_SENHA_AQUI],Ativa,0.00,Infraestrutura Escalavel (Pago),
+HuggingFace,Conta Principal,roxingo@gmail.com,[DIGITE_A_SENHA_AQUI],Ativa,-,Hospedagem de Modelos e Tokens,
+Fal.ai,Conta Principal,[SEU_EMAIL],[DIGITE_A_SENHA_AQUI],Ativa,-,APIs Rapidas / Imagem (Fallback),
+OpenRouter,Conta Principal,[SEU_EMAIL],[DIGITE_A_SENHA_AQUI],Ativa,-,Roteamento de LLM (Textos/Agentes),
+Beam.cloud,Conta Principal,[SEU_EMAIL],[DIGITE_A_SENHA_AQUI],Ativa,10.00,Processamento Serverless,

@@ -1,0 +1,5 @@
+litserve
+torch
+diffusers
+transformers
+accelerate

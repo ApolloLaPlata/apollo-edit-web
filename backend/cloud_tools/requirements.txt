@@ -1,0 +1,15 @@
+oprembg
+onnxruntime
+moviepy
+edge-tts
+yt-dlp
+diffusers
+transformers
+accelerate
+safetensors
+rembg[gpu]
+scenedetect
+mediapipe
+opencv-python-headless
+numpy
+yt-dlp

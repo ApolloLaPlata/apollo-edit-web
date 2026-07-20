@@ -1,0 +1,849 @@
+import tkinter as tk
+try:
+    import ctypes
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)
+except:
+    pass
+from tkinter import filedialog, messagebox, ttk
+from aba_criador_templates import AbaCriadorTemplates
+from aba_mapeador_automatico import AbaMapeadorAutomatico
+
+from aba_fila_render import AbaFilaRender
+from aba_dashboard import AbaDashboard
+
+try:
+    from aba_transicao import AbaTransition
+    MONTADOR_AVAILABLE = True
+except ImportError:
+    MONTADOR_AVAILABLE = False
+
+import cv2
+import os
+import sys
+import io
+
+# Força o console do Windows a aceitar Emojis e caracteres UTF-8 sem crashar (cp1252 fix)
+if sys.stdout is not None:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except AttributeError:
+        pass
+if sys.stderr is not None:
+    try:
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except AttributeError:
+        pass
+
+import numpy as np
+import subprocess
+
+# Importações dos Módulos do Ecossistema Apollo
+try:
+    from config_manager import ConfigManager
+    from tts_manager import TTSManager
+    
+    # Abas Padronizadas
+    from aba_tts import AbaGeracaoTTS
+    from aba_narrador import AbaGeracaoVideoNarrador
+    from aba_volume import AbaControleVolume
+    from aba_ferramentas import AbaFerramentas
+    from aba_configuracoes import AbaConfiguracoes
+    from aba_inferencia_video import AbaInferenciaVideo
+    from aba_legendas import AbaGeradorLegendas
+    from aba_podcast import AbaPodcast
+    from media_adjuster import AbaAjustadorMidia
+    from aba_fabrica_clipes import AbaFabricaClipes
+    from aba_biblioteca import AbaBiblioteca
+    MODULES_AVAILABLE = True
+except ImportError as e:
+    print(f"[AVISO] Falha ao importar módulos Apollo: {e}")
+    MODULES_AVAILABLE = False
+
+class ApolloStudio:
+    def __init__(self, root, workspace_name="Default", workspace_path=None):
+        self.root = root
+        self.workspace_name = workspace_name
+        self.workspace_path = workspace_path
+        self.root.title(f"🚀 Apollo Studio - [Workspace: {workspace_name}]")
+        self.root.geometry("1600x950")
+        # Removemos o state('zoomed') para não abrir em tela cheia (solicitação do usuário)
+        self.root.minsize(1200, 850)
+        self.root.resizable(True, True)
+        try:
+            icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "apollo_logo_padrao.ico") # fallback
+            if self.workspace_path:
+                cfg_path = os.path.join(self.workspace_path, "config.json")
+                if os.path.exists(cfg_path):
+                    import json
+                    with open(cfg_path, 'r', encoding='utf-8') as f:
+                        cfg = json.load(f)
+                    ws_icon = cfg.get("app_icon_path")
+                    if ws_icon and os.path.exists(ws_icon):
+                        icon_path = ws_icon
+            self.root.iconbitmap(icon_path)
+        except Exception:
+            pass
+
+        # Tema visual: Arco-íris / Multicolorido ou Tema do Workspace
+        HEADER_BG = '#1A1A2E'
+        HEADER_FG = '#FFD32A'
+        APP_BG  = '#1A1A2E'
+        APP_FG  = '#F0F0F0'
+        
+        VERMELHO   = '#FF4757'
+        LARANJA    = '#FF6B35'
+        VERDE      = '#2ED573'
+        AZUL       = '#1E90FF'
+        ROXO       = '#9B59B6'
+        BRANCO     = '#FFFFFF'
+        
+        BTN_BG     = AZUL
+        BTN_FG     = BRANCO
+        
+        user_theme = {}
+        
+        if self.workspace_path:
+            cfg_path = os.path.join(self.workspace_path, "config.json")
+            if os.path.exists(cfg_path):
+                import json
+                try:
+                    with open(cfg_path, 'r', encoding='utf-8') as f:
+                        cfg = json.load(f)
+                    user_theme = cfg.get("theme_colors")
+                    if user_theme:
+                        HEADER_BG = user_theme.get('header_bg', user_theme.get('bg', HEADER_BG))
+                        HEADER_FG = user_theme.get('header_fg', user_theme.get('fg', HEADER_FG))
+                        APP_BG = user_theme.get('app_bg', user_theme.get('bg', APP_BG))
+                        APP_FG = user_theme.get('app_fg', APP_FG)
+                        AZUL = user_theme.get('accent', AZUL)
+                        BTN_BG = user_theme.get('btn_bg', AZUL)
+                        BTN_FG = user_theme.get('btn_fg', BRANCO)
+                except: pass
+
+        self.root.configure(bg=APP_BG)
+        
+        # TK Defaults (para widgets tk.* que não usam ttk)
+        self.root.option_add("*background", APP_BG)
+        self.root.option_add("*foreground", APP_FG)
+        is_dark = APP_BG.upper() in ["#1E1E1E", "#1A1A2E", "#2B2B2B", "#2D2D2D", "#111111", "#222222", "#3C3F41", "#16213E", "#151515", "#1A1A1A"]
+        entry_bg = "#2D2D2D" if is_dark else "#FFFFFF"
+        entry_fg = "#FFFFFF" if is_dark else "#000000"
+        self.root.option_add("*Entry.background", entry_bg)
+        self.root.option_add("*Entry.foreground", entry_fg)
+        self.root.option_add("*Text.background", entry_bg)
+        self.root.option_add("*Text.foreground", entry_fg)
+        self.root.option_add("*Listbox.background", entry_bg)
+        self.root.option_add("*Listbox.foreground", entry_fg)
+        self.root.option_add("*Canvas.background", APP_BG)
+
+
+        style = ttk.Style()
+        try: style.theme_use('clam')
+        except: pass
+
+        style.configure('.',            background=APP_BG, foreground=APP_FG)
+        style.configure('TFrame',       background=APP_BG)
+        style.configure('TLabel',       background=APP_BG, foreground=APP_FG)
+        style.configure('TLabelframe',  background=APP_BG, foreground=APP_FG)
+        style.configure('TLabelframe.Label', background=APP_BG, foreground=HEADER_FG, font=('Segoe UI', 9, 'bold'))
+        style.configure('TButton',      background=BTN_BG, foreground=BTN_FG, font=('Segoe UI', 9, 'bold'))
+        style.map('TButton',
+                  background=[('active', user_theme.get('btn_active_bg', BTN_BG) if 'user_theme' in locals() and user_theme else BTN_BG)],
+                  foreground=[('active', user_theme.get('btn_active_fg', BTN_FG) if 'user_theme' in locals() and user_theme else BTN_FG)])
+        style.configure('TRadiobutton', background=APP_BG, foreground=APP_FG)
+        style.configure('TCheckbutton', background=APP_BG, foreground=APP_FG)
+        
+        style.configure('TCombobox',     fieldbackground='#FFFFFF', foreground='#000000', background=APP_BG)
+        style.configure('TEntry',        fieldbackground='#FFFFFF', foreground='#000000')
+        style.configure('TSpinbox',      fieldbackground='#FFFFFF', foreground='#000000')
+        
+        style.map('TCombobox', 
+                  fieldbackground=[('readonly', '#FFFFFF'), ('disabled', '#E0E0E0')],
+                  selectbackground=[('readonly', '#FFFFFF')],
+                  selectforeground=[('readonly', '#000000')])
+        style.map('TEntry', fieldbackground=[('readonly', '#FFFFFF'), ('disabled', '#E0E0E0')])
+        style.map('TSpinbox', fieldbackground=[('readonly', '#FFFFFF'), ('disabled', '#E0E0E0')])
+        
+        style.configure('Treeview', background=BRANCO, fieldbackground=BRANCO, foreground='#000000')
+        style.configure('Treeview.Heading', background=HEADER_BG, foreground=HEADER_FG)
+        style.map('Treeview', background=[('selected', AZUL)], foreground=[('selected', BRANCO)])
+        
+        style.configure('TScale',       background=APP_BG, troughcolor='#16213E')
+        style.configure('TScrollbar',   background='#16213E', troughcolor=APP_BG)
+        style.configure('TNotebook',    background=APP_BG, tabmargins=[2, 5, 2, 0])
+        style.configure('TNotebook.Tab', background=HEADER_BG, foreground=HEADER_FG,
+                        padding=[10, 5], font=('Segoe UI', 9))
+        # Abas ficam coloridas ao selecionar - usando a cor de destaque (HEADER_FG)
+        style.map('TNotebook.Tab',
+                  background=[('selected', HEADER_FG), ('active', AZUL)],
+                  foreground=[('selected', '#000000'), ('active', BRANCO)])
+        style.map('TButton',
+                  background=[('active', ROXO), ('pressed', VERMELHO)],
+                  foreground=[('active', BRANCO), ('pressed', BRANCO)])
+        # Estilos extras
+        style.configure('Generate.TButton', background=VERDE, foreground='#000000', font=('Segoe UI', 10, 'bold'))
+        style.configure('Action.TButton',   background=LARANJA, foreground='#000000', font=('Segoe UI', 9))
+        style.map('Action.TButton',
+                  background=[('active', VERMELHO), ('pressed', '#CC0000')],
+                  foreground=[('active', BRANCO)])
+                  
+        style.configure('Green.Horizontal.TProgressbar', background=VERDE, troughcolor='#16213E')
+        style.map('Generate.TButton',
+                  background=[('active', '#00C851'), ('pressed', '#007E33')],
+                  foreground=[('active', BRANCO)])
+                  
+        if user_theme:
+            tab_bg = user_theme.get('tab_bg', APP_BG)
+            tab_fg = user_theme.get('tab_fg', APP_FG)
+            tab_sel_bg = user_theme.get('tab_selected_bg', tab_bg)
+            tab_sel_fg = user_theme.get('tab_selected_fg', tab_fg)
+            tab_act_bg = user_theme.get('tab_active_bg', tab_bg)
+            tab_act_fg = user_theme.get('tab_active_fg', tab_fg)
+            
+            style.configure('TNotebook', background=tab_bg)
+            style.configure('TNotebook.Tab', background=tab_bg, foreground=tab_fg)
+            style.map('TNotebook.Tab',
+                     background=[('selected', tab_sel_bg), ('active', tab_act_bg)],
+                     foreground=[('selected', tab_sel_fg), ('active', tab_act_fg)])
+            
+            if 'section_bg' in user_theme:
+                style.configure('Section.TLabelframe', background=user_theme['section_bg'], relief='solid', borderwidth=1)
+                style.configure('Section.TLabelframe.Label', background=user_theme['section_bg'], foreground=user_theme.get('section_fg', APP_FG))
+
+            for key, val in user_theme.items():
+                if key.startswith("style_configure_"):
+                    style_name = key.replace("style_configure_", "")
+                    style.configure(style_name, **val)
+                elif key.startswith("style_map_"):
+                    style_name = key.replace("style_map_", "")
+                    style.map(style_name, **val)
+
+        # 👑👑 HEADER PADRAO APOLLO 👑👑────────────────────────────────────────
+        _h = tk.Frame(root, bg=HEADER_BG)
+        _h.pack(fill='x', padx=10, pady=(10, 4))
+        try:
+            from PIL import Image as _Img, ImageTk as _ITk
+            _lp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "apollo_logo_padrao.png") # fallback
+            
+            # Workspace specific logo
+            if self.workspace_path:
+                cfg_path = os.path.join(self.workspace_path, "config.json")
+                if os.path.exists(cfg_path):
+                    import json
+                    try:
+                        with open(cfg_path, 'r', encoding='utf-8') as f:
+                            cfg = json.load(f)
+                        ws_logo = cfg.get("app_logo_path")
+                        if ws_logo and os.path.exists(ws_logo):
+                            _lp = ws_logo
+                    except: pass
+
+            if not os.path.exists(_lp):
+                raise FileNotFoundError
+            _im = _Img.open(_lp).convert("RGBA").resize((80, 80), _Img.Resampling.LANCZOS)
+            self._logo_photo = _ITk.PhotoImage(_im)
+            tk.Label(_h, image=self._logo_photo, bg=HEADER_BG).pack(side='left', padx=(0, 15))
+        except Exception:
+            tk.Label(_h, text="🚀", font=("Segoe UI", 30), bg=HEADER_BG, fg=HEADER_FG).pack(side='left', padx=(0, 12))
+        _tf = tk.Frame(_h, bg=HEADER_BG)
+        _tf.pack(side='left')
+        
+        app_title = "APOLLO STUDIO"
+        if self.workspace_name and self.workspace_name != "Default":
+             app_title = self.workspace_name.upper()
+
+        tk.Label(_tf, text=app_title,
+                 font=("Segoe UI", 20, "bold"), bg=HEADER_BG, fg=HEADER_FG).pack(anchor='w')
+        tk.Label(_tf, text="Editor Multimídia • Apollo System",
+                 font=("Segoe UI", 10), bg=HEADER_BG, fg=HEADER_FG).pack(anchor='w')
+        ttk.Separator(root, orient='horizontal').pack(fill='x', padx=10, pady=(6, 2))
+        # ───────────────────────────────────────────────────────────────
+
+        self.notebook = ttk.Notebook(root)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
+
+        if MODULES_AVAILABLE:
+            if self.workspace_path:
+                config_file = os.path.join(self.workspace_path, "config.json")
+                self.config_manager = ConfigManager(config_file=config_file)
+                self.config_manager.workspace_dir = self.workspace_path
+            else:
+                self.config_manager = ConfigManager()
+                self.config_manager.workspace_dir = os.path.dirname(os.path.abspath(__file__))
+                
+            self._patch_filedialog()
+            self.tts_manager = TTSManager(self.config_manager)
+
+        else:
+            self.config_manager = None
+            self.tts_manager = None
+
+        # DASHBOARD DE PRODUÇÃO ADICIONADO PRIMEIRO PARA SER A ABA 1
+        self.aba_dashboard = AbaDashboard(
+            self.notebook,
+            config_manager=self.config_manager,
+            app_ref=self
+        )
+        self.notebook.add(self.aba_dashboard, text="📊 1. Dashboard Principal")
+
+        if MODULES_AVAILABLE:
+            self.create_apollo_tabs()
+
+        self.aba_mapeador = AbaMapeadorAutomatico(self.notebook, self.config_manager)
+        self.notebook.add(self.aba_mapeador, text="🎬 2. O Diretor (Motor Clássico)")
+        self.aba_mapeador._app_ref = self
+        
+        self.aba_criador = AbaCriadorTemplates(self.notebook)
+        self.notebook.add(self.aba_criador, text="🎨 3. Estúdio Visual")
+
+        self.aba_fila_render = AbaFilaRender(
+            self.notebook,
+            config_manager=self.config_manager,
+            app_ref=self
+        )
+        self.notebook.add(self.aba_fila_render, text="⚡ 4. Fila Autônoma")
+
+        # [GERADOR DE ROTEIRO REMOVIDO] - Roteiro gerado externamente pelo usuario
+
+        if MONTADOR_AVAILABLE:
+            self.aba_montador = AbaTransition(self.notebook)
+            self.notebook.add(self.aba_montador, text="🎥 5. O Montador (Macros)")
+            
+        try:
+            from aba_timeline_web import AbaTimelineWeb
+            self.aba_timeline_web = AbaTimelineWeb(self.notebook)
+            self.notebook.add(self.aba_timeline_web, text="✂️ 6. Apollo Web Editor")
+        except Exception as e:
+            print(f"Erro ao carregar Apollo Web Editor: {e}")
+        
+        
+        
+    def _patch_filedialog(self):
+        """Intercepta chamadas nativas do filedialog para injetar 'memória' do último diretório acessado por cada input"""
+        import tkinter.filedialog as fd
+        import os
+        import inspect
+        
+        orig_askopenfilename = fd.askopenfilename
+        orig_askopenfilenames = fd.askopenfilenames
+        orig_askdirectory = fd.askdirectory
+        orig_asksaveasfilename = fd.asksaveasfilename
+        
+        cm = self.config_manager
+        
+        def _get_key(kwargs):
+            title = kwargs.get('title', '')
+            if title:
+                # Cria uma chave limpa a partir do titulo
+                return "fd_" + "".join(c for c in str(title) if c.isalnum() or c in " _-").replace(" ", "_")
+            
+            # Fallback seguro caso não haja título
+            try:
+                caller = inspect.stack()[2]
+                func_name = getattr(caller, 'function', 'unknown')
+                lineno = getattr(caller, 'lineno', 0)
+                fname = os.path.basename(getattr(caller, 'filename', 'unknown')).replace('.py', '')
+                return f"fd_{fname}_{func_name}_{lineno}"
+            except Exception:
+                return "fd_default"
+
+        def wrap_askopenfilename(**kwargs):
+            k = _get_key(kwargs)
+            ld = cm.get(f"last_dirs.{k}")
+            if ld and os.path.exists(ld) and 'initialdir' not in kwargs:
+                kwargs['initialdir'] = ld
+            res = orig_askopenfilename(**kwargs)
+            if res:
+                cm.set(f"last_dirs.{k}", os.path.dirname(res))
+            return res
+
+        def wrap_askopenfilenames(**kwargs):
+            k = _get_key(kwargs)
+            ld = cm.get(f"last_dirs.{k}")
+            if ld and os.path.exists(ld) and 'initialdir' not in kwargs:
+                kwargs['initialdir'] = ld
+            res = orig_askopenfilenames(**kwargs)
+            if not res:
+                res = ()
+            elif isinstance(res, str):
+                # Workaround for Tkinter sometimes returning a raw Tcl list string or single string
+                try:
+                    res = self.root.tk.splitlist(res)
+                except Exception:
+                    res = (res,)
+            
+            if res and isinstance(res, (list, tuple)) and len(res) > 0:
+                cm.set(f"last_dirs.{k}", os.path.dirname(res[0]))
+            return res
+
+        def wrap_askdirectory(**kwargs):
+            k = _get_key(kwargs)
+            ld = cm.get(f"last_dirs.{k}")
+            if ld and os.path.exists(ld) and 'initialdir' not in kwargs:
+                kwargs['initialdir'] = ld
+            res = orig_askdirectory(**kwargs)
+            if res:
+                cm.set(f"last_dirs.{k}", res)
+            return res
+
+        def wrap_asksaveasfilename(**kwargs):
+            k = _get_key(kwargs)
+            ld = cm.get(f"last_dirs.{k}")
+            if ld and os.path.exists(ld) and 'initialdir' not in kwargs:
+                kwargs['initialdir'] = ld
+            res = orig_asksaveasfilename(**kwargs)
+            if res:
+                cm.set(f"last_dirs.{k}", os.path.dirname(res))
+            return res
+
+        fd.askopenfilename = wrap_askopenfilename
+        fd.askopenfilenames = wrap_askopenfilenames
+        fd.askdirectory = wrap_askdirectory
+        fd.asksaveasfilename = wrap_asksaveasfilename
+
+    def create_apollo_tabs(self):
+        """Inicializa e anexa todas as abas importadas do Ecossistema Apollo ao Notebook"""
+        import traceback
+        def add_tab(constructor, text, *args):
+            """Tenta adicionar uma aba — se falhar, imprime o erro e continua."""
+            try:
+                aba = constructor(*args)
+                self.notebook.add(aba, text=text)
+                safe_text = text.encode('ascii', 'ignore').decode('ascii')
+                print(f"[OK] Aba carregada: {safe_text}")
+            except Exception:
+                safe_text = text.encode('ascii', 'ignore').decode('ascii')
+                print(f"[ERRO] Falha ao carregar aba '{safe_text}':")
+                traceback.print_exc()
+
+        add_tab(AbaGeracaoTTS,          "🎤 Gerar Áudio (TTS)",    self.notebook, self.tts_manager, self.config_manager)
+        add_tab(AbaGeracaoVideoNarrador,"🎥 Gerar Vídeo do Narrador", self.notebook, self.config_manager)
+        # Bug 11 Fix: AbaTransition não deve ser adicionada aqui pois já é adicionada na linha 156
+        add_tab(AbaControleVolume,      "🔊 Controle de Volume",    self.notebook)
+        add_tab(AbaFerramentas,         "🛠️ Ferramentas (Apollo)",  self.notebook)
+        add_tab(AbaGeradorLegendas,     "📝 Gerador de Legendas",   self.notebook, self.config_manager)
+        add_tab(AbaPodcast,             "🎙️ Podcast",               self.notebook, self.config_manager)
+        add_tab(AbaAjustadorMidia,      "🎬 Ajustador de Mídia",    self.notebook)
+        add_tab(AbaInferenciaVideo,     "🎙️ Dublagem Externa",      self.notebook, self.config_manager, {})
+        add_tab(AbaConfiguracoes,       "⚙️ Configurações globais", self.notebook, self.config_manager)
+        add_tab(AbaFabricaClipes,       "🎬 Fábrica de Músicas",   self.notebook, self.config_manager)
+        add_tab(AbaBiblioteca,          "📚 Tanque de Combustível", self.notebook, self.config_manager)
+
+
+
+class WorkspaceLauncher:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("🚀 Hub de Produção - Selecione o Canal")
+        self.root.geometry("1000x750")
+        self.root.resizable(False, False)
+        self.root.configure(bg='#1A1A2E')
+        
+        try:
+            icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "apollo_logo_padrao.ico")
+            self.root.iconbitmap(icon_path)
+        except Exception: pass
+        
+        # Estilos globais
+        style = ttk.Style()
+        try: style.theme_use('clam')
+        except: pass
+        style.configure('Launcher.TFrame', background='#1A1A2E')
+        style.configure('LauncherTitle.TLabel', background='#1A1A2E', foreground='#FFD32A', font=('Segoe UI', 16, 'bold'))
+        style.configure('LauncherSub.TLabel', background='#1A1A2E', foreground='#FFFFFF', font=('Segoe UI', 10))
+        
+        if getattr(sys, 'frozen', False):
+            self.base_dir = os.path.dirname(sys.executable)
+        else:
+            self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.workspaces_dir = os.path.join(self.base_dir, "Workspaces")
+        self._ensure_migration()
+        
+        main_frame = ttk.Frame(self.root, style='Launcher.TFrame')
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Cabeçalho com Logo Gigante
+        header = ttk.Frame(main_frame, style='Launcher.TFrame')
+        header.pack(fill=tk.X, pady=(20, 10))
+        
+        try:
+            from PIL import Image, ImageTk
+            logo_path = os.path.join(self.base_dir, "apollo_logo_padrao.png")
+            if os.path.exists(logo_path):
+                img = Image.open(logo_path).convert("RGBA").resize((250, 250), Image.Resampling.LANCZOS)
+                self.hub_logo = ImageTk.PhotoImage(img)
+                tk.Label(header, image=self.hub_logo, bg='#1A1A2E').pack()
+        except: pass
+        
+        ttk.Label(header, text="🌈 Módulo Central do Apollo", style='LauncherTitle.TLabel').pack(pady=(10, 0))
+        ttk.Label(header, text="Selecione a logomarca do canal para carregar a configuração isolada.", style='LauncherSub.TLabel').pack(pady=(5,0))
+        
+        # Área dividida: Grade à Esquerda e Analytics à Direita
+        split_frame = tk.Frame(main_frame, bg='#1A1A2E')
+        split_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 20))
+        
+        # Lado Esquerdo (Grade)
+        canvas_frame = tk.Frame(split_frame, bg='#1A1A2E')
+        canvas_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
+        
+        btn_frame = ttk.Frame(canvas_frame, style='Launcher.TFrame')
+        btn_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        ttk.Button(btn_frame, text="🔄 Atualizar Lista", command=self.atualizar_lista).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="➕ Criar Novo Canal", command=self.abrir_criador_canal).pack(side=tk.RIGHT, padx=5)
+        
+        self.canvas = tk.Canvas(canvas_frame, bg='#16213E', highlightthickness=0)
+        self.scrollbar = ttk.Scrollbar(canvas_frame, orient="vertical", command=self.canvas.yview)
+        
+        self.grid_frame = tk.Frame(self.canvas, bg='#16213E')
+        self.grid_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        
+        self.canvas_window = self.canvas.create_window((0, 0), window=self.grid_frame, anchor="n")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind('<Configure>', self._on_canvas_resize)
+        
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        def _on_mousewheel(event):
+            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        self.root.bind_all("<MouseWheel>", _on_mousewheel)
+        
+        # Lado Direito (Dashboard / Analytics)
+        self.analytics_frame = tk.Frame(split_frame, bg='#0F172A', width=250)
+        self.analytics_frame.pack(side=tk.RIGHT, fill=tk.Y)
+        self.analytics_frame.pack_propagate(False)
+        
+        tk.Label(self.analytics_frame, text="📊 Produtividade", font=("Segoe UI", 12, "bold"), bg='#0F172A', fg='#FFD32A').pack(pady=(20, 10))
+        
+        self.lbl_total_canais = tk.Label(self.analytics_frame, text="Canais: 0", font=("Segoe UI", 10), bg='#0F172A', fg='white')
+        self.lbl_total_canais.pack(pady=5)
+        
+        self.lbl_total_midias = tk.Label(self.analytics_frame, text="Arquivos Gerados: 0", font=("Segoe UI", 10), bg='#0F172A', fg='white')
+        self.lbl_total_midias.pack(pady=5)
+        
+        tk.Label(self.analytics_frame, text="\nDica: Clique com o\nbotão direito em um\ncanal para Cloná-lo.", font=("Segoe UI", 9, "italic"), bg='#0F172A', fg='#A0AEC0').pack(pady=20)
+        
+        self._photo_cache = []
+        self.atualizar_lista()
+
+    def _on_canvas_resize(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig(self.canvas_window, width=canvas_width)
+
+    def _ensure_migration(self):
+        if not os.path.exists(self.workspaces_dir):
+            os.makedirs(self.workspaces_dir)
+            default_ws = os.path.join(self.workspaces_dir, "Tutorial das Coisas")
+            os.makedirs(default_ws)
+            
+            old_config = os.path.join(self.base_dir, "config.json")
+            if os.path.exists(old_config):
+                import shutil
+                try: shutil.move(old_config, os.path.join(default_ws, "config.json"))
+                except: pass
+
+    def atualizar_lista(self):
+        for widget in self.grid_frame.winfo_children():
+            widget.destroy()
+        self._photo_cache.clear()
+        
+        if not os.path.exists(self.workspaces_dir):
+            return
+            
+        pastas = [d for d in os.listdir(self.workspaces_dir) if os.path.isdir(os.path.join(self.workspaces_dir, d))]
+        pastas = sorted(pastas)
+        
+        colunas = 3
+        from PIL import Image, ImageTk
+        import json
+        import shutil
+        
+        default_logo_path = os.path.join(self.base_dir, "apollo_logo_padrao.png")
+        
+        total_midias = 0
+        
+        for idx, nome in enumerate(pastas):
+            row = idx // colunas
+            col = idx % colunas
+            
+            ws_path = os.path.join(self.workspaces_dir, nome)
+            cfg_path = os.path.join(ws_path, "config.json")
+            
+            # Contabilizar mídias
+            out_path = os.path.join(ws_path, "outputs")
+            if os.path.exists(out_path):
+                for r, d, f in os.walk(out_path):
+                    for file in f:
+                        if file.endswith((".mp3", ".wav", ".mp4", ".mkv", ".srt")):
+                            total_midias += 1
+            
+            img_path = default_logo_path
+            if os.path.exists(cfg_path):
+                try:
+                    with open(cfg_path, 'r', encoding='utf-8') as f:
+                        cfg = json.load(f)
+                    ws_logo = cfg.get("app_logo_path")
+                    if ws_logo and os.path.exists(ws_logo):
+                        img_path = ws_logo
+                except: pass
+                
+            try:
+                if os.path.exists(img_path):
+                    im = Image.open(img_path).convert("RGBA").resize((180, 180), Image.Resampling.LANCZOS)
+                    photo = ImageTk.PhotoImage(im)
+                else:
+                    photo = tk.PhotoImage(width=180, height=180)
+            except:
+                photo = tk.PhotoImage(width=180, height=180)
+                
+            self._photo_cache.append(photo)
+            
+            # Sub-frame centralizado
+            item_frame = tk.Frame(self.grid_frame, bg='#16213E')
+            self.grid_frame.grid_columnconfigure(col, weight=1)
+            item_frame.grid(row=row, column=col, padx=30, pady=20)
+            
+            btn = tk.Button(item_frame, image=photo, bg='#1A1A2E', activebackground='#1E90FF', bd=0, cursor="hand2",
+                            command=lambda n=nome: self.iniciar_workspace(n))
+            
+            # Context menu para o botão direito
+            menu = tk.Menu(self.root, tearoff=0, bg='#16213E', fg='#FFFFFF')
+            menu.add_command(label="🔄 Clonar Canal", command=lambda n=nome: self.clonar_canal(n))
+            menu.add_command(label="🎨 Editar Identidade", command=lambda n=nome: self.editar_identidade(n))
+            
+            def show_menu(e, m=menu):
+                m.tk_popup(e.x_root, e.y_root)
+                
+            btn.bind("<Button-3>", show_menu)
+            btn.pack()
+            
+            tk.Label(item_frame, text=nome, font=("Segoe UI", 11, "bold"), bg='#16213E', fg='#FFFFFF').pack(pady=(8,0))
+            
+        # Update Analytics
+        self.lbl_total_canais.config(text=f"Canais Ativos: {len(pastas)}")
+        self.lbl_total_midias.config(text=f"Mídias Geradas: {total_midias}")
+
+    def clonar_canal(self, nome_origem):
+        import tkinter.simpledialog as sd
+        import shutil
+        novo_nome = sd.askstring("Clonar Workspace", f"Clonando '{nome_origem}'.\nDigite o nome do novo Canal:")
+        if novo_nome:
+            novo_nome = "".join(c for c in novo_nome if c.isalnum() or c in " _-").strip()
+            if novo_nome:
+                origem_path = os.path.join(self.workspaces_dir, nome_origem)
+                destino_path = os.path.join(self.workspaces_dir, novo_nome)
+                
+                if os.path.exists(destino_path):
+                    messagebox.showerror("Erro", "Já existe um canal com esse nome.")
+                    return
+                
+                try:
+                    # Copia toda a estrutura do workspace ignorando a pasta outputs pesada
+                    shutil.copytree(origem_path, destino_path, ignore=shutil.ignore_patterns("outputs"))
+                    
+                    from database_manager import db
+                    db.registrar_canal(novo_nome, os.path.join(destino_path, "config.json"))
+                    
+                    self.atualizar_lista()
+                    messagebox.showinfo("Sucesso", f"Canal '{nome_origem}' clonado perfeitamente para '{novo_nome}'!")
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Falha ao clonar: {e}")
+
+    def editar_identidade(self, nome_canal):
+        top = tk.Toplevel(self.root)
+        top.title(f"Editar Identidade - {nome_canal}")
+        top.geometry("600x500")
+        top.configure(bg='#1A1A2E')
+        top.grab_set()
+        
+        style = ttk.Style()
+        style.configure('Dark.TLabel', background='#1A1A2E', foreground='white')
+        
+        ttk.Label(top, text=f"🎨 Identidade Visual: {nome_canal}", font=("Segoe UI", 14, "bold"), background='#1A1A2E', foreground='#FFD32A').pack(pady=15)
+        
+        cfg_path = os.path.join(self.workspaces_dir, nome_canal, "config.json")
+        cfg = {}
+        if os.path.exists(cfg_path):
+            import json
+            try:
+                with open(cfg_path, 'r', encoding='utf-8') as f:
+                    cfg = json.load(f)
+            except: pass
+            
+        # Logomarca
+        frame_logo = ttk.LabelFrame(top, text="Logomarca (.png)", style='Dark.TLabelframe')
+        frame_logo.pack(fill=tk.X, padx=20, pady=5)
+        var_logo = tk.StringVar(value=cfg.get("app_logo_path", ""))
+        
+        def _procurar_logo():
+            from tkinter import filedialog
+            p = filedialog.askopenfilename(filetypes=[("Imagens PNG", "*.png")])
+            if p: var_logo.set(p)
+            
+        ttk.Entry(frame_logo, textvariable=var_logo, width=50).pack(side=tk.LEFT, padx=(10, 5), pady=10)
+        ttk.Button(frame_logo, text="Procurar Imagem", command=_procurar_logo).pack(side=tk.LEFT, pady=10)
+        
+        # Cores (Background, Foreground, Accent)
+        frame_cores = ttk.LabelFrame(top, text="Paleta de Cores Avançada", style='Dark.TLabelframe')
+        frame_cores.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        
+        tc = cfg.get("theme_colors", {})
+        
+        ttk.Label(frame_cores, text="Cor do Cabeçalho (Hex):", style='Dark.TLabel').grid(row=0, column=0, padx=10, pady=5, sticky='w')
+        var_hbg = tk.StringVar(value=tc.get("header_bg", tc.get("bg", "#1A1A2E")))
+        ttk.Entry(frame_cores, textvariable=var_hbg, width=15).grid(row=0, column=1, padx=10, pady=5)
+        
+        ttk.Label(frame_cores, text="Cor Letras Cabeçalho (Hex):", style='Dark.TLabel').grid(row=1, column=0, padx=10, pady=5, sticky='w')
+        var_hfg = tk.StringVar(value=tc.get("header_fg", tc.get("fg", "#FFD32A")))
+        ttk.Entry(frame_cores, textvariable=var_hfg, width=15).grid(row=1, column=1, padx=10, pady=5)
+        
+        ttk.Label(frame_cores, text="Cor do Fundo App (Hex):", style='Dark.TLabel').grid(row=2, column=0, padx=10, pady=5, sticky='w')
+        var_abg = tk.StringVar(value=tc.get("app_bg", tc.get("bg", "#16213E")))
+        ttk.Entry(frame_cores, textvariable=var_abg, width=15).grid(row=2, column=1, padx=10, pady=5)
+        
+        ttk.Label(frame_cores, text="Cor Letras App (Hex):", style='Dark.TLabel').grid(row=3, column=0, padx=10, pady=5, sticky='w')
+        var_afg = tk.StringVar(value=tc.get("app_fg", tc.get("fg", "#F0F0F0")))
+        ttk.Entry(frame_cores, textvariable=var_afg, width=15).grid(row=3, column=1, padx=10, pady=5)
+        
+        ttk.Label(frame_cores, text="Cor de Destaque/Botões (Hex):", style='Dark.TLabel').grid(row=4, column=0, padx=10, pady=5, sticky='w')
+        var_accent = tk.StringVar(value=tc.get("accent", "#9B59B6"))
+        ttk.Entry(frame_cores, textvariable=var_accent, width=15).grid(row=4, column=1, padx=10, pady=5)
+        
+        def _salvar_identidade():
+            cfg["app_logo_path"] = var_logo.get().strip()
+            cfg["theme_colors"] = {
+                "header_bg": var_hbg.get().strip(),
+                "header_fg": var_hfg.get().strip(),
+                "app_bg": var_abg.get().strip(),
+                "app_fg": var_afg.get().strip(),
+                "accent": var_accent.get().strip()
+            }
+            with open(cfg_path, 'w', encoding='utf-8') as f:
+                json.dump(cfg, f, indent=4)
+            self.atualizar_lista()
+            top.destroy()
+            messagebox.showinfo("Sucesso", "Identidade visual atualizada com sucesso!\nAbrindo o canal para ver as alterações...")
+            
+        ttk.Button(top, text="✔ Salvar Identidade", command=_salvar_identidade).pack(pady=20)
+
+    def abrir_criador_canal(self):
+        top = tk.Toplevel(self.root)
+        top.title("Novo Canal (Workspace)")
+        top.geometry("650x550")
+        top.configure(bg='#1A1A2E')
+        top.grab_set()
+        
+        style = ttk.Style()
+        style.configure('Dark.TLabel', background='#1A1A2E', foreground='white')
+        style.configure('Dark.TLabelframe', background='#1A1A2E', foreground='white')
+        style.configure('Dark.TLabelframe.Label', background='#1A1A2E', foreground='white', font=('Segoe UI', 9, 'bold'))
+        
+        ttk.Label(top, text="🚀 Criar Novo Canal Apollo", font=("Segoe UI", 14, "bold"), background='#1A1A2E', foreground='#FFD32A').pack(pady=15)
+        
+        frame_nome = ttk.Frame(top, style='Launcher.TFrame')
+        frame_nome.pack(fill=tk.X, padx=20, pady=5)
+        ttk.Label(frame_nome, text="Nome do Canal:", style='Dark.TLabel').pack(anchor='w')
+        var_nome = tk.StringVar()
+        
+        # Frame sub-interno para alinhar entry e botão
+        sub_nome = ttk.Frame(frame_nome, style='Launcher.TFrame')
+        sub_nome.pack(fill=tk.X, pady=5)
+        
+        ttk.Entry(sub_nome, textvariable=var_nome, width=50).pack(side=tk.LEFT, padx=(0, 5))
+        
+        def _sugerir_nome():
+            import random
+            prefixos = ["Mentes", "Código", "Frequência", "Descarga", "Oceano", "Universo", "Mestre", "Lendas", "Projeto", "Sombra"]
+            sufixos = ["de Ouro", "Sombrio(a)", "Tech", "Viral", "Alfa", "Infinito", "do Asfalto", "Zero", "Pro", "X"]
+            nome_sorteado = f"{random.choice(prefixos)} {random.choice(sufixos)}"
+            var_nome.set(nome_sorteado)
+            
+        ttk.Button(sub_nome, text="🎲 Sugerir Nome", command=_sugerir_nome, width=15).pack(side=tk.LEFT)
+        
+        frame_cores = ttk.LabelFrame(top, text="Paleta Rápida", style='Dark.TLabelframe')
+        frame_cores.pack(fill=tk.X, padx=20, pady=10)
+        
+        temas = {
+            "Apollo Padrão (Roxo/Dourado)": {"header_bg": "#1A1A2E", "header_fg": "#FFD32A", "app_bg": "#1A1A2E", "app_fg": "#F0F0F0", "accent": "#9B59B6"},
+            "Oceano Profundo (Azul)": {"header_bg": "#0B1D3A", "header_fg": "#00B4D8", "app_bg": "#0A1128", "app_fg": "#E0E0E0", "accent": "#03045E"},
+            "Cyberpunk (Preto/Neon)": {"header_bg": "#0D0D0D", "header_fg": "#39FF14", "app_bg": "#111111", "app_fg": "#FFFFFF", "accent": "#FF00FF"},
+            "Dark Trap (Preto/Vermelho)": {"header_bg": "#121212", "header_fg": "#FF4757", "app_bg": "#1A1A1A", "app_fg": "#E0E0E0", "accent": "#FF0000"},
+            "Clean (Branco/Preto)": {"header_bg": "#FFFFFF", "header_fg": "#000000", "app_bg": "#F5F5F5", "app_fg": "#333333", "accent": "#555555"}
+        }
+        
+        var_tema = tk.StringVar(value="Apollo Padrão (Roxo/Dourado)")
+        ttk.Combobox(frame_cores, textvariable=var_tema, values=list(temas.keys()), state="readonly", width=50).pack(pady=10, padx=10, anchor='w')
+        
+        frame_logo = ttk.LabelFrame(top, text="Logomarca (.png)", style='Dark.TLabelframe')
+        frame_logo.pack(fill=tk.X, padx=20, pady=5)
+        var_logo = tk.StringVar()
+        
+        def _procurar_logo():
+            from tkinter import filedialog
+            p = filedialog.askopenfilename(filetypes=[("Imagens PNG", "*.png")])
+            if p: var_logo.set(p)
+            
+        ttk.Entry(frame_logo, textvariable=var_logo, width=60).pack(side=tk.LEFT, padx=(10, 5), pady=10)
+        ttk.Button(frame_logo, text="Procurar Imagem", command=_procurar_logo).pack(side=tk.LEFT, pady=10)
+        
+        def _salvar():
+            nome = var_nome.get().strip()
+            if not nome:
+                messagebox.showerror("Erro", "Nome inválido!")
+                return
+            nome_dir = "".join(c for c in nome if c.isalnum() or c in " _-").strip()
+            caminho = os.path.join(self.workspaces_dir, nome_dir)
+            
+            if os.path.exists(caminho):
+                messagebox.showerror("Erro", "Canal já existe!")
+                return
+                
+            os.makedirs(caminho)
+            
+            import json
+            cfg = {}
+            if var_logo.get().strip():
+                cfg["app_logo_path"] = var_logo.get().strip()
+            
+            t = var_tema.get()
+            if t in temas:
+                cfg["theme_colors"] = temas[t]
+                
+            with open(os.path.join(caminho, "config.json"), 'w', encoding='utf-8') as f:
+                json.dump(cfg, f, indent=4)
+                
+            from database_manager import db
+            db.registrar_canal(nome_dir, os.path.join(caminho, "config.json"))
+                
+            self.atualizar_lista()
+            top.destroy()
+            messagebox.showinfo("Sucesso", f"Canal '{nome}' criado!\nVocê pode configurar ainda mais os ícones e cores pela aba 'Identidade' dentro dele.")
+            
+        ttk.Button(top, text="✔ Criar Canal", command=_salvar).pack(pady=20)
+
+    def iniciar_workspace(self, nome):
+        import subprocess
+        try:
+            cmd = [sys.executable, "apollo_studio.py", "--workspace", nome]
+            subprocess.Popen(cmd, cwd=self.base_dir)
+        except Exception as e:
+            messagebox.showerror("Erro", f"Falha ao iniciar {nome}:\n{e}")
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--workspace', type=str, default="")
+    args, unknown = parser.parse_known_args()
+    
+    root = tk.Tk()
+    if args.workspace:
+        if getattr(sys, 'frozen', False):
+            base_dir = os.path.dirname(sys.executable)
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+        ws_path = os.path.join(base_dir, "Workspaces", args.workspace)
+        app = ApolloStudio(root, workspace_name=args.workspace, workspace_path=ws_path)
+    else:
+        launcher = WorkspaceLauncher(root)
+    root.mainloop()

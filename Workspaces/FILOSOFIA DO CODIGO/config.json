@@ -1,0 +1,29 @@
+{
+  "vps_config": {
+    "moss_tts": {
+      "url": "http://localhost:8000",
+      "token": ""
+    },
+    "applio_rvc": {
+      "url": "http://localhost:8001",
+      "token": ""
+    }
+  },
+  "api_config": {
+    "chatgpt": {
+      "api_keys": []
+    },
+    "openrouter": {
+      "api_keys": []
+    },
+    "grok": {
+      "api_keys": []
+    }
+  },
+  "music_factory": {
+    "channel_context": "Este é um canal de instrumentais e beats. As músicas não possuem vocais. O objetivo é vender o beat na BeatStars.",
+    "metadata_example": "Title: [Original Name] | Type Beat\\nDescription: Buy this beat on BeatStars! Link: https://beatstars.com/meucanal\\nTags: type beat, instrumental"
+  },
+  "shortcuts": {},
+  "perfis_diretor": {}
+}

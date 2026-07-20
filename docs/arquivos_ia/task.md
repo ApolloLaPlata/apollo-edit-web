@@ -1,0 +1,4 @@
+- [x] Add `margin_multiplier` to `models_pricing` schema in `user_database.py`
+- [x] Update `servidor_web.py` to calculate Gas using `margin_multiplier` and serve ads
+- [x] Create `marketing_agent.py` (updated `market_analyst_agent.py`) to adjust margins and generate dynamic CSS ad campaigns
+- [x] Update `noticias_scripts.html` frontend to display active ad banners

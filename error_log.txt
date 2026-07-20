@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<string>", line 13, in <module>
+  File "E:\MEUS PROGRAMAS\APOLLO_STUDIO\apollo_studio.py", line 566, in __init__
+    self.aba_mapeador = AbaMapeadorAutomatico(self.main_view, self.config_manager)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MEUS PROGRAMAS\APOLLO_STUDIO\aba_mapeador_automatico.py", line 291, in __init__
+    ttk.Spinbox(f_mus, from_=-60, to=10, texttextvariable=self.vol_musica, width=4).pack(side='left')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\tkinter\ttk.py", line 1142, in __init__
+    Entry.__init__(self, master, "ttk::spinbox", **kw)
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\tkinter\ttk.py", line 639, in __init__
+    Widget.__init__(self, master, widget or "ttk::entry", kw)
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\tkinter\ttk.py", line 527, in __init__
+    tkinter.Widget.__init__(self, master, widgetname, kw=kw)
+  File "C:\Users\v5est\AppData\Local\Programs\Python\Python311\Lib\tkinter\__init__.py", line 2628, in __init__
+    self.tk.call(
+_tkinter.TclError: unknown option "-texttexttextvariable"

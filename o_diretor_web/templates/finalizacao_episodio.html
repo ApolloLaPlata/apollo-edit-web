@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding-bottom: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+    <h2 style="color: var(--accent);">🎬 Finalização do Episódio</h2>
+    <p style="color: #888; font-size: 13px; margin-top: 5px;">Monte seu episódio final juntando todos os blocos</p>
+</div>
+
+<div style="display: flex; gap: 20px;">
+
+    <!-- LEFT: Lista de Blocos -->
+    <div class="group-box" style="flex: 2; display: flex; flex-direction: column;">
+        <div class="group-title">📋 Blocos do Episódio</div>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+            <button class="btn primary" onclick="addBloco()">➕ Adicionar Bloco</button>
+            <button class="btn" onclick="removeBloco()" style="background:#5a1a1a; border-color:#c0392b;">➖ Remover Bloco</button>
+            <button class="btn outline" onclick="moveUp()">⬆️ Mover Cima</button>
+            <button class="btn outline" onclick="moveDown()">⬇️ Mover Baixo</button>
+        </div>
+        
+        <div id="blocos-list" style="flex: 1; overflow-y: auto; background: #111; border: 1px solid #333; border-radius: 5px; padding: 10px; min-height: 400px;">
+            <div class="empty-state" style="color: #555; text-align: center; margin-top: 80px;">
+                <div style="font-size: 32px; margin-bottom: 10px;">📋</div>
+                Nenhum bloco adicionado.<br>
+                Clique em "Adicionar Bloco" para começar.
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Configurações Adicionais -->
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+        
+        <div class="group-box">
+            <div class="group-title">🎵 Música de Fundo do Episódio</div>
+            <p style="color: #888; font-size: 11px; margin-bottom: 10px;">Música que toca durante todo o episódio</p>
+            
+            <div id="musica-label" style="color: #666; font-size: 12px; margin-bottom: 8px;">Nenhuma música selecionada</div>
+            <button class="btn outline" onclick="browseFile('musica_path', 'audio')" style="margin-bottom: 10px;">Escolher Música...</button>
+            <input type="text" id="musica_path" readonly style="display: none;">
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                <label style="font-size: 12px; white-space: nowrap;">🔊 Volume:</label>
+                <input type="range" min="0" max="100" value="50" style="flex: 1;" oninput="document.getElementById('musica_vol_lbl').textContent = this.value + '%'">
+                <span id="musica_vol_lbl" style="font-size: 12px; width: 35px;">50%</span>
+            </div>
+        </div>
+
+        <div class="group-box">
+            <div class="group-title">🖼️ Capa / Thumbnail (1 frame)</div>
+            <div id="capa-label" style="color: #666; font-size: 12px; margin-bottom: 8px;">Nenhuma capa selecionada</div>
+            <button class="btn outline" onclick="browseFile('capa_path', 'image')" style="margin-bottom: 10px;">Escolher Capa...</button>
+            <input type="text" id="capa_path" readonly style="display: none;">
+            <p style="color: #555; font-size: 11px;">ℹ️ A capa será adicionada como 1 frame (thumbnail)</p>
+        </div>
+
+        <div class="group-box">
+            <div class="group-title">🎬 Efeitos de Transição entre Blocos</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label><input type="radio" name="trans_bloco" value="nenhuma" checked> Nenhuma transição</label>
+                <label><input type="radio" name="trans_bloco" value="fade"> Fade to Black</label>
+                <label><input type="radio" name="trans_bloco" value="crossfade"> Crossfade</label>
+            </div>
+        </div>
+
+        <div class="group-box">
+            <div class="group-title">📐 Formato de Saída</div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <label><input type="radio" name="fin_formato" value="vertical"> 📱 Vertical (9:16)</label>
+                <label><input type="radio" name="fin_formato" value="horizontal" checked> 🖥️ Horizontal (16:9)</label>
+                <label><input type="radio" name="fin_formato" value="ambos"> Ambos</label>
+            </div>
+        </div>
+
+        <button class="btn primary pulse-animation" style="padding: 15px; font-size: 18px; text-align: center; margin-top: 10px;">
+            🎬 FINALIZAR EPISÓDIO
+        </button>
+    </div>
+</div>
+
+<script>
+    let blocos = [];
+    let selectedIndex = -1;
+
+    async function addBloco() {
+        try {
+            const response = await fetch('/api/browse_file?type=video');
+            const data = await response.json();
+            if (data.path) {
+                blocos.push(data.path);
+                renderBlocos();
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    function removeBloco() {
+        if (selectedIndex >= 0 && selectedIndex < blocos.length) {
+            blocos.splice(selectedIndex, 1);
+            selectedIndex = Math.min(selectedIndex, blocos.length - 1);
+            renderBlocos();
+        }
+    }
+
+    function moveUp() {
+        if (selectedIndex > 0) {
+            [blocos[selectedIndex], blocos[selectedIndex-1]] = [blocos[selectedIndex-1], blocos[selectedIndex]];
+            selectedIndex--;
+            renderBlocos();
+        }
+    }
+
+    function moveDown() {
+        if (selectedIndex >= 0 && selectedIndex < blocos.length - 1) {
+            [blocos[selectedIndex], blocos[selectedIndex+1]] = [blocos[selectedIndex+1], blocos[selectedIndex]];
+            selectedIndex++;
+            renderBlocos();
+        }
+    }
+
+    function renderBlocos() {
+        const list = document.getElementById('blocos-list');
+        if (!blocos.length) {
+            list.innerHTML = '<div class="empty-state" style="color:#555;text-align:center;margin-top:80px;"><div style="font-size:32px;margin-bottom:10px;">📋</div>Nenhum bloco adicionado.</div>';
+            return;
+        }
+        list.innerHTML = blocos.map((p, i) => `
+            <div onclick="selectBloco(${i})" style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid ${i===selectedIndex?'#0af':'#333'};border-radius:4px;margin-bottom:6px;background:${i===selectedIndex?'#0a1a2a':'#1a1a1a'};cursor:pointer;">
+                <span style="color:#0af;font-size:20px;min-width:30px;text-align:center;">${i+1}</span>
+                <span style="color:#0af;font-size:18px;">🎬</span>
+                <span style="flex:1;font-size:12px;word-break:break-all;">${p.split('\\').pop()}</span>
+            </div>
+        `).join('');
+    }
+
+    function selectBloco(i) {
+        selectedIndex = i;
+        renderBlocos();
+    }
+
+    async function browseFile(inputId, fileType) {
+        try {
+            const response = await fetch(`/api/browse_file?type=${fileType}`);
+            const data = await response.json();
+            if (data.path) {
+                document.getElementById(inputId).value = data.path;
+                const label = document.getElementById(inputId.replace('_path','-label'));
+                if (label) label.textContent = data.path.split('\\').pop();
+                label.style.color = '#0af';
+            }
+        } catch(e) { console.error(e); }
+    }
+</script>
+{% endblock %}

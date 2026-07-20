@@ -1,0 +1,9 @@
+{
+    "agent_id": "Cerbero",
+    "status": "idle",
+    "last_action": null,
+    "alerts": [],
+    "data": {
+        "blocked_ips": []
+    }
+}

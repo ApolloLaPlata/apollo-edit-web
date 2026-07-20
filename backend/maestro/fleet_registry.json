@@ -1,0 +1,45 @@
+{
+  "accounts": [
+    {
+      "account_id": "conta_1",
+      "user_name": "Conta Principal Apollo",
+      "lightning_user_id": "b7484a4b-12ec-4ed6-829b-bf53eabea8d5",
+      "lightning_api_key": "16338b74-3f36-4c89-84db-a8e00b099058",
+      "ssh_private_key_path": "~/.ssh/id_rsa", 
+      "studios": [
+        {
+          "studio_name": "zygomorphic-green-9lz",
+          "tier": "cpu_free",
+          "status": "free",
+          "ssh_host": "s_01ktknr1yes0p125rmtn83519n@ssh.lightning.ai"
+        }
+      ]
+    },
+    {
+      "account_id": "conta_2",
+      "user_name": "Conta 2 (Histórias de 7 Dias)",
+      "lightning_user_id": "1b69eea9-4475-4558-b8ff-191692f0d7a3",
+      "lightning_api_key": "a26bf6c5-7c2d-4889-8645-5917a33c6ddc",
+      "ssh_private_key_path": "~/.ssh/id_rsa", 
+      "studios": [
+        {
+          "studio_name": "NOME_DO_SEU_STUDIO_DE_VIDEO_AQUI",
+          "tier": "gpu_medium",
+          "status": "free",
+          "ssh_host": "COLE_O_SSH_DA_MAQUINA_AQUI@ssh.lightning.ai"
+        },
+        {
+          "studio_name": "NOME_DO_SEU_STUDIO_DE_AUDIO_AQUI",
+          "tier": "cpu_free",
+          "status": "free",
+          "ssh_host": "COLE_O_SSH_DA_MAQUINA_AQUI@ssh.lightning.ai"
+        }
+      ]
+    }
+  ],
+  "tier_mapping": {
+    "cpu_free": ["zygomorphic-green-9lz"],
+    "gpu_medium": ["placeholder-gpu-medium-1"],
+    "gpu_high": ["placeholder-gpu-high-1"]
+  }
+}

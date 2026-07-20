@@ -1,0 +1,15 @@
+============================================================
+  TESTE: PuLID 3 Faces - Consistência Máxima
+============================================================
+
+[1] Carregando workflow PuLID 3 faces...
+[2] Carregando imagens de referência...
+  [OK] Jinx:       84 KB
+  [OK] Elon:       1440 KB
+  [OK] Crying Man: 2141 KB
+[3] Injetando referências e prompt no workflow...
+
+[4] Enviando para Modal PuLID engine diretamente via Modal...
+
+  [ERROR] Falhou:
+{'status': 'error', 'message': 'Erro ComfyUI (HTTP 400): {"error": {"type": "prompt_outputs_failed_validation", "message": "Prompt outputs failed validation", "details": "", "extra_info": {}}, "node_errors": {"1008": {"errors": [{"type": "exception_during_inner_validation", "message": "Exception when validating inner node", "details": "\'1005\'", "extra_info": {"input_name": "clip_vision_output", "input_config": ["CLIP_VISION_OUTPUT", {}], "exception_message": "\'1005\'", "exception_type": "KeyError", "traceback": ["  File \\"/comfyui/execution.py\\", line 948, in validate_inputs\\n    r = await validate_inputs(prompt_id, prompt, o_id, validated, visiting)\\n", "  File \\"/comfyui/execution.py\\", line 926, in validate_inputs\\n    o_class_type = prompt[o_id][\'class_type\']\\n"], "linked_node": ["1008", 0]}}], "dependent_outputs": ["9"], "class_type": "CLIPVisionEncode"}, "APOLLO_MASK_LOAD_3": {"errors": [{"type": "custom_validation_failed", "message": "Custom validation failed for node", "details": "image - Invalid image file: apollo_mask_3_2.png", "extra_info": {"input_name": "image"}}], "dependent_outputs": ["9"], "class_type": "LoadImage"}, "APOLLO_MASK_LOAD_2": {"errors": [{"type": "custom_validation_failed", "message": "Custom validation failed for node", "details": "image - Invalid image file: apollo_mask_3_1.png", "extra_info": {"input_name": "image"}}], "dependent_outputs": ["9"], "class_type": "LoadImage"}, "APOLLO_MASK_LOAD_1": {"errors": [{"type": "custom_validation_failed", "message": "Custom validation failed for node", "details": "image - Invalid image file: apollo_mask_3_0.png", "extra_info": {"input_name": "image"}}], "dependent_outputs": ["9"], "class_type": "LoadImage"}}}'}

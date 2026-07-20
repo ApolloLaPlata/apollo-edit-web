@@ -1,0 +1,9 @@
+{
+    "agent_id": "Watchdog",
+    "status": "idle",
+    "last_action": null,
+    "alerts": [],
+    "data": {
+        "lightning_accounts": {}
+    }
+}
