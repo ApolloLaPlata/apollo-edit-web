@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo - Video Editor (FreeCut)</title>
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --panel-bg: rgba(20, 24, 39, 0.7);
+            --brand-accent: #ec4899;
+            --brand-accent-hover: #db2777;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(236, 72, 153, 0.3);
+        }
+        body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: radial-gradient(circle at 50% 0%, #4c1d95 0%, var(--bg-dark) 50%); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; color: var(--text-main); }
+        .apollo-header { height: 60px; background: rgba(15, 17, 26, 0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid var(--border-color); }
+        .apollo-title { color: #fff; font-weight: 800; margin: 0; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        
+        .main-container {
+            display: flex; flex: 1; padding: 40px; justify-content: center; align-items: center;
+        }
+
+        .launch-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 50px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .launch-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .launch-btn {
+            background: linear-gradient(135deg, var(--brand-accent), #9333ea);
+            color: #fff; border: none; padding: 20px 40px; border-radius: 8px; cursor: pointer;
+            font-weight: 800; font-size: 18px; width: 100%; transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 30px;
+            display: inline-flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .launch-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); }
+
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+        <!-- Supabase SDK e Autenticao -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+
+    <header class="apollo-header">
+        <h3 class="apollo-title">🎬 APOLLO VIDEO STUDIO (FREECUT)</h3>
+        <div>
+            <a href="hub.html" style="color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600;">Voltar ao Hub</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="launch-panel">
+            <div class="launch-icon">🎬</div>
+            <h2 style="margin-top: 0; margin-bottom: 15px; font-size: 28px; font-weight: 800;">FreeCut Video Engine</h2>
+            <p style="color: var(--text-muted); font-size: 16px; line-height: 1.6; margin-bottom: 10px;">
+                Este editor de vídeo profissional (Open Source) exige alto processamento e renderização WebGL direta na GPU.
+            </p>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+                Para que ele funcione com poder total e consiga exportar seus vídeos sem engasgos, ele rodará em uma <strong>Aba Dedicada</strong> otimizada.
+            </p>
+
+            <button class="launch-btn" onclick="window.location.href='engines/freecut/dist/index.html'">
+                🚀 INICIAR EDITOR DE VÍDEO AGORA
+            </button>
+        </div>
+    </div>
+
+    <!-- Bruxelinha AI Assistant -->
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="global_style.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Edit — Gerar Áudio (TTS)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            /* background removed for 3d */
+            color: #F0F0F0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .left-panel {
+            flex: 0 0 350px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #9B59B6;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        select, input[type="text"], textarea {
+            width: 100%;
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        textarea {
+            font-family: "Consolas", monospace;
+            resize: vertical;
+        }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        .radio-group label {
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"] {
+            flex: 1;
+        }
+        .slider-val {
+            min-width: 30px;
+            text-align: right;
+            font-weight: bold;
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            background: #444;
+            color: white;
+        }
+        button:hover { opacity: 0.8; }
+        .btn-gerar { background: #9B59B6; }
+        .btn-testar { background: #008CBA; }
+        .btn-google { background: #4CAF50; }
+        .btn-limpar { background: #f44336; }
+        
+        .status-bar {
+            margin-top: auto;
+            padding: 10px;
+            border-radius: 4px;
+            background: #1e1e1e;
+            font-weight: bold;
+            text-align: center;
+        }
+        .status-success { color: #4CAF50; }
+        .status-error { color: #f44336; }
+        .status-loading { color: #FFD32A; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e1e1e;
+            padding: 15px 30px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header a {
+            color: #9B59B6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+        }
+    </style>
+<script src="laplata_db.js"></script>
+<script src="laplata_settings.js"></script>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+
+    <header style="padding: 10px 30px; margin-bottom: 20px;">
+        <!-- Logo e Créditos -->
+        <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;">
+                <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+            </a>
+            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="tts.title_badge">Estúdio TTS</span>
+            <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+                <span class="gas-icon"></span>
+                <strong id="user-credits" data-i18n="common.loading">Carregando...</strong>&nbsp;<span data-i18n="common.gasoline">Gasolina</span>
+            </div>
+        </div>
+
+        <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+            <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usuário Pro</span>
+            </div>
+            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+        </div>
+</header>
+
+    <div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+        <span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+    </div>
+
+
+    <div class="main-container">
+
+        <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
+            <!-- Decorativo fundo -->
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">🏎️</div>
+            
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">🗣️</div>
+            <div style="z-index: 2;">
+                <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
+                    MOTOR VOZ IA
+                </h3>
+                <p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
+                    Geração de voz neural de alta qualidade.
+                </p>
+            </div>
+        </div>
+
+        
+        <!-- PAINEL ESQUERDO: CONFIGURAÇÕES -->
+        <div class="left-panel">
+            <div class="form-group">
+                <label>👤 Personagem:</label>
+                <select id="personagem" onchange="atualizarPersonagem()"></select>
+            </div>
+
+            <div class="section-title">🎵 Configurações de Voz:</div>
+            
+            <div class="form-group">
+                <label>Engine:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="engine" value="proplus" checked> Pro+</label>
+                    <label><input type="radio" name="engine" value="neural"> Neural</label>
+                    <label><input type="radio" name="engine" value="standard"> Standard</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🌍 Idioma:</label>
+                <select id="idioma">
+                    <option value="pt-BR">pt-BR</option>
+                    <option value="en-US">en-US</option>
+                    <option value="es-ES">es-ES</option>
+                    <option value="fr-FR">fr-FR</option>
+                    <option value="de-DE">de-DE</option>
+                    <option value="it-IT">it-IT</option>
+                    <option value="ja-JP">ja-JP</option>
+                    <option value="ko-KR">ko-KR</option>
+                    <option value="zh-CN">zh-CN</option>
+                    <option value="ar-SA">ar-SA</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🎭 Efeito:</label>
+                <select id="efeito">
+                    <option value="default">default</option>
+                    <option value="news" selected>news</option>
+                    <option value="conversational">conversational</option>
+                    <option value="assistant">assistant</option>
+                    <option value="happy">happy</option>
+                    <option value="breathing">breathing</option>
+                    <option value="soft">soft</option>
+                    <option value="whispered">whispered</option>
+                </select>
+            </div>
+
+            <div class="section-title">🎛️ Controles de Áudio:</div>
+
+            <div class="form-group">
+                <label>🔊 Volume (-20 a 20):</label>
+                <div class="slider-container">
+                    <input type="range" id="volume" min="-20" max="20" value="0" oninput="document.getElementById('vol_val').innerText = this.value">
+                    <span class="slider-val" id="vol_val">0</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>⚡ Velocidade (-100 a 100):</label>
+                <div class="slider-container">
+                    <input type="range" id="velocidade" min="-100" max="100" value="0" oninput="document.getElementById('vel_val').innerText = this.value">
+                    <span class="slider-val" id="vel_val">0</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🎵 Pitch (-100 a 100):</label>
+                <div class="slider-container">
+                    <input type="range" id="pitch" min="-100" max="100" value="0" oninput="document.getElementById('pit_val').innerText = this.value">
+                    <span class="slider-val" id="pit_val">0</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📊 Sample Rate:</label>
+                <select id="samplerate">
+                    <option value="48000">48000</option>
+                    <option value="44100">44100</option>
+                    <option value="24000">24000</option>
+                    <option value="22050">22050</option>
+                    <option value="16000">16000</option>
+                    <option value="8000">8000</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- PAINEL DIREITO: TEXTOS E BOTÕES -->
+        <div class="right-panel">
+            <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+                <label>📝 Cole o roteiro aqui:</label>
+                <textarea id="roteiro" style="flex: 1; min-height: 250px;"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🧠 Emoção / Instrução Adicional (Apenas Google Gemini / OpenAI):</label>
+                <textarea id="emocao" rows="2" placeholder="Exemplo: Fale sussurrando com medo, ou Fale dando gargalhadas."></textarea>
+            </div>
+
+            <div class="status-bar status-success" id="status" style="margin-top: 10px;">
+                ✅ Pronto para gerar áudio TTS
+            </div>
+        </div>
+
+    </div> <!-- End Main Container -->
+
+    <!-- BOTÕES INFERIORES (Como no Tkinter) -->
+    <div style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+        <div class="btn-row" style="justify-content: center;">
+            <button class="btn-gerar" onclick="gerarAudio('padrao')" id="btnGerar" style="flex: 1;">🎤 Gerar Áudio TTS</button>
+            <button class="btn-testar" onclick="testarVozPadrao()" id="btnTestar" style="flex: 1;">🔊 Testar Voz (Padrão)</button>
+            <button class="btn-google" onclick="gerarAudio('google')" id="btnGoogle" style="flex: 1;">🤖 Testar Voz do Google TTS</button>
+            <button class="btn-limpar" onclick="limparCampos()" style="flex: 0 0 150px;">🧹 Limpar</button>
+        </div>
+    </div>
+
+
+        <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPAÇO PUBLICITÁRIO - 728x90 INFERIOR]</span>
+        </div>
+
+    <script>
+        let personDict = {};
+
+        async function carregarPersonagens() {
+            try {
+                const res = await fetch('/api/tts/personagens');
+                const data = await res.json();
+                if(data.success) {
+                    personDict = data.detalhes;
+                    const sel = document.getElementById('personagem');
+                    sel.innerHTML = '';
+                    data.personagens.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p;
+                        opt.innerText = p;
+                        sel.appendChild(opt);
+                    });
+                    if(data.personagens.length > 0) atualizarPersonagem();
+                }
+            } catch(e) {
+                setStatus('❌ Erro ao carregar personagens: ' + e, 'error');
+            }
+        }
+
+        function atualizarPersonagem() {
+            const p = document.getElementById('personagem').value;
+            if(personDict[p]) {
+                const conf = personDict[p];
+                if(conf.engine) document.querySelector(`input[name="engine"][value="${conf.engine}"]`).checked = true;
+                if(conf.idioma) document.getElementById('idioma').value = conf.idioma;
+                if(conf.efeito) document.getElementById('efeito').value = conf.efeito;
+            }
+        }
+
+        function setStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.innerText = msg;
+            el.className = 'status-bar status-' + type;
+        }
+
+        function bloquearBotoes(bloquear) {
+            document.getElementById('btnGerar').disabled = bloquear;
+            document.getElementById('btnTestar').disabled = bloquear;
+            document.getElementById('btnGoogle').disabled = bloquear;
+            document.getElementById('btnGerar').style.opacity = bloquear ? 0.5 : 1;
+            document.getElementById('btnGoogle').style.opacity = bloquear ? 0.5 : 1;
+        }
+
+        async function gerarAudio(tipo) {
+            const roteiro = document.getElementById('roteiro').value.trim();
+            if(!roteiro && tipo !== 'google') {
+                alert("Aviso: Digite um texto para gerar o áudio");
+                return;
+            }
+
+            const payload = {
+                personagem: document.getElementById('personagem').value,
+                texto: roteiro || (tipo === 'google' ? "Olá! Este é um teste da voz nativa sendo injetada pela chave de API do Gemini." : ""),
+                engine: document.querySelector('input[name="engine"]:checked').value,
+                idioma: document.getElementById('idioma').value,
+                efeito: document.getElementById('efeito').value,
+                volume: parseInt(document.getElementById('volume').value),
+                velocidade: parseInt(document.getElementById('velocidade').value),
+                pitch: parseInt(document.getElementById('pitch').value),
+                sample_rate: document.getElementById('samplerate').value,
+                emocao_adicional: document.getElementById('emocao').value
+            };
+
+            const url = tipo === 'google' ? '/api/tts/testar_google' : '/api/tts/gerar';
+            const statusInit = tipo === 'google' ? "🔄 Checando chaves e baixando áudio do Google API..." : "🔄 Gerando áudio TTS...";
+            
+            setStatus(statusInit, 'loading');
+            bloquearBotoes(true);
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if(data.success) {
+                    setStatus(`✅ Áudio gerado com sucesso: ${data.filename}`, 'success');
+                    
+                    // Envia para o Bagageiro nativamente! (Se for caminho local, a gente salva a referência)
+                    if (window.apolloTransferOS) {
+                        try {
+                            // Se a API retornar a rota relativa da pasta outputs, usaremos
+                            // Mas se não soubermos, usamos o nome do arquivo. O usuário roda local.
+                            const fileUrl = `/outputs/tts/${data.filename}`;
+                            window.apolloTransferOS.addItem('audio', data.filename, 'TTS Export', null, { url: fileUrl });
+                            if (window.showToast) window.showToast("📥 Áudio TTS enviado para Área de Transferência!", "success");
+                        } catch(e) {}
+                    }
+
+                    // Gamificação: Disparar progresso de missão (conta como geração criativa)
+                    if (window.parent) {
+                        window.parent.dispatchEvent(new CustomEvent('apollo_mission_progress', {
+                            detail: { type: 'image', amount: 1 } // Reuse the 'image' counter for 'digital artist'
+                        }));
+                    }
+                    
+                    alert(`Sucesso!\nSalvo em: ${data.file}\nE também enviado para a sua Área de Transferência HUD!`);
+                } else {
+                    setStatus(`❌ Erro: ${data.error}`, 'error');
+                    alert(`Erro: ${data.error}`);
+                }
+            } catch(e) {
+                setStatus(`❌ Erro de conexão: ${e}`, 'error');
+            } finally {
+                bloquearBotoes(false);
+            }
+        }
+
+        function testarVozPadrao() {
+            document.getElementById('roteiro').value = "Olá! Este é um teste da voz selecionada.";
+            gerarAudio('padrao');
+        }
+
+        function limparCampos() {
+            document.getElementById('roteiro').value = '';
+            document.getElementById('volume').value = 0;
+            document.getElementById('vol_val').innerText = '0';
+            document.getElementById('velocidade').value = 0;
+            document.getElementById('vel_val').innerText = '0';
+            document.getElementById('pitch').value = 0;
+            document.getElementById('pit_val').innerText = '0';
+            setStatus('✅ Pronto para gerar áudio TTS', 'success');
+        }
+
+        window.onload = carregarPersonagens;
+    </script>
+    <!-- I18N Loader -->
+    <script src="i18n_loader.js"></script>
+
+    <!-- Supabase SDK e Autenticação -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_tour.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+<script src="transfer_hud.js?v=11"></script>
+<script src="copilot_hud.js"></script>
+<script src="apollo_assistant.js"></script>
+</body>
+</html>
+
+

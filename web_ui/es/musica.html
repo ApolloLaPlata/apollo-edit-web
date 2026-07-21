@@ -1,0 +1,376 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit — Gerador de Vídeos Musicais</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&amp;family=Consolas&amp;display=swap" rel="stylesheet"/>
+<link href="../styles.css" rel="stylesheet"/>
+<style>
+        body {
+            /* background removed for 3d */
+            color: #F0F0F0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px; padding-bottom: 60px; min-height: 100vh; overflow-y: auto;
+        }
+        .header {
+            display: flex; align-items: center; justify-content: space-between; background: #1e1e1e;
+            padding: 15px 30px; border-bottom: 1px solid #333; margin-bottom: 20px;
+        }
+        .header a { color: #9B59B6; text-decoration: none; font-weight: bold; }
+        .header h1 { margin: 0; font-size: 20px; color: #fff; }
+        
+        .main-container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        
+        .box { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px;}
+        .box h3 { margin-top: 0; font-size: 16px; margin-bottom: 15px; color: #9B59B6; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group select {
+            width: 100%; padding: 10px; background: #121212; border: 1px solid #444; color: #fff; border-radius: 4px; box-sizing: border-box;
+        }
+        
+        .btn { background: #333; color: white; border: none; padding: 10px 15px; font-size: 14px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #444; }
+        .btn-primary { background: #9B59B6; font-weight: bold; }
+        .btn-primary:hover { background: #8e44ad; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { background: #2a2a2a; color: #9B59B6; }
+        td { background: #1e1e1e; }
+        tr:hover td { background: #2a2a2a; }
+
+        .tabs-container { border-bottom: 1px solid #333; margin-bottom: 20px; display: flex; gap: 10px; }
+        .tab-btn { background: transparent; color: #aaa; border: none; font-size: 16px; font-weight: bold; cursor: pointer; padding: 10px 20px; }
+        .tab-btn.active { color: #9B59B6; border-bottom: 2px solid #9B59B6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .log-box {
+            background: #121212; border: 1px solid #444; color: #0f0; font-family: "Consolas", monospace;
+            font-size: 12px; padding: 10px; overflow-y: auto; height: 200px; white-space: pre-wrap; margin-top: 20px; border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333;">
+ Logo e Créditos 
+<div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" data-i18n="musica.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">🎵 Fábrica de Videos Musicales</span>
+<div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+<span class="gas-icon"></span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+</div>
+</div>
+<div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+<div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuario Pro</span>
+</div>
+<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+</div>
+</header>
+<div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+<span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+</div>
+<div class="main-container">
+<div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
+ Decorativo fundo 
+<div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">🏎️</div>
+<div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">🎵</div>
+<div style="z-index: 2;">
+<h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
+                    FÁBRICA MUSICAL
+                </h3>
+<p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
+                    Trilhas sonoras geradas por IA.
+                </p>
+</div>
+</div>
+<div class="tabs-container">
+<button class="tab-btn active" onclick="switchTab('gerador', this)">🎵 Gerador Lote</button>
+<button class="tab-btn" onclick="switchTab('compilador', this)">⏳ Compilador (Lives 24h)</button>
+</div>
+ ABA 1: GERADOR LOTE 
+<div class="tab-content active" id="tab_gerador">
+<div class="box">
+<h3>1. Configuração dos Diretórios</h3>
+<div class="form-group">
+<label>Pasta Raiz Músicas (Suno):</label>
+<div style="display:flex; gap:5px;">
+<input id="suno_dir" placeholder="Ex: C:\Musicas\Suno" type="text"/>
+<button class="btn" onclick="browsePath('suno_dir', 'folder')">📁</button>
+</div>
+</div>
+<div class="form-group">
+<label>Pasta de Backgrounds Base:</label>
+<div style="display:flex; gap:5px;">
+<input id="bg_dir" placeholder="Ex: C:\Videos\Backgrounds" type="text"/>
+<button class="btn" onclick="browsePath('bg_dir', 'folder')">📁</button>
+</div>
+</div>
+<button class="btn btn-primary" onclick="carregarMusicas()">🔄 Carregar Músicas</button>
+</div>
+<div class="box">
+<h3>2. Músicas Encontradas</h3>
+<div style="max-height: 300px; overflow-y: auto;">
+<table id="tabela_musicas">
+<thead>
+<tr>
+<th>Nome da Música</th>
+<th>Arquivo de Áudio</th>
+<th style="text-align:center;">Prompt (TXT)</th>
+<th style="text-align:center;">Status</th>
+</tr>
+</thead>
+<tbody>
+ Preenchido via JS 
+</tbody>
+</table>
+</div>
+</div>
+<div class="box" style="display:flex; gap:20px; align-items: flex-end;">
+<div class="form-group" style="flex:1; margin-bottom: 0;">
+<label>Template Visual:</label>
+<select id="template_select">
+<option value="Aleatório (Auto)">Aleatório (Auto)</option>
+</select>
+</div>
+<button class="btn" onclick="carregarTemplates()">🔄 Atualizar Lista</button>
+<div class="form-group" style="flex:1; margin-bottom: 0;">
+<label>Capa IA:</label>
+<select id="capa_select">
+<option value="Quadrada (1:1)">Quadrada (1:1)</option>
+<option value="Vertical (9:16)">Vertical (9:16)</option>
+<option value="Horizontal (16:9)">Horizontal (16:9)</option>
+<option value="Não gerar capa">Não gerar capa</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="gerarLote()" style="padding: 12px 25px; font-size:16px;">🚀 Gerar Vídeos em Lote</button>
+</div>
+<div class="log-box" id="log_gerador">Aguardando início...</div>
+</div>
+ ABA 2: COMPILADOR 
+<div class="tab-content" id="tab_compilador">
+<div class="box">
+<h3>1. Fonte dos Arquivos</h3>
+<div class="form-group">
+<label>Pasta com Clipes Gerados (Subpastas serão incluídas):</label>
+<div style="display:flex; gap:5px;">
+<input id="clips_dir" placeholder="Ex: C:\Musicas\Suno" type="text"/>
+<button class="btn" onclick="browsePath('clips_dir', 'folder')">📁</button>
+</div>
+</div>
+</div>
+<div class="box">
+<h3>2. Configuração do Compilado / Live</h3>
+<p style="font-size: 14px; color: #aaa;">Duração do Vídeo Final (minutos):</p>
+<div style="display:flex; gap:10px; margin-bottom: 15px;">
+<button class="btn" onclick="setDur(30)">30 Min</button>
+<button class="btn" onclick="setDur(60)">1 Hora</button>
+<button class="btn" onclick="setDur(120)">2 Horas</button>
+<button class="btn" onclick="setDur(240)">4 Horas</button>
+<button class="btn" onclick="setDur(720)">12 Horas</button>
+<button class="btn" onclick="setDur(1440)">24 Horas</button>
+</div>
+<div class="form-group">
+<label>Ou digite (em minutos):</label>
+<input id="dur_minutos" style="width:150px;" type="number" value="60"/>
+</div>
+<p style="font-size: 13px; color: #888;">ℹ️ O sistema unificará os vídeos aleatoriamente até atingir a duração desejada.<br/>O vídeo final será exportado mantendo a qualidade original sem re-encodar, garantindo um arquivo leve e rápido.</p>
+<button class="btn btn-primary" onclick="compilar()" style="margin-top:10px;">🚀 Iniciar Compilação Profunda</button>
+</div>
+<div class="log-box" id="log_compilador">Aguardando início...</div>
+</div>
+</div>
+<div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
+<span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPAÇO PUBLICITÁRIO - 728x90 INFERIOR]</span>
+</div>
+<script>
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab_' + tabId).classList.add('active');
+        }
+
+        async function browsePath(inputId, type) {
+            try {
+                const res = await fetch(`/api/browse_file?type=${type}`);
+                const data = await res.json();
+                if(data.status === 'success' && data.path) {
+                    document.getElementById(inputId).value = data.path;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function setDur(mins) {
+            document.getElementById('dur_minutos').value = mins;
+        }
+
+        async function carregarTemplates() {
+            try {
+                const res = await fetch('/api/fabrica/templates');
+                const data = await res.json();
+                if(data.success) {
+                    const sel = document.getElementById('template_select');
+                    sel.innerHTML = '<option value="Aleatório (Auto)">Aleatório (Auto)</option>';
+                    data.templates.forEach(t => {
+                        sel.innerHTML += `<option value="${t}">${t}</option>`;
+                    });
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // Variável global para guardar as músicas carregadas
+        let musicasEncontradas = [];
+
+        async function carregarMusicas() {
+            const suno_dir = document.getElementById('suno_dir').value.trim();
+            if(!suno_dir) { alert("Informe a Pasta Raiz das Músicas (Suno)."); return; }
+
+            const btn = event.target;
+            btn.innerText = "⏳ Carregando...";
+
+            try {
+                const res = await fetch('/api/fabrica/carregar_musicas', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ suno_dir: suno_dir })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    musicasEncontradas = data.musicas;
+                    const tbody = document.querySelector('#tabela_musicas tbody');
+                    tbody.innerHTML = '';
+                    if(data.musicas.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhuma música encontrada</td></tr>';
+                    } else {
+                        data.musicas.forEach(m => {
+                            tbody.innerHTML += `
+                                <tr id="row_${m.id}">
+                                    <td>${m.nome}</td>
+                                    <td>${m.audio_basename}</td>
+                                    <td style="text-align:center;">${m.txt ? 'Sim' : 'Não'}</td>
+                                    <td style="text-align:center;" id="status_${m.id}">${m.status}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                } else {
+                    alert("Erro: " + data.error);
+                }
+            } catch(e) { alert("Falha na conexão: " + e); }
+            finally { btn.innerText = "🔄 Carregar Músicas"; }
+        }
+
+        async function gerarLote() {
+            if(musicasEncontradas.length === 0) { alert("Nenhuma música carregada na tabela."); return; }
+            const bg_dir = document.getElementById('bg_dir').value.trim();
+            if(!bg_dir) { alert("Informe a pasta de backgrounds."); return; }
+
+            const template = document.getElementById('template_select').value;
+            const formato = document.getElementById('capa_select').value;
+            
+            const payload = {
+                bg_dir: bg_dir,
+                template: template,
+                formato_capa: formato,
+                musicas: musicasEncontradas
+            };
+
+            const log = document.getElementById('log_gerador');
+            log.innerText = "Iniciando geração em lote...\n";
+            
+            try {
+                const res = await fetch('/api/fabrica/gerar_lote', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                
+                // Tratar Server-Sent Events (SSE) manual via stream
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                while(true) {
+                    const { done, value } = await reader.read();
+                    if(done) break;
+                    const chunk = decoder.decode(value, {stream: true});
+                    
+                    // As mensagens SSE vêm como "data: {json}\n\n"
+                    const parts = chunk.split("\n\n");
+                    for(let p of parts) {
+                        if(p.startsWith("data: ")) {
+                            try {
+                                const msg = JSON.parse(p.substring(6));
+                                if(msg.type === "log") {
+                                    log.innerText += msg.text + "\n";
+                                    log.scrollTop = log.scrollHeight;
+                                } else if(msg.type === "status") {
+                                    const stTd = document.getElementById(`status_${msg.id}`);
+                                    if(stTd) {
+                                        stTd.innerText = msg.status;
+                                        if(msg.status === "Erro") stTd.style.color = "red";
+                                        else if(msg.status === "Concluído") stTd.style.color = "lightgreen";
+                                        else stTd.style.color = "yellow";
+                                    }
+                                }
+                            } catch(ex){}
+                        }
+                    }
+                }
+                log.innerText += "\n✅ Geração em Lote finalizada!";
+            } catch(e) {
+                log.innerText += "\n❌ Erro de conexão: " + e;
+            }
+        }
+
+        async function compilar() {
+            const root_dir = document.getElementById('clips_dir').value.trim();
+            if(!root_dir) { alert("Informe a pasta com os clipes."); return; }
+            const dur = parseInt(document.getElementById('dur_minutos').value);
+            if(isNaN(dur) || dur <= 0) { alert("Duração inválida."); return; }
+
+            const log = document.getElementById('log_compilador');
+            log.innerText = "Iniciando compilação de " + dur + " minutos...\n";
+            
+            try {
+                const res = await fetch('/api/fabrica/compilar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ root_dir: root_dir, duracao_min: dur })
+                });
+                
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                while(true) {
+                    const { done, value } = await reader.read();
+                    if(done) break;
+                    const chunk = decoder.decode(value, {stream: true});
+                    log.innerText += chunk;
+                    log.scrollTop = log.scrollHeight;
+                }
+            } catch(e) {
+                log.innerText += "\n❌ Erro de conexão: " + e;
+            }
+        }
+
+        window.onload = () => {
+            carregarTemplates();
+            // Tenta pegar o diretório salvo no config se possível, para isso precisaria de um endpoint.
+            // Para simplificar, o usuário preenche na UI com o botão 📁.
+        };
+    </script>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+</body>
+</html>

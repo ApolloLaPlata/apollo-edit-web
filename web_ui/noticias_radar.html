@@ -1,0 +1,227 @@
+﻿﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Notícias — Radar YT — Apollo Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <link rel="stylesheet" href="noticias.css">
+    <style>
+        /* ── Radar page-specific styles ── */
+        .apollo-toast { padding: 12px 20px; border-radius: 8px; color: #fff; font-weight: 600; font-family: 'Nunito', sans-serif; transition: opacity 0.3s; }
+        .apollo-toast.success { background: #2ECC71; }
+        .apollo-toast.error   { background: #E74C3C; }
+        .apollo-toast.info    { background: #3498DB; }
+
+        .radar-categories { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+
+        #radar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        #radar-loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 60px 20px;
+        }
+        #radar-loading .spinner {
+            width: 48px; height: 48px;
+            border: 4px solid rgba(139,92,246,0.2);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #radar-error {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            color: #fca5a5;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        #radar-empty {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+            font-family: 'Nunito', sans-serif;
+        }
+        #radar-empty i { font-size: 48px; margin-bottom: 16px; display: block; color: #475569; }
+
+        /* ── Player Modal ── */
+        #radar-player-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0,0,0,0.85);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .radar-modal-inner {
+            position: relative;
+            width: 90%;
+            max-width: 960px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        .radar-modal-inner iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .radar-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .radar-modal-close:hover { background: rgba(255,255,255,0.1); }
+
+        /* Hidden helper for cross-page transfer */
+        #scripts-topic { display: none; }
+
+        .noticias-nav-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 20px;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem;
+            text-decoration: none; border: 2px solid; transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .noticias-nav-pill:hover { filter: brightness(1.2); transform: translateY(-1px); }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+
+    <header class="top-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(30, 30, 30, 0.9); border-bottom: 1px solid #333; backdrop-filter: blur(10px);">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;"><div class="main-logo"><span>APOLLO</span> EDIT</div></a>
+            <span style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-family: 'Nunito', sans-serif;">📰 Central de Notícias</span>
+        </div>
+        <h2 id="tool-title" style="color: #fff; margin:0; font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 1.8rem;"></h2>
+        <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+            <span class="gas-icon"></span>
+            <strong id="user-credits">...</strong> Gasolina
+        </div>
+    </header>
+
+    <div class="tool-container">
+        <!-- Navigation Pills -->
+        <div id="noticias-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:15px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); flex-wrap: wrap;"></div>
+
+        <div class="ad-slot" style="margin: 0 auto 20px auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+
+        <!-- ═══════════════ RADAR CONTENT ═══════════════ -->
+        <div class="news-card">
+            <h2 style="margin:0 0 6px 0; font-family:'Bangers',cursive; font-size:1.6rem; letter-spacing:1px; color:#F1C40F;">
+                <i class="fas fa-satellite-dish"></i> Radar YouTube
+            </h2>
+            <p style="margin:0 0 20px 0; color:#94a3b8; font-family:'Nunito',sans-serif; font-size:0.9rem;">
+                Descubra vídeos em alta por categoria e copie ideias direto para seus roteiros.
+            </p>
+
+            <!-- Category Buttons -->
+            <div id="radar-categories-container" class="radar-categories"></div>
+
+            <!-- Loading State -->
+            <div id="radar-loading">
+                <div class="spinner"></div>
+                <span class="loading-text" style="font-size:1.3rem; padding:10px;">Buscando vídeos…</span>
+            </div>
+
+            <!-- Error State -->
+            <div id="radar-error">
+                <i class="fas fa-exclamation-triangle" style="font-size:20px;"></i>
+                <span id="radar-error-text">Não foi possível carregar os vídeos em alta no momento.</span>
+            </div>
+
+            <!-- Empty State -->
+            <div id="radar-empty">
+                <i class="fas fa-video-slash"></i>
+                <p style="font-size:1.1rem; font-weight:600;">Nenhum vídeo encontrado para esta categoria.</p>
+                <p style="font-size:0.85rem;">Tente outra categoria ou volte mais tarde.</p>
+            </div>
+
+            <!-- Video Grid -->
+            <div id="radar-grid"></div>
+        </div>
+
+        <!-- Hidden textarea used by sendRadarToScripts for cross-page transfer -->
+        <textarea id="scripts-topic"></textarea>
+
+        <div class="ad-slot" style="margin: 20px auto 0 auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════ YouTube Player Modal ═══════════════ -->
+    <div id="radar-player-modal" onclick="if(event.target===this) closeRadarPlayer();">
+        <div class="radar-modal-inner">
+            <button class="radar-modal-close" onclick="closeRadarPlayer();" title="Fechar"><i class="fas fa-times"></i></button>
+            <iframe id="radar-player-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
+
+    <script src="noticias_nav.js"></script>
+    <script src="radar_logic.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="i18n_loader.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_tour.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+
+

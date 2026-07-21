@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Explore - Feed Social</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #fff; margin: 0; padding: 0; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .masonry { column-count: 1; column-gap: 1.5rem; }
+        @media (min-width: 640px) { .masonry { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry { column-count: 3; } }
+        @media (min-width: 1280px) { .masonry { column-count: 4; } }
+        .masonry-item { break-inside: avoid; margin-bottom: 1.5rem; }
+        .cyber-loader {
+            width: 40px; height: 40px; border-radius: 50%; border: 3px solid transparent;
+            border-top-color: #a855f7; border-bottom-color: #3b82f6;
+            animation: spin 1s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .gradient-text { background: linear-gradient(to right, #c084fc, #3b82f6); -webkit-background-clip: text; color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(124,58,237,0.5)]">
+                <i class="fas fa-globe text-white text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-tight"><span class="gradient-text">Apollo</span> Explore</h1>
+        </div>
+        <div class="flex gap-4 items-center">
+            <span class="text-slate-400 text-sm hidden md:block">Inspire-se nas criações da comunidade</span>
+            <button onclick="loadFeed()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition text-sm font-bold border border-slate-600">
+                <i class="fas fa-sync-alt mr-2"></i> Atualizar Feed
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8">
+        
+        <!-- Hero Section -->
+        <div class="text-center py-12 mb-8 bg-gradient-to-r from-violet-900/40 to-blue-900/40 rounded-3xl border border-violet-500/20">
+            <h2 class="text-4xl md:text-5xl font-black mb-4">Descubra o Impossível</h2>
+            <p class="text-slate-300 max-w-2xl mx-auto text-lg">Milhares de vídeos e imagens gerados pelo motor LTX e Wan estão sendo criados todos os dias. Encontre seu próximo prompt vencedor.</p>
+        </div>
+
+        <div id="feedGrid" class="masonry">
+            <div class="col-span-full text-center text-slate-500 py-12">
+                <div class="cyber-loader mb-4"></div>
+                <p>Sincronizando com a rede global...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        async function loadFeed() {
+            const grid = document.getElementById('feedGrid');
+            grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12"><div class="cyber-loader mb-4"></div><p>Sincronizando com a rede global...</p></div>';
+            
+            try {
+                const res = await fetch('/api/public/explore');
+                const data = await res.json();
+                
+                if(data.success && data.feed.length > 0) {
+                    let html = '';
+                    data.feed.forEach(job => {
+                        const icon = job.type === 'video_generation' ? 'fa-film' : 'fa-image';
+                        
+                        let mediaHtml = '';
+                        if(job.result_url) {
+                            if(job.type === 'video_generation') {
+                                mediaHtml = `<video src="${job.result_url}" class="w-full object-cover rounded-t-xl" autoplay loop muted playsinline></video>`;
+                            } else {
+                                mediaHtml = `<img src="${job.result_url}" class="w-full object-cover rounded-t-xl">`;
+                            }
+                        }
+
+                        let paramText = '';
+                        if (job.parameters) {
+                            if(job.parameters.model) paramText += `<span class="bg-slate-800 px-2 py-1 rounded text-[10px] text-slate-300">${job.parameters.model.toUpperCase()}</span> `;
+                            if(job.parameters.aspect_ratio) paramText += `<span class="bg-slate-800 px-2 py-1 rounded text-[10px] text-slate-300">${job.parameters.aspect_ratio}</span> `;
+                        }
+
+                        const promptSafe = (job.parameters?.prompt || 'Sem prompt').replace(/"/g, '&quot;');
+
+                        html += `
+                            <div class="masonry-item">
+                                <div class="glass-panel rounded-xl hover:border-violet-500/50 transition duration-300 group overflow-hidden shadow-lg">
+                                    ${mediaHtml}
+                                    <div class="p-4">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div class="flex items-center gap-2 text-slate-400">
+                                                <i class="fas ${icon}"></i>
+                                                <span class="text-xs font-bold">${new Date(job.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <button onclick="copyPrompt('${promptSafe}')" class="text-violet-400 hover:text-white bg-violet-500/10 hover:bg-violet-500/40 p-1.5 rounded transition" title="Copiar Prompt">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-sm text-white font-medium mb-3 line-clamp-4 leading-relaxed">${job.parameters?.prompt || 'Sem prompt'}</p>
+                                        <div class="flex flex-wrap gap-1 mb-3">
+                                            ${paramText}
+                                        </div>
+                                        <button onclick="sendToTimeline('${job.result_url}', '${job.type}')" class="w-full bg-blue-600/30 hover:bg-blue-500/50 text-blue-300 py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2 mt-2">
+                                            <i class="fas fa-layer-group"></i> Enviar para Timeline
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    grid.innerHTML = html;
+                } else {
+                    grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12"><i class="fas fa-satellite-dish text-4xl mb-4 opacity-50"></i><p>A rede global está vazia no momento.</p></div>';
+                }
+            } catch(e) {
+                console.error(e);
+                grid.innerHTML = '<div class="col-span-full text-center text-red-400 py-12">Falha na comunicação com a rede global.</div>';
+            }
+        }
+
+        function copyPrompt(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Prompt copiado para a área de transferência!");
+            }).catch(err => {
+                console.error('Erro ao copiar', err);
+            });
+        }
+
+        function sendToTimeline(url, type) {
+            let assetId = 'asset_' + Date.now();
+            let newAsset = {
+                id: assetId,
+                name: (type === 'video_generation' ? 'Vídeo_Social_' : 'Imagem_Social_') + Math.floor(Math.random()*1000) + (type === 'video_generation' ? '.mp4' : '.png'),
+                url: url,
+                type: type === 'video_generation' ? 'video' : 'image'
+            };
+            
+            let existingAssets = [];
+            try {
+                let saved = localStorage.getItem('apollo_timeline_assets');
+                if(saved) existingAssets = JSON.parse(saved);
+            } catch(e) {}
+            
+            existingAssets.push(newAsset);
+            localStorage.setItem('apollo_timeline_assets', JSON.stringify(existingAssets));
+            
+            alert("Mídia da comunidade adicionada à sua Timeline!");
+        }
+
+        // Auto-load
+        loadFeed();
+    </script>
+</body>
+</html>

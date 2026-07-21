@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estúdio Multimídia IA | Apollo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a; /* slate-900 */
+            --brand-primary: #8b5cf6; /* violet-500 */
+            --brand-secondary: #ec4899; /* pink-500 */
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7); /* slate-800 */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .animated-bg {
+            position: fixed;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+            animation: pulseBg 15s infinite alternate ease-in-out;
+            z-index: -1;
+            pointer-events: none;
+        }
+        @keyframes pulseBg {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(-2%, 2%); }
+        }
+
+        /* Toggle Switch */
+        .type-selector {
+            display: flex;
+            background: #1e293b;
+            border-radius: 9999px;
+            padding: 4px;
+            width: fit-content;
+            margin: 0 auto;
+            position: relative;
+        }
+        .type-option {
+            padding: 10px 24px;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 1;
+            color: #94a3b8;
+        }
+        .type-option.active { color: white; }
+        .type-indicator {
+            position: absolute;
+            top: 4px; bottom: 4px;
+            width: 50%;
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+            border-radius: 9999px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+        .mode-video .type-indicator { transform: translateX(100%); }
+
+        /* Loader */
+        .cyber-loader {
+            display: inline-block;
+            width: 50px; height: 50px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--brand-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <div class="animated-bg"></div>
+
+    <!-- Header -->
+    <header class="glass-panel py-4 px-8 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-pink-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                <i class="fas fa-wand-magic-sparkles text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-tight"><span class="gradient-text">Apollo</span> Estúdio IA</h1>
+        </div>
+        <div class="flex gap-4 items-center">
+            <button onclick="toggleView('create')" id="tabCreateBtn" class="text-white font-bold bg-violet-600 px-4 py-2 rounded-lg transition">Sintetizar</button>
+            <button onclick="toggleView('gallery')" id="tabGalleryBtn" class="text-slate-400 font-bold hover:text-white px-4 py-2 rounded-lg transition">Meu Cofre</button>
+
+            <!-- Notifications Bell -->
+            <div class="relative ml-2 mr-2">
+                <button onclick="toggleNotifications()" class="text-slate-300 hover:text-white relative p-2 transition transform hover:scale-110">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span id="notifBadge" class="hidden absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-slate-900 shadow-lg shadow-pink-500/50">0</span>
+                </button>
+                
+                <!-- Notif Dropdown -->
+                <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 glass-panel rounded-xl border border-slate-700 shadow-2xl overflow-hidden z-50">
+                    <div class="bg-slate-800/80 p-3 border-b border-slate-700 flex justify-between items-center">
+                        <h3 class="font-bold text-white text-sm">Notificações</h3>
+                        <button onclick="markAllRead()" class="text-xs text-violet-400 hover:text-violet-300">Marcar lidas</button>
+                    </div>
+                    <div id="notifList" class="max-h-64 overflow-y-auto p-2 space-y-2">
+                        <div class="text-center text-slate-500 text-sm py-4">Nenhuma notificação nova</div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="bg-slate-800 border border-slate-700 rounded-full px-4 py-2 text-sm font-semibold text-violet-300 hidden md:flex items-center gap-2 shadow-inner">
+                <i class="fas fa-bolt text-yellow-400"></i> Premium Ativo
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="createView" class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-12 grid grid-cols-1 md:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Controls -->
+        <div class="md:col-span-5 space-y-6">
+            <div class="glass-panel rounded-2xl p-6">
+                
+                <h2 class="text-xl font-bold mb-6 text-center text-slate-200">Qual mídia vamos criar hoje?</h2>
+                
+                <!-- Toggle Mode -->
+                <div class="type-selector mb-8" id="mediaTypeToggle">
+                    <div class="type-indicator" id="typeIndicator"></div>
+                    <div class="type-option active flex items-center gap-2" onclick="setMode('image')">
+                        <i class="fas fa-image"></i> Imagem
+                    </div>
+                    <div class="type-option flex items-center gap-2" onclick="setMode('video')">
+                        <i class="fas fa-film"></i> Vídeo
+                    </div>
+                </div>
+
+                <div class="mb-4 relative">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="block text-sm font-semibold text-slate-400">Engenharia de Prompt</label>
+                        <button onclick="enhancePrompt()" id="enhanceBtn" class="text-xs font-bold text-violet-400 hover:text-white bg-violet-500/20 hover:bg-violet-500/50 px-2 py-1 rounded transition border border-violet-500/30 flex items-center gap-1">
+                            <i class="fas fa-magic"></i> Prompt Magic
+                        </button>
+                    </div>
+                    <!-- Presets Bar -->
+                    <div class="flex gap-2 overflow-x-auto pb-2 mb-2" style="scrollbar-width: none;" id="presetBar">
+                        <button onclick="setPreset('none', this)" class="preset-btn bg-violet-600 border border-violet-500 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition shadow-lg shadow-violet-500/20">Nenhum</button>
+                        <button onclick="setPreset('cinematic', this)" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition"><i class="fas fa-video mr-1 text-blue-400"></i> Cinematic</button>
+                        <button onclick="setPreset('anime', this)" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition"><i class="fas fa-paint-brush mr-1 text-pink-400"></i> Anime</button>
+                        <button onclick="setPreset('3d', this)" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition"><i class="fas fa-cube mr-1 text-emerald-400"></i> 3D Render</button>
+                        <button onclick="setPreset('cyberpunk', this)" class="preset-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition"><i class="fas fa-city mr-1 text-purple-400"></i> Cyberpunk</button>
+                    </div>
+                    <textarea id="promptInput" rows="5" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all resize-none" placeholder="Descreva sua visão com riqueza de detalhes..."></textarea>
+                </div>
+
+                <div id="videoOptions" class="hidden space-y-4 mb-4">
+                    <!-- Image to Video Zone -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-2">Quadro Inicial (Image-to-Video) <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1 rounded ml-1">Opcional</span></label>
+                        <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-800 hover:bg-slate-700/50 hover:border-violet-500 transition group relative overflow-hidden">
+                            <div id="i2vPlaceholder" class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fas fa-image text-2xl text-slate-500 mb-2 group-hover:text-violet-400 transition"></i>
+                                <p class="mb-1 text-xs text-slate-400"><span class="font-bold text-violet-400">Clique para Enviar</span> ou arraste uma foto</p>
+                            </div>
+                            <img id="i2vPreview" class="hidden absolute inset-0 w-full h-full object-cover opacity-80">
+                            <input id="i2vInput" type="file" accept="image/*" class="hidden" onchange="previewI2V(this)" />
+                            <button id="i2vClear" class="hidden absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg" onclick="clearI2V(event)"><i class="fas fa-times text-xs"></i></button>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-2">Motor de Renderização</label>
+                        <select id="videoModelSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-violet-500">
+                            <option value="ltx">LTX-Video 2.3 (Cinemático)</option>
+                            <option value="wan">Wan2.1-T2V (Alta Estabilidade)</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-400 mb-2">Proporção</label>
+                            <select id="videoAspectRatio" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-violet-500">
+                                <option value="horizontal">16:9 (YouTube)</option>
+                                <option value="vertical">9:16 (TikTok)</option>
+                                <option value="square">1:1 (Instagram)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-400 mb-2">Duração</label>
+                            <select id="videoDuration" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-violet-500">
+                                <option value="3">Curto (3s)</option>
+                                <option value="5" selected>Médio (5s)</option>
+                                <option value="10">Longo (10s)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-2">Semente (Seed Aleatória = -1)</label>
+                        <input type="number" id="videoSeed" value="-1" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-violet-500 placeholder-slate-500">
+                    </div>
+                </div>
+
+                <div id="imageOptions" class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-2">Motor de Renderização</label>
+                        <select id="imageModelSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-violet-500">
+                            <option value="flux_schnell">FLUX.1 Schnell (Rápido / Grátis)</option>
+                            <option value="flux_dev">FLUX.1 Dev (Pro / 40GB VRAM)</option>
+                            <option value="flux_fill">FLUX.1 Fill (Inpainting Pro)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-2">Proporção</label>
+                        <select id="imageAspectRatio" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-violet-500">
+                            <option value="16:9">16:9 (Cinemático)</option>
+                            <option value="1:1">1:1 (Quadrado)</option>
+                            <option value="9:16">9:16 (Vertical)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Advanced Controls -->
+                <details class="group bg-slate-800/50 border border-slate-700 rounded-xl mb-6 overflow-hidden">
+                    <summary class="flex justify-between items-center font-bold cursor-pointer p-4 select-none text-slate-300 group-open:text-violet-400 transition">
+                        <span><i class="fas fa-sliders-h mr-2"></i> Controles Avançados (Pro)</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                    </summary>
+                    <div class="p-4 border-t border-slate-700 space-y-4 bg-slate-800/20">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-400 mb-2">Negative Prompt</label>
+                            <textarea id="negativePrompt" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500 placeholder-slate-600" placeholder="O que NÃO deve aparecer (ugly, deformed, lowres...)"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-400 mb-2">Inference Steps (<span id="stepsVal">50</span>)</label>
+                                <input type="range" id="inferenceSteps" min="10" max="100" value="50" class="w-full accent-violet-500" oninput="document.getElementById('stepsVal').innerText = this.value">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-400 mb-2">CFG Scale (<span id="cfgVal">3.0</span>)</label>
+                                <input type="range" id="cfgScale" min="1.0" max="15.0" step="0.5" value="3.0" class="w-full accent-violet-500" oninput="document.getElementById('cfgVal').innerText = this.value">
+                            </div>
+                        </div>
+                        <div id="motionScaleContainer" class="hidden">
+                            <label class="block text-sm font-semibold text-slate-400 mb-2">Motion Scale (Dinamismo <span id="motionVal">1.0</span>)</label>
+                            <input type="range" id="motionScale" min="0.1" max="3.0" step="0.1" value="1.0" class="w-full accent-blue-500" oninput="document.getElementById('motionVal').innerText = this.value">
+                        </div>
+                    </div>
+                </details>
+
+                <button id="generateBtn" onclick="generateMedia()" class="w-full bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white font-black py-4 rounded-xl shadow-xl shadow-pink-500/20 transform transition hover:-translate-y-1 active:translate-y-0 text-lg flex items-center justify-center gap-3">
+                    <i class="fas fa-brain"></i> Sintetizar Mídia
+                </button>
+                <p id="costEstimate" class="text-center text-xs font-mono text-slate-500 mt-3">Custo Est.: $0.04 (DALL-E 4 Ultra)</p>
+            </div>
+        </div>
+
+        <!-- Right Column: Result -->
+        <div class="md:col-span-7 flex flex-col">
+            <div class="glass-panel rounded-2xl p-2 flex-1 flex flex-col relative overflow-hidden min-h-[400px]">
+                
+                <!-- Placeholder State -->
+                <div id="resultPlaceholder" class="flex-1 flex flex-col items-center justify-center text-slate-500">
+                    <i class="fas fa-image text-6xl mb-4 opacity-50"></i>
+                    <p class="font-medium">Sua criação aparecerá aqui.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden absolute inset-0 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-10 rounded-2xl">
+                    <div class="cyber-loader mb-6"></div>
+                    <h3 class="text-xl font-bold text-violet-400 mb-2" id="loadingTitle">Acessando Clusters H100...</h3>
+                    <p class="text-sm text-slate-400" id="loadingDesc">DALL-E 4 Ultra processando texturas.</p>
+                    
+                    <div class="w-64 h-2 bg-slate-800 rounded-full mt-6 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-violet-500 to-pink-500 rounded-full" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Result Content -->
+                <div id="resultContent" class="hidden flex-1 flex flex-col">
+                    <div class="flex-1 bg-black rounded-xl overflow-hidden flex items-center justify-center relative group">
+                        <img id="resultImage" src="" class="max-w-full max-h-full object-contain hidden" alt="AI Generated">
+                        <video id="resultVideo" src="" class="max-w-full max-h-full object-contain hidden" controls loop autoplay></video>
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6">
+                            <div class="flex gap-4">
+                                <button class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2">
+                                    <i class="fas fa-download"></i> Baixar Alta Resolução
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-4 flex justify-between items-center px-2">
+                <p class="text-sm text-slate-500"><i class="fas fa-shield-halved mr-1"></i> Assets protegidos por criptografia end-to-end.</p>
+                <div class="flex gap-2 text-xl text-slate-600">
+                    <i class="fab fa-aws hover:text-orange-400 transition cursor-pointer" title="Hospedado na AWS"></i>
+                    <i class="fab fa-docker hover:text-blue-400 transition cursor-pointer" title="Containerizado"></i>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Session Gallery Feed (Fase 11.3) -->
+    <section id="sessionFeed" class="max-w-6xl w-full mx-auto p-6 md:px-12 pb-12 hidden">
+        <h3 class="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-2"><i class="fas fa-stream mr-2 text-violet-500"></i>Galeria da Sessão</h3>
+        <div id="sessionGalleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Cards -->
+        </div>
+    </section>
+
+    <!-- Gallery Content -->
+    <main id="galleryView" class="hidden flex-1 max-w-6xl w-full mx-auto p-6 md:p-12">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-3xl font-black text-white"><i class="fas fa-vault mr-3 text-violet-500"></i>Meu Cofre de Criações</h2>
+                <p class="text-slate-400 mt-2">Seus vídeos e imagens gerados pelo motor assíncrono.</p>
+            </div>
+            <button onclick="loadGallery()" class="text-slate-400 hover:text-white transition"><i class="fas fa-sync-alt"></i> Atualizar</button>
+        </div>
+        
+        <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="col-span-full text-center text-slate-500 py-12">
+                <div class="cyber-loader mb-4"></div>
+                <p>Acessando clusters de memória...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentMode = 'image';
+
+        function setMode(mode) {
+            currentMode = mode;
+            const toggle = document.getElementById('mediaTypeToggle');
+            const options = document.querySelectorAll('.type-option');
+            
+            if (mode === 'video') {
+                toggle.classList.add('mode-video');
+                options[0].classList.remove('active');
+                options[1].classList.add('active');
+                document.getElementById('imageOptions').classList.add('hidden');
+                document.getElementById('videoOptions').classList.remove('hidden');
+                document.getElementById('motionScaleContainer').classList.remove('hidden');
+                document.getElementById('generateBtn').innerHTML = '<i class="fas fa-film"></i> Renderizar Vídeo';
+                document.getElementById('costEstimate').innerText = "Custo Est.: $0.15 (Nano Banana v2)";
+            } else {
+                toggle.classList.remove('mode-video');
+                options[1].classList.remove('active');
+                options[0].classList.add('active');
+                document.getElementById('videoOptions').classList.add('hidden');
+                document.getElementById('imageOptions').classList.remove('hidden');
+                document.getElementById('motionScaleContainer').classList.add('hidden');
+                document.getElementById('generateBtn').innerHTML = '<i class="fas fa-image"></i> Sintetizar Imagem';
+                document.getElementById('costEstimate').innerText = "Custo Est.: $0.04 (DALL-E 4 Ultra)";
+            }
+        }
+
+        async function generateMedia() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            if(!prompt) {
+                alert("Por favor, digite um prompt primeiro.");
+                return;
+            }
+
+            // UI Changes
+            document.getElementById('resultPlaceholder').classList.add('hidden');
+            document.getElementById('resultContent').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').classList.add('opacity-50');
+
+            const loadingTitle = document.getElementById('loadingTitle');
+            const loadingDesc = document.getElementById('loadingDesc');
+            const progressBar = document.getElementById('progressBar');
+
+            progressBar.style.transition = "width 0.5s ease";
+            progressBar.style.width = "0%";
+            
+            if(currentMode === 'image') {
+                loadingTitle.innerText = "Acessando Clusters DALL-E...";
+                loadingDesc.innerText = "Calculando vetores de estilo fotorrealista.";
+            } else {
+                loadingTitle.innerText = "Entrando na Fila de Renderização...";
+                loadingDesc.innerText = "Aguardando GPU Modal Serverless.";
+            }
+
+            try {
+                // Collect Advanced Parameters
+                let reqBody = { 
+                    type: currentMode, 
+                    prompt: prompt,
+                    preset: window.activePreset || 'none',
+                    negative_prompt: document.getElementById('negativePrompt').value,
+                    steps: parseInt(document.getElementById('inferenceSteps').value) || 50,
+                    guidance_scale: parseFloat(document.getElementById('cfgScale').value) || 3.0,
+                    motion_scale: parseFloat(document.getElementById('motionScale').value) || 1.0
+                };
+                if(currentMode === 'video') {
+                    reqBody.model = document.getElementById('videoModelSelect').value;
+                    reqBody.aspect_ratio = document.getElementById('videoAspectRatio').value;
+                    reqBody.duration = parseInt(document.getElementById('videoDuration').value) || 5;
+                    reqBody.seed = parseInt(document.getElementById('videoSeed').value) || -1;
+                    if (window.i2vBase64) {
+                        reqBody.image_base64 = window.i2vBase64;
+                    }
+                } else {
+                    reqBody.model = document.getElementById('imageModelSelect').value;
+                    reqBody.aspect_ratio = document.getElementById('imageAspectRatio').value;
+                    if (window.i2vBase64) {
+                        reqBody.image_base64 = window.i2vBase64; // Used for FLUX.1 Fill
+                    }
+                }
+
+                // Call API
+                const res = await fetch('/api/studio/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(reqBody)
+                });
+                
+                const data = await res.json();
+                
+                if (data.success && data.job_id) {
+                    loadingTitle.innerText = "Na Fila (Aguarde ou Navegue)";
+                    loadingDesc.innerText = "Conectando Telemetria em Tempo Real...";
+                    
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/jobs/${data.job_id}`);
+                    
+                    ws.onmessage = function(event) {
+                        const msg = JSON.parse(event.data);
+                        if(msg.status === 'PROCESSING') {
+                            progressBar.style.width = msg.progress + "%";
+                            loadingTitle.innerText = `Processando: ${msg.progress}%`;
+                            loadingDesc.innerText = "Motores de Difusão Ativos.";
+                        } else if (msg.status === 'COMPLETED') {
+                            progressBar.style.width = "100%";
+                            ws.close();
+                            finishGeneration(msg.result_url);
+                        } else if (msg.status === 'FAILED') {
+                            ws.close();
+                            failGeneration(msg.error || "Erro desconhecido.");
+                        }
+                    };
+                    
+                    ws.onerror = function(err) {
+                        console.error("WebSocket erro", err);
+                        loadingDesc.innerText = "Erro na telemetria (mas o trabalho pode terminar no fundo).";
+                    };
+                } else {
+                    failGeneration(data.error || "Erro ao enfileirar requisição.");
+                }
+
+            } catch(e) {
+                console.error(e);
+                failGeneration("Falha de conexão com a infraestrutura.");
+            }
+        }
+
+        function finishGeneration(url) {
+            setTimeout(() => {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('resultContent').classList.remove('hidden');
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').classList.remove('opacity-50');
+
+                const imgEl = document.getElementById('resultImage');
+                const vidEl = document.getElementById('resultVideo');
+
+                if(currentMode === 'image') {
+                    imgEl.src = url;
+                    imgEl.classList.remove('hidden');
+                    vidEl.classList.add('hidden');
+                    vidEl.pause();
+                } else {
+                    vidEl.src = url;
+                    vidEl.classList.remove('hidden');
+                    imgEl.classList.add('hidden');
+                    vidEl.play();
+                }
+                
+                // Add to Session Gallery
+                document.getElementById('sessionFeed').classList.remove('hidden');
+                const sessionGrid = document.getElementById('sessionGalleryGrid');
+                
+                const card = document.createElement('div');
+                card.className = "bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-violet-500 transition shadow-lg group";
+                
+                let mediaTag = currentMode === 'video' 
+                    ? `<video src="${url}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500" controls loop muted></video>`
+                    : `<img src="${url}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">`;
+                
+                card.innerHTML = `
+                    <div class="relative overflow-hidden">
+                        ${mediaTag}
+                        <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white border border-white/10 uppercase tracking-widest">
+                            ${currentMode}
+                        </div>
+                    </div>
+                    <div class="p-4 border-t border-slate-700 bg-slate-800/90">
+                        <p class="text-xs text-slate-400 mb-3 truncate" title="Sessão Local">Gerado agora</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="${url}" download class="text-center bg-slate-700 hover:bg-slate-600 text-white py-1.5 rounded-lg text-xs font-bold transition"><i class="fas fa-download"></i> Baixar</a>
+                            <button onclick="sendToTimeline('${url}', '${currentMode === 'video' ? 'video_generation' : 'image_generation'}')" class="text-center bg-blue-600/30 hover:bg-blue-500/50 text-blue-300 py-1.5 rounded-lg text-xs font-bold transition"><i class="fas fa-layer-group"></i> Timeline</button>
+                        </div>
+                    </div>
+                `;
+                sessionGrid.prepend(card);
+                
+                // Animate Scroll
+                document.getElementById('sessionFeed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
+        }
+
+        function failGeneration(errorMsg) {
+            alert("Erro ao gerar: " + errorMsg);
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultPlaceholder').classList.remove('hidden');
+            document.getElementById('resultContent').classList.add('hidden');
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('generateBtn').classList.remove('opacity-50');
+        }
+
+        // ==========================================
+        // PROMPT MAGIC & I2V & PRESETS (Fase 7 e 9)
+        // ==========================================
+
+        window.i2vBase64 = null;
+        window.activePreset = 'none';
+
+        function setPreset(presetName, btnEl) {
+            window.activePreset = presetName;
+            
+            // UI Reset
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.remove('bg-violet-600', 'border-violet-500', 'shadow-lg', 'shadow-violet-500/20');
+                b.classList.add('bg-slate-800', 'border-slate-700');
+            });
+            
+            // UI Active
+            btnEl.classList.remove('bg-slate-800', 'border-slate-700');
+            btnEl.classList.add('bg-violet-600', 'border-violet-500', 'shadow-lg', 'shadow-violet-500/20');
+        }
+
+        function previewI2V(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('i2vPreview');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById('i2vPlaceholder').classList.add('hidden');
+                    document.getElementById('i2vClear').classList.remove('hidden');
+                    
+                    // Extrair base64 purinho para a API
+                    window.i2vBase64 = e.target.result.split(',')[1];
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearI2V(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('i2vInput').value = "";
+            window.i2vBase64 = null;
+            document.getElementById('i2vPreview').classList.add('hidden');
+            document.getElementById('i2vPlaceholder').classList.remove('hidden');
+            document.getElementById('i2vClear').classList.add('hidden');
+        }
+
+        async function enhancePrompt() {
+            const promptEl = document.getElementById('promptInput');
+            const btn = document.getElementById('enhanceBtn');
+            const originalPrompt = promptEl.value.trim();
+            
+            if(!originalPrompt) {
+                alert("Digite uma ideia básica antes de usar o Prompt Magic.");
+                return;
+            }
+
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Magia...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/studio/enhance_prompt', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ prompt: originalPrompt, type: currentMode })
+                });
+                const data = await res.json();
+                if(data.success && data.enhanced) {
+                    promptEl.value = data.enhanced;
+                    // highlight effect
+                    promptEl.classList.add('ring-2', 'ring-pink-500', 'bg-pink-900/20');
+                    setTimeout(() => {
+                        promptEl.classList.remove('ring-2', 'ring-pink-500', 'bg-pink-900/20');
+                    }, 1500);
+                } else {
+                    alert("A Magia falhou: " + (data.error || "Tente novamente."));
+                }
+            } catch(e) {
+                console.error(e);
+            } finally {
+                btn.innerHTML = oldHtml;
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // GALERIA E NOTIFICAÇÕES (Fases 5 e 6)
+        // ==========================================
+
+        function toggleView(view) {
+            if(view === 'create') {
+                document.getElementById('createView').classList.remove('hidden');
+                document.getElementById('createView').classList.add('grid');
+                document.getElementById('galleryView').classList.add('hidden');
+                
+                document.getElementById('tabCreateBtn').classList.add('bg-violet-600', 'text-white');
+                document.getElementById('tabCreateBtn').classList.remove('text-slate-400', 'bg-transparent');
+                
+                document.getElementById('tabGalleryBtn').classList.remove('bg-violet-600', 'text-white');
+                document.getElementById('tabGalleryBtn').classList.add('text-slate-400');
+            } else {
+                document.getElementById('createView').classList.add('hidden');
+                document.getElementById('createView').classList.remove('grid');
+                document.getElementById('galleryView').classList.remove('hidden');
+                
+                document.getElementById('tabGalleryBtn').classList.add('bg-violet-600', 'text-white');
+                document.getElementById('tabGalleryBtn').classList.remove('text-slate-400', 'bg-transparent');
+                
+                document.getElementById('tabCreateBtn').classList.remove('bg-violet-600', 'text-white');
+                document.getElementById('tabCreateBtn').classList.add('text-slate-400');
+                
+                loadGallery();
+            }
+        }
+
+        function toggleNotifications() {
+            const drop = document.getElementById('notifDropdown');
+            drop.classList.toggle('hidden');
+        }
+
+        let unreadJobIds = [];
+
+        async function pollNotifications() {
+            try {
+                const res = await fetch('/api/notifications');
+                const data = await res.json();
+                if(data.success) {
+                    const list = document.getElementById('notifList');
+                    const badge = document.getElementById('notifBadge');
+                    
+                    if(data.notifications.length > 0) {
+                        badge.innerText = data.notifications.length;
+                        badge.classList.remove('hidden');
+                        
+                        let html = '';
+                        unreadJobIds = [];
+                        data.notifications.forEach(n => {
+                            unreadJobIds.push(n.job_id);
+                            html += `
+                                <div class="bg-slate-700/50 hover:bg-slate-700 p-3 rounded-lg border border-slate-600 transition cursor-pointer" onclick="viewJob('${n.job_id}', '${n.result_url}')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-semibold text-white">Renderização Concluída</p>
+                                            <p class="text-xs text-slate-400 mt-1 truncate w-48">Mídia pronta para visualização!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        list.innerHTML = html;
+                    } else {
+                        badge.classList.add('hidden');
+                        list.innerHTML = '<div class="text-center text-slate-500 text-sm py-4">Nenhuma notificação nova</div>';
+                    }
+                }
+            } catch(e) {
+                console.error("Polling error", e);
+            }
+        }
+
+        async function markAllRead() {
+            if(unreadJobIds.length === 0) return;
+            try {
+                await fetch('/api/notifications/mark_read', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({job_ids: unreadJobIds})
+                });
+                pollNotifications();
+                document.getElementById('notifDropdown').classList.add('hidden');
+            } catch(e) { console.error(e); }
+        }
+
+        function viewJob(jobId, url) {
+            markAllRead();
+            toggleView('gallery');
+        }
+
+        async function loadGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12"><div class="cyber-loader mb-4"></div><p>Buscando histórico...</p></div>';
+            
+            try {
+                const res = await fetch('/api/studio/history');
+                const data = await res.json();
+                
+                if(data.success && data.history.length > 0) {
+                    let html = '';
+                    data.history.forEach(job => {
+                        const icon = job.type === 'video_generation' ? 'fa-film' : 'fa-image';
+                        const badgeColor = job.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400' : (job.status === 'FAILED' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400');
+                        const statusTxt = job.status === 'COMPLETED' ? 'Pronto' : (job.status === 'FAILED' ? 'Falha' : 'Processando...');
+                        
+                        let mediaHtml = '';
+                        if(job.status === 'COMPLETED' && job.result_url) {
+                            if(job.type === 'video_generation') {
+                                mediaHtml = `<video src="${job.result_url}" class="w-full h-48 object-cover rounded-xl mb-3 border border-slate-700" controls loop muted></video>`;
+                            } else {
+                                mediaHtml = `<img src="${job.result_url}" class="w-full h-48 object-cover rounded-xl mb-3 border border-slate-700">`;
+                            }
+                        } else if (job.status === 'FAILED') {
+                            mediaHtml = `<div class="w-full h-48 bg-slate-800 rounded-xl mb-3 border border-slate-700 flex flex-col items-center justify-center text-slate-500"><i class="fas fa-triangle-exclamation text-3xl mb-2 text-red-400/50"></i><p class="text-xs">Falha na renderização</p></div>`;
+                        } else {
+                            mediaHtml = `<div class="w-full h-48 bg-slate-800 rounded-xl mb-3 border border-slate-700 flex flex-col items-center justify-center text-slate-500"><div class="cyber-loader mb-2 w-8 h-8"></div><p class="text-xs">${job.progress}% concluído</p></div>`;
+                        }
+
+                        let paramText = '';
+                        if (job.parameters) {
+                            if(job.parameters.model) paramText += `<span class="bg-slate-800 px-2 py-1 rounded text-[10px] text-slate-300">Model: ${job.parameters.model}</span> `;
+                            if(job.parameters.seed && job.parameters.seed !== -1) paramText += `<span class="bg-slate-800 px-2 py-1 rounded text-[10px] text-slate-300">Seed: ${job.parameters.seed}</span> `;
+                        }
+
+                        html += `
+                            <div class="glass-panel p-4 rounded-2xl hover:border-violet-500/50 transition duration-300 group">
+                                ${mediaHtml}
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas ${icon} text-slate-400"></i>
+                                        <span class="text-xs font-bold px-2 py-0.5 rounded-full ${badgeColor}">${statusTxt}</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-500">${new Date(job.created_at).toLocaleString()}</span>
+                                </div>
+                                <p class="text-sm text-white font-medium line-clamp-2 mb-2" title="${job.parameters?.prompt || ''}">${job.parameters?.prompt || 'Sem prompt'}</p>
+                                <div class="flex flex-wrap gap-1 mb-3">
+                                    ${paramText}
+                                </div>
+                                ${job.status === 'COMPLETED' ? `
+                                <div class="flex flex-col gap-2">
+                                    <a href="${job.result_url}" download class="block w-full text-center bg-white/10 hover:bg-white/20 text-white text-sm font-bold py-2 rounded-lg transition"><i class="fas fa-download mr-1"></i> Baixar Mídia</a>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        <button onclick="sendToTimeline('${job.result_url}', '${job.type}')" class="w-full bg-blue-600/30 hover:bg-blue-500/50 text-blue-300 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap"><i class="fas fa-layer-group"></i> Timeline</button>
+                                        ${job.type === 'video_generation' ? `
+                                        <button id="btn_enh_${job.job_id}" onclick="enhanceVideo('${job.job_id}')" class="w-full bg-violet-600/30 hover:bg-violet-500/50 text-violet-300 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap"><i class="fas fa-magic"></i> Upscale</button>
+                                        <button id="btn_sfx_${job.job_id}" onclick="generateSFX('${job.job_id}')" class="w-full bg-emerald-600/30 hover:bg-emerald-500/50 text-emerald-300 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap"><i class="fas fa-music"></i> SFX</button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                    grid.innerHTML = html;
+                } else {
+                    grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12"><i class="fas fa-box-open text-4xl mb-4 opacity-50"></i><p>Seu cofre está vazio. Gere seu primeiro vídeo!</p></div>';
+                }
+            } catch(e) {
+                console.error(e);
+                grid.innerHTML = '<div class="col-span-full text-center text-red-400 py-12">Erro ao carregar o cofre.</div>';
+            }
+        }
+
+        // Start polling for notifications every 10 seconds
+        setInterval(pollNotifications, 10000);
+        pollNotifications();
+
+        // ==========================================
+        // FASE 8: SAAS PREMIUM
+        // ==========================================
+
+        function sendToTimeline(url, type) {
+            let assetId = 'asset_' + Date.now();
+            let newAsset = {
+                id: assetId,
+                name: (type === 'video_generation' ? 'Vídeo_IA_' : 'Imagem_IA_') + Math.floor(Math.random()*1000) + (type === 'video_generation' ? '.mp4' : '.png'),
+                url: url,
+                type: type === 'video_generation' ? 'video' : 'image'
+            };
+            
+            // Puxar ativos existentes do localStorage (que a timeline.html usa)
+            let existingAssets = [];
+            try {
+                let saved = localStorage.getItem('apollo_timeline_assets');
+                if(saved) existingAssets = JSON.parse(saved);
+            } catch(e) {}
+            
+            existingAssets.push(newAsset);
+            localStorage.setItem('apollo_timeline_assets', JSON.stringify(existingAssets));
+            
+            alert("Mídia adicionada com sucesso à sua Pool da Timeline!");
+        }
+
+        async function enhanceVideo(jobId) {
+            const btn = document.getElementById('btn_enh_' + jobId);
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/studio/enhance_video', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({job_id: jobId})
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert("O Upscale 4K foi enfileirado! Você receberá uma notificação quando terminar.");
+                } else {
+                    alert("Erro no Upscale: " + data.error);
+                }
+            } catch(e) {
+                alert("Erro de conexão.");
+            } finally {
+                btn.innerHTML = oldHtml;
+                btn.disabled = false;
+            }
+        }
+
+        async function generateSFX(jobId) {
+            const btn = document.getElementById('btn_sfx_' + jobId);
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/studio/generate_sfx', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({job_id: jobId})
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert("A injeção de áudio/Foley foi iniciada! Você receberá uma notificação quando terminar.");
+                } else {
+                    alert("Erro no Gerador SFX: " + data.error);
+                }
+            } catch(e) {
+                alert("Erro de conexão.");
+            } finally {
+                btn.innerHTML = oldHtml;
+                btn.disabled = false;
+            }
+        }
+
+    </script>
+</body>
+</html>

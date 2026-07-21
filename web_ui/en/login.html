@@ -1,0 +1,205 @@
+html
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit Pro — Login</title>
+<link href="favicon.png" rel="icon" type="image/png"/>
+<link href="../global_style.css" rel="stylesheet"/>
+<style>
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.1), transparent 60%);
+        }
+        
+        .login-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-pro);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .toggle-link {
+            display: block;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .toggle-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        #auth-error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<header style="justify-content: center;">
+<h1><span style="color: var(--primary);">APOLLO</span> EDIT</h1>
+</header>
+<div class="login-container">
+<div class="login-card">
+<h2 data-i18n="login.title" id="form-title">Access Studio</h2>
+<p data-i18n="login.subtitle" id="form-subtitle">Log in to continue</p>
+<div id="auth-error">Email ou senha incorretos.</div>
+<div class="form-group">
+<label data-i18n="login.email">Email</label>
+<input id="email" placeholder="seu@email.com" type="email"/>
+</div>
+<div class="form-group">
+<label data-i18n="login.password">Password</label>
+<input id="password" placeholder="••••••••" type="password"/>
+</div>
+<div class="form-group" id="profile-selection" style="display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px dashed var(--primary);">
+<label style="color: var(--primary);">Escolha seu Perfil de Uso:</label>
+<select id="user-profile-mode" style="width: 100%; background: var(--bg-base); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 6px;">
+<option value="cloud">Modo Automático / Nuvem (Mais Fácil)</option>
+<option value="local">Modo Pro / Hacker (Conectar Pinokio Local)</option>
+</select>
+<p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 0;">* Você pode alterar isso depois na Oficina.</p>
+</div>
+<button class="btn primary btn-full" data-i18n="login.enter" id="btn-submit" onclick="handleAuth()">Log In</button>
+<a class="toggle-link" data-i18n="login.create_account" id="toggle-mode" onclick="toggleMode()">Create a new account</a>
+</div>
+</div>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script>
+        let isLoginMode = true;
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            
+            const titleEl = document.getElementById('form-title');
+            const subEl = document.getElementById('form-subtitle');
+            const btnEl = document.getElementById('btn-submit');
+            const toggleEl = document.getElementById('toggle-mode');
+            const profileSelEl = document.getElementById('profile-selection');
+
+            if (isLoginMode) {
+                titleEl.setAttribute('data-i18n', 'login.title');
+                subEl.setAttribute('data-i18n', 'login.subtitle');
+                btnEl.setAttribute('data-i18n', 'login.enter');
+                toggleEl.setAttribute('data-i18n', 'login.create_account');
+                profileSelEl.style.display = 'none';
+            } else {
+                titleEl.setAttribute('data-i18n', 'login.signup_title');
+                subEl.setAttribute('data-i18n', 'login.signup_subtitle');
+                btnEl.setAttribute('data-i18n', 'login.signup_btn');
+                toggleEl.setAttribute('data-i18n', 'login.have_account');
+                profileSelEl.style.display = 'block';
+            }
+            
+            document.getElementById('auth-error').style.display = 'none';
+            if (typeof applyTranslations === 'function') applyTranslations();
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('auth-error');
+            errorDiv.style.display = 'none';
+
+            if (!email || !password) {
+                errorDiv.innerText = "Preencha todos os campos.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (isLoginMode) {
+                // If the user already has a saved preference, use it. Otherwise default to cloud.
+                if(!localStorage.getItem('apollo_user_mode')) {
+                    localStorage.setItem('apollo_user_mode', 'cloud');
+                }
+
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    errorDiv.innerText = error.message;
+                    errorDiv.style.display = 'block';
+                } else {
+                    window.location.href = 'hub.html';
+                }
+            } else {
+                const modeSelect = document.getElementById('user-profile-mode').value;
+                localStorage.setItem('apollo_user_mode', modeSelect);
+
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) {
+                    errorDiv.innerText = error.message;
+                    errorDiv.style.display = 'block';
+                } else {
+                    alert('Conta criada com sucesso! Modo ' + (modeSelect === 'cloud' ? 'Nuvem' : 'Local') + ' selecionado.');
+                    toggleMode();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

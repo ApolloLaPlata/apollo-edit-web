@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Media Lab (Pendrive Mágico)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        .tab-btn.active { border-bottom: 2px solid #3b82f6; color: #60a5fa; }
+        .input-dark { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 15px; }
+        .input-dark:focus { border-color: #3b82f6; outline: none; }
+        .preview-box { background: rgba(15, 23, 42, 0.5); border: 1px dashed #475569; border-radius: 8px; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 15px; }
+        .preview-box img, .preview-box video, .preview-box audio { max-width: 100%; max-height: 400px; border-radius: 4px; }
+    </style>
+</head>
+<body class="p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-extrabold text-white flex items-center gap-3">
+                <span class="text-blue-500">🔌</span> Pendrive Mágico da Nuvem
+            </h1>
+            <p class="text-slate-400 mt-2">Laboratório universal para Geração de Imagem, Áudio e Vídeo via API (CORS liberado).</p>
+        </header>
+
+        <!-- Abas -->
+        <div class="flex gap-6 mb-6 border-b border-slate-800">
+            <button onclick="switchTab('tab-image')" class="tab-btn active pb-3 font-bold text-slate-300 hover:text-white flex items-center gap-2">🖼️ Geração de Imagem</button>
+            <button onclick="switchTab('tab-audio')" class="tab-btn pb-3 font-bold text-slate-300 hover:text-white flex items-center gap-2">🎙️ TTS & Música</button>
+            <button onclick="switchTab('tab-video')" class="tab-btn pb-3 font-bold text-slate-300 hover:text-white flex items-center gap-2">🎬 Geração de Vídeo</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- CONTROLES -->
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-white">⚙️ Configuração da Requisição</h2>
+                
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">URL da API (Endpoint)</label>
+                <input type="text" id="api-url" class="input-dark" placeholder="https://api.fal.ai/... ou https://api.replicate.com/..." value="https://api.fal.ai/v1/generation/text-to-image">
+
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Chave de API (Bearer Token)</label>
+                <input type="password" id="api-key" class="input-dark" placeholder="sk-...">
+
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Prompt / Texto Base</label>
+                <textarea id="api-prompt" class="input-dark h-24" placeholder="O que você quer gerar? Ex: Um robô cibernético bebendo água de coco na praia..."></textarea>
+
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Payload Extra (Opcional JSON)</label>
+                <textarea id="api-payload" class="input-dark h-20 font-mono text-xs" placeholder='{"model": "v1", "quality": "hd"}'></textarea>
+
+                <button id="btn-generate" onclick="generateMedia()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition flex items-center justify-center gap-2">
+                    ⚡ Iniciar Geração no Servidor
+                </button>
+            </div>
+
+            <!-- RESULTADO -->
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-white">👀 Resultado da Mídia</h2>
+                
+                <div id="status-text" class="text-sm text-yellow-400 mb-2 hidden font-mono animate-pulse">Enviando requisição pelo proxy do Python...</div>
+                
+                <div class="preview-box" id="media-preview">
+                    <span class="text-slate-500 text-sm">A mídia gerada aparecerá aqui.</span>
+                </div>
+
+                <div class="mt-4 flex-1">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Resposta Bruta (JSON)</label>
+                    <textarea id="api-response" class="input-dark h-32 font-mono text-[10px]" readonly></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'tab-image';
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            currentTab = tabId;
+
+            // Altera placeholders para ajudar o usuário
+            const urlInput = document.getElementById('api-url');
+            if(tabId === 'tab-image') urlInput.value = "https://api.fal.ai/v1/generation/text-to-image";
+            if(tabId === 'tab-audio') urlInput.value = "https://api.elevenlabs.io/v1/text-to-speech/ID_DA_VOZ";
+            if(tabId === 'tab-video') urlInput.value = "https://api.runwayml.com/v1/image_to_video";
+        }
+
+        async function generateMedia() {
+            const url = document.getElementById('api-url').value;
+            const key = document.getElementById('api-key').value;
+            const prompt = document.getElementById('api-prompt').value;
+            let payloadStr = document.getElementById('api-payload').value;
+            
+            const btn = document.getElementById('btn-generate');
+            const status = document.getElementById('status-text');
+            const preview = document.getElementById('media-preview');
+            const responseBox = document.getElementById('api-response');
+
+            if(!url) { alert("Preencha a URL da API!"); return; }
+
+            // Prepara Payload Customizado
+            let extraPayload = {};
+            if(payloadStr.trim() !== '') {
+                try {
+                    extraPayload = JSON.parse(payloadStr);
+                } catch(e) {
+                    alert("Erro no Payload Extra: JSON Inválido!");
+                    return;
+                }
+            }
+
+            // O nosso Proxy exige que a URL alvo e Headers sejam passados no corpo
+            const proxyPayload = {
+                target_url: url,
+                target_headers: {
+                    "Authorization": `Bearer ${key}`,
+                    "Content-Type": "application/json"
+                },
+                prompt: prompt,
+                ...extraPayload
+            };
+
+            btn.disabled = true;
+            btn.innerHTML = "⏳ Processando...";
+            status.classList.remove('hidden');
+            preview.innerHTML = `<span class="text-slate-500 animate-pulse">Aguardando nuvem...</span>`;
+            responseBox.value = "";
+
+            try {
+                // Chama a rota nativa do Python que criamos
+                const res = await fetch("/api/media_proxy", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(proxyPayload)
+                });
+
+                const data = await res.json();
+                responseBox.value = JSON.stringify(data, null, 2);
+
+                if(!res.ok) {
+                    preview.innerHTML = `<span class="text-red-400">Erro na API. Veja o JSON abaixo.</span>`;
+                } else {
+                    renderMedia(data);
+                }
+
+            } catch(e) {
+                preview.innerHTML = `<span class="text-red-500">Erro de conexão com o Proxy.</span>`;
+                responseBox.value = str(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "⚡ Iniciar Geração no Servidor";
+                status.classList.add('hidden');
+            }
+        }
+
+        function renderMedia(data) {
+            const preview = document.getElementById('media-preview');
+            
+            // Tenta adivinhar onde está a mídia no JSON de retorno (depende de qual API o usuário colocou)
+            let mediaUrl = null;
+
+            // Padrão Replicate/Fal.ai para imagens/videos
+            if(data.images && data.images.length > 0) mediaUrl = data.images[0].url;
+            else if(data.output && Array.isArray(data.output)) mediaUrl = data.output[0];
+            else if(data.video_url) mediaUrl = data.video_url;
+            else if(data.audio_url) mediaUrl = data.audio_url;
+            
+            if(!mediaUrl) {
+                preview.innerHTML = `<span class="text-yellow-400">Sucesso! Mas não achei a URL da mídia no JSON de resposta. Veja abaixo.</span>`;
+                return;
+            }
+
+            if(currentTab === 'tab-image') {
+                preview.innerHTML = `<img src="${mediaUrl}" alt="Imagem Gerada">`;
+            } else if(currentTab === 'tab-video') {
+                preview.innerHTML = `<video src="${mediaUrl}" controls autoplay loop></video>`;
+            } else if(currentTab === 'tab-audio') {
+                preview.innerHTML = `<audio src="${mediaUrl}" controls autoplay></audio>`;
+            }
+        }
+    </script>
+</body>
+</html>

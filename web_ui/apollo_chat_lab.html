@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Chat Lab (Universal API)</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: #111827;
+            --text-color: #e5e7eb;
+            --accent: #3b82f6;
+            --border: #1f2937;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 350px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .messages {
+            flex: 1;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        .user-msg {
+            background-color: var(--accent);
+            align-self: flex-end;
+        }
+        .ai-msg {
+            background-color: var(--border);
+            align-self: flex-start;
+            white-space: pre-wrap;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+        input, select {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: -10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 style="margin-top: 0; color: #60a5fa;">Apollo Swarm Config</h2>
+        
+        <label>API Key (Já Inserida)</label>
+        <input type="password" id="apiKey" value="16338b74-3f36-4c89-84db-a8e00b099058/roxingo/apollo-maquinas-virtuais" readonly>
+
+        <label>Modelo (A Mágica acontece aqui)</label>
+        <select id="modelSelect">
+            <option value="nvidia-nemotron-3-ultra-550b-a55b">NVIDIA Nemotron 3 Ultra 550B (O Gratuito)</option>
+            <option value="openai/gpt-5.5-2026-04-23">GPT-5.5 (O Caro)</option>
+            <option value="anthropic/claude-opus-4-8">Claude Opus 4.8</option>
+            <option value="google/gemini-3.5-flash">Gemini 3.5 Flash</option>
+            <option value="nvidia-nemotron-omni-30b">Nemotron Omni 30B (Barato)</option>
+        </select>
+
+        <label>System Prompt (A Alma do Roteirista)</label>
+        <input type="text" id="sysPrompt" value="Você é um roteirista cínico de suspense. Responda de forma sombria e profissional.">
+
+        <div style="margin-top: auto;">
+            <p style="font-size: 0.8rem; color: #9ca3af;">Isso usa o endpoint universal: <br><i>/v1/chat/completions</i></p>
+        </div>
+    </div>
+
+    <div class="chat-area">
+        <div class="messages" id="chatBox">
+            <div class="message ai-msg">Sistemas online. Selecione o modelo à esquerda e envie seu comando.</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Digite sua mensagem para a IA..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()" id="sendBtn">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const sendBtn = document.getElementById('sendBtn');
+            const apiKey = document.getElementById('apiKey').value;
+            const model = document.getElementById('modelSelect').value;
+            const sysPrompt = document.getElementById('sysPrompt').value;
+            
+            const text = input.value.trim();
+            if(!text) return;
+
+            // Adiciona mensagem do usuario
+            chatBox.innerHTML += `<div class="message user-msg">${text}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Prepara UI de carregamento
+            sendBtn.disabled = true;
+            sendBtn.innerText = 'Processando...';
+
+            try {
+                const response = await fetch("/api/lightning_proxy", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            { role: "system", content: sysPrompt },
+                            { role: "user", content: text }
+                        ]
+                    })
+                });
+
+                if(!response.ok) {
+                    throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const aiText = data.choices[0].message.content;
+
+                // Adiciona resposta da IA
+                chatBox.innerHTML += `<div class="message ai-msg">${aiText}</div>`;
+            } catch (error) {
+                chatBox.innerHTML += `<div class="message ai-msg" style="color: #ef4444;">Erro de Conexão: Ocorreu um problema ao conectar com a Lightning AI.<br>Detalhe: ${error.message}</div>`;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerText = 'Enviar';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>

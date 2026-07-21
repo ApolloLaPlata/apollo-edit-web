@@ -1,0 +1,601 @@
+html
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit Pro — Workspace</title>
+<link href="favicon.png" rel="icon" type="image/png"/>
+<link href="../global_style.css" rel="stylesheet"/>
+<link href="../racer_loading.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #1e1e1e; border-bottom: 1px solid #333;">
+<div style="display: flex; align-items: center; gap: 20px;">
+<div class="main-logo" style="margin: 0; font-size: 1.5rem;"><span>APOLLO</span> EDIT</div>
+<button class="btn" onclick="openChannelModal()" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onmouseover="this.style.background='var(--btn-purple)'" style="background: rgba(0,0,0,0.5); border: 1px dashed var(--btn-purple); border-radius: 8px; padding: 8px 15px; font-weight: bold; color: #fff; cursor: pointer; transition: 0.2s;">
+                📺 <span id="lbl_active_channel" style="color: #fff;">Selecionar Canal (Workspace)</span> ▾
+            </button>
+</div>
+<div class="user-widget" style="display: flex; gap: 15px; align-items: center;">
+<select id="lang-selector" onchange="setLanguage(this.value)" style="background: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; height: 35px;">
+<option value="pt">🇧🇷 PT</option>
+<option value="en">🇺🇸 EN</option>
+<option value="es">🇪🇸 ES</option>
+</select>
+<div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+<span class="gas-icon"></span>
+<span><strong id="user-credits">Carregando...</strong> Gasolina</span>
+<button class="btn yellow mini" onclick="if(window.adSystem) window.adSystem.show(25)" style="font-size: 11px; padding: 4px 8px; margin-left: 10px;">📺 ABASTECER</button>
+</div>
+<a href="perfil.html" style="text-decoration: none; color: inherit;">
+<div class="avatar-container" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="display:flex; align-items:center; gap:10px; cursor: pointer; transition: transform 0.2s;">
+<div class="avatar" style="width:40px; height:40px; border-radius:50%; background:#333; border:2px solid #FFD32A;"></div>
+<span class="user-name" id="user-name" style="display:flex; flex-direction:column;">
+<strong data-i18n="header.user_pro" style="font-size:14px;">Jogador #1</strong>
+<span style="color: var(--btn-yellow); font-size:11px;">Piloto de Elite</span>
+</span>
+</div>
+</a>
+</div>
+</header>
+<div class="editor-layout">
+ SIDEBAR (Inventário &amp; Equipamentos) 
+<aside class="side-panel">
+<div class="ad-slot">
+<span>[ESPAÇO PUBLICITÁRIO - 300x250]</span>
+</div>
+<div class="section-title">👤 Equipe &amp; Perfil</div>
+<div class="rpg-item-grid" style="margin-bottom: 20px;">
+<a class="rpg-item legendary" href="perfil.html" style="border-color: var(--btn-purple);">
+<div class="rpg-item-icon" style="background-image: url('assets/mascote.png'); background-size: cover;"></div>
+<span class="rpg-item-name">Vestiário</span>
+</a>
+<a class="rpg-item epic" href="copilotos.html" style="border-color: var(--btn-green);">
+<div class="rpg-item-icon" style="background-image: url('assets/ai_robot_racer.png'); background-size: cover;"></div>
+<span class="rpg-item-name">Copilotos</span>
+</a>
+</div>
+<div class="section-title">🎒 Inventário</div>
+<div class="rpg-item-grid">
+<a class="rpg-item epic" href="tanque.html">
+<div class="rpg-item-level">Lv.Max</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_tanque.png');"></div>
+<span class="rpg-item-name">O Tanque</span>
+</a>
+<a class="rpg-item legendary" href="oficina.html" style="border-color: var(--btn-yellow);">
+<div class="rpg-item-level">Lv.???</div>
+<div class="rpg-item-icon" style="background-image: url('assets/car_level1.png'); background-size: contain;"></div>
+<span class="rpg-item-name">Oficina de I.A</span>
+</a>
+</div>
+<div class="section-title">🔧 Equipamentos</div>
+<div class="rpg-item-grid">
+<a class="rpg-item rare" href="ferramentas.html">
+<div class="rpg-item-level">Lv.5</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Tools FFmpeg</span>
+</a>
+<a class="rpg-item rare" href="midia.html">
+<div class="rpg-item-level">Lv.2</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Resize Crop</span>
+</a>
+<a class="rpg-item common" href="volume.html">
+<div class="rpg-item-level">Lv.1</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Audio Normalizer</span>
+</a>
+</div>
+<div class="section-title" data-i18n="sidebar.external_plugins">🧩 Plugins Extras</div>
+<div id="external-plugins-list" style="padding: 0 15px;">
+<button class="btn yellow" onclick="window.location.href='plugin_viewer.html?app=story'" style="width: 100%; margin-bottom: 12px; justify-content: flex-start;">🖼️ <span data-i18n="sidebar.story_gen">Histórias</span></button>
+<button class="btn primary" onclick="window.location.href='plugin_viewer.html?app=news'" style="width: 100%; margin-bottom: 12px; justify-content: flex-start;">📰 <span data-i18n="sidebar.news_panel">Notícias</span></button>
+<button class="btn" onclick="window.location.href='la_plata.html'" style="width: 100%; margin-bottom: 12px; justify-content: flex-start; background: #9B59B6; color: white; border-color: #7D3C98;">🚀 <span>La Plata</span></button>
+</div>
+</aside>
+ MAIN STAGE (Mapa de Missões) 
+<main class="main-stage">
+ COFRE DE MOEDAS (MICRO-ECONOMIA) 
+<div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+<div style="flex: 1; background: rgba(0,0,0,0.5); border: 2px solid #555; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+<div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;">⛽ TEMPO RENDER</div>
+<div style="font-size: 1.5rem; font-weight: bold; color: var(--btn-green); font-family: 'Nunito', sans-serif;">120 Min</div>
+</div>
+<div style="flex: 1; background: rgba(0,0,0,0.5); border: 2px solid #9B59B6; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+<div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;">💎 CRISTAIS</div>
+<div style="font-size: 1.5rem; font-weight: bold; color: #e0b0ff; font-family: 'Nunito', sans-serif;">12</div>
+</div>
+</div>
+ GACHA / ROLETA DIÁRIA 
+<div style="background: linear-gradient(45deg, #1e0b3b, #4a196e); border: 3px solid #9B59B6; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(155,89,182,0.4);">
+<div>
+<h2 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #FFD32A; margin: 0; letter-spacing: 2px;">🎰 ROLETA DA SORTE</h2>
+<p style="color: #cbd5e1; margin: 5px 0 0 0; font-size: 1.1rem;">Assista um anúncio para girar e ganhar Peças Premium ou Minutos de Render!</p>
+</div>
+<div>
+<button class="btn" id="btn-gacha-hub" onclick="spinDailyRoulette()" style="background: linear-gradient(90deg, #f59e0b, #d97706); border-color: #b45309; font-size: 1.5rem; padding: 15px 30px;">
+                        📺 GIRAR AGORA (GRÁTIS)
+                    </button>
+</div>
+</div>
+ 📺 OUTDOOR DE PROMOÇÕES (CAROUSEL) 
+<div class="promo-carousel">
+<div class="promo-tag">NOVIDADES</div>
+<div class="promo-track">
+<span class="promo-text">
+                        🏎️ Nova API Nano Banana Disponível no Sistema! | ⛽ Oferta de Fim de Semana: Compre 1.000L de Gasolina e Ganhe o Dobro! | 👾 <a href="#">Entre na Comunidade VIP no Discord! Participe dos Torneios.</a>
+</span>
+</div>
+</div>
+ 🤖 SUPER BANNER ANIMADO DE I.A. E PUBLICIDADE 
+<div class="ai-super-banner">
+<div class="banner-track">
+ Slide 1: A IA 
+<div class="banner-slide">
+<div class="ai-chat-area">
+<h2>Diretor de IA</h2>
+<p>Eu sou a sua I.A. Faço o roteiro, monto o vídeo e publico. Tudo no automático!</p>
+<button class="btn yellow" onclick="demoRacingLoader('premium')" style="font-size: 1.5rem;">CONVERSAR COM IA 🤖</button>
+</div>
+<img alt="Apollo Mascote" class="ai-mascot" src="../assets/mascote.png"/>
+</div>
+ Slide 2: Propaganda 
+<div class="banner-slide" style="background: linear-gradient(90deg, #b91c1c, #7f1d1d); justify-content: center; text-align: center;">
+<h2 style="color: #fff; font-family: 'Bangers', cursive; font-size: 3rem; margin-bottom: 10px;">OFERTA RELÂMPAGO! ⚡</h2>
+<p style="color: #facc15; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Ganhe 500 Litros de Gasolina ao assinar a Newsletter VIP.</p>
+<button class="btn" style="background: #000; color: #fff; border-color: #fff;">RESGATAR AGORA</button>
+</div>
+ Slide 3: Geração Mágica Flutuante 
+<div class="banner-slide" style="background: linear-gradient(90deg, #1d4ed8, #1e3a8a); align-items: center; padding: 0 40px; gap: 30px;">
+<div style="font-size: 5rem; animation: float 3s infinite;">🔮</div>
+<div>
+<h2 style="color: #60a5fa; font-family: 'Bangers', cursive; font-size: 2.5rem;">Criação Instantânea</h2>
+<p style="color: #fff; font-size: 1.2rem; font-weight: bold;">Arraste suas referências aqui e eu gero um vídeo baseado nelas.</p>
+<div class="ai-input-box" style="margin-top: 15px;">
+<input placeholder="Cole a URL ou jogue sua ideia aqui..." style="width: 400px;" type="text"/>
+<button class="btn primary" onclick="demoRacingLoader('premium')">GERAR MAGIA ✨</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+ GAMIFICATION BANNER 
+<div class="garage-banner" data-accepts="api-credit,image,audio">
+<div class="info">
+<h2 data-i18n="main.garage_title">🏎️ A Garagem do Apollo</h2>
+<p data-i18n="main.garage_desc">Construa o motor do seu projeto, chame o FFmpeg e veja a mágica.</p>
+</div>
+<div style="display: flex; gap: 15px;">
+<button class="btn yellow" data-i18n="main.garage_btn" onclick="demoRacingLoader('medium')">START GARAGE</button>
+<button class="btn primary" data-i18n="main.upload_btn" onclick="openUploadModal()">☁️ UPLOAD</button>
+</div>
+</div>
+<div class="section-title">⚔️ Missões Principais (Criação)</div>
+<div class="rpg-item-grid">
+<a class="rpg-item legendary" href="timeline.html">
+<div class="rpg-item-level">Lv.Max</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png');"></div>
+<span class="rpg-item-name">Timeline</span>
+</a>
+<a class="rpg-item epic" href="montador.html">
+<div class="rpg-item-level">Lv.15</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Montador Dark</span>
+</a>
+<a class="rpg-item legendary" href="musica.html">
+<div class="rpg-item-level">Lv.10</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Fábrica Musical</span>
+</a>
+<a class="rpg-item epic" href="podcast.html">
+<div class="rpg-item-level">Lv.8</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Cast Creator</span>
+</a>
+</div>
+<div class="ad-slot" style="margin: 30px 20px;">
+<span>[BANNER 728x90 ADSENSE]</span>
+</div>
+<div class="section-title">🔮 Magias de IA &amp; Áudio</div>
+<div class="rpg-item-grid">
+<a class="rpg-item legendary" href="tts.html">
+<div class="rpg-item-level">Lv.30</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Motor Voz IA</span>
+</a>
+<a class="rpg-item legendary" href="dublagem.html">
+<div class="rpg-item-level">Lv.50</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_dublagem.png');"></div>
+<span class="rpg-item-name">Dublagem RVC</span>
+</a>
+<a class="rpg-item epic" href="narrador.html">
+<div class="rpg-item-level">Lv.22</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Avatar Mágico</span>
+</a>
+<a class="rpg-item rare" href="legendas.html">
+<div class="rpg-item-level">Lv.15</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Auto Legendas</span>
+</a>
+</div>
+<div class="section-title" style="color: #9B59B6; text-shadow: 0 0 10px rgba(155,89,182,0.5);">🚀 Ferramentas La Plata (IA)</div>
+<div class="rpg-item-grid">
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=prompt">
+<div class="rpg-item-level laplata-level">Lv.1</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Gerador de Prompt</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=hashtag">
+<div class="rpg-item-level laplata-level">Lv.1</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Gerador de Hashtag</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=descrever">
+<div class="rpg-item-level laplata-level">Lv.2</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Descrever Imagem</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=mineracao">
+<div class="rpg-item-level laplata-level">Lv.3</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Mineração Viral</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=titulos">
+<div class="rpg-item-level laplata-level">Lv.2</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Gerador de Títulos</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=descricoes">
+<div class="rpg-item-level laplata-level">Lv.2</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Gerador Descrições</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=gerador_imagem">
+<div class="rpg-item-level laplata-level">Lv.4</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Gerador Imagens</span>
+</a>
+<a class="rpg-item rpg-item-laplata" href="ferramenta_laplata.html?tool=tendencias">
+<div class="rpg-item-level laplata-level">Lv.3</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
+<span class="rpg-item-name">Tendências</span>
+</a>
+</div>
+<div class="section-title">🛠️ Canivete Suíço (Mini-Tools)</div>
+<div class="rpg-item-grid">
+<a class="rpg-item common" href="ferramentas.html?tool=redimensionar">
+<div class="rpg-item-level">Lv.2</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Resize Crop</span>
+</a>
+<a class="rpg-item common" href="ferramentas.html?tool=acelerar_desacelerar">
+<div class="rpg-item-level">Lv.1</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Speed FX</span>
+</a>
+<a class="rpg-item common" href="ferramentas.html?tool=remover_audio">
+<div class="rpg-item-level">Lv.1</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Mute Vídeo</span>
+</a>
+<a class="rpg-item rare" href="ferramentas.html?tool=ajustar_brilho_contraste">
+<div class="rpg-item-level">Lv.3</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Color Grade</span>
+</a>
+<a class="rpg-item rare" href="ferramentas.html?tool=inverter_video">
+<div class="rpg-item-level">Lv.5</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Rewind FX</span>
+</a>
+<a class="rpg-item epic" href="ferramentas.html?tool=remover_silencios">
+<div class="rpg-item-level">Lv.8</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Auto-Cut</span>
+</a>
+<a class="rpg-item epic" href="ferramentas.html?tool=compressor_video">
+<div class="rpg-item-level">Lv.10</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Compressor</span>
+</a>
+<a class="rpg-item legendary" href="ferramentas.html?tool=padronizar_celular">
+<div class="rpg-item-level">Lv.12</div>
+<div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<span class="rpg-item-name">Shorts Maker</span>
+</a>
+</div>
+<div class="section-title">🏰 Construções &amp; Sistema</div>
+<div class="tool-grid">
+<a class="tool-card" href="mercado.html" style="border-color: #00f0ff;">
+<div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
+<div class="card-content">
+<h3 style="color: #00f0ff;">MERCADO P2P</h3>
+<p>Venda Prompts, Peças e Compre Pacotes de Geração com Desconto.</p>
+</div>
+<div class="badge-tag new" style="background: #e11d48;">$$$</div>
+</a>
+<a class="tool-card" href="index.html">
+<div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<div class="card-content">
+<h3 data-i18n="main.node_studio">Estúdio Node</h3>
+<p data-i18n="main.node_studio_desc">Crie fluxos de trabalho visuais com nós conectáveis.</p>
+</div>
+<div class="badge-tag new">Novo</div>
+</a>
+<a class="tool-card" href="fila.html">
+<div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<div class="card-content">
+<h3 data-i18n="main.render_queue">Fila de Render</h3>
+<p data-i18n="main.render_queue_desc">Gerencie os vídeos enviados para o Render Farm.</p>
+</div>
+<div class="badge-tag free">Livre</div>
+</a>
+<a class="tool-card" href="dashboard.html">
+<div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<div class="card-content">
+<h3 data-i18n="main.analytics">DEXboard</h3>
+<p data-i18n="main.analytics_desc">Estatísticas, Custos e Armazenamento S3.</p>
+</div>
+</a>
+<a class="tool-card" href="config.html">
+<div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
+<div class="card-content">
+<h3 data-i18n="main.api_keys">Chaves API</h3>
+<p data-i18n="main.api_keys_desc">Configurações do cofre BYOK para rodar grátis.</p>
+</div>
+</a>
+</div>
+</main>
+</div>
+ S3 / R2 Upload Modal (Gamer Style) 
+<div id="upload-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+<div style="background: var(--bg-surface-elevated); padding: 40px; border-radius: 24px; border: var(--border-thick); width: 450px; text-align: center; box-shadow: 0 10px 0 var(--border-dark); position: relative;">
+<button onclick="closeUploadModal()" style="position: absolute; top: -15px; right: -15px; background: var(--btn-red); border: var(--border-thick); width: 40px; height: 40px; border-radius: 50%; color: #fff; font-family: 'Bangers'; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 0 var(--border-dark);">X</button>
+<h3 data-i18n="modal.upload_title" style="margin-bottom:15px; color: var(--btn-yellow); font-family: 'Bangers'; font-size:2.5rem; text-shadow: 2px 2px 0 var(--border-dark);">Upload p/ Nuvem</h3>
+<p data-i18n="modal.upload_desc" style="font-size:1rem; color: #fff; font-weight:800; margin-bottom: 25px;">Envio direto pelo navegador.</p>
+<input id="file-input" style="margin-bottom: 20px; width:100%; border:var(--border-thick); border-radius:12px; padding:15px; font-weight: 800; font-family: 'Nunito';" type="file"/>
+<div id="upload-progress" style="display:none; width:100%; background:#e2e8f0; height:16px; border-radius:8px; margin-bottom: 15px; border: 2px solid var(--border-dark);">
+<div id="upload-bar" style="width:0%; height:100%; background:var(--btn-green); border-radius:6px; transition:width 0.2s;"></div>
+</div>
+<p id="upload-status" style="font-size:1rem; font-weight:800; color:var(--btn-yellow); margin-bottom: 25px;"></p>
+<button class="btn yellow" data-i18n="modal.start_upload" onclick="startS3Upload()" style="width:100%; font-size:1.5rem;">INICIAR UPLOAD</button>
+</div>
+</div>
+ FASE 35: Modal de Seleção de Canais 
+<div id="channel-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+<div style="background: #1e1e1e; padding: 30px; border-radius: 16px; border: 2px solid #444; width: 500px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative;">
+<button onclick="closeChannelModal()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer;">✖</button>
+<h2 style="margin-top: 0; color: #fff; margin-bottom: 20px; display:flex; align-items:center; gap:10px;">
+                📺 Gerenciador de Canais
+            </h2>
+<p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Selecione o canal para isolar as mídias, histórico e customizar as cores da interface (Theme Tinting).</p>
+<div id="channels-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px; max-height: 250px; overflow-y: auto; padding-right:10px;">
+ Preenchido via JS 
+</div>
+<div style="border-top: 1px solid #333; padding-top: 20px;">
+<h4 style="margin-top:0; color:#ddd; margin-bottom:10px;">➕ Adicionar Novo Canal</h4>
+<div style="display:flex; gap:10px; margin-bottom:10px;">
+<input id="new-channel-name" placeholder="Ex: Curiosidades Sombrias" style="flex:1; padding:10px; border-radius:6px; border:1px solid #555; background:#111; color:#fff;" type="text"/>
+<input id="new-channel-color" style="width:40px; height:40px; border:none; border-radius:6px; padding:0; cursor:pointer;" type="color" value="#E74C3C"/>
+</div>
+<button class="btn primary" onclick="createNewChannel()" style="width:100%;">Criar Canal</button>
+</div>
+</div>
+</div>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+<script src="../racer_loading.js"></script>
+<script src="../video_ad_modal.js"></script>
+<script src="../transfer_hud.js?v=11"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script>
+        function openUploadModal() {
+            document.getElementById('upload-modal').style.display = 'flex';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-modal').style.display = 'none';
+            document.getElementById('upload-progress').style.display = 'none';
+            document.getElementById('upload-status').innerText = '';
+            document.getElementById('file-input').value = '';
+        }
+
+        // Fase 13: Interações do Perfil Dropdown
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profile-dropdown');
+            menu.classList.toggle('active');
+        }
+        
+        // Fase 22: Gacha Roulette
+        function spinDailyRoulette() {
+            const btn = document.getElementById('btn-gacha-hub');
+            btn.disabled = true;
+            btn.innerText = "⏳ Assistindo Ad (15s)...";
+            
+            setTimeout(() => {
+                const prizes = [
+                    "🎟️ Ticket: 5 Minutos de Renderização Grátis",
+                    "📦 Peça Cosmética: Roda de Ouro",
+                    "💎 3 Cristais Premium",
+                    "⛽ 200 Litros de Gasolina"
+                ];
+                const prize = prizes[Math.floor(Math.random() * prizes.length)];
+                
+                alert(`🎉 PARABÉNS! Você girou a roleta e ganhou:\n\n${prize}\n\nSeu prêmio foi adicionado ao seu Inventário (Mock).`);
+                
+                btn.innerText = "✅ VOLTE AMANHÃ";
+                // Keep it disabled to simulate daily spin
+            }, 3000);
+        }
+
+        // Phase 35: Channels
+        let myChannels = JSON.parse(localStorage.getItem('apollo_channels')) || [];
+        
+        function initChannels() {
+            const activeId = localStorage.getItem('apollo_active_channel_id');
+            if (myChannels.length === 0) {
+                // Default fallback
+                myChannels = [{ id: 'default', name: 'Canal Principal', color: '#9B59B6' }];
+                localStorage.setItem('apollo_channels', JSON.stringify(myChannels));
+                if(!activeId) localStorage.setItem('apollo_active_channel_id', 'default');
+            }
+            updateHeaderChannelName();
+        }
+        
+        function updateHeaderChannelName() {
+            const activeId = localStorage.getItem('apollo_active_channel_id') || myChannels[0].id;
+            const activeCh = myChannels.find(c => c.id === activeId);
+            if (activeCh) {
+                document.getElementById('lbl_active_channel').innerText = activeCh.name;
+                document.getElementById('lbl_active_channel').style.color = activeCh.color;
+            }
+        }
+
+        function openChannelModal() {
+            document.getElementById('channel-modal').style.display = 'flex';
+            renderChannelsList();
+        }
+
+        function closeChannelModal() {
+            document.getElementById('channel-modal').style.display = 'none';
+        }
+
+        function renderChannelsList() {
+            const list = document.getElementById('channels-list');
+            const activeId = localStorage.getItem('apollo_active_channel_id');
+            list.innerHTML = '';
+            
+            myChannels.forEach(ch => {
+                const isActive = ch.id === activeId;
+                list.innerHTML += `
+                    <div style="display:flex; align-items:center; justify-content:space-between; background: ${isActive ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.3)'}; padding: 12px; border-radius: 8px; border: 1px solid ${isActive ? ch.color : '#444'}; cursor:pointer; transition:0.2s;" onclick="selectChannel('${ch.id}')">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:20px; height:20px; border-radius:4px; background:${ch.color}; box-shadow: 0 0 10px ${ch.color};"></div>
+                            <span style="color:#fff; font-weight:bold;">${ch.name}</span>
+                        </div>
+                        ${isActive ? '<span style="color:#10B981; font-size:12px; font-weight:bold;">✓ ATIVO</span>' : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function selectChannel(id) {
+            localStorage.setItem('apollo_active_channel_id', id);
+            updateHeaderChannelName();
+            renderChannelsList();
+            
+            // Reload page so Theme Tinting can apply
+            window.location.reload();
+        }
+
+        function createNewChannel() {
+            const name = document.getElementById('new-channel-name').value;
+            const color = document.getElementById('new-channel-color').value;
+            if(!name) return alert('Digite um nome para o canal.');
+            
+            const id = 'ch_' + Math.random().toString(36).substr(2, 9);
+            myChannels.push({ id, name, color });
+            localStorage.setItem('apollo_channels', JSON.stringify(myChannels));
+            
+            document.getElementById('new-channel-name').value = '';
+            renderChannelsList();
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initChannels();
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.profile-menu-container');
+            if (dropdown && !dropdown.contains(event.target)) {
+                const el = document.getElementById('profile-dropdown');
+                if(el) el.classList.remove('active');
+            }
+        });
+
+        async function startS3Upload() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            const statusText = document.getElementById('upload-status');
+            const progressContainer = document.getElementById('upload-progress');
+            const progressBar = document.getElementById('upload-bar');
+
+            if (!file) {
+                statusText.innerText = 'Selecione um arquivo primeiro!';
+                statusText.style.color = 'var(--btn-red)';
+                return;
+            }
+
+            statusText.innerText = 'Iniciando Missão de Upload...';
+            statusText.style.color = '#fff';
+
+            try {
+                const response = await fetch('/api/s3/presigned', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename: file.name, content_type: file.type })
+                });
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error('Erro: ' + data.error);
+                }
+
+                statusText.innerText = 'Permissão concedida. Upando...';
+                progressContainer.style.display = 'block';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', data.presigned_url, true);
+                xhr.setRequestHeader('Content-Type', file.type);
+
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progressBar.style.width = percentComplete + '%';
+                        statusText.innerText = `Upando... ${Math.round(percentComplete)}%`;
+                    }
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        statusText.innerText = '✅ Upload Concluído com Sucesso!';
+                        statusText.style.color = 'var(--btn-green)';
+                    } else {
+                        throw new Error('Falha no upload do S3.');
+                    }
+                };
+
+                xhr.onerror = function() {
+                    statusText.innerText = 'Erro de rede durante o upload.';
+                    statusText.style.color = 'var(--btn-red)';
+                };
+
+                xhr.send(file);
+
+            } catch (error) {
+                statusText.innerText = error.message;
+                statusText.style.color = 'var(--btn-red)';
+                console.error(error);
+            }
+        }
+    </script>
+<div id="toast-container"></div>
+<script src="../i18n_loader.js"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if(document.getElementById('lang-selector')) {
+                document.getElementById('lang-selector').value = getCurrentLang();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit — Gerador de Podcast</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&amp;family=Consolas&amp;display=swap" rel="stylesheet"/>
+<link href="../styles.css" rel="stylesheet"/>
+<style>
+        body {
+            /* background removed for 3d */
+            color: #F0F0F0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e1e1e;
+            padding: 15px 30px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .header a { color: #9B59B6; text-decoration: none; font-weight: bold; }
+        .header h1 { margin: 0; font-size: 20px; color: #fff; }
+        
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Lado Esquerdo */
+        .left-panel {
+            flex: 0 0 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .chars-box {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            flex-grow: 1;
+        }
+        .chars-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 10px; color: #9B59B6; }
+        .char-list {
+            list-style: none;
+            padding: 0; margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .char-list li {
+            padding: 8px; background: #2a2a2a; margin-bottom: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;
+        }
+        .char-list li:hover { background: #4a4a6a; }
+
+        .log-box {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+        .log-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 10px; color: #9B59B6; }
+        .log-content {
+            flex-grow: 1;
+            background: #121212;
+            border: 1px solid #444;
+            color: #fff;
+            font-family: "Consolas", monospace;
+            font-size: 11px;
+            padding: 10px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Lado Direito */
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .script-box {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .script-box label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 10px; }
+        textarea {
+            width: 100%; height: 300px; background: #121212; border: 1px solid #444; color: #fff;
+            padding: 15px; font-family: "Consolas", monospace; font-size: 13px; border-radius: 4px; resize: vertical; box-sizing: border-box;
+        }
+        .hint { font-size: 12px; color: #888; margin-top: 10px; }
+
+        .options-box {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .options-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 15px; color: #9B59B6; }
+        .opt-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+        .opt-row label { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }
+
+        .btn-gerar {
+            background: #9B59B6; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; transition: opacity 0.2s;
+        }
+        .btn-gerar:hover { opacity: 0.8; }
+
+        /* Tabs Inferiores */
+        .tabs-container {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .tab-headers { display: flex; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .tab-btn { background: transparent; color: #aaa; border: none; font-size: 14px; font-weight: bold; cursor: pointer; padding: 5px 10px; }
+        .tab-btn.active { color: #9B59B6; border-bottom: 2px solid #9B59B6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Volumes Grid */
+        .volumes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .vol-item { display: flex; align-items: center; gap: 10px; background: #2a2a2a; padding: 10px; border-radius: 6px; }
+        .vol-item span { width: 100px; font-size: 12px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .vol-item input[type="range"] { flex: 1; }
+        .vol-item .val { width: 40px; text-align: right; font-size: 12px; color: #9B59B6; font-weight: bold; }
+
+        /* Processamento Configs */
+        .proc-group { background: #2a2a2a; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+        .proc-group label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+        .proc-slider { display: flex; align-items: center; gap: 10px; }
+        .proc-slider input[type="range"] { flex: 1; }
+        .proc-slider .val { width: 60px; font-size: 12px; font-weight: bold; color: #9B59B6; }
+
+    </style>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333;">
+ Logo e Créditos 
+<div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" data-i18n="podcast.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">🎙️ Gerador de Podcast - VoiceMaker &amp; Tags</span>
+<div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+<span class="gas-icon"></span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+</div>
+</div>
+<div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+<div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuário Pro</span>
+</div>
+<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+</div>
+</header>
+<div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+<span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+</div>
+<div class="main-container">
+<div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
+ Decorativo fundo 
+<div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">🏎️</div>
+<div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">🎧</div>
+<div style="z-index: 2;">
+<h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
+                    CAST CREATOR
+                </h3>
+<p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
+                    Crie conversas entre duas vozes.
+                </p>
+</div>
+</div>
+ PAINEL ESQUERDO 
+<div class="left-panel">
+<div class="chars-box">
+<h3>Personagens</h3>
+<ul class="char-list" id="char_list">
+ Preenchido via JS 
+</ul>
+</div>
+<div class="log-box">
+<h3>Log de Execução</h3>
+<div class="log-content" id="log_content">Aguardando início...</div>
+</div>
+</div>
+ PAINEL DIREITO 
+<div class="right-panel">
+<div class="script-box">
+<label>Cole seu roteiro aqui:</label>
+<textarea id="roteiro"></textarea>
+<div class="hint">DICA: Formato Base -&gt; 'Nome Personagem (Estado Visual): Texto' | Formatos mais avançados serão suportados.</div>
+</div>
+<div class="options-box">
+<h3>Opções de Geração</h3>
+<div class="opt-row">
+<label><input checked="" id="chk_audio" type="checkbox"/> Gerar Áudio (MP3)</label>
+<label><input id="chk_video" type="checkbox"/> Gerar Vídeo LOOP (MP4)</label>
+<label><input id="chk_tags" type="checkbox"/> Gerar TAGS (MOV Alpha)</label>
+<label><input checked="" id="chk_normalize" type="checkbox"/> Normalizar Áudio</label>
+<label><input id="chk_cores" type="checkbox"/> 🎨 Gerar Mapa de Cores (.json)</label>
+</div>
+<div class="opt-row" style="margin-top: 10px; border-top: 1px solid #333; padding-top: 15px;">
+<label style="color: #4CAF50; font-weight: bold;">
+<input id="chk_srt" type="checkbox"/> 📝 Gerar SRT após áudio (Whisper — word-level timestamps)
+                    </label>
+</div>
+</div>
+<button class="btn-gerar" id="btn_gerar" onclick="gerarPodcast()">🚀 GERAR PODCAST</button>
+<div class="tabs-container">
+<div class="tab-headers">
+<button class="tab-btn active" onclick="switchTab('volumes', this)">Volumes</button>
+<button class="tab-btn" onclick="switchTab('processamento', this)">Processamento</button>
+</div>
+ ABA VOLUMES 
+<div class="tab-content active" id="tab_volumes">
+<div class="volumes-grid" id="volumes_container">
+ Preenchido via JS 
+</div>
+</div>
+ ABA PROCESSAMENTO 
+<div class="tab-content" id="tab_processamento">
+<div class="proc-group">
+<label>Normalização (LUFS)</label>
+<div class="proc-slider">
+<input id="lufs" max="-5" min="-30" oninput="updateVal('lufs_val', this.value + ' LUFS')" step="0.5" type="range"/>
+<span class="val" id="lufs_val">-10.0 LUFS</span>
+</div>
+</div>
+<div class="proc-group">
+<label><input id="chk_compressor" type="checkbox"/> Ativar Compressor (Rádio Voice)</label>
+<div class="proc-slider">
+<span style="font-size: 12px; color: #aaa;">Intensidade:</span>
+<input id="comp_int" max="100" min="0" oninput="updateVal('comp_val', this.value)" type="range"/>
+<span class="val" id="comp_val">50</span>
+</div>
+</div>
+<div class="proc-group">
+<label><input id="chk_pacing" type="checkbox"/> Smart Pacing (Remover Silêncios)</label>
+</div>
+<div class="proc-group">
+<label><input id="chk_ducking" type="checkbox"/> Audio Ducking (Música de Fundo)</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
+<span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPAÇO PUBLICITÁRIO - 728x90 INFERIOR]</span>
+</div>
+<script>
+        let isGenerating = false;
+
+        function updateVal(id, val) { document.getElementById(id).innerText = val; }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab_' + tabId).classList.add('active');
+        }
+
+        async function carregarDados() {
+            try {
+                const res = await fetch('/api/podcast/dados');
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Personagens (Lista Lateral)
+                    const ul = document.getElementById('char_list');
+                    const volGrid = document.getElementById('volumes_container');
+                    
+                    for (const [name, info] of Object.entries(data.personagens)) {
+                        // Lista Lateral
+                        const li = document.createElement('li');
+                        li.innerText = name;
+                        li.onclick = () => {
+                            const txt = document.getElementById('roteiro');
+                            txt.value += `[${name}] (Normal): \n`;
+                            txt.focus();
+                        };
+                        ul.appendChild(li);
+
+                        // Slider de Volume
+                        const vol = info.volume_ajuste || 0.0;
+                        volGrid.innerHTML += `
+                            <div class="vol-item">
+                                <span title="${name}">${name}</span>
+                                <input type="range" id="vol_${name}" min="-20" max="20" step="0.5" value="${vol}" oninput="document.getElementById('val_${name}').innerText = this.value + ' dB'">
+                                <span class="val" id="val_${name}">${vol} dB</span>
+                            </div>
+                        `;
+                    }
+
+                    // Configurações de Processamento
+                    document.getElementById('lufs').value = data.config.target_lufs || -10.0;
+                    document.getElementById('lufs_val').innerText = (data.config.target_lufs || -10.0) + ' LUFS';
+                    
+                    document.getElementById('chk_compressor').checked = data.config.use_compressor !== false;
+                    document.getElementById('comp_int').value = data.config.compressor_intensity || 50;
+                    document.getElementById('comp_val').innerText = data.config.compressor_intensity || 50;
+
+                    document.getElementById('chk_pacing').checked = data.config.use_smart_pacing !== false;
+                    document.getElementById('chk_ducking').checked = data.config.use_ducking || false;
+                }
+            } catch (e) {
+                document.getElementById('log_content').innerText = "Erro ao carregar dados: " + e;
+            }
+        }
+
+        async function gerarPodcast() {
+            if (isGenerating) return;
+
+            const roteiro = document.getElementById('roteiro').value.trim();
+            if (!roteiro) { alert("O roteiro está vazio!"); return; }
+
+            const modes = [];
+            if(document.getElementById('chk_audio').checked) modes.push("audio");
+            if(document.getElementById('chk_video').checked) modes.push("video");
+            if(document.getElementById('chk_tags').checked) modes.push("tags");
+
+            if(modes.length === 0) { alert("Selecione pelo menos um modo de geração!"); return; }
+
+            // Coletar volumes alterados
+            const volumes = {};
+            document.querySelectorAll('[id^="vol_"]').forEach(el => {
+                const name = el.id.replace('vol_', '');
+                volumes[name] = parseFloat(el.value);
+            });
+
+            const payload = {
+                roteiro: roteiro,
+                modes: modes,
+                normalize: document.getElementById('chk_normalize').checked,
+                mapa_cores: document.getElementById('chk_cores').checked,
+                gerar_srt: document.getElementById('chk_srt').checked,
+                volumes: volumes,
+                proc: {
+                    lufs: parseFloat(document.getElementById('lufs').value),
+                    compressor: document.getElementById('chk_compressor').checked,
+                    comp_int: parseFloat(document.getElementById('comp_int').value),
+                    pacing: document.getElementById('chk_pacing').checked,
+                    ducking: document.getElementById('chk_ducking').checked
+                }
+            };
+
+            const btn = document.getElementById('btn_gerar');
+            btn.innerText = "⏳ Processando Podcast...";
+            btn.style.background = "#555";
+            isGenerating = true;
+
+            document.getElementById('log_content').innerText = "Iniciando geração do podcast...\n";
+
+            try {
+                const res = await fetch('/api/podcast/gerar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('log_content').innerText += `\n✅ Concluído! Salvo em: ${data.path || 'output_podcast'}`;
+                    alert("Sucesso!\nPodcast gerado.");
+                } else {
+                    document.getElementById('log_content').innerText += `\n❌ Erro: ${data.error}`;
+                    alert("Erro: " + data.error);
+                }
+            } catch (e) {
+                document.getElementById('log_content').innerText += `\n❌ Falha na conexão: ${e}`;
+            } finally {
+                btn.innerText = "🚀 GERAR PODCAST";
+                btn.style.background = "#9B59B6";
+                isGenerating = false;
+            }
+        }
+
+        window.onload = carregarDados;
+    </script>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+</body>
+</html>
