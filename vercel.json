@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/web_ui/hub.html" },
+    { "source": "/(.*)", "destination": "/web_ui/$1" }
+  ]
+}
