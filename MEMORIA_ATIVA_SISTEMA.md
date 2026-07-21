@@ -2821,3 +2821,14 @@ O próximo grande passo estratégico será plugar o **Supabase** (Banco de Dados
 - Os vídeos gerados são publicados com 1 clique nesse canal.
 - **Efeito YouTube:** A comunidade do Apollo poderá navegar, assistir, curtir e interagir com os conteúdos uns dos outros. Isso gera o "Efeito de Rede", tornando a plataforma extremamente engajadora e reduzindo o cancelamento a zero (ninguém abandona sua própria rede social).
 - **Diretriz de Arquitetura:** Todas as tabelas do Supabase (Perfis, Vídeos, Trabalhos) devem agora contemplar colunas de visibilidade ("Público", "Privado") para suportar a futura interface social de descoberta de conteúdo.
+
+### 📝 [DETALHAMENTO DA REDE SOCIAL: O MODELO SUBSTACK + YOUTUBE] - 21/07/2026
+**Evolução da Ideia pelo CEO:**
+1. **O Molde Substack:** A rede social terá uma pegada estilo "Substack" (a plataforma amarelinha com newsletter). Não será apenas um feed de vídeos, será um **Blog Pessoal com Feed Integrado**.
+2. **Monetização via Banners (Lucro da Plataforma):** O site vai se pagar e lucrar inserindo uma quantidade inteligente e reduzida de Banners de Publicidade nos blogs dos usuários. A hospedagem do blog grátis do usuário é bancada por esses banners que revertem dinheiro para nós.
+3. **Distribuição Multiplataforma Automática:** A dor do usuário é a postagem. O cara cria o vídeo e posta no Blog exclusivo dele no Apollo. De lá, nós oferecemos automação para disparar o vídeo diretamente para o YouTube e Instagram dele (ou ele baixa e posta manualmente). 
+4. **O Upsell do Autoblog IA:** O usuário cria a conta para editar vídeos e ganha o blog de graça. Porém, se ele quiser que o Blog dele publique artigos sozinhos usando os nossos Robôs (Autoblog IA), ele pagará uma taxa extra (Upsell). Isso cria um funil perfeito de conversão.
+5. **Diretriz de Design (Fase 2):** O design atual da web_ui é apenas o esqueleto (mockup estrutural) para conectar os botões. No futuro, a diretriz é absoluta: **Design Mobile-First**. As redes sociais migraram dos PCs para o celular e depois criaram editores. Nós começaremos com o editor no celular para depois crescer a rede.
+
+**Mentalidade de Execução (O Acordo):**
+Sabemos que essa é a visão de longo prazo. Por enquanto, começamos pequenos. Um site "feinho, mas que funciona" (MVP). A prioridade agora é devolver o site 100% online para o CEO, validar o gerador de imagem, e ir dando corpo ao ecossistema dia após dia.
