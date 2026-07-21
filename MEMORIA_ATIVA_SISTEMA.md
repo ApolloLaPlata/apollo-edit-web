@@ -2811,3 +2811,13 @@ A Tríade de Ouro está 100% ONLINE e validada:
 4. **Motores de GPU:** Modal (Imagens) + Lightning AI (LLMs).
 
 O próximo grande passo estratégico será plugar o **Supabase** (Banco de Dados/Login) e iniciar as interfaces, começando pelo sistema do **Apollo Autoblog** utilizando essa mesma super infraestrutura.
+
+- **2026-07-21**: Deploy Oficial Fase 1: Supabase + Tela de Login Premium enviados para o GitHub. A integra��o Cont�nua (CI/CD) da Vercel assumiu o pacote e publicou em apolloedit.com. O frontend agora est� protegido por autentica��o.
+
+### 👑 [PIVOT ESTRATÉGICO FINAL - A REDE SOCIAL DA IA] - 21/07/2026
+**A Epifania do CEO:** O Apollo Edit Web deixará de ser apenas um "software SaaS" isolado. A infraestrutura Vercel + Oracle + Domínios servirá de base para a criação de uma **Rede Social de Criadores**.
+- O usuário gera vídeos internamente usando os Agentes (Paula, Diretor, Roteirista).
+- Cada assinante do Apollo Edit receberá um **Blog/Canal pessoal** (ex: apolloedit.com/seu-canal) automaticamente provisionado.
+- Os vídeos gerados são publicados com 1 clique nesse canal.
+- **Efeito YouTube:** A comunidade do Apollo poderá navegar, assistir, curtir e interagir com os conteúdos uns dos outros. Isso gera o "Efeito de Rede", tornando a plataforma extremamente engajadora e reduzindo o cancelamento a zero (ninguém abandona sua própria rede social).
+- **Diretriz de Arquitetura:** Todas as tabelas do Supabase (Perfis, Vídeos, Trabalhos) devem agora contemplar colunas de visibilidade ("Público", "Privado") para suportar a futura interface social de descoberta de conteúdo.
