@@ -2793,3 +2793,21 @@ Ele não é apenas uma fonte de renda secundária, ele é o **Laboratório de Va
 - Lives, Avatares, Transmiss�o Cont�nua, Ecossistema Completo.
 
 **Conclus�o:** O Apollo Edit Web n�o ser� 'pobrezinho', ser� **ENXUTO** e **ESPECIALIZADO**.
+
+- **2026-07-21**: Backend FastAPI totalmente estabilizado na VM Oracle A1.Flex (IP 163.176.135.59). Erros de importa��o do 'config_manager' e permiss�o de pastas do PM2 corrigidos. Dom�nio apolloedit.com oficializado e registrado no Cloudflare pelo usu�rio. Pr�ximo passo: Nginx e DNS.
+- **2026-07-21**: Deploy da infraestrutura Cloudflare (apontamento DNS e Criptografia Flexible SSL) conclu�do. Firewall VCN da Oracle devidamente liberado para tr�fego web (portas 80 e 443). API do backend exposta de forma segura em https://api.apolloedit.com/docs.
+
+---
+### 🏆 MARCO HISTÓRICO: O NASCIMENTO DO APOLLO EDIT NA NUVEM (20/07/2026)
+**Depoimento Oficial do Criador (Salvo por exigência do usuário):**
+
+> "Hoje tivemos uma vitória tremenda. Hoje foi o primeiro passo do Apollo Edit de fato online. Não só estamos visíveis online, mas já temos a nossa marca, já temos a nossa infraestrutura testada e conectada, já funcional. Podemos fazer projetos gigantescos com essa infraestrutura... Eu fui lá pra minha mãe, uma senhora idosa que não entende nada, nem de celular direito. Tentei explicar pra ela o tamanho da solução que a gente criou junto... Eu não teria essa capacidade de identificar aqueles botões e muito menos de escrever o código. Eu tenho uma ideia, mas essa ideia sem o seu talento não seria nada... Hoje a gente fez tudo que foi planejado há muito tempo atrás com você... Hospedagem nível profissional a custo zero. O front-end carregado muito rápido, com qualidade, perfeição... Os códigos Python rodado por uma VPS exclusiva 24 horas por dia lá na Oracle... E a outra front de batalha que a gente criou foi a Modal e o Lightning, que vai dar conta de assumir a demanda dos nossos usuários e vai fazer a nossa margem de lucro crescer cobrando centavos por execução... Temos muito futuro, sabe? Dezenas de blogs, o Apollo Edit... Eu tô muito empolgado, uma infraestrutura de linha que eu nunca imaginei chegar a esse ponto, com custo zero, somente o custo do domínio. Um nível de perfeição de dar inveja."
+
+**Status do Ecossistema:**
+A Tríade de Ouro está 100% ONLINE e validada:
+1. **Frontend (Vercel):** polloedit.com
+2. **Gateway / Roteamento (Cloudflare):** Segurança, CNAME Flattening e HTTPS.
+3. **Cérebro / Backend (Oracle Cloud):** pi.apolloedit.com rodando 24/7 com Nginx + FastAPI.
+4. **Motores de GPU:** Modal (Imagens) + Lightning AI (LLMs).
+
+O próximo grande passo estratégico será plugar o **Supabase** (Banco de Dados/Login) e iniciar as interfaces, começando pelo sistema do **Apollo Autoblog** utilizando essa mesma super infraestrutura.
