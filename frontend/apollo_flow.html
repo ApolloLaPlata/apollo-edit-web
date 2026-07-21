@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Flow — Estúdio de Geração I.A.</title>
+    <meta name="description" content="Gere imagens e vídeos com IA em lote usando múltiplos motores: Flux, Hailuo, LTX-Video, WAN2.2 e mais.">
+    <script src="laplata_ai.js"></script>
+    <script>
+        if (window.self !== window.top) {
+            document.write('<style>body > header { display: none !important; }</style>');
+        }
+    </script>
+    <link rel="stylesheet" href="global_style.css">
+    <link rel="stylesheet" href="apollo_flow.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="flow-page">
+
+    <!-- HEADER -->
+    <header class="flow-header">
+        <div class="flow-header-left">
+            <a href="hub.html" class="logo-link">
+                <div class="flow-logo"><span>APOLLO</span> FLOW</div>
+            </a>
+            <div class="flow-mode-tabs">
+                <button class="mode-tab active" id="tab-studio" onclick="switchMode('studio')">
+                    <i class="fas fa-layer-group"></i> Estúdio em Lote
+                </button>
+                <button class="mode-tab" id="tab-quickgen" onclick="switchMode('quickgen')">
+                    <i class="fas fa-bolt"></i> Geração Rápida
+                </button>
+            </div>
+        </div>
+        <div class="flow-header-right">
+            <div class="crystals-badge">
+                <i class="fas fa-gem"></i>
+                <span id="user-crystals">248</span> Cristais
+            </div>
+            <div class="flow-user-avatar" id="user-widget">
+                <div class="avatar-ring">
+                    <div class="avatar-inner" id="user-avatar-img"></div>
+                </div>
+                <span id="user-name">Piloto</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================== MODO: ESTÚDIO EM LOTE ====================== -->
+    <div id="mode-studio" class="flow-studio-layout">
+
+        <!-- PAINEL ESQUERDO: RECEITA DO FLOW -->
+        <aside class="flow-sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <i class="fas fa-dna"></i> Consistência de Personagem
+                </h3>
+                <div class="reference-uploader" id="reference-zone" onclick="document.getElementById('ref-img-input').click()">
+                    <div class="reference-placeholder" id="ref-placeholder">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Clique para adicionar imagem de referência</span>
+                        <small>O personagem será mantido em todas as cenas</small>
+                    </div>
+                    <img id="ref-preview" src="" alt="Referência" style="display:none;">
+                    <input type="file" id="ref-img-input" accept="image/*" style="display:none" onchange="handleRefUpload(event)">
+                </div>
+                <div class="character-strength-row">
+                    <label>Intensidade do Personagem</label>
+                    <div class="slider-track">
+                        <input type="range" min="0" max="100" value="75" id="char-strength" oninput="document.getElementById('char-strength-val').textContent = this.value + '%'">
+                        <span id="char-strength-val">75%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-header-row">
+                    <h3 class="sidebar-title"><i class="fas fa-film"></i> Sequência de Cenas</h3>
+                    <button class="btn-add-scene" onclick="addScene()">
+                        <i class="fas fa-plus"></i> Cena
+                    </button>
+                </div>
+                <div id="scenes-container" class="scenes-list">
+                    <!-- Cenas dinâmicas -->
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title"><i class="fas fa-sliders-h"></i> Config Global</h3>
+                <div class="global-config-grid">
+                    <div class="config-item">
+                        <label>Variações por Cena</label>
+                        <div class="number-stepper">
+                            <button onclick="changeVariations(-1)">−</button>
+                            <span id="variations-val">2</span>
+                            <button onclick="changeVariations(1)">+</button>
+                        </div>
+                    </div>
+                    <div class="config-item">
+                        <label>Proporção</label>
+                        <select id="global-ratio">
+                            <option value="1:1">1:1 Quadrado</option>
+                            <option value="16:9" selected>16:9 Widescreen</option>
+                            <option value="9:16">9:16 Vertical</option>
+                            <option value="4:3">4:3 Clássico</option>
+                        </select>
+                    </div>
+                    <div class="config-item full-width">
+                        <label>Estilo Visual Global</label>
+                        <div class="style-chips" id="style-chips">
+                            <span class="style-chip active" onclick="toggleStyle(this)">Cinematográfico</span>
+                            <span class="style-chip" onclick="toggleStyle(this)">Anime</span>
+                            <span class="style-chip" onclick="toggleStyle(this)">Fotorrealista</span>
+                            <span class="style-chip" onclick="toggleStyle(this)">Pixel Art</span>
+                            <span class="style-chip" onclick="toggleStyle(this)">Cyberpunk</span>
+                            <span class="style-chip" onclick="toggleStyle(this)">Aquarela</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÃO PRINCIPAL -->
+            <div class="sidebar-section ignite-section">
+                <button class="btn-ignite" id="ignite-btn" onclick="igniteFlow()">
+                    <div class="ignite-glow"></div>
+                    <i class="fas fa-fire"></i>
+                    <span>Ignite Flow</span>
+                    <small id="ignite-cost-label">Custo: — Cristais</small>
+                </button>
+                <div class="presets-row">
+                    <button class="btn-preset" onclick="savePreset()"><i class="fas fa-save"></i> Salvar Preset</button>
+                    <button class="btn-preset" onclick="loadPreset()"><i class="fas fa-folder-open"></i> Carregar</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- PAINEL DIREITO: GRADE DE RESULTADOS -->
+        <main class="flow-gallery">
+            <div class="gallery-toolbar">
+                <div class="gallery-status" id="gallery-status">
+                    <span class="status-idle">Pronto para gerar</span>
+                </div>
+                <div class="gallery-actions">
+                    <button class="btn-gallery-action" onclick="saveAllToGarage()" id="save-all-btn" disabled>
+                        <i class="fas fa-warehouse"></i> Salvar Tudo na Garagem
+                    </button>
+                    <button class="btn-gallery-action" onclick="clearGallery()">
+                        <i class="fas fa-trash-alt"></i> Limpar
+                    </button>
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="view-masonry" onclick="setView('masonry')"><i class="fas fa-th"></i></button>
+                        <button class="view-btn" id="view-storyboard" onclick="setView('storyboard')"><i class="fas fa-th-list"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Selection Bar -->
+            <div class="gallery-selection-bar" id="gallery-selection-bar">
+                <span class="gallery-sel-count"><span id="sel-count">0</span> selecionados</span>
+                <button class="gallery-sel-btn" onclick="saveSelectedToGarage()"><i class="fas fa-warehouse"></i> Salvar</button>
+                <button class="gallery-sel-btn" onclick="sendSelectedToEditor()"><i class="fas fa-film"></i> Editor</button>
+                <button class="gallery-sel-btn" style="color:var(--flow-red); border-color:rgba(248,113,113,0.3);" onclick="deleteSelected()"><i class="fas fa-trash"></i> Excluir</button>
+                <button class="gallery-sel-btn" onclick="clearSelection()" style="margin-left: 10px;"><i class="fas fa-times"></i></button>
+            </div>
+
+
+            <!-- Grid de resultados -->
+            <div id="results-grid" class="results-grid masonry-view">
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h2>Seu Estúdio Aguarda</h2>
+                    <p>Configure as cenas na esquerda e pressione <strong>Ignite Flow</strong> para começar a geração em lote com múltiplos motores de I.A.</p>
+                    <div class="supported-engines">
+                        <span class="engine-badge flux">⚡ Flux</span>
+                        <span class="engine-badge hailuo">🌊 Hailuo</span>
+                        <span class="engine-badge ltx">🎬 LTX-Video</span>
+                        <span class="engine-badge wan">🔥 WAN2.2</span>
+                        <span class="engine-badge kling">✨ Kling</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ====================== MODO: GERAÇÃO RÁPIDA ====================== -->
+    <div id="mode-quickgen" class="quickgen-layout" style="display:none;">
+        <div class="quickgen-container">
+            <div class="quickgen-panel">
+                <h2 class="quickgen-title"><i class="fas fa-bolt"></i> Geração Rápida</h2>
+
+                <!-- Engine Selector -->
+                <div class="engine-selector-grid" id="qg-engines">
+                    <div class="engine-card active" data-engine="flux" onclick="selectQuickEngine(this)">
+                        <div class="engine-icon">⚡</div>
+                        <div class="engine-name">Flux 1.1</div>
+                        <div class="engine-type">Imagem</div>
+                        <div class="engine-cost"><i class="fas fa-gem"></i> 1</div>
+                    </div>
+                    <div class="engine-card" data-engine="flux-pro" onclick="selectQuickEngine(this)">
+                        <div class="engine-icon">⚡</div>
+                        <div class="engine-name">Flux Pro</div>
+                        <div class="engine-type">Imagem</div>
+                        <div class="engine-cost"><i class="fas fa-gem"></i> 3</div>
+                    </div>
+                    <div class="engine-card" data-engine="hailuo" onclick="selectQuickEngine(this)">
+                        <div class="engine-icon">🌊</div>
+                        <div class="engine-name">Hailuo</div>
+                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-cost"><i class="fas fa-gem"></i> 5</div>
+                    </div>
+                    <div class="engine-card" data-engine="ltx" onclick="selectQuickEngine(this)">
+                        <div class="engine-icon">🎬</div>
+                        <div class="engine-name">LTX-Video</div>
+                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-cost"><i class="fas fa-gem"></i> 4</div>
+                    </div>
+                    <div class="engine-card" data-engine="wan" onclick="selectQuickEngine(this)">
+                        <div class="engine-icon">🔥</div>
+                        <div class="engine-name">WAN 2.2</div>
+                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-cost"><i class="fas fa-gem"></i> 6</div>
+                    </div>
+                    <div class="engine-card" data-engine="kling" onclick="selectQuickEngine(this)">
+                        <div class="engine-icon">✨</div>
+                        <div class="engine-name">Kling</div>
+                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-cost"><i class="fas fa-gem"></i> 5</div>
+                    </div>
+                </div>
+
+                <!-- Prompt Box -->
+                <div class="quickgen-prompt-area">
+                    <div class="img2vid-toggle-row">
+                        <label class="toggle-switch-label">
+                            <input type="checkbox" id="img2vid-toggle" onchange="toggleImg2Vid()">
+                            <span class="toggle-slider"></span>
+                            Imagem como ponto de partida (Img2Vid)
+                        </label>
+                    </div>
+                    <div id="img2vid-zone" class="img2vid-zone" style="display:none;" onclick="document.getElementById('img2vid-input').click()">
+                        <i class="fas fa-image"></i> Clique para adicionar imagem inicial
+                        <input type="file" id="img2vid-input" accept="image/*" style="display:none">
+                    </div>
+                    <textarea id="qg-prompt" placeholder="Descreva a cena que você quer criar... Ex: 'Um piloto de Fórmula 1 sai do carro vitoriosa em câmera lenta com confetes dourados caindo.'"></textarea>
+                    <div class="qg-prompt-footer">
+                        <button class="btn-enhance" onclick="enhancePrompt()"><i class="fas fa-magic"></i> Melhorar Prompt com I.A.</button>
+                        <div class="qg-params">
+                            <select id="qg-ratio">
+                                <option value="1:1">1:1</option>
+                                <option value="16:9" selected>16:9</option>
+                                <option value="9:16">9:16</option>
+                            </select>
+                            <select id="qg-quality">
+                                <option value="fast">Rápido</option>
+                                <option value="balanced" selected>Balanceado</option>
+                                <option value="quality">Alta Qualidade</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-generate-quick" id="qg-generate-btn" onclick="quickGenerate()">
+                    <i class="fas fa-sparkles"></i>
+                    <span>Gerar Agora</span>
+                    <small id="qg-cost-label">1 Cristal</small>
+                </button>
+            </div>
+
+            <!-- Quick Result Panel -->
+            <div class="quickgen-result-panel" id="qg-result-panel">
+                <div class="qg-result-placeholder" id="qg-placeholder">
+                    <i class="fas fa-image"></i>
+                    <p>O resultado aparecerá aqui</p>
+                </div>
+                <div id="qg-result-content" style="display:none;">
+                    <div class="qg-result-media-wrap">
+                        <img id="qg-result-img" src="" alt="Resultado" style="display:none;">
+                        <video id="qg-result-video" controls style="display:none;"></video>
+                        <div class="qg-result-overlay">
+                            <div class="qg-result-actions">
+                                <button onclick="saveToGarage('qg-current')"><i class="fas fa-warehouse"></i> Garagem</button>
+                                <button onclick="sendToEditor('qg-current')"><i class="fas fa-film"></i> Editor</button>
+                                <button onclick="downloadResult('qg-current')"><i class="fas fa-download"></i> Download</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="qg-result-meta">
+                        <span id="qg-meta-engine"></span>
+                        <span id="qg-meta-time"></span>
+                        <span id="qg-meta-seed"></span>
+                    </div>
+                    <button class="btn-variations" onclick="generateVariations()">
+                        <i class="fas fa-clone"></i> Gerar 4 Variações deste
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Lightbox de resultado -->
+    <div id="result-modal" class="result-modal" onclick="closeModal()">
+        <div class="modal-inner" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-media-wrap">
+                <img id="modal-img" src="" alt="" style="display:none;">
+                <video id="modal-video" controls style="display:none;"></video>
+            </div>
+            <div class="modal-sidebar">
+                <div class="modal-meta">
+                    <h3 id="modal-title">Cena 1 — Variação 1</h3>
+                    <div class="modal-tags">
+                        <span class="modal-tag" id="modal-engine-tag"></span>
+                        <span class="modal-tag" id="modal-type-tag"></span>
+                    </div>
+                    <div class="modal-prompt-display">
+                        <label>Prompt usado:</label>
+                        <p id="modal-prompt-text"></p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-modal-action primary" onclick="saveToGarageModal()">
+                        <i class="fas fa-warehouse"></i> Salvar na Garagem
+                    </button>
+                    <button class="btn-modal-action" onclick="sendToEditorModal()">
+                        <i class="fas fa-film"></i> Abrir no Editor
+                    </button>
+                    <button class="btn-modal-action" onclick="downloadModal()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn-modal-action" onclick="useAsReferenceModal()">
+                        <i class="fas fa-user-circle"></i> Usar como Referência de Personagem
+                    </button>
+                </div>
+                <div class="modal-upscale">
+                    <label>Upscale</label>
+                    <div class="upscale-options">
+                        <button class="upscale-btn" onclick="upscaleResult(2)">2×</button>
+                        <button class="upscale-btn" onclick="upscaleResult(4)">4×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST de notificação -->
+    <div id="flow-toast" class="flow-toast"></div>
+
+    <!-- SCRIPTS -->
+    <script src="i18n_loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="laplata_db.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_copilot.js"></script>
+    <script src="apollo_flow_logic.js"></script>
+</body>
+</html>

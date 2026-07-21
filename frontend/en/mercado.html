@@ -1,0 +1,1017 @@
+html
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Studio - Mercado Negro &amp; Banco</title>
+ Use o CSS Global Gamificado do Apollo 
+<link href="../global_style.css" rel="stylesheet"/>
+ Removido index.css quebrado, utilizando apenas globais e overrides abaixo 
+<style>
+        /* =========================================
+           MARKETPLACE SPECIFIC STYLES
+           ========================================= */
+        body {
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at 50% 0%, #3b0764 0%, transparent 70%);
+            padding-bottom: 50px;
+        }
+
+        .market-header {
+            padding: 10px 30px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            background: rgba(19, 10, 42, 0.9);
+            border-bottom: var(--border-thick);
+            border-color: #a855f7;
+            height: 80px; 
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .market-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2.8rem;
+            color: #c084fc;
+            text-shadow: 3px 3px 0 #000, 0 0 15px rgba(168, 85, 247, 0.6);
+            letter-spacing: 2px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* -------------------------------------
+           HUD ECONOMY (Gas, Crystals)
+           ------------------------------------- */
+        .economy-hud {
+            display: flex;
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto 30px auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .hud-box {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(0,0,0,0.6);
+            border: var(--border-thick);
+            border-radius: 16px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+        
+        .hud-box:hover {
+            transform: translateY(-4px);
+        }
+
+        .hud-box.gas { border-color: #10b981; }
+        .hud-box.crystals { border-color: #c084fc; box-shadow: 0 10px 0 #000, inset 0 0 15px rgba(192, 132, 252, 0.3); }
+
+        .hud-title {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            color: #fff;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .hud-value {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: 'Nunito', sans-serif;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .gas .hud-value { color: #34d399; }
+        .crystals .hud-value { color: #e879f9; }
+
+        /* -------------------------------------
+           PROMO CAROUSEL (HOT DEALS)
+           ------------------------------------- */
+        .promo-carousel {
+            max-width: 1400px;
+            margin: 0 auto 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .promo-card {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+            border: 4px solid #a855f7;
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 0 #000, 0 0 30px rgba(168, 85, 247, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .promo-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 18px 0 #000, 0 0 40px rgba(168, 85, 247, 0.6);
+        }
+
+        .promo-card.hot {
+            background: linear-gradient(135deg, #450a0a 0%, #991b1b 100%);
+            border-color: #ef4444;
+            box-shadow: 0 10px 0 #000, 0 0 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .promo-badge {
+            position: absolute;
+            top: 15px;
+            right: -35px;
+            background: #facc15;
+            color: #000;
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .promo-icon {
+            font-size: 5rem;
+            filter: drop-shadow(4px 4px 0 #000);
+        }
+
+        .promo-details h3 {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 #000;
+            line-height: 1.1;
+        }
+        
+        .promo-details p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* -------------------------------------
+           TABS NAVIGATION
+           ------------------------------------- */
+        .market-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+
+        .tab-btn {
+            background: #1e1e1e;
+            color: #94a3b8;
+            border: var(--border-thick);
+            border-color: #334155;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-family: 'Bangers', cursive;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 0 #000;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #000;
+            color: #fff;
+        }
+        .tab-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 #000;
+        }
+
+        .tab-btn.active[data-tab="banco"] { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981; }
+        .tab-btn.active[data-tab="negro"] { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: #c084fc; }
+        .tab-btn.active[data-tab="garagem"] { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #f87171; }
+        .tab-btn.active[data-tab="nuvem"] { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; }
+
+        /* -------------------------------------
+           ITEM GRIDS & CARDS
+           ------------------------------------- */
+        .market-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .market-grid.active {
+            display: grid;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .item-card {
+            background: rgba(0,0,0,0.6);
+            border: var(--border-thick);
+            border-color: #475569;
+            border-radius: 16px;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.2s;
+            position: relative;
+            box-shadow: 0 8px 0 #000;
+            text-align: center;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #000, 0 0 20px rgba(255,255,255,0.1);
+            border-color: #cbd5e1;
+        }
+
+        .item-icon {
+            font-size: 4.5rem;
+            margin: 10px 0;
+            filter: drop-shadow(2px 4px 0 #000);
+        }
+
+        .item-title {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            color: #fff;
+            line-height: 1.1;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 700;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        /* Specific borders based on currency type */
+        .item-card.cost-real:hover { border-color: #10b981; box-shadow: 0 13px 0 #000, 0 0 20px rgba(16, 185, 129, 0.4); }
+        .item-card.cost-crystal:hover { border-color: #c084fc; box-shadow: 0 13px 0 #000, 0 0 20px rgba(168, 85, 247, 0.4); }
+        .item-card.cost-gas:hover { border-color: #10b981; box-shadow: 0 13px 0 #000, 0 0 20px rgba(16, 185, 129, 0.4); }
+
+        .price-tag {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #333;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            font-family: 'Nunito', sans-serif;
+            margin-top: auto;
+            text-shadow: 1px 1px 0 #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-real { color: #34d399; border-color: #10b981; }
+        .price-crystal { color: #e879f9; border-color: #a855f7; }
+        .price-gas { color: #34d399; border-color: #047857; }
+
+        .buy-btn {
+            width: 100%;
+            font-size: 1.4rem;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        /* -------------------------------------
+           TOAST NOTIFICATION (PIXEL/RPG)
+           ------------------------------------- */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: linear-gradient(135deg, #1e1b4b, #3b0764);
+            border: var(--border-thick);
+            border-color: #a855f7;
+            border-radius: 12px;
+            padding: 20px 25px;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            box-shadow: 0 8px 0 #000, 0 0 20px rgba(168, 85, 247, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 300px;
+        }
+
+        .toast.error { border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #7f1d1d); box-shadow: 0 8px 0 #000, 0 0 20px rgba(239, 68, 68, 0.5); }
+        .toast.success { border-color: #10b981; background: linear-gradient(135deg, #064e3b, #047857); box-shadow: 0 8px 0 #000, 0 0 20px rgba(16, 185, 129, 0.5); }
+
+        .toast-icon { font-size: 2rem; filter: drop-shadow(2px 2px 0 #000); }
+        
+        .toast-content h4 {
+            font-family: 'Bangers', cursive;
+            font-size: 1.4rem;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .toast-content p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
+        /* -------------------------------------
+           PAYMENT MODAL (Pix/Stripe)
+           ------------------------------------- */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-card {
+            background: #111;
+            border: var(--border-thick);
+            border-color: #3b82f6;
+            border-radius: 24px;
+            width: 500px;
+            max-width: 90%;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 15px 0 #000, 0 0 50px rgba(59, 130, 246, 0.5);
+            position: relative;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .pay-method-btn {
+            background: #1e1e1e;
+            border: 2px solid #333;
+            padding: 15px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pay-method-btn:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .pay-icon { font-size: 2rem; }
+        /* -------------------------------------
+           CRYPTO TERMINAL MODAL
+           ------------------------------------- */
+        .crypto-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .crypto-terminal {
+            background: #000;
+            border: 2px solid #34d399;
+            border-radius: 8px;
+            width: 600px;
+            max-width: 95%;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(52, 211, 153, 0.4);
+            font-family: 'Courier New', Courier, monospace;
+            color: #34d399;
+        }
+
+        .crypto-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px dashed #34d399;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .crypto-qr {
+            width: 200px;
+            height: 200px;
+            background: #fff;
+            margin: 0 auto 20px auto;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            image-rendering: pixelated;
+        }
+        
+        .crypto-qr img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .terminal-logs {
+            background: #0a0a0a;
+            padding: 15px;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #10b981;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+ CABEÇALHO 
+<header class="market-header">
+<div class="market-title">
+            🛒 MERCADO NEGRO <span style="font-size: 1rem; background: #a855f7; color: white; padding: 4px 12px; border-radius: 20px; border: 2px solid #000; box-shadow: 0 2px 0 #000;">BETA</span>
+</div>
+<div class="top-nav" style="display: flex; align-items: center; gap: 20px;">
+<select id="lang-selector" onchange="setLanguage(this.value)" style="background: #111; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+<option value="pt">🇧🇷 PT</option>
+<option value="en">🇺🇸 EN</option>
+<option value="es">🇪🇸 ES</option>
+</select>
+<select id="fiat-currency-selector" onchange="changeCurrency()" style="background: #111; color: #34d399; border: 1px solid #34d399; padding: 5px 10px; border-radius: 6px; font-family: 'Bangers', cursive; font-size: 1.2rem; cursor: pointer;">
+<option value="BRL">🇧🇷 BRL (R$)</option>
+<option value="USD">🇺🇸 USD ($)</option>
+<option value="EUR">🇪🇺 EUR (€)</option>
+</select>
+<a class="btn outline small" data-i18n="market.back_hub" href="hub.html" style="margin-right: 20px;">⬅ Back to Hub</a>
+<div class="avatar-container" style="display:flex; align-items:center; gap:10px; cursor: pointer;">
+ O auth.js vai injetar o Card RPG aqui automaticamente 
+<div class="avatar" style="width:40px; height:40px; border-radius:50%; background:#333;"></div>
+<span class="user-name" id="user-name" style="display:flex; flex-direction:column;">
+<strong style="font-size:14px; color:white;">Loading...</strong>
+</span>
+</div>
+</div>
+</header>
+ HUD DE ECONOMIA 
+<div class="economy-hud">
+<div class="hud-box gas">
+<div>
+<div class="hud-title">GASOLINA</div>
+<div style="color: #94a3b8; font-size: 0.85rem; font-weight: bold;">(Combustível / Renders)</div>
+</div>
+<div class="hud-value" id="hud-gas">-- L</div>
+</div>
+<div class="hud-box crystals">
+<div>
+<div class="hud-title">CRISTAIS VIP</div>
+<div style="color: #94a3b8; font-size: 0.85rem; font-weight: bold;">(Moeda Premium)</div>
+</div>
+<div class="hud-value" id="hud-crystals">--</div>
+</div>
+</div>
+ CARROSSEL DE PROMOÇÕES QUENTES 
+<div class="promo-carousel">
+<div class="promo-card hot" onclick="processPurchase('Hacker Master Course', 80, 'crystal')">
+<div class="promo-badge">HOT!</div>
+<div class="promo-icon">👾</div>
+<div class="promo-details">
+<h3 data-i18n="market.hacker_course">ELITE HACKER COURSE</h3>
+<p data-i18n="market.hacker_course_desc">Learn how to run Apollo Edit 100% Local (RVC, Pinokio, BYOK API) and eliminate your server costs! + Lifetime Badge.</p>
+<div class="btn purple small" data-i18n="market.buy_hacker" style="pointer-events: none;">💎 BUY FOR 80 CRYSTALS</div>
+</div>
+</div>
+<div class="promo-card" onclick="processPurchase('Super-Charge Gasolina (5000L)', 50, 'crystal')">
+<div class="promo-icon">⛽</div>
+<div class="promo-details">
+<h3 style="color: #22d3ee;">SUPER-CHARGE GAS</h3>
+<p>Encha o tanque com 5.000 L de gasolina limpa para renderização ininterrupta. Oferta Especial!</p>
+<div class="btn blue small" style="pointer-events: none;">💎 COMPRAR POR 50 CRISTAIS</div>
+</div>
+</div>
+</div>
+ NAVEGAÇÃO DE ABAS 
+<div class="market-tabs">
+<button class="tab-btn active" data-tab="banco" onclick="switchTab('banco')">🏦 BANCO (CÂMBIO &amp; CRISTAIS)</button>
+<button class="tab-btn" data-tab="negro" onclick="switchTab('negro')">👕 MERCADO NEGRO (SKINS &amp; APIs)</button>
+<button class="tab-btn" data-tab="garagem" onclick="switchTab('garagem')">⚙️ OFICINA &amp; GARAGEM</button>
+<button class="tab-btn" data-tab="nuvem" onclick="switchTab('nuvem')">☁️ INFRA &amp; STORAGE (NUVEM)</button>
+</div>
+ ABA: BANCO (Dinheiro Real -&gt; Cristais / Cristais -&gt; Gas) 
+<div class="market-grid active" id="tab-banco">
+<div class="item-card cost-real">
+<div class="item-icon">💎</div>
+<div class="item-title">Saco de Cristais</div>
+<div class="item-desc">Adquira 10 Cristais VIP para utilizar no ecossistema Apollo.</div>
+<div class="price-tag price-real" data-brl="25">💵 R$ 25,00</div>
+<button class="btn green buy-btn" onclick="openPaymentGateway('10 Cristais VIP', 25, 'crystals', 10)">COMPRAR VIA PIX/CARTÃO</button>
+</div>
+<div class="item-card cost-real">
+<div class="item-icon">💎💎</div>
+<div class="item-title">Baú de Cristais (Bônus)</div>
+<div class="item-desc">Adquira 50 Cristais VIP. Perfeito para customizações lendárias e cotas massivas.</div>
+<div class="price-tag price-real" data-brl="100">💵 R$ 100,00</div>
+<button class="btn green buy-btn" onclick="openPaymentGateway('50 Cristais VIP', 100, 'crystals', 50)">COMPRAR VIA PIX/CARTÃO</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">⛽</div>
+<div class="item-title">Câmbio: Cristais para Gasolina</div>
+<div class="item-desc">Abasteça seu motor rapidamente trocando cristais. Útil para compras de peças e render.</div>
+<div class="price-tag price-crystal">💎 1 Cristal = 100 Litros</div>
+<button class="btn purple buy-btn" onclick="processExchange('crystal_to_gas', 1, 100)">TROCAR 1 CRISTAL</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">⛽</div>
+<div class="item-title">Câmbio Mestre: Cristais para Gasolina</div>
+<div class="item-desc">Pacote massivo de abastecimento.</div>
+<div class="price-tag price-crystal">💎 10 Cristais = 1200 Litros</div>
+<button class="btn purple buy-btn" onclick="processExchange('crystal_to_gas', 10, 1200)">TROCAR 10 CRISTAIS</button>
+</div>
+</div>
+ ABA: MERCADO NEGRO (Skins, Lootboxes, API Quotas) 
+<div class="market-grid" id="tab-negro">
+<div class="item-card cost-crystal">
+<div class="item-icon">🔥</div>
+<div class="item-title">Borda: Chamas do Asfalto</div>
+<div class="item-desc">Skin de perfil Épica. Deixe seu avatar ardendo em chamas vermelhas.</div>
+<div class="price-tag price-crystal">💎 5 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('Borda: Chamas do Asfalto', 5, 'crystal')">COMPRAR COM CRISTAIS</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">⚡</div>
+<div class="item-title">Borda: Cyberpunk Neon</div>
+<div class="item-desc">Skin de perfil Lendária. Brilho elétrico pulsante para a comunidade.</div>
+<div class="price-tag price-crystal">💎 10 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('Borda: Cyberpunk Neon', 10, 'crystal')">COMPRAR COM CRISTAIS</button>
+</div>
+<div class="item-card cost-gas">
+<div class="item-icon">📦</div>
+<div class="item-title">Lootbox Misteriosa</div>
+<div class="item-desc">Abra para ter chance de ganhar Peças Raras, Cristais ou Lixo. Gacha style!</div>
+<div class="price-tag price-gas">⛽ 200 Litros</div>
+<button class="btn green buy-btn" onclick="processPurchase('Lootbox Misteriosa', 200, 'gas')">ABRIR CAIXA</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">🍌</div>
+<div class="item-title">Cota: 100x Imagens Banana</div>
+<div class="item-desc">Carga de processamento remoto para a geração de imagens IA (API Banana).</div>
+<div class="price-tag price-crystal">💎 10 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('100x Imagens Banana', 10, 'crystal')">COMPRAR COTA API</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">🎙️</div>
+<div class="item-title">Cota: 50x Dublagens Vel3</div>
+<div class="item-desc">Créditos para inferência de áudio RVC na nuvem via API Vel3.</div>
+<div class="price-tag price-crystal">💎 15 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('50x Dublagens Vel3', 15, 'crystal')">COMPRAR COTA API</button>
+</div>
+</div>
+ ABA: GARAGEM &amp; OFICINA 
+<div class="market-grid" id="tab-garagem">
+<div class="item-card cost-gas">
+<div class="item-icon">🏎️</div>
+<div class="item-title">Chassi Blindado Nv.3</div>
+<div class="item-desc">Melhora a estabilidade dos renders longos e adiciona estética ao carro na Garagem.</div>
+<div class="price-tag price-gas">⛽ 1.500 Litros</div>
+<button class="btn green buy-btn" onclick="processPurchase('Chassi Blindado Nv.3', 1500, 'gas')">INSTALAR PEÇA</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">💨</div>
+<div class="item-title">Turbina F1 Nitro</div>
+<div class="item-desc">Acelera a pré-visualização na Timeline em 25%. Item de performance.</div>
+<div class="price-tag price-crystal">💎 35 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('Turbina F1 Nitro', 35, 'crystal')">INSTALAR PEÇA</button>
+</div>
+<div class="item-card cost-gas">
+<div class="item-icon">🎬</div>
+<div class="item-title">Pack de Cenas: Cyberpunk</div>
+<div class="item-desc">Conjunto de 50 takes em vídeo pré-renderizados para usar nas suas montagens de Dark Trap.</div>
+<div class="price-tag price-gas">⛽ 800 Litros</div>
+<button class="btn green buy-btn" onclick="processPurchase('Pack Cenas: Cyberpunk', 800, 'gas')">COMPRAR PACK</button>
+</div>
+<div class="item-card cost-gas">
+<div class="item-icon">🎧</div>
+<div class="item-title">Pack de SFX: Transições</div>
+<div class="item-desc">Pacote P2P vendido por @Kira_Edits. Mais de 100 efeitos sonoros de Woosh e Impactos.</div>
+<div class="price-tag price-gas">⛽ 500 Litros</div>
+<button class="btn green buy-btn" onclick="processPurchase('Pack SFX Transições', 500, 'gas')">COMPRAR PACK P2P</button>
+</div>
+</div>
+ ABA: NUVEM &amp; INFRA (Storage, Render Priority) 
+<div class="market-grid" id="tab-nuvem">
+<div class="item-card cost-crystal">
+<div class="item-icon">☁️</div>
+<div class="item-title" data-i18n="market.cloud_storage">Upgrade: +50GB Cloud Storage</div>
+<div class="item-desc" data-i18n="market.cloud_storage_desc">Increase your disk space in the Apollo cloud to store more heavy projects. Monthly subscription.</div>
+<div class="price-tag price-crystal" data-i18n="market.cloud_price">💎 4 Crystals / month</div>
+<button class="btn purple buy-btn" data-i18n="market.cloud_btn" onclick="processPurchase('Mensalidade +50GB Storage', 4, 'crystal')">SUBSCRIBE TO PLAN</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">⏱️</div>
+<div class="item-title">Ticket: Retenção Prolongada</div>
+<div class="item-desc">Mantém os vídeos gerados no banco de dados por +60 dias sem deletar.</div>
+<div class="price-tag price-crystal">💎 12 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('Retenção +60 Dias', 12, 'crystal')">ESTENDER TEMPO</button>
+</div>
+<div class="item-card cost-crystal">
+<div class="item-icon">🚀</div>
+<div class="item-title">Passe de Render Rápido (VIP)</div>
+<div class="item-desc">Fura a fila de renderização do servidor principal por 24 horas. Renderização Instantânea.</div>
+<div class="price-tag price-crystal">💎 20 Cristais</div>
+<button class="btn purple buy-btn" onclick="processPurchase('Passe VIP Render 24h', 20, 'crystal')">ATIVAR MODO VIP</button>
+</div>
+</div>
+ PAYMENT GATEWAY MODAL (Simulação de Pix/Stripe) 
+<div class="payment-modal" id="payment-modal">
+<div class="payment-card">
+<button class="btn red small" onclick="document.getElementById('payment-modal').style.display='none'" style="position: absolute; top: -15px; right: -15px; border-radius: 50%; width: 40px; height: 40px;">X</button>
+<h2 style="font-family: 'Bangers', cursive; color: #10b981; font-size: 2.5rem; margin-top:0;">CAIXA ELETRÔNICO</h2>
+<p id="pay-item-desc" style="color: #fff; font-size: 1.1rem; font-weight: bold;">Comprar Item X</p>
+<div id="pay-item-price" style="font-size: 2.5rem; font-family: 'Nunito', sans-serif; font-weight: 900; color: #34d399; margin-bottom: 20px;">R$ 0,00</div>
+<div class="payment-methods">
+<div class="pay-method-btn" onclick="confirmRealPayment('Pix')">
+<span class="pay-icon">💠</span>
+<span>PIX (Instantâneo)</span>
+</div>
+<div class="pay-method-btn" onclick="confirmRealPayment('Stripe / Cartão')">
+<span class="pay-icon">💳</span>
+<span>Cartão de Crédito</span>
+</div>
+<div class="pay-method-btn" onclick="confirmRealPayment('PayPal')">
+<span class="pay-icon">🅿️</span>
+<span>PayPal</span>
+</div>
+<div class="pay-method-btn" onclick="confirmRealPayment('Cripto')">
+<span class="pay-icon">₿</span>
+<span>Criptomoeda</span>
+</div>
+</div>
+</div>
+</div>
+ CRYPTO PAYMENT TERMINAL 
+<div class="crypto-modal" id="crypto-modal">
+<div class="crypto-terminal">
+<div class="crypto-header">
+<span>[ 
+                    <select id="crypto-coin-selector" onchange="updateCryptoTerminal()" style="background: #000; color: #34d399; border: 1px dashed #34d399; font-family: 'Courier New'; font-weight: bold; cursor: pointer;">
+<option value="BTC">BTC NETWORK</option>
+<option value="ETH">ETH NETWORK</option>
+<option value="SOL">SOL NETWORK</option>
+</select>
+                ]</span>
+<span style="color: #facc15; animation: pulse 1s infinite;">Aguardando Pagamento...</span>
+</div>
+<div style="text-align: center;">
+<p style="margin-bottom: 10px;">Envie exatamente <strong id="crypto-amount" style="color: #fff; font-size: 1.2rem;">0.00000000 BTC</strong> para o endereço abaixo:</p>
+<div id="crypto-address" style="background: #111; padding: 10px; border: 1px dashed #34d399; display: inline-block; margin-bottom: 20px; font-weight: bold; font-size: 1.1rem; word-break: break-all;">
+                    bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                </div>
+<div class="crypto-qr">
+<img alt="QR Code Crypto" id="crypto-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=bitcoin:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh&amp;bgcolor=ffffff&amp;color=000000"/>
+</div>
+</div>
+<div class="terminal-logs" id="terminal-logs">
+                &gt; Inicializando escuta na blockchain...<br/>
+                &gt; Endereço gerado com sucesso.<br/>
+</div>
+<button class="btn red small" onclick="cancelCryptoPayment()" style="width: 100%;">[ ABORTAR TRANSAÇÃO ]</button>
+</div>
+</div>
+<style>
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+ TOAST NOTIFICATION CONTAINER 
+<div id="toast-container"></div>
+<script src="../i18n_loader.js"></script>
+<script src="../auth.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('lang-selector').value = getCurrentLang();
+        });
+        // =========================================
+        // ENGINE DE ECONOMIA E COMPRAS
+        // =========================================
+        
+        let currentFiat = 'BRL';
+        const fiatRates = { BRL: 1, USD: 0.20, EUR: 0.18 };
+        const fiatSymbols = { BRL: 'R$', USD: '$', EUR: '€' };
+
+        function formatFiat(amountBrl) {
+            let converted = amountBrl * fiatRates[currentFiat];
+            return `${fiatSymbols[currentFiat]} ${converted.toFixed(2).replace('.', ',')}`;
+        }
+
+        function changeCurrency() {
+            currentFiat = document.getElementById('fiat-currency-selector').value;
+            
+            document.querySelectorAll('.price-real').forEach(el => {
+                let brl = parseFloat(el.getAttribute('data-brl'));
+                if (el.innerText.includes('/ mês')) {
+                    el.innerText = `💵 ${formatFiat(brl)} / mês`;
+                } else {
+                    el.innerText = `💵 ${formatFiat(brl)}`;
+                }
+            });
+            
+            document.querySelectorAll('.price-real-btn').forEach(el => {
+                let brl = parseFloat(el.getAttribute('data-brl'));
+                el.innerText = `🔥 ADQUIRIR POR ${formatFiat(brl)}`;
+            });
+        }
+        
+        
+        let userBalances = {
+            gas: 0,
+            crystals: 0
+        };
+
+        // Estado do pagamento pendente
+        let pendingPayment = null;
+
+        function loadBalances() {
+            // Inicializa valores caso não existam
+            if (localStorage.getItem('apollo_mock_gas') === null) localStorage.setItem('apollo_mock_gas', 120);
+            if (localStorage.getItem('apollo_mock_crystals') === null) localStorage.setItem('apollo_mock_crystals', 12);
+
+            userBalances.gas = parseInt(localStorage.getItem('apollo_mock_gas'));
+            userBalances.crystals = parseInt(localStorage.getItem('apollo_mock_crystals'));
+
+            // Atualiza o HUD visual
+            document.getElementById('hud-gas').innerText = userBalances.gas.toLocaleString('pt-BR') + ' L';
+            document.getElementById('hud-crystals').innerText = userBalances.crystals.toLocaleString('pt-BR');
+        }
+
+        function saveBalances() {
+            localStorage.setItem('apollo_mock_gas', userBalances.gas);
+            localStorage.setItem('apollo_mock_crystals', userBalances.crystals);
+            loadBalances(); // Refresh HUD
+        }
+
+        // Toca notificação flutuante
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✨' : (type === 'error' ? '❌' : '🔔');
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <h4>${title}</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // Lógica de Compras in-game (Crystals, Gas)
+        function processPurchase(itemName, cost, currency) {
+            if (currency === 'real') {
+                openPaymentGateway(itemName, cost, 'special', 0);
+                return;
+            }
+
+            let balanceKey = currency === 'crystal' ? 'crystals' : 'gas';
+            let currencyName = currency === 'crystal' ? 'Cristais' : 'Litros de Gasolina';
+
+            if (userBalances[balanceKey] >= cost) {
+                // Sucesso
+                userBalances[balanceKey] -= cost;
+                saveBalances();
+                
+                // Tratar Lootbox especialmente
+                if (itemName.includes("Lootbox")) {
+                    showToast('LOOTBOX ABERTA!', 'Você encontrou 5 Cristais escondidos no fundo da caixa!', 'success');
+                    userBalances.crystals += 5;
+                    saveBalances();
+                } else {
+                    showToast('COMPRA EFETUADA!', `Você adquiriu [${itemName}] com sucesso. Foi descontado ${cost} ${currencyName}.`, 'success');
+                }
+            } else {
+                // Falha
+                showToast('FALHA NA TRANSAÇÃO', `Saldo insuficiente. Você precisa de ${cost} ${currencyName} mas tem apenas ${userBalances[balanceKey]}.`, 'error');
+                
+                // Se faltou cristal, sugerir Banco
+                if (currency === 'crystal') {
+                    setTimeout(() => switchTab('banco'), 1500);
+                }
+            }
+        }
+
+        // Lógica de Câmbio interno (Crystal -> Gas)
+        function processExchange(type, costCrystals, reward) {
+            if (userBalances.crystals >= costCrystals) {
+                userBalances.crystals -= costCrystals;
+                
+                if (type === 'crystal_to_gas') {
+                    userBalances.gas += reward;
+                    showToast('TANQUE ABASTECIDO', `Trocou ${costCrystals} Cristal(is) por ${reward}L de Gasolina!`, 'success');
+                }
+                saveBalances();
+            } else {
+                showToast('SALDO INSUFICIENTE', `Você precisa de ${costCrystals} Cristais para fazer este câmbio.`, 'error');
+            }
+        }
+
+        // Lógica de Gateway de Pagamento (Real Money)
+        function openPaymentGateway(itemName, priceReal, type, rewardValue) {
+            pendingPayment = { itemName, priceReal, type, rewardValue };
+            
+            document.getElementById('pay-item-desc').innerText = itemName;
+            document.getElementById('pay-item-price').innerText = formatFiat(priceReal);
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        let cryptoInterval = null;
+
+        function confirmRealPayment(method) {
+            if (!pendingPayment) return;
+            
+            if (method === 'Cripto') {
+                document.getElementById('payment-modal').style.display = 'none';
+                startCryptoTerminal();
+                return;
+            }
+            
+            const p = pendingPayment;
+            document.getElementById('payment-modal').style.display = 'none';
+            
+            showToast('PROCESSANDO...', `Aguardando confirmação do ${method}...`, 'success');
+            
+            setTimeout(() => {
+                showToast('PAGAMENTO APROVADO!', `Pagamento de R$ ${p.priceReal.toFixed(2)} via ${method} aprovado com sucesso!`, 'success');
+                
+                // Aplica a recompensa
+                if (p.type === 'crystals') {
+                    userBalances.crystals += p.rewardValue;
+                    saveBalances();
+                    setTimeout(() => showToast('CRISTAIS ADICIONADOS', `+${p.rewardValue} Cristais foram creditados na sua conta!`, 'success'), 1500);
+                } else if (p.type === 'special') {
+                    setTimeout(() => showToast('CURSO LIBERADO', `Sua badge Hacker foi ativada e o acesso ao curso está liberado.`, 'success'), 1500);
+                } else if (p.type === 'monthly_storage') {
+                    setTimeout(() => showToast('STORAGE AMPLIADO', `Seu HD virtual na Nuvem Apollo ganhou +50GB.`, 'success'), 1500);
+                }
+                
+                pendingPayment = null;
+            }, 2500); // Fake delay for API simulation
+        }
+
+        const cryptoData = {
+            BTC: { rate: 350000, addr: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', name: 'bitcoin' },
+            ETH: { rate: 18000, addr: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', name: 'ethereum' },
+            SOL: { rate: 800, addr: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH', name: 'solana' }
+        };
+
+        function updateCryptoTerminal() {
+            if (!pendingPayment) return;
+            const coin = document.getElementById('crypto-coin-selector').value;
+            const data = cryptoData[coin];
+            
+            const cryptoValue = (pendingPayment.priceReal / data.rate).toFixed(6);
+            document.getElementById('crypto-amount').innerText = `${cryptoValue} ${coin}`;
+            document.getElementById('crypto-address').innerText = data.addr;
+            document.getElementById('crypto-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${data.name}:${data.addr}&bgcolor=ffffff&color=000000`;
+        }
+
+        function startCryptoTerminal() {
+            const p = pendingPayment;
+            document.getElementById('crypto-modal').style.display = 'flex';
+            
+            document.getElementById('crypto-coin-selector').value = 'BTC';
+            updateCryptoTerminal();
+            
+            const logs = document.getElementById('terminal-logs');
+            logs.innerHTML = '> Inicializando escuta na rede descentralizada...<br>> Endereço de carteira única gerado com sucesso.<br>> Aguardando broadcast na rede...<br>';
+            
+            let step = 0;
+            cryptoInterval = setInterval(() => {
+                step++;
+                if (step === 1) {
+                    logs.innerHTML += '> <span style="color: #facc15;">Transação detectada na Mempool/TxPool! Aguardando blocos...</span><br>';
+                } else if (step === 2) {
+                    logs.innerHTML += '> <span style="color: #3b82f6;">(1/3 confirmações) - Bloco minerado. Confirmando rede...</span><br>';
+                } else if (step === 3) {
+                    logs.innerHTML += '> <span style="color: #3b82f6;">(2/3 confirmações) - Consolidando hash Criptográfico...</span><br>';
+                } else if (step === 4) {
+                    logs.innerHTML += '> <span style="color: #10b981;">(3/3 confirmações) - TRANSAÇÃO VALIDADA E CONCLUÍDA!</span><br>';
+                } else if (step === 5) {
+                    clearInterval(cryptoInterval);
+                    document.getElementById('crypto-modal').style.display = 'none';
+                    
+                    const coin = document.getElementById('crypto-coin-selector').value;
+                    const cryptoValue = document.getElementById('crypto-amount').innerText;
+                    
+                    showToast('PAGAMENTO CRIPTO APROVADO!', `Transação de ${cryptoValue} confirmada na blockchain!`, 'success');
+                    
+                    // Aplica a recompensa
+                    if (p.type === 'crystals') {
+                        userBalances.crystals += p.rewardValue;
+                        saveBalances();
+                        setTimeout(() => showToast('CRISTAIS ADICIONADOS', `+${p.rewardValue} Cristais foram creditados!`, 'success'), 1500);
+                    } else if (p.type === 'special') {
+                        setTimeout(() => showToast('CURSO LIBERADO', `Sua badge Hacker foi ativada.`, 'success'), 1500);
+                    } else if (p.type === 'monthly_storage') {
+                        setTimeout(() => showToast('STORAGE AMPLIADO', `Seu HD virtual na Nuvem Apollo ganhou +50GB.`, 'success'), 1500);
+                    }
+                    pendingPayment = null;
+                }
+                logs.scrollTop = logs.scrollHeight;
+            }, 2500);
+        }
+
+        function cancelCryptoPayment() {
+            if (cryptoInterval) clearInterval(cryptoInterval);
+            document.getElementById('crypto-modal').style.display = 'none';
+            pendingPayment = null;
+            showToast('TRANSAÇÃO CANCELADA', 'O pagamento via Criptomoeda foi abortado pelo usuário.', 'error');
+        }
+
+        // Lógica de Troca de Abas
+        function switchTab(tabId) {
+            // Remove active classes
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.market-grid').forEach(grid => grid.classList.remove('active'));
+            
+            // Add active classes
+            document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBalances();
+        });
+    </script>
+</body>
+</html>

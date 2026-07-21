@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat IA - Apollo Edit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <style>
+        body {
+            background-color: #0A0612;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 80px);
+            position: relative;
+        }
+
+        .main-chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* TIMELINE / DROP ZONE NO CHAT */
+        .chat-mission-tracker {
+            background: rgba(17, 9, 30, 0.9);
+            border: 2px dashed #4a2b6e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .chat-mission-tracker.empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            text-align: center;
+        }
+
+        .chat-mission-tracker.empty-state h3 {
+            font-family: 'Bangers', cursive;
+            color: #64748b;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* MENSAGENS DO CHAT */
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 15px;
+            max-width: 80%;
+        }
+
+        .chat-message.ai { align-self: flex-start; }
+        .chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+        .avatar-chat {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #331f4e;
+            border: 2px solid #6366f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar-chat img { width: 100%; height: 100%; object-fit: cover; }
+        .chat-message.user .avatar-chat { border-color: #10b981; }
+
+        .message-bubble {
+            background: #1e1b4b;
+            padding: 15px 20px;
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            border: 1px solid #331f4e;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        }
+
+        .chat-message.user .message-bubble {
+            background: #064e3b;
+            border-color: #047857;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 4px;
+        }
+
+        .message-bubble strong { color: #fff; }
+
+        /* INPUT AREA */
+        .chat-input-area {
+            background: #11091e;
+            border: 2px solid #331f4e;
+            border-radius: 16px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-shrink: 0;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            padding: 10px;
+            outline: none;
+        }
+
+        .chat-input-area .btn { padding: 10px 25px; }
+
+        /* PAINEL LATERAL DIREITO (ABAS) */
+        .right-sidebar {
+            width: 400px;
+            background: #0a0612;
+            border-left: 2px solid #331f4e;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 2px solid #331f4e;
+            background: #11091e;
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            font-family: 'Bangers', cursive;
+            font-size: 1.3rem;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+            border-bottom: 3px solid transparent;
+        }
+
+        .sidebar-tab:hover {
+            color: #fff;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .sidebar-tab.active {
+            color: #f59e0b;
+            border-bottom-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: none;
+        }
+
+        .sidebar-content.active { display: block; }
+
+        /* Inventário / Categorias */
+        .inventory-category {
+            margin-bottom: 25px;
+            border: 1px solid #331f4e;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .inventory-category-header {
+            background: #1e1b4b;
+            padding: 10px 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #818cf8;
+            border-bottom: 1px solid #331f4e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .inventory-category-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .setting-row { margin-bottom: 15px; }
+        .setting-row label {
+            display: block;
+            margin-bottom: 5px;
+            color: #cbd5e1;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        .setting-row input[type="text"] {
+            width: 100%;
+            background: #11091e;
+            border: 1px solid #331f4e;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+        .budget-display {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .budget-display .cost {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f59e0b;
+        }
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+
+    <!-- TOP HEADER PADRÃO APOLLO -->
+    <header style="padding: 10px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #331f4e; background: #11091e; z-index: 100;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none; color: #f59e0b; font-family: 'Bangers'; font-size: 2.5rem; text-shadow: 2px 2px 0 #000;">🎬 APOLLO <span style="color:#fff;">EDIT</span></a>
+            <span style="background: #331f4e; padding: 5px 15px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 0.9rem;">DIRETOR DE I.A</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div class="notification-bell alert" title="Atenção Necessária: Produção Pausada!" onclick="alert('IA: Terminamos o Roteiro! Por favor, revise para continuarmos.')">🔔</div>
+            <div class="user-widget" style="display: flex; gap: 10px; align-items: center;">
+                <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="chat-container">
+        
+        <!-- ESQUERDA/CENTRO: CHAT E TIMELINE -->
+        <main class="main-chat-area">
+            
+            <!-- TIMELINE / DROP ZONE NO CHAT -->
+            <div id="drop-zone-timeline" class="chat-mission-tracker empty-state drop-zone">
+                <div class="mission-header" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <h3 style="font-family: 'Bangers'; font-size: 1.5rem; margin: 0; color: #64748b; letter-spacing: 1px;">NENHUM PROJETO NA MESA</h3>
+                </div>
+                <div class="mission-stepper" style="opacity: 0.5;">
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">1</div>
+                        <div class="step-label" style="color: #64748b;">Roteiro</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">2</div>
+                        <div class="step-label" style="color: #64748b;">Imagens</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">3</div>
+                        <div class="step-label" style="color: #64748b;">Voz</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT HISTORY -->
+            <div class="chat-history" id="chat-history">
+                
+                <div class="chat-message ai">
+                    <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                    <div class="message-bubble">
+                        <strong>Diretor IA:</strong> Olá, Piloto! Vi que você quer criar um Vídeo Vertical de Notícias sobre Criptomoedas.<br><br>
+                        📊 <strong>Orçamento Estimado:</strong><br>
+                        Para um vídeo de 1 minuto, precisaremos de 10 Imagens e 1 Vídeo/Voz principal. Estimo um custo de <strong>35 Créditos</strong>.<br><br>
+                        👉 <strong>Ação Necessária:</strong> Vá na aba lateral de <strong>CONFIGURAÇÕES</strong>. Arraste as suas IAs favoritas (do Inventário) para os Slots da Equipe e confirme o pagamento para iniciarmos a produção automática!
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CHAT INPUT -->
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Fale com o Diretor..." onkeydown="if(event.key === 'Enter') simularRespostaIA()">
+                <button class="btn primary" onclick="simularRespostaIA()">ENVIAR</button>
+            </div>
+            
+        </main>
+
+        <!-- PAINEL LATERAL DIREITO: CONFIGURAÇÕES -->
+        <aside class="right-sidebar">
+            <div class="sidebar-tabs">
+                <div class="sidebar-tab active" id="tab-btn-config" ondragover="switchTabOnDrag(event, 'config')" onclick="switchTab('config')">⚙️ CONFIGURAÇÕES</div>
+                <div class="sidebar-tab" id="tab-btn-action" style="display: none; background: #c026d3; color: white; border-color: #facc15;" onclick="switchTab('action')">🎯 CONTROLE</div>
+            </div>
+
+            <!-- ABA 1: CONFIGURAÇÕES (CONSTRUTOR DE PIPELINE) -->
+            <div class="sidebar-content active" id="tab-content-config">
+                
+                <div class="setting-row">
+                    <label>Título do Projeto</label>
+                    <input type="text" value="Notícias Cripto Dia 14">
+                </div>
+
+                <div class="setting-row">
+                    <label>Formato do Vídeo</label>
+                    <select style="width: 100%; background: #11091e; border: 1px solid #331f4e; color: #fff; padding: 10px; border-radius: 6px; font-family: 'Inter', sans-serif;">
+                        <option value="vertical">Vertical (9:16) - TikTok/Reels</option>
+                        <option value="horizontal">Horizontal (16:9) - YouTube</option>
+                        <option value="square">Quadrado (1:1) - Instagram</option>
+                    </select>
+                </div>
+                
+                <div id="dynamic-ai-requirements" style="margin-top: 20px;">
+                    <!-- A IA injetará os slots necessários aqui dinamicamente -->
+                    <div style="text-align: center; color: #64748b; font-family: 'Nunito', sans-serif; padding: 20px; font-style: italic;">
+                        Aguardando você passar as informações no chat para que a IA monte a Equipe de Produção necessária...
+                    </div>
+                </div>
+
+                <div class="budget-display">
+                    <div style="font-family: 'Inter'; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">Custo Total Estimado</div>
+                    <div class="cost">-- Créditos</div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <button class="btn primary" id="btn-confirm-budget" style="width: 100%;" disabled onclick="iniciarProducao()">CONFIRMAR E PAGAR</button>
+                    <button class="btn secondary outline" id="btn-save-draft" style="width: 100%;" onclick="salvarRascunho()">💾 SALVAR RASCUNHO</button>
+                </div>
+            </div>
+
+            <!-- ABA 3: CONTROLE (MESA DE DECISÃO) -->
+            <div class="sidebar-content" id="tab-content-action">
+                <h3 style="font-family: 'Orbitron'; color: #facc15; margin-bottom: 20px; border-bottom: 1px solid #331f4e; padding-bottom: 10px;">Aguardando Decisão</h3>
+                <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 20px;">A IA concluiu a etapa atual. Revise o material e escolha uma ação para continuar.</p>
+
+                <div style="display: flex; gap: 15px; flex-direction: column;">
+                    <button class="btn primary" style="width: 100%; box-shadow: 0 6px 0 #047857;" onclick="aprovarEtapa()">✅ APROVAR E CONTINUAR</button>
+                    <button class="btn yellow" style="width: 100%;" onclick="solicitarAlteracao()">✏️ SOLICITAR ALTERAÇÃO</button>
+                    <button class="btn danger outline" style="width: 100%; margin-top: 20px;" onclick="pausarProducao()">⏸️ PAUSAR E SALVAR</button>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- SCRIPT DE LÓGICA DAS ABAS E CONSTRUTOR DE PIPELINE -->
+    <script>
+        // Lógica das Abas
+        function switchTab(tabName) {
+            document.getElementById('tab-btn-config').classList.remove('active');
+            document.getElementById('tab-btn-action').classList.remove('active');
+            document.getElementById('tab-content-config').classList.remove('active');
+            document.getElementById('tab-content-action').classList.remove('active');
+
+            document.getElementById('tab-btn-' + tabName).classList.add('active');
+            document.getElementById('tab-content-' + tabName).classList.add('active');
+        }
+
+        // Trocar de aba se o usuário segurar um item arrastado em cima do botão da aba por 500ms
+        let dragHoverTimer;
+        function switchTabOnDrag(e, tabName) {
+            e.preventDefault();
+            if(!document.getElementById('tab-btn-' + tabName).classList.contains('active')) {
+                clearTimeout(dragHoverTimer);
+                dragHoverTimer = setTimeout(() => {
+                    switchTab(tabName);
+                }, 400); // 400ms hover = switch tab
+            }
+        }
+
+        // Variáveis de estado do Pipeline Builder
+        let slotsData = { roteiro: null, arte: null, voz: null };
+        let draggedElementId = null;
+        let clearConfigTimer = null;
+        let simularParadaTimer = null;
+
+        function makeDraggable(item) {
+            item.addEventListener('dragstart', (e) => {
+                draggedElementId = item.id;
+                
+                const isProject = item.getAttribute('data-type') === 'projeto';
+                const badgeEl = item.querySelector('.quadradinho-badge');
+                
+                const payload = {
+                    source: 'sidebar',
+                    id: item.id,
+                    type: item.getAttribute('data-type'),
+                    name: item.getAttribute('data-name') || item.querySelector('.quadradinho-text').innerText.split('\n')[0].trim(),
+                    icon: item.getAttribute('data-icon') || item.querySelector('.quadradinho-icon').innerText.trim(),
+                    badge: badgeEl ? badgeEl.innerText : '',
+                    isProject: isProject
+                };
+                
+                e.dataTransfer.setData('application/json', JSON.stringify(payload));
+                e.dataTransfer.setData('text/plain', item.id);
+                item.style.opacity = '0.5';
+            });
+
+            item.addEventListener('dragend', () => {
+                item.style.opacity = '1';
+                document.querySelectorAll('.drop-zone-slot').forEach(sz => sz.classList.remove('drag-over'));
+                const timeline = document.getElementById('drop-zone-timeline');
+                if(timeline) {
+                    timeline.classList.remove('drag-over');
+                    timeline.style.borderColor = '#4a2b6e';
+                }
+            });
+        }
+
+        const draggables = document.querySelectorAll('.quadradinho-item');
+        draggables.forEach(item => makeDraggable(item));
+
+        // (Removida a lógica de side panel, pois ele não existe mais)
+
+        // Configuração da Mesa (Timeline)
+        const timelineDropZone = document.getElementById('drop-zone-timeline');
+        timelineDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            timelineDropZone.classList.add('drag-over');
+            timelineDropZone.style.borderColor = '#f59e0b';
+        });
+        timelineDropZone.addEventListener('dragleave', () => {
+            timelineDropZone.classList.remove('drag-over');
+            timelineDropZone.style.borderColor = '#4a2b6e';
+        });
+        timelineDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            timelineDropZone.classList.remove('drag-over');
+            timelineDropZone.style.borderColor = '#4a2b6e';
+            
+            let payload = null;
+            try {
+                payload = JSON.parse(e.dataTransfer.getData('application/json'));
+            } catch(err) {}
+            
+            let isProject = false;
+            let draggedItem = null;
+            
+            if (payload && payload.source === 'hud') {
+                isProject = payload.isProject;
+            } else {
+                const itemId = e.dataTransfer.getData('text/plain');
+                draggedItem = document.getElementById(itemId);
+                if (draggedItem) {
+                    isProject = draggedItem.getAttribute('data-type') === 'projeto';
+                }
+            }
+
+            if(!isProject) {
+                alert("A Mesa só aceita Projetos (Receitas ou Rascunhos). Para alocar IAs, arraste-as para os Slots nas Configurações.");
+                return;
+            }
+            
+            let htmlContent = '';
+            let stateData = '{}';
+            if (payload && payload.source === 'hud') {
+                htmlContent = payload.name;
+                // stateData would ideally be stored in payload.data, if available
+                if (payload.originalItem && payload.originalItem.data && payload.originalItem.data.state) {
+                    stateData = JSON.stringify(payload.originalItem.data.state);
+                }
+            } else if (draggedItem) {
+                htmlContent = draggedItem.innerHTML;
+                stateData = draggedItem.getAttribute('data-state') || '{}';
+            }
+
+            if(htmlContent.includes('RASCUNHO') || htmlContent.includes('Save State')) {
+                const state = JSON.parse(stateData);
+                restaurarRascunho(state);
+                alert("Retomando Orçamento do Rascunho!");
+                switchTab('config');
+            } else {
+                iniciarProducao(true);
+            }
+        });
+
+        // ======= LÓGICA DO MENU DINÂMICO E CONVERSA DA IA =======
+
+        let currentChannelId = "diretor_central"; // Variável que pode ser alterada para chats menores
+
+        async function simularRespostaIA() {
+            const input = document.getElementById('chat-input');
+            const userText = input.value.trim();
+            if(!userText) return;
+            
+            input.value = '';
+
+            const chat = document.getElementById('chat-history');
+            chat.innerHTML += `
+                <div class="chat-message user">
+                    <div class="avatar-chat" style="border-color: #10b981; background: #333;"><img src="assets/user-avatar.png" alt="User"></div>
+                    <div class="message-bubble" style="background: #064e3b; border-color: #047857;">${userText}</div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+
+            // Mostrar "digitando..."
+            const typingId = "typing-" + Date.now();
+            chat.innerHTML += `
+                <div class="chat-message ai" id="${typingId}">
+                    <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                    <div class="message-bubble" style="color: #94a3b8;"><em>Processando (Gemini IA)...</em></div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const response = await fetch('https://api.apolloedit.com/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        channel_id: currentChannelId,
+                        message: userText
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const typingEl = document.getElementById(typingId);
+                if(typingEl) typingEl.remove();
+                
+                if (result.status === 'success') {
+                    const aiText = result.data.text;
+                    const actions = result.data.actions;
+                    
+                    // Formata a resposta mantendo quebras de linha com <br>
+                    const formattedText = aiText.replace(/\n/g, '<br>');
+                    
+                    chat.innerHTML += `
+                        <div class="chat-message ai">
+                            <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                            <div class="message-bubble">${formattedText}</div>
+                        </div>
+                    `;
+                    chat.scrollTop = chat.scrollHeight;
+
+                    // Executar Actions (Function Calling Local)
+                    if (actions && actions.length > 0) {
+                        actions.forEach(act => {
+                            if (act.action === "create_budget") {
+                                renderizarNecessidadesDaIA([
+                                    { id: 'slot-roteiro', tipo: 'roteiro', nomeReq: 'Roteirista', icone: '📝', custo: act.budget_data.slot_roteiro || 10 },
+                                    { id: 'slot-arte', tipo: 'arte', nomeReq: 'Diretor de Arte', icone: '🎨', custo: act.budget_data.slot_arte || 10 },
+                                    { id: 'slot-voz', tipo: 'voz', nomeReq: 'Locutor', icone: '🎙️', custo: act.budget_data.slot_voz || 15 }
+                                ]);
+                                // Força abrir a aba de configuração se receber orçamento
+                                switchTab('config');
+                            }
+                            if (act.action === "navigate") {
+                                switchTab(act.target);
+                            }
+                        });
+                    }
+                } else {
+                    chat.innerHTML += `
+                        <div class="chat-message ai">
+                            <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                            <div class="message-bubble" style="color:#ef4444;">Erro do Cérebro: ${result.message}</div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                const typingEl = document.getElementById(typingId);
+                if(typingEl) typingEl.remove();
+                
+                chat.innerHTML += `
+                    <div class="chat-message ai">
+                        <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                        <div class="message-bubble" style="color:#ef4444;">Falha de comunicação com o Servidor Python.</div>
+                    </div>
+                `;
+            }
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function renderizarNecessidadesDaIA(requisitos) {
+            const container = document.getElementById('dynamic-ai-requirements');
+            container.innerHTML = `
+                <h3 style="font-family: 'Orbitron'; color: #818cf8; margin-top: 10px; border-bottom: 1px solid #331f4e; padding-bottom: 10px;">Equipe de Produção (I.A)</h3>
+                <p style="color: #64748b; font-size: 0.8rem; text-align: center; margin-bottom: 15px;">Arraste suas IAs da Área de Transferência (HUD flutuante) para preencher os cargos gerados pela Inteligência Artificial.</p>
+            `;
+
+            slotsData = {};
+            requisitos.forEach(req => {
+                slotsData[req.id] = null; // Zera o state
+
+                const slot = document.createElement('div');
+                slot.className = 'pipeline-slot drop-zone-slot';
+                slot.id = req.id;
+                slot.innerHTML = `
+                    <div class="slot-icon">${req.icone}</div>
+                    <div class="slot-info">
+                        <div class="slot-title">${req.nomeReq.toUpperCase()}</div>
+                        <div class="slot-desc">Arraste a IA de Tipo '${req.tipo}' aqui</div>
+                    </div>
+                `;
+                container.appendChild(slot);
+                
+                // Configura Drag & Drop para este slot específico
+                setupSlotDropEvents(slot, req.tipo, req.custo, req.nomeReq);
+            });
+            
+            verificarOrcamento();
+        }
+
+        function setupSlotDropEvents(slot, requiredType, custoDaOperacao, reqName) {
+            slot.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                slot.classList.add('drag-over');
+            });
+
+            slot.addEventListener('dragleave', () => {
+                slot.classList.remove('drag-over');
+            });
+
+            slot.addEventListener('drop', (e) => {
+                e.preventDefault();
+                slot.classList.remove('drag-over');
+
+                let payload = null;
+                try {
+                    payload = JSON.parse(e.dataTransfer.getData('application/json'));
+                } catch(err) {}
+                
+                let itemType, name, icon, creditosAtuais = 0;
+                
+                if (payload && payload.source === 'hud') {
+                    if (payload.isProject || payload.type === 'projeto') {
+                        alert("Apenas Tokens de IA podem ser alocados nestes espaços da equipe. Projetos vão para a Timeline (Mesa).");
+                        return;
+                    }
+                    itemType = payload.type; 
+                    name = payload.name;
+                    icon = payload.icon;
+                    creditosAtuais = parseInt(payload.badge) || 0;
+                } else {
+                    alert("Por favor, abra o seu HUD (🎒 Área de Transferência / 🤖 IAs) no canto da tela e arraste a Inteligência Artificial diretamente de lá!");
+                    return;
+                }
+                
+                // Valida se o tipo da IA bate com o tipo exigido pelo slot (verificação inclusiva de substrings, ex: roteiro in slot-roteiro)
+                if(!itemType.includes(requiredType) && !requiredType.includes(itemType)) {
+                    alert(`Erro! Esse requisito precisa de uma IA do tipo "${requiredType}". Você arrastou uma IA do tipo "${itemType}".`);
+                    return;
+                }
+
+                if(creditosAtuais >= custoDaOperacao) {
+                    let restantes = creditosAtuais - custoDaOperacao;
+                    
+                    // Debita os créditos no HUD
+                    let items = window.apolloTransferOS.getItems(payload.folder);
+                    let itemToUpdate = items.find(i => i.id === payload.id);
+                    if (itemToUpdate) {
+                        if (!itemToUpdate.data) itemToUpdate.data = {};
+                        itemToUpdate.data.badge = restantes;
+                        if (restantes <= 0) {
+                            items = items.filter(i => i.id !== payload.id);
+                        }
+                        window.apolloTransferOS.saveItems(items, false);
+                    }
+                    
+                    // Aloca no Slot Visualmente
+                    slot.classList.add('filled');
+                    slot.innerHTML = `
+                        <div class="slot-icon" style="opacity: 1;">${icon}</div>
+                        <div class="slot-info">
+                            <div class="slot-title" style="color: #38bdf8;">${name}</div>
+                            <div class="slot-desc" style="color: #10b981;">Pronta! (-${custoDaOperacao} pts)</div>
+                        </div>
+                    `;
+
+                    // Salva no State
+                    slotsData[slot.id] = {
+                        type: requiredType,
+                        reqName: reqName,
+                        name: name,
+                        icon: icon,
+                        custo: custoDaOperacao
+                    };
+                    verificarOrcamento();
+
+                } else {
+                    alert(`ERRO ESTRATÉGICO:\n\nCusto exigido: ${custoDaOperacao} créditos.\nSeu saldo nesta IA: ${creditosAtuais} créditos.\n\nPor favor, compre mais quadradinhos desta IA no Mercado!`);
+                }
+            });
+        }
+
+        function verificarOrcamento() {
+            let totalFilled = 0;
+            let totalCost = 0;
+            let totalSlots = Object.keys(slotsData).length;
+
+            for (let slotId in slotsData) {
+                if (slotsData[slotId]) {
+                    totalFilled++;
+                    totalCost += slotsData[slotId].custo;
+                }
+            }
+
+            if(totalSlots > 0 && totalFilled === totalSlots) {
+                document.querySelector('.budget-display .cost').innerText = totalCost + " Créditos";
+                const btn = document.getElementById('btn-confirm-budget');
+                btn.disabled = false;
+                btn.classList.add('pulse');
+            } else {
+                document.querySelector('.budget-display .cost').innerText = "-- Créditos";
+                const btn = document.getElementById('btn-confirm-budget');
+                btn.disabled = true;
+                btn.classList.remove('pulse');
+            }
+        }
+
+        function limparConfiguracoes() {
+            slotsData = {};
+            const btn = document.getElementById('btn-confirm-budget');
+            btn.disabled = true;
+            btn.innerHTML = "CONFIRMAR E PAGAR";
+            btn.style.background = "";
+            btn.style.borderColor = "";
+            btn.classList.remove('pulse');
+            document.querySelector('.budget-display .cost').innerText = "-- Créditos";
+
+            const reqContainer = document.getElementById('dynamic-ai-requirements');
+            if (reqContainer) {
+                reqContainer.innerHTML = `
+                    <div style="text-align: center; color: #64748b; font-family: 'Nunito', sans-serif; padding: 20px; font-style: italic;">
+                        Aguardando você passar as informações no chat para que a IA monte a Equipe de Produção necessária...
+                    </div>
+                `;
+            }
+        }
+
+        function abortarProducao() {
+            clearTimeout(clearConfigTimer);
+            clearTimeout(simularParadaTimer);
+            document.getElementById('tab-btn-action').style.display = 'none';
+            switchTab('config');
+            const dropZone = document.getElementById('drop-zone-timeline');
+            dropZone.innerHTML = `
+                <div class="mission-header" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <h3 style="font-family: 'Bangers'; font-size: 1.5rem; margin: 0; color: #64748b; letter-spacing: 1px;">NENHUM PROJETO NA MESA</h3>
+                </div>
+                <div class="mission-stepper" style="opacity: 0.5;">
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">1</div>
+                        <div class="step-label" style="color: #64748b;">Roteiro</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">2</div>
+                        <div class="step-label" style="color: #64748b;">Imagens</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">3</div>
+                        <div class="step-label" style="color: #64748b;">Voz</div>
+                    </div>
+                </div>
+            `;
+            dropZone.classList.add('empty-state');
+            dropZone.style.borderStyle = 'dashed';
+            salvarEstadoAtual();
+            alert('Produção Abortada. A linha do tempo foi encerrada.');
+        }
+
+        function iniciarProducao(isResume = false) {
+            const btn = document.getElementById('btn-confirm-budget');
+            btn.innerHTML = "PAGAMENTO CONFIRMADO ✓";
+            btn.style.background = "#10b981";
+            btn.style.borderColor = "#047857";
+            
+            // Ativa a timeline no topo
+            const dropZone = document.getElementById('drop-zone-timeline');
+            dropZone.classList.remove('empty-state');
+            dropZone.style.borderStyle = 'solid';
+            dropZone.innerHTML = `
+                <div class="mission-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="font-family: 'Bangers'; font-size: 1.8rem; margin: 0; color: #10b981;">🚀 PRODUÇÃO INICIADA!</h3>
+                        <div style="color: #94a3b8; font-size: 0.9rem;">Receita Criada. O Robô está trabalhando...</div>
+                    </div>
+                    <div><button class="btn danger outline mini" onclick="abortarProducao()">🛑 ABORTAR</button></div>
+                </div>
+                <div class="mission-stepper">
+                    <div class="stepper-item active">
+                        <div class="step-circle" style="border-color: #f59e0b; color: #f59e0b; animation: pulseActive 1.5s infinite alternate;">📝</div>
+                        <div class="step-label">Roteiro</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">2</div>
+                        <div class="step-label" style="color: #64748b;">Imagens</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">3</div>
+                        <div class="step-label" style="color: #64748b;">Voz</div>
+                    </div>
+                </div>
+            `;
+
+            // IA avisa no chat
+            const chat = document.getElementById('chat-history');
+            chat.innerHTML += `
+                <div class="chat-message ai" style="margin-top: 20px;">
+                    <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                    <div class="message-bubble" style="border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);">
+                        <strong>Diretor IA:</strong> Perfeito! Os créditos foram descontados e a sua <strong>[Receita]</strong> foi gerada nos bastidores.<br><br>
+                        Assim que a primeira etapa (Roteiro) terminar, o sino de notificação vai piscar lá no topo para você revisar o texto!
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+            
+            if (!isResume) {
+                if (window.apolloTransferOS) {
+                    let items = window.apolloTransferOS.getItems('transfer');
+                    items.unshift({
+                        id: 'item_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+                        type: 'projeto',
+                        title: '[RECEITA] Notícias Cripto',
+                        subtitle: 'Produção Paga e Liberada',
+                        thumbnail: null,
+                        data: { state: slotsData },
+                        timestamp: Date.now()
+                    });
+                    
+                    // Salvar especificamente na pasta 'transfer'
+                    localStorage.setItem(window.apolloTransferOS.keys['transfer'], JSON.stringify(items));
+                    window.apolloTransferOS.render();
+                }
+            }
+            
+            salvarEstadoAtual();
+            
+            // Depois de 2 segundos, limpa as configurações para ele poder criar um novo
+            clearTimeout(clearConfigTimer);
+            clearConfigTimer = setTimeout(limparConfiguracoes, 2000);
+            
+            // Simula a parada semi-automática do Roteiro após 6 segundos
+            clearTimeout(simularParadaTimer);
+            simularParadaTimer = setTimeout(simularParadaSemiAutomatica, 6000);
+        }
+
+        function simularParadaSemiAutomatica() {
+            // IA avisa no chat
+            const chat = document.getElementById('chat-history');
+            chat.innerHTML += `
+                <div class="chat-message ai" style="margin-top: 20px;">
+                    <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
+                    <div class="message-bubble" style="border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);">
+                        <strong>Diretor IA:</strong> O Roteiro está pronto e anexado para a sua revisão! Como estamos no modo Semi-Automático, a produção foi pausada.<br><br>
+                        O que você quer fazer? Use a aba de Controle para decidir ou digite as alterações aqui.
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+
+            // Mostra a aba de controle e seleciona ela
+            const btnAction = document.getElementById('tab-btn-action');
+            btnAction.style.display = 'block';
+            switchTab('action');
+            salvarEstadoAtual();
+        }
+
+        function aprovarEtapa() {
+            const chat = document.getElementById('chat-history');
+            chat.innerHTML += `
+                <div class="chat-message user">
+                    <div class="avatar-chat"><img src="assets/user-avatar.png" alt="User"></div>
+                    <div class="message-bubble">Aprovado! Pode iniciar a geração das imagens.</div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+
+            // Esconde a aba de controle
+            document.getElementById('tab-btn-action').style.display = 'none';
+            switchTab('config');
+
+            // Atualiza a Timeline para o passo 2
+            const timeline = document.getElementById('drop-zone-timeline');
+            timeline.querySelector('.stepper-item:nth-child(1)').classList.remove('active');
+            timeline.querySelector('.stepper-item:nth-child(1)').classList.add('completed');
+            timeline.querySelector('.stepper-item:nth-child(1) .step-circle').innerHTML = '✓';
+            timeline.querySelector('.stepper-item:nth-child(1) .step-circle').style.animation = '';
+
+            timeline.querySelector('.stepper-item:nth-child(2)').classList.remove('pending');
+            timeline.querySelector('.stepper-item:nth-child(2)').classList.add('active');
+            timeline.querySelector('.stepper-item:nth-child(2) .step-circle').style.borderColor = '#f59e0b';
+            timeline.querySelector('.stepper-item:nth-child(2) .step-circle').style.color = '#f59e0b';
+            timeline.querySelector('.stepper-item:nth-child(2) .step-circle').style.animation = 'pulseActive 1.5s infinite alternate';
+            salvarEstadoAtual();
+        }
+
+        function solicitarAlteracao() {
+            document.querySelector('.chat-input-area input').focus();
+            document.querySelector('.chat-input-area input').value = "Altere o roteiro para focar mais na parte de Bitcoin...";
+        }
+
+        function pausarProducao() {
+            clearTimeout(clearConfigTimer);
+            clearTimeout(simularParadaTimer);
+            alert("Produção Pausada. Receita atualizada no Inventário com status 'Pausado em: Roteiro'.");
+            
+            // Oculta a aba de Controle e Timeline
+            document.getElementById('tab-btn-action').style.display = 'none';
+            switchTab('config');
+            
+            const dropZone = document.getElementById('drop-zone-timeline');
+            dropZone.innerHTML = `
+                <div class="mission-header" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <h3 style="font-family: 'Bangers'; font-size: 1.5rem; margin: 0; color: #64748b; letter-spacing: 1px;">NENHUM PROJETO NA MESA</h3>
+                </div>
+                <div class="mission-stepper" style="opacity: 0.5;">
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">1</div>
+                        <div class="step-label" style="color: #64748b;">Roteiro</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">2</div>
+                        <div class="step-label" style="color: #64748b;">Imagens</div>
+                    </div>
+                    <div class="stepper-item pending">
+                        <div class="step-circle" style="color: #64748b; border-color: #331f4e;">3</div>
+                        <div class="step-label" style="color: #64748b;">Voz</div>
+                    </div>
+                </div>
+            `;
+            dropZone.classList.add('empty-state');
+            dropZone.style.borderStyle = 'dashed';
+            salvarEstadoAtual();
+        }
+
+        function salvarRascunho() {
+            if (window.apolloTransferOS) {
+                let items = window.apolloTransferOS.getItems('transfer');
+                items.unshift({
+                    id: 'item_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+                    type: 'projeto',
+                    title: '[RASCUNHO] Vídeo Cripto',
+                    subtitle: 'Faltam IAs para fechar orçamento',
+                    thumbnail: null,
+                    data: { state: slotsData },
+                    timestamp: Date.now()
+                });
+                
+                // Salvar especificamente na pasta 'transfer'
+                localStorage.setItem(window.apolloTransferOS.keys['transfer'], JSON.stringify(items));
+                window.apolloTransferOS.render();
+            }
+            
+            limparConfiguracoes();
+            alert("Rascunho Salvo com sucesso na sua Área de Transferência! Quando você comprar ou ganhar mais IAs, arraste o rascunho de lá para a Mesa (Timeline) para retomar o Orçamento.");
+            salvarEstadoAtual();
+        }
+
+        function restaurarRascunho(state) {
+            limparConfiguracoes();
+            for (let type in state) {
+                if (state[type]) {
+                    slotsData[type] = state[type];
+                    const slot = document.getElementById('slot-' + type);
+                    slot.innerHTML = `
+                        <div class="slot-icon" style="opacity: 1;">${state[type].icon}</div>
+                        <div class="slot-info">
+                            <div class="slot-title" style="color: #38bdf8;">${state[type].name}</div>
+                            <div class="slot-desc" style="color: #10b981;">(Restaurado do Rascunho)</div>
+                        </div>
+                    `;
+                    slot.classList.add('filled');
+                }
+            }
+            verificarOrcamento();
+        }
+
+        function salvarEstadoAtual() {
+            if(typeof ChatStateManager !== 'undefined') {
+                const chatHtml = document.getElementById('chat-history').innerHTML;
+                const dropZone = document.getElementById('drop-zone-timeline');
+                const dropZoneHtml = dropZone.innerHTML;
+                const dropZoneClass = dropZone.className;
+                const dropZoneBorder = dropZone.style.borderStyle;
+                const actionTabVisible = document.getElementById('tab-btn-action').style.display;
+                const budgetBtn = document.getElementById('btn-confirm-budget');
+                const budgetButtonText = budgetBtn.innerHTML;
+                const budgetButtonEnabled = !budgetBtn.disabled;
+                
+                ChatStateManager.saveState(chatHtml, dropZoneHtml, dropZoneClass, dropZoneBorder, actionTabVisible, budgetButtonText, budgetButtonEnabled, slotsData);
+            }
+        }
+
+        window.onload = function() {
+            if(typeof ChatStateManager !== 'undefined') {
+                const state = ChatStateManager.loadState();
+                if(state) {
+                    document.getElementById('chat-history').innerHTML = state.chatHtml;
+                    
+                    const dropZone = document.getElementById('drop-zone-timeline');
+                    dropZone.innerHTML = state.dropZoneHtml;
+                    dropZone.className = state.dropZoneClass;
+                    dropZone.style.borderStyle = state.dropZoneBorder;
+                    
+                    document.getElementById('tab-btn-action').style.display = state.actionTabVisible;
+                    
+                    const budgetBtn = document.getElementById('btn-confirm-budget');
+                    budgetBtn.innerHTML = state.budgetButtonText;
+                    budgetBtn.disabled = !state.budgetButtonEnabled;
+                    if(state.budgetButtonEnabled) {
+                        budgetBtn.style.background = "#10b981";
+                        budgetBtn.style.borderColor = "#047857";
+                    }
+                    
+                    if(state.slotsData) {
+                        restaurarRascunho(state.slotsData);
+                    }
+                    
+                    const chat = document.getElementById('chat-history');
+                    chat.scrollTop = chat.scrollHeight;
+                }
+            }
+        }
+
+    </script>
+    <script src="laplata_settings.js"></script>
+        <!-- Supabase SDK e Autenticao -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="state_manager.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+

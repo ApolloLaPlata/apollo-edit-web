@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo | Agência de Talentos (Copilotos)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.1), transparent 40%);
+            min-height: 100vh;
+        }
+
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        /* RPG Avatar Frame */
+        .avatar-frame {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            background: #1e293b;
+            border-bottom: 2px solid;
+        }
+        .avatar-img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%) contrast(110%);
+        }
+
+        .tier-free { border-color: #10b981; } /* Emerald */
+        .tier-premium { border-color: #8b5cf6; } /* Purple */
+        .tier-elite { border-color: #facc15; } /* Yellow */
+
+        .glow-text-purple { text-shadow: 0 0 10px rgba(139, 92, 246, 0.6); }
+        .glow-text-green { text-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 glass-panel p-6 border-l-4 border-l-purple-500">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-purple-500/20 border border-purple-500/50 flex items-center justify-center glow-text-purple">
+                <i class="fas fa-users-cog text-3xl text-purple-400"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold orbitron tracking-wider text-white">AGÊNCIA DE <span class="text-purple-400">TALENTOS</span></h1>
+                <p class="text-slate-400 mt-1">Contrate Roteiristas Padrão ou Forje seu Copiloto Pessoal</p>
+            </div>
+        </div>
+        <div class="flex gap-4 items-center">
+            <div class="bg-slate-800 border border-slate-600 rounded px-4 py-2 flex items-center gap-2 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                <i class="fas fa-gas-pump text-amber-500"></i>
+                <span class="font-bold text-amber-500">450 L</span>
+            </div>
+            <div class="bg-slate-800 border border-slate-600 rounded px-4 py-2 flex items-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.1)]">
+                <i class="fas fa-gem text-blue-400"></i>
+                <span class="font-bold text-blue-400">1,250</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Left: Copilot List -->
+        <div class="lg:col-span-3 space-y-8">
+            
+            <!-- Section: Default Free Writers -->
+            <div>
+                <h2 class="text-xl font-bold orbitron text-white mb-4 border-b border-slate-700 pb-2"><i class="fas fa-robot text-emerald-400 mr-2"></i>Roteiristas Padrão (Gratuitos)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Copilot: Zé do Terror -->
+                    <div class="card rounded-xl">
+                        <div class="absolute top-2 right-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500 px-2 py-1 rounded text-xs font-bold z-10 backdrop-blur-sm">
+                            Custo: ZERO
+                        </div>
+                        <div class="avatar-frame tier-free">
+                            <img src="https://i.pravatar.cc/300?img=12" class="avatar-img" alt="Zé do Terror">
+                            <div class="absolute bottom-0 w-full bg-gradient-to-t from-slate-900 to-transparent h-20"></div>
+                            <h3 class="absolute bottom-2 left-3 font-bold orbitron text-lg text-white">Zé do Terror</h3>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-emerald-400 font-bold mb-2 uppercase"><i class="fas fa-brain mr-1"></i> API: Llama 3 Base</p>
+                            <p class="text-sm text-slate-400 mb-4 line-clamp-2">Especialista em criar histórias de terror tensas e virais para TikTok e Shorts.</p>
+                            <button class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold py-2 rounded transition">Equipar Roteirista</button>
+                        </div>
+                    </div>
+
+                    <!-- Copilot: Marta Finanças -->
+                    <div class="card rounded-xl">
+                        <div class="absolute top-2 right-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500 px-2 py-1 rounded text-xs font-bold z-10 backdrop-blur-sm">
+                            Custo: ZERO
+                        </div>
+                        <div class="avatar-frame tier-free">
+                            <img src="https://i.pravatar.cc/300?img=5" class="avatar-img" alt="Marta Finanças">
+                            <div class="absolute bottom-0 w-full bg-gradient-to-t from-slate-900 to-transparent h-20"></div>
+                            <h3 class="absolute bottom-2 left-3 font-bold orbitron text-lg text-white">Marta Finanças</h3>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-emerald-400 font-bold mb-2 uppercase"><i class="fas fa-brain mr-1"></i> API: Llama 3 Base</p>
+                            <p class="text-sm text-slate-400 mb-4 line-clamp-2">Cria roteiros diretos ao ponto sobre dicas financeiras, milhas e cartões.</p>
+                            <button class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold py-2 rounded transition">Equipar Roteirista</button>
+                        </div>
+                    </div>
+
+                    <!-- Copilot: Bob Curiosidades -->
+                    <div class="card rounded-xl">
+                        <div class="absolute top-2 right-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500 px-2 py-1 rounded text-xs font-bold z-10 backdrop-blur-sm">
+                            Custo: ZERO
+                        </div>
+                        <div class="avatar-frame tier-free">
+                            <img src="https://i.pravatar.cc/300?img=11" class="avatar-img" alt="Bob Curiosidades">
+                            <div class="absolute bottom-0 w-full bg-gradient-to-t from-slate-900 to-transparent h-20"></div>
+                            <h3 class="absolute bottom-2 left-3 font-bold orbitron text-lg text-white">Bob Curiosidades</h3>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-emerald-400 font-bold mb-2 uppercase"><i class="fas fa-brain mr-1"></i> API: Llama 3 Base</p>
+                            <p class="text-sm text-slate-400 mb-4 line-clamp-2">Sabe tudo sobre fatos inúteis e histórias fascinantes do mundo antigo.</p>
+                            <button class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold py-2 rounded transition">Equipar Roteirista</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Section: Custom User Copilots -->
+            <div class="mt-8">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                    <h2 class="text-xl font-bold orbitron text-white"><i class="fas fa-user-astronaut text-purple-400 mr-2"></i>Meus Copilotos Customizados</h2>
+                    <button class="text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded transition">Vender no Mercado P2P <i class="fas fa-lock ml-1 text-slate-300"></i></button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- User Custom Copilot -->
+                    <div class="card rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                        <div class="absolute top-2 right-2 bg-amber-500/20 text-amber-500 border border-amber-500 px-2 py-1 rounded text-xs font-bold z-10 backdrop-blur-sm flex items-center">
+                            <i class="fas fa-gas-pump mr-1"></i> 5L / vídeo
+                        </div>
+                        <div class="absolute top-2 left-2 bg-slate-900/80 text-white px-2 py-1 rounded text-xs font-bold z-10 backdrop-blur-sm border border-slate-600">
+                            Autor: Você
+                        </div>
+                        <div class="avatar-frame tier-premium">
+                            <img src="https://i.pravatar.cc/300?img=68" class="avatar-img" alt="Custom">
+                            <div class="absolute bottom-0 w-full bg-gradient-to-t from-slate-900 to-transparent h-20"></div>
+                            <h3 class="absolute bottom-2 left-3 font-bold orbitron text-lg text-white">Sr. Cinematográfico</h3>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-purple-400 font-bold mb-2 uppercase"><i class="fas fa-brain mr-1"></i> API: Claude 3 Haiku</p>
+                            <p class="text-sm text-slate-400 mb-4 line-clamp-2">Focado em roteiros profundos, com descrições ricas de cenas e pausas dramáticas.</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded transition">Equipar</button>
+                                <button class="bg-slate-700 hover:bg-slate-600 px-3 rounded border border-slate-600 text-slate-300"><i class="fas fa-edit"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add New -->
+                    <div class="card rounded-xl border-dashed border-2 border-slate-600 flex flex-col items-center justify-center p-8 cursor-pointer hover:border-purple-500 group">
+                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-purple-600 transition">
+                            <i class="fas fa-plus text-2xl text-slate-400 group-hover:text-white"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-300 group-hover:text-white transition">Forjar Copiloto</h3>
+                        <p class="text-xs text-slate-500 text-center mt-2">Crie sua IA personalizada com a sua bagagem e API preferida.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Section: Active Missions Dashboard -->
+            <div class="mt-12 glass-panel p-6 border-t-4 border-t-emerald-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold orbitron text-white"><i class="fas fa-satellite-dish text-emerald-400 mr-2 animate-pulse"></i>Painel de Missões Ativas (Swarm)</h2>
+                    <span class="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500"><i class="fas fa-circle text-[8px] mr-1 animate-ping"></i>Online</span>
+                </div>
+                
+                <div id="missionLogContainer" class="bg-slate-900 border border-slate-700 rounded-lg p-4 h-64 overflow-y-auto space-y-3 font-mono text-sm">
+                    <div class="text-slate-500 text-center mt-20"><i class="fas fa-sleep text-2xl mb-2 block"></i>Nenhuma missão ativa no momento. Equipe um roteirista.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right: Creation Terminal -->
+        <div class="lg:col-span-1">
+            <div class="glass-panel p-6 sticky top-6">
+                <h3 class="text-xl font-bold orbitron mb-4 text-white"><i class="fas fa-hammer mr-2 text-slate-400"></i>Laboratório de IA</h3>
+                
+                <form class="space-y-4">
+                    <!-- Nome -->
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Nome do Copiloto</label>
+                        <input type="text" placeholder="Ex: Mestre do Clickbait" class="w-full bg-slate-800 text-white border border-slate-600 rounded px-3 py-2 text-sm focus:border-purple-500 focus:outline-none">
+                    </div>
+
+                    <!-- API Choice -->
+                    <div class="p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Motor Cognitivo (Cérebro)</label>
+                        <select class="w-full bg-slate-900 text-white border border-slate-600 rounded p-2 text-sm focus:border-purple-500 focus:outline-none mb-2" onchange="updateCost(this.value)">
+                            <option value="llama">Llama 3 Local (Gratuito)</option>
+                            <option value="claude-haiku">Claude 3 Haiku (Baixo Custo)</option>
+                            <option value="gemini-pro">Gemini 1.5 Pro (Médio Custo)</option>
+                            <option value="gpt4o">GPT-4 Omni (Alto Custo Premium)</option>
+                        </select>
+                        <div class="flex justify-between items-center text-xs bg-slate-900 p-2 rounded border border-slate-800">
+                            <span class="text-slate-400">Custo Base p/ Roteiro:</span>
+                            <span id="costDisplay" class="font-bold text-emerald-400">0 Gasolina</span>
+                        </div>
+                    </div>
+
+                    <!-- System Prompt (Bagagem) -->
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Bagagem (Instruções)</label>
+                        <textarea rows="6" placeholder="Você é um roteirista especializado em vídeos de React. Suas regras são: 1. Use gírias. 2. Foque no engajamento nos primeiros 3 segundos..." class="w-full bg-slate-800 text-slate-300 font-mono text-xs border border-slate-600 rounded p-3 focus:border-purple-500 focus:outline-none resize-none"></textarea>
+                    </div>
+
+                    <!-- Avatar Config -->
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Estilo do Avatar (Seed)</label>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Mago Cyberpunk" class="flex-1 bg-slate-800 text-white border border-slate-600 rounded px-3 py-2 text-sm focus:border-purple-500 focus:outline-none">
+                            <button type="button" class="bg-slate-700 hover:bg-slate-600 px-3 rounded border border-slate-600" title="Gerar Imagem"><i class="fas fa-magic text-purple-400"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Tópico da Missão (O que o agente deve produzir?)</label>
+                        <input type="text" id="copilotTopic" placeholder="Ex: A história secreta dos samurais cibernéticos" class="w-full bg-slate-800 text-white border border-slate-600 rounded px-3 py-2 text-sm focus:border-purple-500 focus:outline-none">
+                    </div>
+
+                    <button type="button" onclick="iniciarCopiloto()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-3 rounded shadow-[0_0_15px_rgba(139,92,246,0.5)] transition mt-4">
+                        <i class="fas fa-bolt mr-2"></i> INICIAR COPILOTO
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateCost(model) {
+            const costDisplay = document.getElementById('costDisplay');
+            if(model === 'llama') {
+                costDisplay.className = "font-bold text-emerald-400";
+                costDisplay.innerHTML = "0 Gasolina";
+            } else if(model === 'claude-haiku') {
+                costDisplay.className = "font-bold text-amber-500";
+                costDisplay.innerHTML = "<i class='fas fa-gas-pump mr-1'></i> 5L Gasolina";
+            } else if(model === 'gemini-pro') {
+                costDisplay.className = "font-bold text-orange-500";
+                costDisplay.innerHTML = "<i class='fas fa-gas-pump mr-1'></i> 25L Gasolina";
+            } else if(model === 'gpt4o') {
+                costDisplay.className = "font-bold text-red-500 glow-text-red";
+                costDisplay.innerHTML = "<i class='fas fa-gem mr-1 text-blue-400'></i> 10 Cristais";
+            }
+        }
+
+        let currentMissionInterval = null;
+
+        async function iniciarCopiloto() {
+            const nomeInput = document.querySelector('input[placeholder="Ex: Mestre do Clickbait"]').value || "Agente Desconhecido";
+            const motorSelect = document.querySelector('select').value;
+            const bagagemText = document.querySelector('textarea').value || "Você é um roteirista padrão.";
+            const topicInput = document.getElementById('copilotTopic').value || "Tema aleatório surpreendente";
+            
+            const logContainer = document.getElementById('missionLogContainer');
+            logContainer.innerHTML = '<div class="text-emerald-400"><i class="fas fa-spinner fa-spin mr-2"></i> Iniciando Conexão Neural com Llama 3...</div>';
+
+            try {
+                const res = await fetch('https://api.apolloedit.com/api/agency/start_copilot', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name: nomeInput,
+                        model: motorSelect,
+                        system_prompt: bagagemText,
+                        topic: topicInput
+                    })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    if (currentMissionInterval) clearInterval(currentMissionInterval);
+                    currentMissionInterval = setInterval(() => pollMission(data.mission_id), 2000);
+                } else {
+                    logContainer.innerHTML = `<div class="text-red-500"><i class="fas fa-exclamation-triangle mr-2"></i> Falha: ${data.error}</div>`;
+                }
+            } catch (err) {
+                logContainer.innerHTML = `<div class="text-red-500"><i class="fas fa-exclamation-triangle mr-2"></i> Erro de rede: ${err}</div>`;
+            }
+        }
+
+        async function pollMission(missionId) {
+            try {
+                const res = await fetch(`/api/agency/mission/${missionId}/logs`);
+                const data = await res.json();
+                if(data.success) {
+                    const logContainer = document.getElementById('missionLogContainer');
+                    logContainer.innerHTML = '';
+                    
+                    data.logs.forEach(logLine => {
+                        const div = document.createElement('div');
+                        div.className = "text-emerald-300 mb-1 border-b border-slate-800 pb-1";
+                        div.innerText = logLine;
+                        logContainer.appendChild(div);
+                    });
+                    
+                    // Auto-scroll
+                    logContainer.scrollTop = logContainer.scrollHeight;
+                    
+                    if(data.status === "COMPLETED" || data.status === "FAILED" || data.status === "BANKRUPT") {
+                        clearInterval(currentMissionInterval);
+                        const finalDiv = document.createElement('div');
+                        finalDiv.className = data.status === "COMPLETED" ? "text-blue-400 font-bold mt-2" : "text-red-500 font-bold mt-2";
+                        finalDiv.innerHTML = `<i class="fas fa-flag-checkered mr-2"></i> Missão Encerrada [${data.status}]`;
+                        logContainer.appendChild(finalDiv);
+                    }
+                }
+            } catch (e) {
+                console.error("Erro polling mission", e);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,522 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit — Oficina de Automação</title>
+<style>
+        .oficina-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            height: calc(100vh - 150px);
+        }
+
+        .builder-panel {
+            flex: 1;
+            background: rgba(18, 18, 18, 0.9);
+            border: var(--border-thick);
+            border-color: var(--btn-yellow);
+            border-radius: 24px;
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 50px rgba(250, 204, 21, 0.1);
+        }
+
+        .builder-title {
+            font-family: 'Bangers', cursive;
+            font-size: 3rem;
+            color: var(--btn-yellow);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 var(--border-dark);
+        }
+
+        .part-category {
+            margin-bottom: 30px;
+            background: #111;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #333;
+        }
+
+        .part-category h4 {
+            color: #fff;
+            margin-top: 0;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .part-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .part-card {
+            background: #222;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .part-card:hover {
+            border-color: var(--btn-green);
+            background: #2a3a2a;
+        }
+
+        .part-card.selected {
+            border-color: var(--btn-yellow);
+            background: rgba(250, 204, 21, 0.2);
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+        }
+
+        .part-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .part-name {
+            font-weight: 800;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .part-cost {
+            color: var(--btn-green);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .showroom-panel {
+            flex: 0 0 450px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+            border: var(--border-thick);
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .car-pedestal {
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(circle at center, #333 0%, #000 70%);
+            border: 2px solid #444;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .car-image {
+            width: 80%;
+            object-fit: contain;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 20px 20px rgba(0,0,0,0.8));
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        .pedestal-light {
+            position: absolute;
+            bottom: -50px;
+            width: 80%;
+            height: 100px;
+            background: var(--btn-yellow);
+            filter: blur(50px);
+            opacity: 0.2;
+            border-radius: 50%;
+        }
+
+        .build-btn {
+            width: 100%;
+            font-size: 2rem;
+            padding: 25px;
+            font-family: 'Bangers', cursive;
+            letter-spacing: 2px;
+        }
+        
+        .build-btn:disabled {
+            background: #555;
+            color: #888;
+            border-color: #333;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Animação da Esteira de Montagem */
+        .assembly-line {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            height: 10px;
+            background: repeating-linear-gradient(90deg, #333, #333 20px, #555 20px, #555 40px);
+            animation: beltMove 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes beltMove {
+            0% { background-position: 0 0; }
+            100% { background-position: -40px 0; }
+        }
+
+        @keyframes dropIn {
+            0% { transform: translateY(-300px) scale(0.5) rotate(-10deg); opacity: 0; }
+            70% { transform: translateY(20px) scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: translateY(0) scale(1) rotate(0); }
+        }
+    </style>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; background: #1e1e1e; border-bottom: 1px solid #333; height: 80px; z-index: 100;">
+<div class="top-nav" style="display: flex; align-items: center; gap: 20px;">
+<select id="lang-selector" onchange="setLanguage(this.value)" style="background: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; height: 35px;">
+<option value="pt">🇧🇷 PT</option>
+<option value="en">🇺🇸 EN</option>
+<option value="es">🇪🇸 ES</option>
+</select>
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" style="background: rgba(250,204,21,.2); color: var(--btn-yellow); padding: 4px 8px; border-radius: 4px;">Oficina de Automação</span>
+</div>
+</header>
+ COFRE DE MOEDAS (MICRO-ECONOMIA) 
+<div style="max-width: 1200px; margin: 0 auto 20px auto; padding: 0 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+<div style="flex: 1; background: rgba(0,0,0,0.5); border: 2px solid #555; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+<div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;">⛽ TEMPO RENDER</div>
+<div style="font-size: 1.5rem; font-weight: bold; color: var(--btn-green); font-family: 'Nunito', sans-serif;">120 Min</div>
+</div>
+<div style="flex: 1; background: rgba(0,0,0,0.5); border: 2px solid #9B59B6; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+<div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;">💎 CRISTAIS</div>
+<div style="font-size: 1.5rem; font-weight: bold; color: #e0b0ff; font-family: 'Nunito', sans-serif;">12</div>
+</div>
+</div>
+<div class="oficina-container">
+ Painel de Montagem (Peças) 
+<div class="builder-panel">
+<h2 class="builder-title">MONTAR CARRO AUTOMATIZADOR</h2>
+<div class="part-category">
+<h4>1. CHASSI (Base do Vídeo)</h4>
+<div class="part-grid" id="grid-chassi">
+<div class="part-card selected" onclick="selectPart('chassi', 'enferrujado')">
+<div class="part-icon">🚙</div>
+<div class="part-name">Chassi Enferrujado</div>
+<div class="part-cost">Grátis</div>
+</div>
+<div class="part-card" onclick="selectPart('chassi', 'esportivo')">
+<div class="part-icon">🏎️</div>
+<div class="part-name">Chassi Esportivo</div>
+<div class="part-cost">5.000 L</div>
+</div>
+<div class="part-card" onclick="selectPart('chassi', 'blindado')">
+<div class="part-icon">🚜</div>
+<div class="part-name">Chassi Blindado</div>
+<div class="part-cost">10.000 L</div>
+</div>
+</div>
+</div>
+<div class="part-category">
+<h4>2. MOTOR (Velocidade de Render)</h4>
+<div class="part-grid" id="grid-motor">
+<div class="part-card selected" onclick="selectPart('motor', 'v4')">
+<div class="part-icon">⚙️</div>
+<div class="part-name">Motor V4 (Básico)</div>
+<div class="part-cost">Grátis</div>
+</div>
+<div class="part-card" onclick="selectPart('motor', 'v8')">
+<div class="part-icon">🔥</div>
+<div class="part-name">Motor V8 (Rápido)</div>
+<div class="part-cost">8.000 L</div>
+</div>
+<div class="part-card" onclick="selectPart('motor', 'antigravidade')">
+<div class="part-icon">🚀</div>
+<div class="part-name">Anti-Gravidade</div>
+<div class="part-cost">25.000 L</div>
+</div>
+</div>
+</div>
+<div class="part-category">
+<h4>3. PINTURA (Estilo Visual)</h4>
+<div class="part-grid" id="grid-pintura">
+<div class="part-card selected" onclick="selectPart('pintura', 'desgastada')">
+<div class="part-icon">🎨</div>
+<div class="part-name">Pintura Desgastada</div>
+</div>
+<div class="part-card" onclick="selectPart('pintura', 'neon')">
+<div class="part-icon">✨</div>
+<div class="part-name">Neon Cyberpunk</div>
+</div>
+<div class="part-card" onclick="selectPart('pintura', 'ouro')">
+<div class="part-icon">🏆</div>
+<div class="part-name">Banho de Ouro</div>
+</div>
+</div>
+</div>
+</div>
+ Painel de Exibição (Showroom) 
+<div class="showroom-panel">
+<h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; margin-top: 0;">SEU VEÍCULO</h3>
+<div class="car-pedestal">
+<div class="pedestal-light" id="pedestal-light"></div>
+<div id="car-layers-container" style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+<img alt="Chassi Base" class="car-image" id="car-base-layer" src="../assets/car_level1.png" style="position: absolute; transition: filter 0.3s;"/>
+ Simulando Camadas Sobrepostas (Sprite Overlays) 
+<img alt="Pintura Overlay" class="car-image" id="car-paint-layer" src="../assets/car_level1.png" style="position: absolute; opacity: 0; mix-blend-mode: color; transition: all 0.3s;"/>
+</div>
+<div class="assembly-line" id="assembly-line"></div>
+</div>
+<div style="background: #111; padding: 15px; width: 100%; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333;">
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+<span style="color: #888;">Custo da Montagem:</span>
+<strong id="display-cost" style="color: var(--btn-green);">0 L Gasolina</strong>
+</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+<span style="color: #888;">Cotas Freemium:</span>
+<strong id="quota-display" style="color: #f87171;">Loading...</strong>
+</div>
+<div id="prompt-output" style="display: flex; justify-content: space-between; flex-direction: column;">
+<div style="display: flex; justify-content: space-between;">
+<span style="color: #888;">Geração de IA:</span>
+<strong style="color: var(--btn-purple);">Pixel Art 8-bit</strong>
+</div>
+</div>
+</div>
+<button class="btn yellow build-btn" id="btn-build" onclick="buildCar()">FORJAR VEÍCULO (IA) 🔨</button>
+<p style="text-align: center; color: #666; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Ao forjar, a Inteligência Artificial desenhará um carro único baseado nas suas peças. (Mock Mode)</p>
+<button class="btn" id="btn-ad" onclick="watchAd()" style="width: 100%; margin-top: 10px; background: linear-gradient(90deg, #10b981, #059669); border-color: #047857; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                📺 ASSISTIR AD (+1 Geração)
+            </button>
+</div>
+</div>
+<script>
+        let parts = {
+            chassi: 'enferrujado',
+            motor: 'v4',
+            pintura: 'desgastada'
+        };
+
+        const PARTS_DB = {
+            "chassi": {
+                "enferrujado": {"cost": 0, "prompt": "rusty chassis, duct tape"},
+                "esportivo": {"cost": 5000, "prompt": "sleek sports chassis"},
+                "blindado": {"cost": 10000, "prompt": "heavy armored chassis, bulletproof"}
+            },
+            "motor": {
+                "v4": {"cost": 0, "prompt": "small basic engine"},
+                "v8": {"cost": 8000, "prompt": "massive V8 engine sticking out of hood, fire"},
+                "antigravidade": {"cost": 25000, "prompt": "hovering anti-gravity thrusters"}
+            },
+            "pintura": {
+                "desgastada": {"cost": 0, "prompt": "faded paint, scratched surface"},
+                "neon": {"cost": 3000, "prompt": "bright cyberpunk neon glowing paint"},
+                "ouro": {"cost": 15000, "prompt": "solid gold plated finish, luxury"}
+            }
+        };
+
+        function updateCostDisplay() {
+            let totalCost = 0;
+            totalCost += PARTS_DB["chassi"][parts.chassi].cost;
+            totalCost += PARTS_DB["motor"][parts.motor].cost;
+            totalCost += PARTS_DB["pintura"][parts.pintura].cost;
+
+            document.getElementById('display-cost').innerText = totalCost.toLocaleString('pt-BR') + ' L Gasolina';
+            return totalCost;
+        }
+
+        // Gerenciamento de Cotas Freemium
+        function getQuotas() {
+            let quotas = localStorage.getItem('apollo_freemium_quotas');
+            if (quotas === null) {
+                quotas = 5; // Cota inicial
+                localStorage.setItem('apollo_freemium_quotas', quotas);
+            }
+            return parseInt(quotas);
+        }
+
+        function updateQuotaDisplay() {
+            const quotas = getQuotas();
+            const display = document.getElementById('quota-display');
+            display.innerText = `${quotas}/5 Gerações`;
+            
+            if (quotas <= 0) {
+                display.style.color = 'var(--btn-red)';
+                display.innerText = '0/5 (Cota Esgotada)';
+            } else {
+                display.style.color = 'var(--btn-yellow)';
+            }
+            return quotas;
+        }
+
+        function selectPart(category, value) {
+            parts[category] = value;
+            const container = document.getElementById(`grid-${category}`);
+            const cards = container.querySelectorAll('.part-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            updateCostDisplay();
+            applySpriteOverlays();
+        }
+
+        // Fase 22: Engine de Sprite Overlays
+        // Atualiza a camada de CSS instantaneamente, sem gastar com chamadas de IA!
+        function applySpriteOverlays() {
+            const baseLayer = document.getElementById('car-base-layer');
+            const paintLayer = document.getElementById('car-paint-layer');
+            
+            // Lógica de Chassi
+            if (parts.chassi === 'esportivo') {
+                baseLayer.src = 'assets/car_level2.png';
+                paintLayer.src = 'assets/car_level2.png';
+            } else if (parts.chassi === 'blindado') {
+                baseLayer.src = 'assets/car_level3.png';
+                paintLayer.src = 'assets/car_level3.png';
+            } else {
+                baseLayer.src = 'assets/car_level1.png';
+                paintLayer.src = 'assets/car_level1.png';
+            }
+
+            // Lógica de Pintura (CSS Filters Overlay)
+            paintLayer.style.opacity = '1';
+            if (parts.pintura === 'neon') {
+                paintLayer.style.filter = 'hue-rotate(270deg) saturate(300%) brightness(1.5)';
+                paintLayer.style.mixBlendMode = 'color-dodge';
+            } else if (parts.pintura === 'ouro') {
+                paintLayer.style.filter = 'sepia(100%) saturate(500%) hue-rotate(10deg) brightness(1.2)';
+                paintLayer.style.mixBlendMode = 'color';
+            } else {
+                // Desgastada / Padrão
+                paintLayer.style.filter = 'grayscale(80%) brightness(70%) sepia(20%)';
+                paintLayer.style.mixBlendMode = 'multiply';
+            }
+            
+            // Adiciona pequeno pulo na animação para dar game feel
+            baseLayer.style.transform = 'translateY(-10px)';
+            paintLayer.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                baseLayer.style.transform = 'translateY(0)';
+                paintLayer.style.transform = 'translateY(0)';
+            }, 150);
+        }
+
+        function buildCar() {
+            const btn = document.getElementById('btn-build');
+            const belt = document.getElementById('assembly-line');
+            const layersContainer = document.getElementById('car-layers-container');
+            const light = document.getElementById('pedestal-light');
+            
+            const totalCost = updateCostDisplay();
+
+            btn.disabled = true;
+            btn.innerText = "SALVANDO LOADOUT NO SEU PERFIL...";
+            belt.style.display = 'block';
+            
+            // Esconde carro atual
+            layersContainer.style.opacity = '0';
+            layersContainer.style.transform = 'translateX(200px)';
+            light.style.background = 'var(--btn-purple)';
+
+            // Fase 23: Desvincula o custo da geração da criação do Carro Avatar.
+            // O Carro agora é persistente e salvo no localStorage.
+            localStorage.setItem('apollo_car_avatar', JSON.stringify(parts));
+
+            // Simulando o request para ai_forge.py
+            setTimeout(() => {
+                let tier_prompt = "";
+                let img_ref = "";
+                
+                if(totalCost <= 5000) {
+                    tier_prompt = "a pathetic cheap jalopy car, garbage quality, post-apocalyptic scavenger vehicle, ";
+                    img_ref = 'assets/car_level1.png';
+                } else if(totalCost <= 20000) {
+                    tier_prompt = "a customized street racer car, decent quality, heavily modded vehicle, ";
+                    img_ref = 'assets/car_level2.png';
+                } else {
+                    tier_prompt = "an ultra luxury futuristic hypercar, elite premium quality, flawless design, masterpiece, ";
+                    img_ref = 'assets/car_level3.png';
+                }
+
+                // Gerando Prompt Dinâmico
+                const pChassi = PARTS_DB["chassi"][parts.chassi].prompt;
+                const pMotor = PARTS_DB["motor"][parts.motor].prompt;
+                const pPintura = PARTS_DB["pintura"][parts.pintura].prompt;
+                const finalPrompt = `8-bit pixel art style, isometric view, car game sprite, ${tier_prompt} ${pChassi}, ${pMotor}, ${pPintura} --v 6.0`;
+
+                // O carro reaparece com o novo visual
+                layersContainer.style.transition = 'none';
+                layersContainer.style.transform = 'translateX(-200px)';
+                
+                setTimeout(() => {
+                    layersContainer.style.transition = 'all 0.5s ease';
+                    layersContainer.style.transform = 'translateX(0)';
+                    layersContainer.style.opacity = '1';
+                    
+                    belt.style.display = 'none';
+                    btn.disabled = false;
+                    btn.innerText = "SALVAR NOVO LOADOUT 🔨";
+                    light.style.background = 'rgba(250, 204, 21, 0.2)';
+                    
+                    alert(`Loadout atualizado! Você salvou: ${tier_prompt}\n(Custo: ${totalCost} Gasolina)`);
+                    document.getElementById('prompt-output').innerHTML = `<strong>Prompt de IA Gerado:</strong><br><span style="color:#aaa; font-size: 0.8rem;">${finalPrompt}</span>`;
+                    console.log("AI Server Payload:", { total_cost: totalCost, prompt: finalPrompt });
+                }, 100);
+            }, 1500);
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCostDisplay();
+            updateQuotaDisplay();
+        });
+
+        function watchAd() {
+            const btnAd = document.getElementById('btn-ad');
+            btnAd.disabled = true;
+            btnAd.innerText = "⏳ Assista ao vídeo... (15s)";
+            
+            // Simula um Ad de 3 segundos
+            setTimeout(() => {
+                let quotas = getQuotas();
+                quotas += 1;
+                localStorage.setItem('apollo_freemium_quotas', quotas);
+                updateQuotaDisplay();
+                
+                alert("✨ Recompensa! Você ganhou +1 Cota Freemium de Gasolina.");
+                
+                btnAd.innerText = "📺 ASSISTIR AD (+1 Geração)";
+                btnAd.disabled = false;
+            }, 3000);
+        }
+    </script>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if(document.getElementById('lang-selector')) {
+                document.getElementById('lang-selector').value = getCurrentLang();
+            }
+        });
+    </script>
+</body>
+</html>

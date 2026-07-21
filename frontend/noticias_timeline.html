@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Notícias — Timeline Mapeamento — Apollo Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <link rel="stylesheet" href="noticias.css">
+    <link rel="stylesheet" href="timeline_style.css">
+    <script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+
+    <header class="top-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(30, 30, 30, 0.9); border-bottom: 1px solid #333; backdrop-filter: blur(10px);">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;"><div class="main-logo"><span>APOLLO</span> EDIT</div></a>
+            <span style="background: rgba(139,92,246,.2); color: #8b5cf6; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-family: 'Nunito', sans-serif;">🎬 Mapeamento Timeline</span>
+        </div>
+        <h2 id="tool-title" style="color: #fff; margin:0; font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 1.8rem;"></h2>
+        <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+            <span class="gas-icon"></span>
+            <strong id="user-credits">...</strong> Gasolina
+        </div>
+    </header>
+
+    <div class="tool-container">
+        <!-- Navigation Pills -->
+        <div id="noticias-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:15px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); flex-wrap: wrap;"></div>
+
+        <!-- TIMELINE CONTENT -->
+        <div class="timeline-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                <div>
+                    <h2 style="font-family:'Bangers',cursive; font-size:1.8rem; color:#8b5cf6; margin:0 0 8px 0; letter-spacing:2px;">
+                        <i class="fas fa-stream"></i> Timeline de Mapeamento Manual
+                    </h2>
+                    <p style="color:#94a3b8; font-family:'Nunito',sans-serif; margin:0;">
+                        Crie ou edite o mapeamento de 4 camadas para instruir os Agentes da IA. Arraste e estique os blocos.
+                    </p>
+                </div>
+                <button id="btn-save-timeline" class="btn" style="background: #8b5cf6; color: #fff; padding: 12px 20px; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 700; border: none; cursor: pointer;">
+                    <i class="fas fa-save"></i> Salvar Mapeamento
+                </button>
+            </div>
+
+            <!-- Toolbar provisória para injetar blocos -->
+            <div class="timeline-toolbar">
+                <button class="add-block-btn" data-track="video"><i class="fas fa-video"></i> Add Vídeo Base</button>
+                <button class="add-block-btn" data-track="template"><i class="fas fa-border-style"></i> Add Template</button>
+                <button class="add-block-btn" data-track="config"><i class="fas fa-sliders-h"></i> Add Configuração</button>
+                <button class="add-block-btn" data-track="audio"><i class="fas fa-microphone"></i> Add Áudio/LipSync</button>
+            </div>
+
+            <!-- Editor Timeline Container -->
+            <div class="timeline-editor-wrapper">
+                <!-- Régua de tempo -->
+                <div class="timeline-ruler" id="timeline-ruler">
+                    <!-- Gerado via JS (Marcadores de segundos) -->
+                </div>
+
+                <!-- Tracks container -->
+                <div class="timeline-tracks-container" id="timeline-tracks-container">
+                    
+                    <!-- Track 1: Vídeo -->
+                    <div class="timeline-track-row">
+                        <div class="track-header" style="border-left-color: #f39c12;">
+                            <i class="fas fa-video"></i> Vídeo Base
+                        </div>
+                        <div class="track-content" id="track-video" data-type="video"></div>
+                    </div>
+
+                    <!-- Track 2: Template -->
+                    <div class="timeline-track-row">
+                        <div class="track-header" style="border-left-color: #9b59b6;">
+                            <i class="fas fa-border-style"></i> Template Gráfico
+                        </div>
+                        <div class="track-content" id="track-template" data-type="template"></div>
+                    </div>
+
+                    <!-- Track 3: Config -->
+                    <div class="timeline-track-row">
+                        <div class="track-header" style="border-left-color: #2ecc71;">
+                            <i class="fas fa-sliders-h"></i> Configuração (Cor/LUT)
+                        </div>
+                        <div class="track-content" id="track-config" data-type="config"></div>
+                    </div>
+
+                    <!-- Track 4: Audio -->
+                    <div class="timeline-track-row">
+                        <div class="track-header" style="border-left-color: #e74c3C;">
+                            <i class="fas fa-microphone"></i> Áudio / Lip Sync
+                        </div>
+                        <div class="track-content" id="track-audio" data-type="audio"></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
+
+    <script src="noticias_nav.js"></script>
+    <script src="timeline_logic.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="i18n_loader.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_tour.js"></script>
+    <script src="laplata_inventory.js"></script>
+    <script src="copilot_knowledge_base.js"></script>
+    <script src="apollo_copilot.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

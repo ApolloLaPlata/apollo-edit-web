@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo | Banco Central</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/economy.css">
+</head>
+<body>
+    <!-- MENU LATERAL -->
+    <aside class="sidebar">
+        <div class="brand">APOLLO<span>HUB</span></div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link"><span class="icon">🚀</span> A Oficina (Cloud)</a>
+            <a href="banco.html" class="nav-link active"><span class="icon">🏦</span> Casa da Moeda (Banco)</a>
+            <a href="loja.html" class="nav-link"><span class="icon">🛒</span> Loja Oficial</a>
+            <a href="mercado.html" class="nav-link"><span class="icon">🏴‍☠️</span> Mercado Negro</a>
+            <a href="#" class="nav-link"><span class="icon">💼</span> Meu Bagageiro</a>
+        </nav>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+        <!-- HEADER (MOEDAS E PERFIL) -->
+        <header class="topbar">
+            <div class="page-title">Banco Central</div>
+            <div class="user-resources">
+                <div class="resource-pill fuel"><span class="resource-icon">⛽</span><span class="value">100/100</span></div>
+                <div class="resource-pill crystals"><span class="resource-icon">💎</span><span class="value">2.450</span></div>
+                <div class="resource-pill gpus"><span class="resource-icon">🖥️</span><span class="value">12</span></div>
+                <div class="profile-btn"></div>
+            </div>
+        </header>
+
+        <!-- HEADER DA PÁGINA -->
+        <div class="economy-header bank">
+            <h1 class="economy-title">Casa da Moeda</h1>
+            <p class="economy-desc">Adquira moedas com dinheiro real ou utilize a Casa de Câmbio para converter seus saldos atuais.</p>
+        </div>
+
+        <div class="economy-section">
+            <h2 class="section-title-sm"><span class="icon">💳</span> Comprar Moedas (Top-up)</h2>
+            <div class="topup-grid">
+                <!-- Pacote Combustível -->
+                <div class="topup-card">
+                    <div class="topup-icon">⛽</div>
+                    <div class="topup-amount">5.000</div>
+                    <div class="topup-type">Combustíveis</div>
+                    <div class="topup-price">R$ 15,00</div>
+                    <button class="btn-buy">Comprar (Pix)</button>
+                </div>
+                <!-- Pacote Cristal -->
+                <div class="topup-card">
+                    <div class="topup-icon">💎</div>
+                    <div class="topup-amount">1.000</div>
+                    <div class="topup-type">Cristais de API</div>
+                    <div class="topup-price">R$ 25,00</div>
+                    <button class="btn-buy">Comprar (Pix)</button>
+                </div>
+                <!-- Pacote GPU -->
+                <div class="topup-card">
+                    <div class="topup-icon">🖥️</div>
+                    <div class="topup-amount">100</div>
+                    <div class="topup-type">Placas de GPU</div>
+                    <div class="topup-price">R$ 50,00</div>
+                    <button class="btn-buy">Comprar (Pix)</button>
+                </div>
+            </div>
+
+            <h2 class="section-title-sm"><span class="icon">💱</span> Casa de Câmbio</h2>
+            <div class="exchange-container">
+                <div class="exchange-box">
+                    <label>Você paga:</label>
+                    <div class="exchange-input">
+                        <input type="number" value="5000">
+                        <select>
+                            <option value="fuel">⛽ Combustível</option>
+                            <option value="crystal">💎 Cristal</option>
+                            <option value="gpu">🖥️ GPU</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="exchange-arrow">➔</div>
+
+                <div class="exchange-box">
+                    <label>Você recebe:</label>
+                    <div class="exchange-input">
+                        <input type="number" value="1" disabled>
+                        <select>
+                            <option value="gpu">🖥️ GPU</option>
+                            <option value="crystal">💎 Cristal</option>
+                            <option value="fuel">⛽ Combustível</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-exchange">Converter</button>
+            </div>
+
+            <!-- SISTEMA DE SAQUE E ESTORNO -->
+            <h2 class="section-title-sm" style="margin-top: 50px; color: var(--accent-red);"><span class="icon">💸</span> Saque (Cash Out) & Estorno</h2>
+            <div style="background-color: var(--bg-panel); border: 1px solid var(--accent-red); border-radius: 12px; padding: 30px;">
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Converta suas Placas de GPU acumuladas em dinheiro real (Pix) ou solicite o estorno de compras recentes de acordo com a política de 7 dias.</p>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px;">
+                        <h3 style="font-size: 16px; margin-bottom: 10px;">Solicitar Saque (P2E)</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">Taxa de Saque: 100 GPUs = R$ 30,00</p>
+                        <button class="btn-buy" style="background-color: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold);">Sacar via Pix</button>
+                    </div>
+                    <div style="flex: 1; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px;">
+                        <h3 style="font-size: 16px; margin-bottom: 10px;">Solicitar Estorno</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">Apenas para top-ups não utilizados realizados há menos de 7 dias.</p>
+                        <button class="btn-buy" style="background-color: transparent; border: 1px solid var(--accent-red); color: var(--accent-red);">Solicitar Reembolso</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
