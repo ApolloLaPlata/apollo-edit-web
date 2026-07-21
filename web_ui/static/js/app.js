@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Buscar informações reais do Workspace da API do FastAPI
-    fetch('/api/workspace')
+    fetch('https://api.apolloedit.com/api/workspace')
         .then(response => response.json())
         .then(data => {
             console.log("Workspace conectado:", data);

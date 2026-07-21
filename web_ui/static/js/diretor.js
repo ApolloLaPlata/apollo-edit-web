@@ -42,7 +42,7 @@ async function loadProfiles() {
     select.innerHTML = '<option value="">Carregando perfis...</option>';
     
     try {
-        const response = await fetch('/api/list_profiles');
+        const response = await fetch('https://api.apolloedit.com/api/list_profiles');
         const result = await response.json();
         
         if (result.status === 'success') {
@@ -67,7 +67,7 @@ async function loadProfiles() {
 async function browseFile(inputId, type = 'media') {
     try {
         // Usar endpoint genérico browse_file (ou criar um novo no python futuramente)
-        const response = await fetch('/api/browse_file', { method: 'POST' });
+        const response = await fetch('https://api.apolloedit.com/api/browse_file', { method: 'POST' });
         const result = await response.json();
         if (result.status === 'success' && result.path) {
             document.getElementById(inputId).value = result.path;
@@ -81,7 +81,7 @@ async function browseFile(inputId, type = 'media') {
 async function browseFolder(inputId) {
     try {
         // Fallback: se o servidor não tiver browse_folder, pode falhar.
-        const response = await fetch('/api/browse_file?type=folder', { method: 'POST' });
+        const response = await fetch('https://api.apolloedit.com/api/browse_file?type=folder', { method: 'POST' });
         const result = await response.json();
         if (result.status === 'success' && result.path) {
             // Em Python filedialog.askdirectory deve ser implementado no backend
@@ -98,7 +98,7 @@ let videoList = [];
 
 function addVideos() {
     // Simula seleção múltipla e adiciona na lista
-    fetch('/api/browse_file')
+    fetch('https://api.apolloedit.com/api/browse_file')
         .then(res => res.json())
         .then(result => {
             if (result.status === 'success' && result.path) {
@@ -272,7 +272,7 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     const text = document.getElementById('render_status_text');
     text.textContent = "Na Fila...";
     
-    fetch('/api/render_diretor', {
+    fetch('https://api.apolloedit.com/api/render_diretor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -462,7 +462,7 @@ window.sendCopilotMessage = async function() {
         // Contexto inteligente para a IA saber em qual aba o usuario esta
         const sysPrompt = "Você é o Copiloto IA do Apollo Studio. Você é sarcástico, direto e muito inteligente. O usuário está atualmente na aba: " + context.current_tab + ". Ajude-o com dúvidas sobre criação de vídeo, roteiros ou operação do sistema.";
 
-        const response = await fetch("/api/lightning_proxy", {
+        const response = await fetch('https://api.apolloedit.com/api/lightning_proxy", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${apiKey}`,

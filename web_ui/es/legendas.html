@@ -267,7 +267,7 @@ html
 
         async function carregarPerfis() {
             try {
-                const res = await fetch('/api/config/perfis_legenda');
+                const res = await fetch('https://api.apolloedit.com/api/config/perfis_legenda');
                 const data = await res.json();
                 if(data.success && data.perfis) {
                     const sel = document.getElementById('preset');
@@ -311,7 +311,7 @@ html
             setStatus("🚀 Transcrevendo e processando FFmpeg. Aguarde...", "loading");
 
             try {
-                const res = await fetch('/api/legendas/gerar', {
+                const res = await fetch('https://api.apolloedit.com/api/legendas/gerar', {
                     method: 'POST',
                     body: fd
                 });

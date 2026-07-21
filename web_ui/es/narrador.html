@@ -202,7 +202,7 @@ html
 
         async function carregarPersonagens() {
             try {
-                const res = await fetch('/api/tts/personagens'); // Usamos o mesmo endpoint pra pegar os personagens cadastrados
+                const res = await fetch('https://api.apolloedit.com/api/tts/personagens'); // Usamos o mesmo endpoint pra pegar os personagens cadastrados
                 const data = await res.json();
                 if(data.success) {
                     personDict = data.detalhes;
@@ -273,7 +273,7 @@ html
             setStatus("🔧 Cortando vídeo base e injetando áudio (FFmpeg)...", "loading");
 
             try {
-                const res = await fetch('/api/narrador/gerar', {
+                const res = await fetch('https://api.apolloedit.com/api/narrador/gerar', {
                     method: 'POST',
                     body: formData
                 });

@@ -1075,7 +1075,7 @@ function updateInspector() {
             const name = document.getElementById('preset-name').value;
             if (!name) return alert('Digite o nome do preset');
             const data = { font_size: c.fontSize, font_color: c.fontColor, pos_x: c.posX, pos_y: c.posY };
-            await fetch('/api/save_profile', {
+            await fetch('https://api.apolloedit.com/api/save_profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome: 'text_preset_' + name, template_data: data })
@@ -1088,7 +1088,7 @@ function updateInspector() {
         if (btnLoad) btnLoad.addEventListener('click', async () => {
             const name = document.getElementById('preset-list').value;
             if (!name) return;
-            const res = await fetch('/api/load_profile?nome=' + encodeURIComponent(name));
+            const res = await fetch('https://api.apolloedit.com/api/load_profile?nome=' + encodeURIComponent(name));
             const data = await res.json();
             if (data.status === 'success' && data.template_data) {
                 c.fontSize = data.template_data.font_size || c.fontSize;
@@ -1105,7 +1105,7 @@ window.loadTextPresetList = async function() {
     const select = document.getElementById('preset-list');
     if (!select) return;
     try {
-        const res = await fetch('/api/list_profiles');
+        const res = await fetch('https://api.apolloedit.com/api/list_profiles');
         const data = await res.json();
         if (data.status === 'success') {
             select.innerHTML = '<option value="">Selecione...</option>';
@@ -1314,7 +1314,7 @@ function sendToPython(draftMode = false, config = null) {
         exportData.export_quality = config.quality;
     }
 
-    fetch('/api/export_timeline', {
+    fetch('https://api.apolloedit.com/api/export_timeline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(exportData)
@@ -1367,7 +1367,7 @@ document.getElementById('btn-ai-edit')?.addEventListener('click', () => {
         if (bar) bar.style.background = 'linear-gradient(90deg, #b534ff, #8b5cf6)';
     }, 100);
 
-    fetch('/api/ai_edit_timeline', {
+    fetch('https://api.apolloedit.com/api/ai_edit_timeline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(exportData)
@@ -1425,7 +1425,7 @@ loadInput.addEventListener('change', (e) => {
 const btnImport = document.querySelector('.media-library .btn-icon');
 if (btnImport) {
     btnImport.addEventListener('click', () => {
-        fetch('/api/browse_file')
+        fetch('https://api.apolloedit.com/api/browse_file')
             .then(r => r.json())
             .then(data => {
                 if (data.status === 'success' && data.paths && data.paths.length > 0) {
@@ -1513,7 +1513,7 @@ function startRenderPolling() {
     if (renderPollInterval) clearInterval(renderPollInterval);
     
     renderPollInterval = setInterval(() => {
-        fetch('/api/render_status')
+        fetch('https://api.apolloedit.com/api/render_status')
             .then(r => r.json())
             .then(s => {
                 bar.style.width = s.progress + '%';
@@ -2032,7 +2032,7 @@ async function sendChatMessage() {
         document.getElementById('chat-typing').style.display = 'block';
         document.getElementById('chat-typing').innerText = 'Gerando Imagem IA...';
         try {
-            const response = await fetch('/api/generate_broll', {
+            const response = await fetch('https://api.apolloedit.com/api/generate_broll', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ prompt: brollMatch[1] })
@@ -2078,7 +2078,7 @@ async function sendChatMessage() {
     };
 
     try {
-        const response = await fetch('/api/chat_copilot', {
+        const response = await fetch('https://api.apolloedit.com/api/chat_copilot', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2192,7 +2192,7 @@ function applyCopilotOperations(ops) {
             }
             else if (op.type === 'generate_broll_image') {
                 appendChatMessage('copilot', `🎨 Gerando imagem: "${op.prompt}"...`);
-                fetch('/api/generate_broll', {
+                fetch('https://api.apolloedit.com/api/generate_broll', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: op.prompt })
@@ -2468,7 +2468,7 @@ function addTextClip() {
 
 // --- INBOX POLLER: Verifica se há mídias enviadas via /api/send_to_timeline ---
 setInterval(() => {
-    fetch('/api/check_inbox')
+    fetch('https://api.apolloedit.com/api/check_inbox')
         .then(r => r.json())
         .then(data => {
             if (data.status === 'success' && data.files && data.files.length > 0) {

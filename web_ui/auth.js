@@ -39,7 +39,7 @@ async function requireAuth() {
 
 async function loadWebUserProfile() {
     try {
-        const response = await fetch('/api/user/profile');
+        const response = await fetch('https://api.apolloedit.com/api/user/profile');
         const data = await response.json();
         
         // FASE 4: Bloqueios e Globais (Banimento e Manutenção)
@@ -680,7 +680,7 @@ async function checkPageAccessAndLog() {
     if(currentPage === 'admin.html' || currentPage === 'login.html') return;
 
     try {
-        const response = await fetch('/api/log_visit', {
+        const response = await fetch('https://api.apolloedit.com/api/log_visit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ page_name: currentPage })
@@ -691,7 +691,7 @@ async function checkPageAccessAndLog() {
             // Verifica permissão da página inteira
             const reqAccess = data.settings[`page_${currentPage}_access`] || 'Free';
             if (reqAccess !== 'Free') {
-                const profileRes = await fetch('/api/user/profile');
+                const profileRes = await fetch('https://api.apolloedit.com/api/user/profile');
                 const profileData = await profileRes.json();
                 
                 let userLevel = 0;
@@ -723,7 +723,7 @@ async function checkPageAccessAndLog() {
 
 async function renderAds() {
     try {
-        const res = await fetch('/api/public/ads');
+        const res = await fetch('https://api.apolloedit.com/api/public/ads');
         const data = await res.json();
         if(data.success && data.ads.length > 0) {
             // Escolhe um AD aleatório ativo

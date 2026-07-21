@@ -56,7 +56,7 @@ async function loadDashboardNews(category) {
     let topic = category === 'Geral' ? 'Principais notícias do dia Brasil e Mundo' : category;
     
     try {
-        const response = await fetch('/api/noticias/ai', {
+        const response = await fetch('https://api.apolloedit.com/api/noticias/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

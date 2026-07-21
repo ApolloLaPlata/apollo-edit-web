@@ -64,7 +64,7 @@
             grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12"><div class="cyber-loader mb-4"></div><p>Sincronizando com a rede global...</p></div>';
             
             try {
-                const res = await fetch('/api/public/explore');
+                const res = await fetch('https://api.apolloedit.com/api/public/explore');
                 const data = await res.json();
                 
                 if(data.success && data.feed.length > 0) {

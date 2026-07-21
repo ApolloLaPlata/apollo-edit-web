@@ -52,7 +52,7 @@ async function handleStartMonitoring() {
             api_key_grok: grokKey
         };
 
-        const res = await fetch('/api/noticias/ai', {
+        const res = await fetch('https://api.apolloedit.com/api/noticias/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)

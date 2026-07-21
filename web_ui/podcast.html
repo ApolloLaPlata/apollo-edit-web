@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Gerador de Podcast</title>
+    <title>Apollo Edit ó Gerador de Podcast</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -163,12 +163,12 @@
     <div id="global-3d-bg"></div>
 
     <header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
             </a>
-            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="podcast.title_badge">üéôÔ∏è Gerador de Podcast - VoiceMaker & Tags</span>
+            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="podcast.title_badge">??? Gerador de Podcast - VoiceMaker & Tags</span>
             <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
                 <span class="gas-icon"></span>
                 <strong id="user-credits" data-i18n="common.loading">Carregando...</strong>&nbsp;<span data-i18n="common.gasoline">Gasolina</span>
@@ -177,7 +177,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -192,9 +192,9 @@
 
         <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
             <!-- Decorativo fundo -->
-            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">üèéÔ∏è</div>
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">???</div>
             
-            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">üéß</div>
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">??</div>
             <div style="z-index: 2;">
                 <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
                     CAST CREATOR
@@ -215,8 +215,8 @@
                 </ul>
             </div>
             <div class="log-box">
-                <h3>Log de Execu√ß√£o</h3>
-                <div class="log-content" id="log_content">Aguardando in√≠cio...</div>
+                <h3>Log de ExecuÁ„o</h3>
+                <div class="log-content" id="log_content">Aguardando inÌcio...</div>
             </div>
         </div>
 
@@ -225,26 +225,26 @@
             <div class="script-box">
                 <label>Cole seu roteiro aqui:</label>
                 <textarea id="roteiro"></textarea>
-                <div class="hint">DICA: Formato Base -> 'Nome Personagem (Estado Visual): Texto' | Formatos mais avan√ßados ser√£o suportados.</div>
+                <div class="hint">DICA: Formato Base -> 'Nome Personagem (Estado Visual): Texto' | Formatos mais avanÁados ser„o suportados.</div>
             </div>
 
             <div class="options-box">
-                <h3>Op√ß√µes de Gera√ß√£o</h3>
+                <h3>OpÁıes de GeraÁ„o</h3>
                 <div class="opt-row">
-                    <label><input type="checkbox" id="chk_audio" checked> Gerar √Åudio (MP3)</label>
-                    <label><input type="checkbox" id="chk_video"> Gerar V√≠deo LOOP (MP4)</label>
+                    <label><input type="checkbox" id="chk_audio" checked> Gerar ¡udio (MP3)</label>
+                    <label><input type="checkbox" id="chk_video"> Gerar VÌdeo LOOP (MP4)</label>
                     <label><input type="checkbox" id="chk_tags"> Gerar TAGS (MOV Alpha)</label>
-                    <label><input type="checkbox" id="chk_normalize" checked> Normalizar √Åudio</label>
-                    <label><input type="checkbox" id="chk_cores"> üé® Gerar Mapa de Cores (.json)</label>
+                    <label><input type="checkbox" id="chk_normalize" checked> Normalizar ¡udio</label>
+                    <label><input type="checkbox" id="chk_cores"> ?? Gerar Mapa de Cores (.json)</label>
                 </div>
                 <div class="opt-row" style="margin-top: 10px; border-top: 1px solid #333; padding-top: 15px;">
                     <label style="color: #4CAF50; font-weight: bold;">
-                        <input type="checkbox" id="chk_srt"> üìù Gerar SRT ap√≥s √°udio (Whisper ‚Äî word-level timestamps)
+                        <input type="checkbox" id="chk_srt"> ?? Gerar SRT apÛs ·udio (Whisper ó word-level timestamps)
                     </label>
                 </div>
             </div>
 
-            <button class="btn-gerar" id="btn_gerar" onclick="gerarPodcast()">üöÄ GERAR PODCAST</button>
+            <button class="btn-gerar" id="btn_gerar" onclick="gerarPodcast()">?? GERAR PODCAST</button>
 
             <div class="tabs-container">
                 <div class="tab-headers">
@@ -262,7 +262,7 @@
                 <!-- ABA PROCESSAMENTO -->
                 <div id="tab_processamento" class="tab-content">
                     <div class="proc-group">
-                        <label>Normaliza√ß√£o (LUFS)</label>
+                        <label>NormalizaÁ„o (LUFS)</label>
                         <div class="proc-slider">
                             <input type="range" id="lufs" min="-30" max="-5" step="0.5" oninput="updateVal('lufs_val', this.value + ' LUFS')">
                             <span class="val" id="lufs_val">-10.0 LUFS</span>
@@ -270,7 +270,7 @@
                     </div>
                     
                     <div class="proc-group">
-                        <label><input type="checkbox" id="chk_compressor"> Ativar Compressor (R√°dio Voice)</label>
+                        <label><input type="checkbox" id="chk_compressor"> Ativar Compressor (R·dio Voice)</label>
                         <div class="proc-slider">
                             <span style="font-size: 12px; color: #aaa;">Intensidade:</span>
                             <input type="range" id="comp_int" min="0" max="100" oninput="updateVal('comp_val', this.value)">
@@ -279,11 +279,11 @@
                     </div>
 
                     <div class="proc-group">
-                        <label><input type="checkbox" id="chk_pacing"> Smart Pacing (Remover Sil√™ncios)</label>
+                        <label><input type="checkbox" id="chk_pacing"> Smart Pacing (Remover SilÍncios)</label>
                     </div>
 
                     <div class="proc-group">
-                        <label><input type="checkbox" id="chk_ducking"> Audio Ducking (M√∫sica de Fundo)</label>
+                        <label><input type="checkbox" id="chk_ducking"> Audio Ducking (M˙sica de Fundo)</label>
                     </div>
                 </div>
             </div>
@@ -294,7 +294,7 @@
 
 
         <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
         </div>
 
     <script>
@@ -311,7 +311,7 @@
 
         async function carregarDados() {
             try {
-                const res = await fetch('/api/podcast/dados');
+                const res = await fetch('https://api.apolloedit.com/api/podcast/dados');
                 const data = await res.json();
                 
                 if (data.success) {
@@ -341,7 +341,7 @@
                         `;
                     }
 
-                    // Configura√ß√µes de Processamento
+                    // ConfiguraÁıes de Processamento
                     document.getElementById('lufs').value = data.config.target_lufs || -10.0;
                     document.getElementById('lufs_val').innerText = (data.config.target_lufs || -10.0) + ' LUFS';
                     
@@ -361,14 +361,14 @@
             if (isGenerating) return;
 
             const roteiro = document.getElementById('roteiro').value.trim();
-            if (!roteiro) { alert("O roteiro est√° vazio!"); return; }
+            if (!roteiro) { alert("O roteiro est· vazio!"); return; }
 
             const modes = [];
             if(document.getElementById('chk_audio').checked) modes.push("audio");
             if(document.getElementById('chk_video').checked) modes.push("video");
             if(document.getElementById('chk_tags').checked) modes.push("tags");
 
-            if(modes.length === 0) { alert("Selecione pelo menos um modo de gera√ß√£o!"); return; }
+            if(modes.length === 0) { alert("Selecione pelo menos um modo de geraÁ„o!"); return; }
 
             // Coletar volumes alterados
             const volumes = {};
@@ -394,14 +394,14 @@
             };
 
             const btn = document.getElementById('btn_gerar');
-            btn.innerText = "‚è≥ Processando Podcast...";
+            btn.innerText = "? Processando Podcast...";
             btn.style.background = "#555";
             isGenerating = true;
 
-            document.getElementById('log_content').innerText = "Iniciando gera√ß√£o do podcast...\n";
+            document.getElementById('log_content').innerText = "Iniciando geraÁ„o do podcast...\n";
 
             try {
-                const res = await fetch('/api/podcast/gerar', {
+                const res = await fetch('https://api.apolloedit.com/api/podcast/gerar', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
@@ -409,16 +409,16 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    document.getElementById('log_content').innerText += `\n‚úÖ Conclu√≠do! Salvo em: ${data.path || 'output_podcast'}`;
+                    document.getElementById('log_content').innerText += `\n? ConcluÌdo! Salvo em: ${data.path || 'output_podcast'}`;
                     alert("Sucesso!\nPodcast gerado.");
                 } else {
-                    document.getElementById('log_content').innerText += `\n‚ùå Erro: ${data.error}`;
+                    document.getElementById('log_content').innerText += `\n? Erro: ${data.error}`;
                     alert("Erro: " + data.error);
                 }
             } catch (e) {
-                document.getElementById('log_content').innerText += `\n‚ùå Falha na conex√£o: ${e}`;
+                document.getElementById('log_content').innerText += `\n? Falha na conex„o: ${e}`;
             } finally {
-                btn.innerText = "üöÄ GERAR PODCAST";
+                btn.innerText = "?? GERAR PODCAST";
                 btn.style.background = "#9B59B6";
                 isGenerating = false;
             }
@@ -429,7 +429,7 @@
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

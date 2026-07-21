@@ -158,7 +158,7 @@ async function callBackend(data) {
     document.getElementById('resultArea').style.display = 'none';
 
     try {
-        const response = await fetch('/api/laplata/generate', {
+        const response = await fetch('https://api.apolloedit.com/api/laplata/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

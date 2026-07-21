@@ -269,7 +269,7 @@ async function settingsTestKey(key) {
         let ok = false;
 
         if (key === 'api_key_grok') {
-            const res = await fetch('/api/grok/models', {
+            const res = await fetch('https://api.apolloedit.com/api/grok/models', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ api_key: value })

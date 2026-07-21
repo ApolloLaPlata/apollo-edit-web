@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Gerar V√≠deo do Narrador</title>
+    <title>Apollo Edit ó Gerar VÌdeo do Narrador</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -147,7 +147,7 @@
     <div id="global-3d-bg"></div>
 
     <header style="padding: 10px 30px; margin-bottom: 20px;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
@@ -161,7 +161,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -176,12 +176,12 @@
 
         <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
             <!-- Decorativo fundo -->
-            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">üèéÔ∏è</div>
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">???</div>
             
-            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">üßô‚Äç‚ôÇÔ∏è</div>
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">?????</div>
             <div style="z-index: 2;">
                 <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
-                    AVATAR M√ÅGICO
+                    AVATAR M¡GICO
                 </h3>
                 <p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
                     Avatar falante movido a IA.
@@ -207,13 +207,13 @@
 
         <div class="form-group">
             <div class="file-upload-wrapper">
-                <button class="btn-upload" onclick="document.getElementById('audio_file').click()">Carregar Arquivo de √Åudio (.mp3)</button>
+                <button class="btn-upload" onclick="document.getElementById('audio_file').click()">Carregar Arquivo de ¡udio (.mp3)</button>
                 <input type="file" id="audio_file" accept=".mp3" onchange="atualizarLabelAudio()">
-                <span class="audio-label" id="lbl_audio">Nenhum √°udio carregado.</span>
+                <span class="audio-label" id="lbl_audio">Nenhum ·udio carregado.</span>
             </div>
         </div>
 
-        <button class="btn-gerar" id="btn_gerar" onclick="gerarVideo()">Gerar V√≠deo do Narrador</button>
+        <button class="btn-gerar" id="btn_gerar" onclick="gerarVideo()">Gerar VÌdeo do Narrador</button>
 
         <div class="status-bar" id="status" style="display: none;"></div>
 
@@ -221,7 +221,7 @@
 
 
         <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
         </div>
 
     <script>
@@ -229,7 +229,7 @@
 
         async function carregarPersonagens() {
             try {
-                const res = await fetch('/api/tts/personagens'); // Usamos o mesmo endpoint pra pegar os personagens cadastrados
+                const res = await fetch('https://api.apolloedit.com/api/tts/personagens'); // Usamos o mesmo endpoint pra pegar os personagens cadastrados
                 const data = await res.json();
                 if(data.success) {
                     personDict = data.detalhes;
@@ -244,18 +244,18 @@
                     if(data.personagens.length > 0) atualizarPersonagem();
                 } else {
                     const sel = document.getElementById('personagem');
-                    sel.innerHTML = '<option disabled selected>Nenhum personagem dispon√≠vel</option>';
+                    sel.innerHTML = '<option disabled selected>Nenhum personagem disponÌvel</option>';
                     document.getElementById('btn_gerar').disabled = true;
                 }
             } catch(e) {
-                setStatus('‚ùå Erro ao carregar personagens: ' + e, 'error');
+                setStatus('? Erro ao carregar personagens: ' + e, 'error');
             }
         }
 
         function atualizarPersonagem() {
             const p = document.getElementById('personagem').value;
-            // Aqui poder√≠amos atualizar dinamicamente os estados emocionais caso o banco de dados suporte,
-            // Mas o Tkinter original deixava as 4 op√ß√µes fixas.
+            // Aqui poderÌamos atualizar dinamicamente os estados emocionais caso o banco de dados suporte,
+            // Mas o Tkinter original deixava as 4 opÁıes fixas.
         }
 
         function atualizarLabelAudio() {
@@ -264,7 +264,7 @@
             if(fileInput.files.length > 0) {
                 label.innerText = fileInput.files[0].name;
             } else {
-                label.innerText = "Nenhum √°udio carregado.";
+                label.innerText = "Nenhum ·udio carregado.";
             }
         }
 
@@ -281,11 +281,11 @@
             const fileInput = document.getElementById('audio_file');
 
             if(!personagem) {
-                alert("Erro: Selecione um personagem v√°lido.");
+                alert("Erro: Selecione um personagem v·lido.");
                 return;
             }
             if(fileInput.files.length === 0) {
-                alert("Erro: Carregue um arquivo de √°udio primeiro.");
+                alert("Erro: Carregue um arquivo de ·udio primeiro.");
                 return;
             }
 
@@ -296,28 +296,28 @@
 
             const btn = document.getElementById('btn_gerar');
             btn.disabled = true;
-            btn.innerText = "üé¨ Processando FFmpeg... Aguarde";
-            setStatus("üîß Cortando v√≠deo base e injetando √°udio (FFmpeg)...", "loading");
+            btn.innerText = "?? Processando FFmpeg... Aguarde";
+            setStatus("?? Cortando vÌdeo base e injetando ·udio (FFmpeg)...", "loading");
 
             try {
-                const res = await fetch('/api/narrador/gerar', {
+                const res = await fetch('https://api.apolloedit.com/api/narrador/gerar', {
                     method: 'POST',
                     body: formData
                 });
                 const data = await res.json();
                 
                 if(data.success) {
-                    setStatus(`‚úÖ V√≠deo do narrador gerado com sucesso!\nüìÅ Salvo em: ${data.file}\n‚è±Ô∏è Dura√ß√£o: ${data.duracao.toFixed(2)}s`, 'success');
-                    alert(`Sucesso!\nV√≠deo salvo em: ${data.file}`);
+                    setStatus(`? VÌdeo do narrador gerado com sucesso!\n?? Salvo em: ${data.file}\n?? DuraÁ„o: ${data.duracao.toFixed(2)}s`, 'success');
+                    alert(`Sucesso!\nVÌdeo salvo em: ${data.file}`);
                 } else {
-                    setStatus(`‚ùå Erro: ${data.error}`, 'error');
-                    alert(`Erro ao gerar v√≠deo:\n${data.error}`);
+                    setStatus(`? Erro: ${data.error}`, 'error');
+                    alert(`Erro ao gerar vÌdeo:\n${data.error}`);
                 }
             } catch(e) {
-                setStatus(`‚ùå Erro de conex√£o: ${e}`, 'error');
+                setStatus(`? Erro de conex„o: ${e}`, 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Gerar V√≠deo do Narrador";
+                btn.innerText = "Gerar VÌdeo do Narrador";
             }
         }
 
@@ -326,7 +326,7 @@
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

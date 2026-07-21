@@ -183,7 +183,7 @@
         // Fetch Real-time Dashboard Data
         async function loadDashboardData() {
             try {
-                const response = await fetch('/api/admin/dashboard');
+                const response = await fetch('https://api.apolloedit.com/api/admin/dashboard');
                 const data = await response.json();
                 
                 if (data.success) {
@@ -243,7 +243,7 @@
             btn.disabled = true;
 
             try {
-                const response = await fetch('/api/admin/market_analyst/apply', {
+                const response = await fetch('https://api.apolloedit.com/api/admin/market_analyst/apply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: action, value: value })
@@ -269,7 +269,7 @@
 
         async function loadMarketRecommendations() {
             try {
-                const response = await fetch('/api/admin/market_analyst/recommendations');
+                const response = await fetch('https://api.apolloedit.com/api/admin/market_analyst/recommendations');
                 const data = await response.json();
                 
                 if (data.success) {

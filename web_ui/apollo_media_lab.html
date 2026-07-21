@@ -131,7 +131,7 @@
 
             try {
                 // Chama a rota nativa do Python que criamos
-                const res = await fetch("/api/media_proxy", {
+                const res = await fetch('https://api.apolloedit.com/api/media_proxy", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(proxyPayload)

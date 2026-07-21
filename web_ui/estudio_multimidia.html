@@ -439,7 +439,7 @@
                 }
 
                 // Call API
-                const res = await fetch('/api/studio/generate', {
+                const res = await fetch('https://api.apolloedit.com/api/studio/generate', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(reqBody)
@@ -611,7 +611,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch('/api/studio/enhance_prompt', {
+                const res = await fetch('https://api.apolloedit.com/api/studio/enhance_prompt', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ prompt: originalPrompt, type: currentMode })
@@ -674,7 +674,7 @@
 
         async function pollNotifications() {
             try {
-                const res = await fetch('/api/notifications');
+                const res = await fetch('https://api.apolloedit.com/api/notifications');
                 const data = await res.json();
                 if(data.success) {
                     const list = document.getElementById('notifList');
@@ -716,7 +716,7 @@
         async function markAllRead() {
             if(unreadJobIds.length === 0) return;
             try {
-                await fetch('/api/notifications/mark_read', {
+                await fetch('https://api.apolloedit.com/api/notifications/mark_read', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({job_ids: unreadJobIds})
@@ -736,7 +736,7 @@
             grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12"><div class="cyber-loader mb-4"></div><p>Buscando histórico...</p></div>';
             
             try {
-                const res = await fetch('/api/studio/history');
+                const res = await fetch('https://api.apolloedit.com/api/studio/history');
                 const data = await res.json();
                 
                 if(data.success && data.history.length > 0) {
@@ -840,7 +840,7 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
             btn.disabled = true;
             try {
-                const res = await fetch('/api/studio/enhance_video', {
+                const res = await fetch('https://api.apolloedit.com/api/studio/enhance_video', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({job_id: jobId})
@@ -865,7 +865,7 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
             btn.disabled = true;
             try {
-                const res = await fetch('/api/studio/generate_sfx', {
+                const res = await fetch('https://api.apolloedit.com/api/studio/generate_sfx', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({job_id: jobId})

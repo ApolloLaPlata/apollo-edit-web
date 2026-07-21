@@ -27,7 +27,7 @@ async function adicionarVideos() {
     // Primeiro pede quantos e depois abre seletor para cada um
     // Estratégia: abrir seletor 1x por clique, usuário pode clicar várias vezes
     try {
-        const r = await fetch('/api/browse_file?type=file');
+        const r = await fetch('https://api.apolloedit.com/api/browse_file?type=file');
         const d = await r.json();
         if (d.status === 'success' && d.path) {
             const caminho = d.path;
@@ -139,7 +139,7 @@ function toggleCheck(elId, stateKey) {
 // ════════════════════════════════════════════════════
 async function browsePasta(inputId) {
     try {
-        const r = await fetch('/api/browse_file?type=folder');
+        const r = await fetch('https://api.apolloedit.com/api/browse_file?type=folder');
         const d = await r.json();
         if (d.status === 'success') {
             document.getElementById(inputId).value = d.path;
@@ -150,7 +150,7 @@ async function browsePasta(inputId) {
 
 async function carregarCache() {
     try {
-        const r = await fetch('/api/montador/cache');
+        const r = await fetch('https://api.apolloedit.com/api/montador/cache');
         const d = await r.json();
         if (d.success && d.cache) {
             const c = d.cache;
@@ -173,7 +173,7 @@ async function salvarCache() {
         cache[id] = document.getElementById(id)?.value || '';
     });
     try {
-        await fetch('/api/montador/cache', {
+        await fetch('https://api.apolloedit.com/api/montador/cache', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cache)
@@ -193,7 +193,7 @@ async function verificarPastas() {
     info.innerHTML = '<span style="color:var(--muted)">Verificando...</span>';
 
     try {
-        const r = await fetch('/api/montador/verificar_pastas?' + params.toString());
+        const r = await fetch('https://api.apolloedit.com/api/montador/verificar_pastas?' + params.toString());
         const d = await r.json();
         if (!d.success) {
             info.innerHTML = '<span class="pi-err">❌ Erro ao verificar pastas.</span>';
@@ -259,7 +259,7 @@ async function processarVideos() {
     state.processando = true;
 
     try {
-        const r = await fetch('/api/montador/processar', {
+        const r = await fetch('https://api.apolloedit.com/api/montador/processar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -313,7 +313,7 @@ async function processarVideos() {
 
 async function atualizarProgresso() {
     try {
-        const r = await fetch('/api/montador/status');
+        const r = await fetch('https://api.apolloedit.com/api/montador/status');
         const d = await r.json();
         if (d.progresso !== undefined) {
             document.getElementById('progress-fill').style.width = d.progresso + '%';

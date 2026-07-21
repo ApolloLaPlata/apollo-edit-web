@@ -149,7 +149,7 @@ async function generateStrategy() {
     const inputContext = `Canal: ${profile.name}\nNicho: ${profile.description}\nConcorrentes: ${competitorsList}`;
 
     try {
-        const response = await fetch('/api/noticias/ai', {
+        const response = await fetch('https://api.apolloedit.com/api/noticias/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(buildNoticiasBody({

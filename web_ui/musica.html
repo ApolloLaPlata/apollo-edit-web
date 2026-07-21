@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Gerador de V√≠deos Musicais</title>
+    <title>Apollo Edit ó Gerador de VÌdeos Musicais</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -67,12 +67,12 @@
 <body>
     <div id="global-3d-bg"></div>
     <header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
             </a>
-            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="musica.title_badge">üéµ F√°brica de V√≠deos Musicais</span>
+            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="musica.title_badge">?? F·brica de VÌdeos Musicais</span>
             <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
                 <span class="gas-icon"></span>
                 <strong id="user-credits" data-i18n="common.loading">Carregando...</strong>&nbsp;<span data-i18n="common.gasoline">Gasolina</span>
@@ -81,7 +81,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -96,12 +96,12 @@
 
         <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
             <!-- Decorativo fundo -->
-            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">üèéÔ∏è</div>
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">???</div>
             
-            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">üéµ</div>
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">??</div>
             <div style="z-index: 2;">
                 <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
-                    F√ÅBRICA MUSICAL
+                    F¡BRICA MUSICAL
                 </h3>
                 <p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
                     Trilhas sonoras geradas por IA.
@@ -111,39 +111,39 @@
 
         
         <div class="tabs-container">
-            <button class="tab-btn active" onclick="switchTab('gerador', this)">üéµ Gerador Lote</button>
-            <button class="tab-btn" onclick="switchTab('compilador', this)">‚è≥ Compilador (Lives 24h)</button>
+            <button class="tab-btn active" onclick="switchTab('gerador', this)">?? Gerador Lote</button>
+            <button class="tab-btn" onclick="switchTab('compilador', this)">? Compilador (Lives 24h)</button>
         </div>
 
         <!-- ABA 1: GERADOR LOTE -->
         <div id="tab_gerador" class="tab-content active">
             <div class="box">
-                <h3>1. Configura√ß√£o dos Diret√≥rios</h3>
+                <h3>1. ConfiguraÁ„o dos DiretÛrios</h3>
                 <div class="form-group">
-                    <label>Pasta Raiz M√∫sicas (Suno):</label>
+                    <label>Pasta Raiz M˙sicas (Suno):</label>
                     <div style="display:flex; gap:5px;">
                         <input type="text" id="suno_dir" placeholder="Ex: C:\Musicas\Suno">
-                        <button class="btn" onclick="browsePath('suno_dir', 'folder')">üìÅ</button>
+                        <button class="btn" onclick="browsePath('suno_dir', 'folder')">??</button>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Pasta de Backgrounds Base:</label>
                     <div style="display:flex; gap:5px;">
                         <input type="text" id="bg_dir" placeholder="Ex: C:\Videos\Backgrounds">
-                        <button class="btn" onclick="browsePath('bg_dir', 'folder')">üìÅ</button>
+                        <button class="btn" onclick="browsePath('bg_dir', 'folder')">??</button>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="carregarMusicas()">üîÑ Carregar M√∫sicas</button>
+                <button class="btn btn-primary" onclick="carregarMusicas()">?? Carregar M˙sicas</button>
             </div>
 
             <div class="box">
-                <h3>2. M√∫sicas Encontradas</h3>
+                <h3>2. M˙sicas Encontradas</h3>
                 <div style="max-height: 300px; overflow-y: auto;">
                     <table id="tabela_musicas">
                         <thead>
                             <tr>
-                                <th>Nome da M√∫sica</th>
-                                <th>Arquivo de √Åudio</th>
+                                <th>Nome da M˙sica</th>
+                                <th>Arquivo de ¡udio</th>
                                 <th style="text-align:center;">Prompt (TXT)</th>
                                 <th style="text-align:center;">Status</th>
                             </tr>
@@ -159,10 +159,10 @@
                 <div class="form-group" style="flex:1; margin-bottom: 0;">
                     <label>Template Visual:</label>
                     <select id="template_select">
-                        <option value="Aleat√≥rio (Auto)">Aleat√≥rio (Auto)</option>
+                        <option value="AleatÛrio (Auto)">AleatÛrio (Auto)</option>
                     </select>
                 </div>
-                <button class="btn" onclick="carregarTemplates()">üîÑ Atualizar Lista</button>
+                <button class="btn" onclick="carregarTemplates()">?? Atualizar Lista</button>
                 
                 <div class="form-group" style="flex:1; margin-bottom: 0;">
                     <label>Capa IA:</label>
@@ -170,14 +170,14 @@
                         <option value="Quadrada (1:1)">Quadrada (1:1)</option>
                         <option value="Vertical (9:16)">Vertical (9:16)</option>
                         <option value="Horizontal (16:9)">Horizontal (16:9)</option>
-                        <option value="N√£o gerar capa">N√£o gerar capa</option>
+                        <option value="N„o gerar capa">N„o gerar capa</option>
                     </select>
                 </div>
                 
-                <button class="btn btn-primary" style="padding: 12px 25px; font-size:16px;" onclick="gerarLote()">üöÄ Gerar V√≠deos em Lote</button>
+                <button class="btn btn-primary" style="padding: 12px 25px; font-size:16px;" onclick="gerarLote()">?? Gerar VÌdeos em Lote</button>
             </div>
             
-            <div class="log-box" id="log_gerador">Aguardando in√≠cio...</div>
+            <div class="log-box" id="log_gerador">Aguardando inÌcio...</div>
         </div>
 
         <!-- ABA 2: COMPILADOR -->
@@ -185,17 +185,17 @@
             <div class="box">
                 <h3>1. Fonte dos Arquivos</h3>
                 <div class="form-group">
-                    <label>Pasta com Clipes Gerados (Subpastas ser√£o inclu√≠das):</label>
+                    <label>Pasta com Clipes Gerados (Subpastas ser„o incluÌdas):</label>
                     <div style="display:flex; gap:5px;">
                         <input type="text" id="clips_dir" placeholder="Ex: C:\Musicas\Suno">
-                        <button class="btn" onclick="browsePath('clips_dir', 'folder')">üìÅ</button>
+                        <button class="btn" onclick="browsePath('clips_dir', 'folder')">??</button>
                     </div>
                 </div>
             </div>
 
             <div class="box">
-                <h3>2. Configura√ß√£o do Compilado / Live</h3>
-                <p style="font-size: 14px; color: #aaa;">Dura√ß√£o do V√≠deo Final (minutos):</p>
+                <h3>2. ConfiguraÁ„o do Compilado / Live</h3>
+                <p style="font-size: 14px; color: #aaa;">DuraÁ„o do VÌdeo Final (minutos):</p>
                 <div style="display:flex; gap:10px; margin-bottom: 15px;">
                     <button class="btn" onclick="setDur(30)">30 Min</button>
                     <button class="btn" onclick="setDur(60)">1 Hora</button>
@@ -208,18 +208,18 @@
                     <label>Ou digite (em minutos):</label>
                     <input type="number" id="dur_minutos" value="60" style="width:150px;">
                 </div>
-                <p style="font-size: 13px; color: #888;">‚ÑπÔ∏è O sistema unificar√° os v√≠deos aleatoriamente at√© atingir a dura√ß√£o desejada.<br>O v√≠deo final ser√° exportado mantendo a qualidade original sem re-encodar, garantindo um arquivo leve e r√°pido.</p>
-                <button class="btn btn-primary" style="margin-top:10px;" onclick="compilar()">üöÄ Iniciar Compila√ß√£o Profunda</button>
+                <p style="font-size: 13px; color: #888;">?? O sistema unificar· os vÌdeos aleatoriamente atÈ atingir a duraÁ„o desejada.<br>O vÌdeo final ser· exportado mantendo a qualidade original sem re-encodar, garantindo um arquivo leve e r·pido.</p>
+                <button class="btn btn-primary" style="margin-top:10px;" onclick="compilar()">?? Iniciar CompilaÁ„o Profunda</button>
             </div>
             
-            <div class="log-box" id="log_compilador">Aguardando in√≠cio...</div>
+            <div class="log-box" id="log_compilador">Aguardando inÌcio...</div>
         </div>
 
     </div>
 
 
         <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
         </div>
 
     <script>
@@ -246,11 +246,11 @@
 
         async function carregarTemplates() {
             try {
-                const res = await fetch('/api/fabrica/templates');
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/templates');
                 const data = await res.json();
                 if(data.success) {
                     const sel = document.getElementById('template_select');
-                    sel.innerHTML = '<option value="Aleat√≥rio (Auto)">Aleat√≥rio (Auto)</option>';
+                    sel.innerHTML = '<option value="AleatÛrio (Auto)">AleatÛrio (Auto)</option>';
                     data.templates.forEach(t => {
                         sel.innerHTML += `<option value="${t}">${t}</option>`;
                     });
@@ -258,18 +258,18 @@
             } catch(e) { console.error(e); }
         }
 
-        // Vari√°vel global para guardar as m√∫sicas carregadas
+        // Vari·vel global para guardar as m˙sicas carregadas
         let musicasEncontradas = [];
 
         async function carregarMusicas() {
             const suno_dir = document.getElementById('suno_dir').value.trim();
-            if(!suno_dir) { alert("Informe a Pasta Raiz das M√∫sicas (Suno)."); return; }
+            if(!suno_dir) { alert("Informe a Pasta Raiz das M˙sicas (Suno)."); return; }
 
             const btn = event.target;
-            btn.innerText = "‚è≥ Carregando...";
+            btn.innerText = "? Carregando...";
 
             try {
-                const res = await fetch('/api/fabrica/carregar_musicas', {
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/carregar_musicas', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ suno_dir: suno_dir })
@@ -280,14 +280,14 @@
                     const tbody = document.querySelector('#tabela_musicas tbody');
                     tbody.innerHTML = '';
                     if(data.musicas.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhuma m√∫sica encontrada</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhuma m˙sica encontrada</td></tr>';
                     } else {
                         data.musicas.forEach(m => {
                             tbody.innerHTML += `
                                 <tr id="row_${m.id}">
                                     <td>${m.nome}</td>
                                     <td>${m.audio_basename}</td>
-                                    <td style="text-align:center;">${m.txt ? 'Sim' : 'N√£o'}</td>
+                                    <td style="text-align:center;">${m.txt ? 'Sim' : 'N„o'}</td>
                                     <td style="text-align:center;" id="status_${m.id}">${m.status}</td>
                                 </tr>
                             `;
@@ -296,12 +296,12 @@
                 } else {
                     alert("Erro: " + data.error);
                 }
-            } catch(e) { alert("Falha na conex√£o: " + e); }
-            finally { btn.innerText = "üîÑ Carregar M√∫sicas"; }
+            } catch(e) { alert("Falha na conex„o: " + e); }
+            finally { btn.innerText = "?? Carregar M˙sicas"; }
         }
 
         async function gerarLote() {
-            if(musicasEncontradas.length === 0) { alert("Nenhuma m√∫sica carregada na tabela."); return; }
+            if(musicasEncontradas.length === 0) { alert("Nenhuma m˙sica carregada na tabela."); return; }
             const bg_dir = document.getElementById('bg_dir').value.trim();
             if(!bg_dir) { alert("Informe a pasta de backgrounds."); return; }
 
@@ -316,10 +316,10 @@
             };
 
             const log = document.getElementById('log_gerador');
-            log.innerText = "Iniciando gera√ß√£o em lote...\n";
+            log.innerText = "Iniciando geraÁ„o em lote...\n";
             
             try {
-                const res = await fetch('/api/fabrica/gerar_lote', {
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/gerar_lote', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
@@ -333,7 +333,7 @@
                     if(done) break;
                     const chunk = decoder.decode(value, {stream: true});
                     
-                    // As mensagens SSE v√™m como "data: {json}\n\n"
+                    // As mensagens SSE vÍm como "data: {json}\n\n"
                     const parts = chunk.split("\n\n");
                     for(let p of parts) {
                         if(p.startsWith("data: ")) {
@@ -347,7 +347,7 @@
                                     if(stTd) {
                                         stTd.innerText = msg.status;
                                         if(msg.status === "Erro") stTd.style.color = "red";
-                                        else if(msg.status === "Conclu√≠do") stTd.style.color = "lightgreen";
+                                        else if(msg.status === "ConcluÌdo") stTd.style.color = "lightgreen";
                                         else stTd.style.color = "yellow";
                                     }
                                 }
@@ -355,9 +355,9 @@
                         }
                     }
                 }
-                log.innerText += "\n‚úÖ Gera√ß√£o em Lote finalizada!";
+                log.innerText += "\n? GeraÁ„o em Lote finalizada!";
             } catch(e) {
-                log.innerText += "\n‚ùå Erro de conex√£o: " + e;
+                log.innerText += "\n? Erro de conex„o: " + e;
             }
         }
 
@@ -365,13 +365,13 @@
             const root_dir = document.getElementById('clips_dir').value.trim();
             if(!root_dir) { alert("Informe a pasta com os clipes."); return; }
             const dur = parseInt(document.getElementById('dur_minutos').value);
-            if(isNaN(dur) || dur <= 0) { alert("Dura√ß√£o inv√°lida."); return; }
+            if(isNaN(dur) || dur <= 0) { alert("DuraÁ„o inv·lida."); return; }
 
             const log = document.getElementById('log_compilador');
-            log.innerText = "Iniciando compila√ß√£o de " + dur + " minutos...\n";
+            log.innerText = "Iniciando compilaÁ„o de " + dur + " minutos...\n";
             
             try {
-                const res = await fetch('/api/fabrica/compilar', {
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/compilar', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ root_dir: root_dir, duracao_min: dur })
@@ -387,20 +387,20 @@
                     log.scrollTop = log.scrollHeight;
                 }
             } catch(e) {
-                log.innerText += "\n‚ùå Erro de conex√£o: " + e;
+                log.innerText += "\n? Erro de conex„o: " + e;
             }
         }
 
         window.onload = () => {
             carregarTemplates();
-            // Tenta pegar o diret√≥rio salvo no config se poss√≠vel, para isso precisaria de um endpoint.
-            // Para simplificar, o usu√°rio preenche na UI com o bot√£o üìÅ.
+            // Tenta pegar o diretÛrio salvo no config se possÌvel, para isso precisaria de um endpoint.
+            // Para simplificar, o usu·rio preenche na UI com o bot„o ??.
         };
     </script>
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

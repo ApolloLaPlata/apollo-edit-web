@@ -196,7 +196,7 @@
         
         async function fetchCampaigns() {
             try {
-                const res = await fetch('/api/public/campaigns');
+                const res = await fetch('https://api.apolloedit.com/api/public/campaigns');
                 const data = await res.json();
                 if(data.success && data.campaigns && data.campaigns.length > 0) {
                     currentCampaigns = data.campaigns;

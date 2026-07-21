@@ -372,7 +372,7 @@ html
             document.getElementById('loading').style.display = 'flex';
 
             try {
-                const res = await fetch('/api/ferramentas/processar', {
+                const res = await fetch('https://api.apolloedit.com/api/ferramentas/processar', {
                     method: 'POST',
                     body: fd
                 });

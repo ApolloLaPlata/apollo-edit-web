@@ -61,7 +61,7 @@ function loadScriptsProfiles() {
 
 async function loadAIModels() {
     try {
-        const res = await fetch('/api/public/models_pricing');
+        const res = await fetch('https://api.apolloedit.com/api/public/models_pricing');
         const data = await res.json();
         if(data.success) {
             const select = document.getElementById('scripts-ai-engine');
@@ -322,7 +322,7 @@ async function handleGenerateScriptCustom() {
         const engineSelect = document.getElementById('scripts-ai-engine');
         const engineValue = engineSelect ? engineSelect.value : 'auto';
 
-        const response = await fetch('/api/noticias/ai', {
+        const response = await fetch('https://api.apolloedit.com/api/noticias/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(buildNoticiasBody({
@@ -380,7 +380,7 @@ async function runSimpleScriptPrompt(promptType, btnId, originalHtml) {
     outputDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     
     try {
-        const response = await fetch('/api/noticias/ai', {
+        const response = await fetch('https://api.apolloedit.com/api/noticias/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

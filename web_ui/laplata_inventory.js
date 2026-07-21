@@ -7,7 +7,7 @@ window.ApolloEconomy = {
 
     sync: async function() {
         try {
-            const response = await fetch('/api/store/inventory');
+            const response = await fetch('https://api.apolloedit.com/api/store/inventory');
             if (response.ok) {
                 const data = await response.json();
                 if (data.status === 'success') {
@@ -33,7 +33,7 @@ window.ApolloEconomy = {
 
     buyItem: async function(itemId, cost, currencyType) {
         try {
-            const response = await fetch('/api/store/buy', {
+            const response = await fetch('https://api.apolloedit.com/api/store/buy', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ item_id: itemId, cost: cost, currency: currencyType })

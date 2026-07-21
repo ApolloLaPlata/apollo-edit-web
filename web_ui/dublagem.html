@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Dublagem Externa</title>
+    <title>Apollo Edit ó Dublagem Externa</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -83,7 +83,7 @@
     <div id="global-3d-bg"></div>
 
     <header style="padding: 10px 30px; margin-bottom: 20px;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
@@ -97,7 +97,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -112,9 +112,9 @@
 
         <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
             <!-- Decorativo fundo -->
-            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">üèéÔ∏è</div>
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">???</div>
             
-            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">üéôÔ∏è</div>
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">???</div>
             <div style="z-index: 2;">
                 <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
                     DUBLAGEM RVC
@@ -129,44 +129,44 @@
         <!-- Left Panel -->
         <div class="left-panel">
             <div class="box">
-                <h3>‚öôÔ∏è Configura√ß√µes e Sele√ß√£o</h3>
+                <h3>?? ConfiguraÁıes e SeleÁ„o</h3>
                 <div class="btn-group">
-                    <button class="btn primary" onclick="document.getElementById('video_input').click()">üìÑ Add V√≠deos</button>
+                    <button class="btn primary" onclick="document.getElementById('video_input').click()">?? Add VÌdeos</button>
                     <!-- Folders input for webKit browsers -->
-                    <button class="btn primary" onclick="document.getElementById('folder_input').click()">üìÅ Add Pasta</button>
+                    <button class="btn primary" onclick="document.getElementById('folder_input').click()">?? Add Pasta</button>
                 </div>
-                <button class="btn" style="width: 100%; margin-bottom: 20px;" onclick="limparFila()">üóëÔ∏è Limpar Fila</button>
+                <button class="btn" style="width: 100%; margin-bottom: 20px;" onclick="limparFila()">??? Limpar Fila</button>
                 
                 <input type="file" id="video_input" multiple accept="video/*" style="display:none" onchange="addFiles(event)">
                 <input type="file" id="folder_input" webkitdirectory directory multiple accept="video/*" style="display:none" onchange="addFiles(event)">
                 
-                <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">üë§ Padr√£o Global (Fallback):</label>
+                <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">?? Padr„o Global (Fallback):</label>
                 <select id="global_char">
-                    <option value="Autom√°tico (Pelo Nome)">Autom√°tico (Pelo Nome)</option>
+                    <option value="Autom·tico (Pelo Nome)">Autom·tico (Pelo Nome)</option>
                 </select>
                 
                 <div class="checkbox-group" id="adv-demucs-toggle" style="display: none;">
                     <input type="checkbox" id="skip_demucs">
-                    <label for="skip_demucs">Pular Demucs (V√≠deo Seco)</label>
+                    <label for="skip_demucs">Pular Demucs (VÌdeo Seco)</label>
                 </div>
                 
-                <button class="btn-processar" id="btn_process" onclick="startProcessing()">üöÄ INICIAR DUBLAGEM <br><small id="btn-cost" style="font-size: 11px; color: #FFD32A;">(Calculando Custo...)</small></button>
+                <button class="btn-processar" id="btn_process" onclick="startProcessing()">?? INICIAR DUBLAGEM <br><small id="btn-cost" style="font-size: 11px; color: #FFD32A;">(Calculando Custo...)</small></button>
             </div>
         </div>
 
         <!-- Right Panel -->
         <div class="right-panel">
             <div class="box">
-                <h3>üìã Cenas para Processar</h3>
+                <h3>?? Cenas para Processar</h3>
                 <div class="queue-container" id="queue_container">
                     <div style="padding: 30px; text-align: center; color: #888; font-style: italic;" id="empty_msg">
-                        Nenhum v√≠deo na fila. Adicione pelo painel √† esquerda.
+                        Nenhum vÌdeo na fila. Adicione pelo painel ‡ esquerda.
                     </div>
                 </div>
             </div>
             
             <div class="box">
-                <h3>üìù Logs da Opera√ß√£o</h3>
+                <h3>?? Logs da OperaÁ„o</h3>
                 <div class="log-content" id="log_content">Aguardando...</div>
             </div>
         </div>
@@ -176,21 +176,21 @@
     <!-- Modal Diarization -->
     <div class="modal-overlay" id="diarize_modal">
         <div class="modal">
-            <h2>Mapeamento de M√∫ltiplos Falantes</h2>
+            <h2>Mapeamento de M˙ltiplos Falantes</h2>
             <div class="modal-status" id="modal_status">Status: Preparando ambiente Pyannote...</div>
             
             <div id="speakers_container" style="display: none; max-height: 300px; overflow-y: auto;">
                 <!-- Preenchido via JS -->
             </div>
             
-            <button class="btn primary" id="btn_save_diarization" style="width: 100%; margin-top: 15px; display: none;" onclick="saveDiarization()">üíæ Confirmar Escala√ß√£o de Atores</button>
+            <button class="btn primary" id="btn_save_diarization" style="width: 100%; margin-top: 15px; display: none;" onclick="saveDiarization()">?? Confirmar EscalaÁ„o de Atores</button>
             <button class="btn danger" style="width: 100%; margin-top: 10px;" onclick="closeModal()">Cancelar / Fechar</button>
         </div>
     </div>
 
 
         <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
         </div>
 
     <script>
@@ -201,7 +201,7 @@
         
         async function loadConfig() {
             try {
-                const res = await fetch('/api/config/personagens');
+                const res = await fetch('https://api.apolloedit.com/api/config/personagens');
                 const data = await res.json();
                 charList = Object.keys(data);
                 
@@ -269,7 +269,7 @@
                 
                 // Decide initial character
                 let initChar = globalFallback;
-                if(initChar === "Autom√°tico (Pelo Nome)") {
+                if(initChar === "Autom·tico (Pelo Nome)") {
                     const lowerName = file.name.toLowerCase();
                     const matched = charList.find(c => lowerName.includes(c.toLowerCase()));
                     initChar = matched || (charList.length > 0 ? charList[0] : "");
@@ -334,7 +334,7 @@
                 optionsHtml += `<option value="${c}" ${c === item.charValue ? 'selected' : ''}>${c}</option>`;
             });
             
-            const dupeHtml = item.isDupe ? `<div class="card-subtitle">‚ö†Ô∏è Cena Duplicada: Ideal para segunda trilha ou segundo ator.</div>` : '';
+            const dupeHtml = item.isDupe ? `<div class="card-subtitle">?? Cena Duplicada: Ideal para segunda trilha ou segundo ator.</div>` : '';
             
             const mode = localStorage.getItem('apollo_user_mode') || 'cloud';
             const isLocal = mode === 'local';
@@ -344,11 +344,11 @@
                 ? `<div style="display:flex; flex-direction: column; gap:10px; margin-top:10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px dashed #555;">
                         <div style="display:flex; align-items:center; justify-content: space-between; font-size:11px;">
                             <span style="color: #F59E0B; font-weight: bold;">[Slot 1] Entrada Bruta (Local)</span>
-                            <span>‚ñ∂</span>
+                            <span>?</span>
                             <span style="color: #10B981; font-weight: bold;">[Slot 2] Filtro RVC (Local)</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="font-size:12px;">Voz Final de Sa√≠da:</span>
+                            <span style="font-size:12px;">Voz Final de SaÌda:</span>
                             <select id="char_${item.id}" style="width: 200px; margin-bottom:0; padding:4px;" onchange="updateItemChar('${item.id}', this.value)">
                                 ${optionsHtml}
                             </select>
@@ -361,7 +361,7 @@
                         </select>
                     </div>`;
                     
-            const detectVoicesBtn = isLocal ? `<button class="btn" style="background:#8E44AD;" onclick="openDiarization('${item.id}')">Detectar Vozes üïµÔ∏è</button>` : '';
+            const detectVoicesBtn = isLocal ? `<button class="btn" style="background:#8E44AD;" onclick="openDiarization('${item.id}')">Detectar Vozes ???</button>` : '';
 
             const cardHtml = `
                 <div class="video-card" id="card_${item.id}">
@@ -373,8 +373,8 @@
                         <div class="multi-voice-label" id="multi_${item.id}"></div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn" onclick="duplicateItem('${item.id}')">Duplicar ‚ûï</button>
-                        <button class="btn danger" onclick="removeItem('${item.id}')">Remover ‚ùå</button>
+                        <button class="btn" onclick="duplicateItem('${item.id}')">Duplicar ?</button>
+                        <button class="btn danger" onclick="removeItem('${item.id}')">Remover ?</button>
                         ${detectVoicesBtn}
                     </div>
                 </div>
@@ -398,7 +398,7 @@
             if (!costEl) return;
             
             if (mode === 'local') {
-                costEl.innerText = "(Custo: GR√ÅTIS - Processamento Local)";
+                costEl.innerText = "(Custo: GR¡TIS - Processamento Local)";
                 costEl.style.color = "#10B981";
                 document.getElementById('adv-demucs-toggle').style.display = 'flex';
             } else {
@@ -430,20 +430,20 @@
             formData.append("video", item.file);
             
             try {
-                const res = await fetch('/api/dublagem/diarizar', {
+                const res = await fetch('https://api.apolloedit.com/api/dublagem/diarizar', {
                     method: 'POST',
                     body: formData
                 });
                 const data = await res.json();
                 
                 if(!res.ok || !data.success) {
-                    alert(data.error || "Erro ao diarizar o √°udio.");
+                    alert(data.error || "Erro ao diarizar o ·udio.");
                     closeModal();
                     return;
                 }
                 
                 if(data.speakers.length === 0) {
-                    alert("Nenhum falante claro ou vozes distanciadas foram encontrados. Fa√ßa o lote normal.");
+                    alert("Nenhum falante claro ou vozes distanciadas foram encontrados. FaÁa o lote normal.");
                     closeModal();
                     return;
                 }
@@ -459,10 +459,10 @@
                     row.className = 'speaker-row';
                     
                     const span = document.createElement('span');
-                    span.innerText = `üéôÔ∏è Falante ${idx+1} (${spk.id}):`;
+                    span.innerText = `??? Falante ${idx+1} (${spk.id}):`;
                     
                     const btn = document.createElement('button');
-                    btn.innerText = '‚ñ∂ Ouvir';
+                    btn.innerText = '? Ouvir';
                     btn.onclick = () => {
                         const audio = new Audio(spk.sample_url);
                         audio.play();
@@ -525,9 +525,9 @@
             mainSel.disabled = true; // disable main char select because map overrides it
             
             const keys = Object.keys(item.diarizationMap);
-            let text = `üéôÔ∏è Modo Est√∫dio (${keys.length} Falantes Mapeados):\n`;
+            let text = `??? Modo Est˙dio (${keys.length} Falantes Mapeados):\n`;
             for(let k in item.diarizationMap) {
-                text += `   ‚Ä¢ ${k}: ${item.diarizationMap[k]}\n`;
+                text += `   ï ${k}: ${item.diarizationMap[k]}\n`;
             }
             lbl.innerText = text;
             lbl.style.display = 'block';
@@ -541,7 +541,7 @@
         function limparFila() {
             queueItems = [];
             const cont = document.getElementById('queue_container');
-            cont.innerHTML = `<div style="padding: 30px; text-align: center; color: #888; font-style: italic;" id="empty_msg">Nenhum v√≠deo na fila. Adicione pelo painel √† esquerda.</div>`;
+            cont.innerHTML = `<div style="padding: 30px; text-align: center; color: #888; font-style: italic;" id="empty_msg">Nenhum vÌdeo na fila. Adicione pelo painel ‡ esquerda.</div>`;
             updateCost();
         }
         
@@ -555,13 +555,13 @@
         async function startProcessing() {
             if(isProcessing) return;
             if(queueItems.length === 0) {
-                alert("A fila est√° vazia!");
+                alert("A fila est· vazia!");
                 return;
             }
             
             isProcessing = true;
             const btn = document.getElementById('btn_process');
-            btn.innerText = "‚è≥ PROCESSANDO LOTE...";
+            btn.innerText = "? PROCESSANDO LOTE...";
             btn.style.background = "#555";
             btn.disabled = true;
             document.getElementById('log_content').innerText = "Iniciando processamento em lote...";
@@ -590,7 +590,7 @@
             });
             
             try {
-                const response = await fetch('/api/dublagem/processar', {
+                const response = await fetch('https://api.apolloedit.com/api/dublagem/processar', {
                     method: 'POST',
                     body: formData
                 });
@@ -610,9 +610,9 @@
                 
                 alert("Lote finalizado! Verifique os logs.");
             } catch(e) {
-                log("‚ùå Erro de conex√£o com o servidor durante o processamento: " + e);
+                log("? Erro de conex„o com o servidor durante o processamento: " + e);
             } finally {
-                btn.innerText = "üöÄ INICIAR DUBLAGEM";
+                btn.innerText = "?? INICIAR DUBLAGEM";
                 btn.style.background = "#2980B9";
                 btn.disabled = false;
                 isProcessing = false;
@@ -625,7 +625,7 @@
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

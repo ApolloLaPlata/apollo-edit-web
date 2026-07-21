@@ -127,7 +127,7 @@ html
             document.getElementById('btnPasta').disabled = true;
 
             try {
-                const res = await fetch('/api/tanque/lista');
+                const res = await fetch('https://api.apolloedit.com/api/tanque/lista');
                 const data = await res.json();
                 
                 if(data.success) {
@@ -163,7 +163,7 @@ html
             if(!path) return;
             
             try {
-                await fetch('/api/tanque/abrir', {
+                await fetch('https://api.apolloedit.com/api/tanque/abrir', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ caminho: path, acao: acao })

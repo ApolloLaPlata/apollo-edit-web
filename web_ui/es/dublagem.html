@@ -169,7 +169,7 @@ html
         
         async function loadConfig() {
             try {
-                const res = await fetch('/api/config/personagens');
+                const res = await fetch('https://api.apolloedit.com/api/config/personagens');
                 const data = await res.json();
                 charList = Object.keys(data);
                 
@@ -398,7 +398,7 @@ html
             formData.append("video", item.file);
             
             try {
-                const res = await fetch('/api/dublagem/diarizar', {
+                const res = await fetch('https://api.apolloedit.com/api/dublagem/diarizar', {
                     method: 'POST',
                     body: formData
                 });
@@ -558,7 +558,7 @@ html
             });
             
             try {
-                const response = await fetch('/api/dublagem/processar', {
+                const response = await fetch('https://api.apolloedit.com/api/dublagem/processar', {
                     method: 'POST',
                     body: formData
                 });

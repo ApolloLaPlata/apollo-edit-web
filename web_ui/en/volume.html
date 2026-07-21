@@ -330,7 +330,7 @@ html
             pbar.style.width = '50%'; // Fake initial progress since it's a single sync request
 
             try {
-                const res = await fetch('/api/volume/processar', {
+                const res = await fetch('https://api.apolloedit.com/api/volume/processar', {
                     method: 'POST',
                     body: formData
                 });

@@ -215,7 +215,7 @@ html
 
         async function carregarTemplates() {
             try {
-                const res = await fetch('/api/fabrica/templates');
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/templates');
                 const data = await res.json();
                 if(data.success) {
                     const sel = document.getElementById('template_select');
@@ -238,7 +238,7 @@ html
             btn.innerText = "⏳ Carregando...";
 
             try {
-                const res = await fetch('/api/fabrica/carregar_musicas', {
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/carregar_musicas', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ suno_dir: suno_dir })
@@ -288,7 +288,7 @@ html
             log.innerText = "Iniciando geração em lote...\n";
             
             try {
-                const res = await fetch('/api/fabrica/gerar_lote', {
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/gerar_lote', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
@@ -340,7 +340,7 @@ html
             log.innerText = "Iniciando compilação de " + dur + " minutos...\n";
             
             try {
-                const res = await fetch('/api/fabrica/compilar', {
+                const res = await fetch('https://api.apolloedit.com/api/fabrica/compilar', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ root_dir: root_dir, duracao_min: dur })

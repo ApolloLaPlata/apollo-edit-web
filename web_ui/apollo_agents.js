@@ -322,7 +322,7 @@ async function sendAgentMessage(agentId) {
 
     if (agentId === 'PRIME') {
         try {
-            const response = await fetch('/api/chat/send', {
+            const response = await fetch('https://api.apolloedit.com/api/chat/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -467,7 +467,7 @@ async function sendAgentMessage(agentId) {
 // ==========================================
 setInterval(async () => {
     try {
-        const response = await fetch('/api/chat/sync');
+        const response = await fetch('https://api.apolloedit.com/api/chat/sync');
         const data = await response.json();
         if (data.success && data.history) {
             const currentCache = memCache['PRIME'] || [];
@@ -500,7 +500,7 @@ async function gerarGrupoWhatsApp() {
     try {
         if (!confirm("O sistema usará o WhatsApp conectado no servidor para criar um Grupo Oficial para este Canal.\\nVocê deseja continuar?")) return;
         
-        const res = await fetch('/api/whatsapp/gerar_grupo', { method: 'POST' });
+        const res = await fetch('https://api.apolloedit.com/api/whatsapp/gerar_grupo', { method: 'POST' });
         const data = await res.json();
         
         if (data.success) {

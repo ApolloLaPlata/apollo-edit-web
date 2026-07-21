@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Ajustador de M√≠dia</title>
+    <title>Apollo Edit ó Ajustador de MÌdia</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -90,12 +90,12 @@
     <div id="global-3d-bg"></div>
 
     <header style="padding: 10px 30px; margin-bottom: 20px;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
             </a>
-            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="media.title_badge">Ajustador de M√≠dia</span>
+            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="media.title_badge">Ajustador de MÌdia</span>
             <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
                 <span class="gas-icon"></span>
                 <strong id="user-credits" data-i18n="common.loading">Carregando...</strong>&nbsp;<span data-i18n="common.gasoline">Gasolina</span>
@@ -104,7 +104,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -119,23 +119,23 @@
 
         <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
             <!-- Decorativo fundo -->
-            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">üèéÔ∏è</div>
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">???</div>
             
-            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">‚úÇÔ∏è</div>
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">??</div>
             <div style="z-index: 2;">
                 <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
                     RESIZE CROP
                 </h3>
                 <p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
-                    Redimensione e ajuste m√≠dias com blur.
+                    Redimensione e ajuste mÌdias com blur.
                 </p>
             </div>
         </div>
 
         
-        <!-- Configura√ß√µes -->
+        <!-- ConfiguraÁıes -->
         <div class="box">
-            <h3>‚öôÔ∏è Configura√ß√µes</h3>
+            <h3>?? ConfiguraÁıes</h3>
             <div class="config-row">
                 <div class="config-item">
                     <label>Preset:</label>
@@ -154,7 +154,7 @@
                     <input type="number" id="cfg_fps" value="30" min="15" max="60" style="width: 60px;">
                 </div>
                 <div class="config-item">
-                    <label>M√≠n. (s):</label>
+                    <label>MÌn. (s):</label>
                     <input type="number" id="cfg_min_dur" value="5" min="1" max="30" style="width: 60px;">
                 </div>
             </div>
@@ -162,12 +162,12 @@
 
         <!-- Lista de Arquivos -->
         <div class="box">
-            <h3>üìÅ Arquivos de Entrada</h3>
+            <h3>?? Arquivos de Entrada</h3>
             <div class="btn-row">
-                <button class="btn primary" onclick="document.getElementById('file_input').click()">‚ûï Adicionar Arquivos</button>
-                <button class="btn" onclick="limparLista()">üóëÔ∏è Limpar Lista</button>
-                <button class="btn" onclick="moverCima()">‚¨Ü Mover Cima</button>
-                <button class="btn" onclick="moverBaixo()">‚¨á Mover Baixo</button>
+                <button class="btn primary" onclick="document.getElementById('file_input').click()">? Adicionar Arquivos</button>
+                <button class="btn" onclick="limparLista()">??? Limpar Lista</button>
+                <button class="btn" onclick="moverCima()">? Mover Cima</button>
+                <button class="btn" onclick="moverBaixo()">? Mover Baixo</button>
                 <span id="file_count" style="margin-left: auto; font-size: 13px; color: #888;">0 arquivos selecionados</span>
             </div>
             
@@ -178,31 +178,31 @@
             </ul>
         </div>
 
-        <!-- Sa√≠da -->
+        <!-- SaÌda -->
         <div class="box">
-            <h3>üíæ Sa√≠da & Fundo</h3>
+            <h3>?? SaÌda & Fundo</h3>
             <div class="out-box">
-                <button class="btn" onclick="document.getElementById('bg_input').click()">üéûÔ∏è Selecionar V√≠deo de Fundo (Opcional)</button>
+                <button class="btn" onclick="document.getElementById('bg_input').click()">??? Selecionar VÌdeo de Fundo (Opcional)</button>
                 <input type="file" id="bg_input" accept="video/*" onchange="addBgFile(event)">
-                <span id="bg_label" style="font-size: 13px; color: #60A5FA;">Nenhum v√≠deo de fundo selecionado (Usar√° Blur)</span>
+                <span id="bg_label" style="font-size: 13px; color: #60A5FA;">Nenhum vÌdeo de fundo selecionado (Usar· Blur)</span>
             </div>
             <div class="out-box" style="margin-top: 15px; border-left: 4px solid #9B59B6;">
-                <span style="font-size: 13px;">üìÇ <b>Pasta de Sa√≠da:</b> Ser√° salvo na subpasta <b>saida_ajustador</b> dentro do seu Workspace atual.</span>
+                <span style="font-size: 13px;">?? <b>Pasta de SaÌda:</b> Ser· salvo na subpasta <b>saida_ajustador</b> dentro do seu Workspace atual.</span>
             </div>
         </div>
 
-        <!-- Log & Execu√ß√£o -->
+        <!-- Log & ExecuÁ„o -->
         <div class="box">
-            <h3>üìã Progresso e Log</h3>
+            <h3>?? Progresso e Log</h3>
             <div class="log-content" id="log_content">Aguardando...</div>
-            <button class="btn-processar" id="btn_processar" onclick="processarMidia()">‚ñ∂ PROCESSAR M√çDIA</button>
+            <button class="btn-processar" id="btn_processar" onclick="processarMidia()">? PROCESSAR MÕDIA</button>
         </div>
 
     </div>
 
 
         <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
         </div>
 
     <script>
@@ -288,7 +288,7 @@
 
             const btn = document.getElementById('btn_processar');
             isProcessing = true;
-            btn.innerText = "‚è≥ ENVIANDO ARQUIVOS...";
+            btn.innerText = "? ENVIANDO ARQUIVOS...";
             btn.style.background = "#555";
             document.getElementById('log_content').innerText = "Iniciando processo...";
 
@@ -307,7 +307,7 @@
             }
 
             try {
-                const response = await fetch('/api/ajustador/processar', {
+                const response = await fetch('https://api.apolloedit.com/api/ajustador/processar', {
                     method: 'POST',
                     body: formData
                 });
@@ -316,7 +316,7 @@
                 const decoder = new TextDecoder();
                 let done = false;
 
-                btn.innerText = "‚è≥ PROCESSANDO...";
+                btn.innerText = "? PROCESSANDO...";
 
                 while (!done) {
                     const { value, done: readerDone } = await reader.read();
@@ -327,11 +327,11 @@
                     }
                 }
                 
-                alert("Conclu√≠do! Verifique o log.");
+                alert("ConcluÌdo! Verifique o log.");
             } catch(e) {
-                log("‚ùå Erro de conex√£o com o servidor: " + e);
+                log("? Erro de conex„o com o servidor: " + e);
             } finally {
-                btn.innerText = "‚ñ∂ PROCESSAR M√çDIA";
+                btn.innerText = "? PROCESSAR MÕDIA";
                 btn.style.background = "#9B59B6";
                 isProcessing = false;
             }
@@ -340,7 +340,7 @@
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

@@ -21,7 +21,7 @@ function initWhatsAppPolling() {
 
 async function pollWhatsAppStatus() {
     try {
-        const response = await fetch('/api/whatsapp/status', {
+        const response = await fetch('https://api.apolloedit.com/api/whatsapp/status', {
             headers: { 'Authorization': API_TOKEN }
         });
         const data = await response.json();
@@ -76,7 +76,7 @@ async function startWhatsApp() {
     if(connectBtn) connectBtn.innerText = 'Ligando...';
     
     try {
-        await fetch('/api/whatsapp/start', {
+        await fetch('https://api.apolloedit.com/api/whatsapp/start', {
             method: 'POST',
             headers: { 'Authorization': API_TOKEN }
         });
@@ -310,7 +310,7 @@ async function submitCredits(action) {
     if(!amount || amount <= 0) return alert('Insira um valor válido.');
 
     try {
-        const res = await fetch('/api/master/users/balance', {
+        const res = await fetch('https://api.apolloedit.com/api/master/users/balance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -335,7 +335,7 @@ async function submitCreateUser() {
     if(!username || !pass) return alert('Preencha os dados.');
 
     try {
-        const res = await fetch('/api/admin/users/create', {
+        const res = await fetch('https://api.apolloedit.com/api/admin/users/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -455,7 +455,7 @@ async function removeKey(provider, idx) {
 
 async function saveKeys(provider, newKeys) {
     try {
-        const res = await fetch('/api/master/keys/update', {
+        const res = await fetch('https://api.apolloedit.com/api/master/keys/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, provider: provider, keys: newKeys })
@@ -568,7 +568,7 @@ async function submitModelPricing() {
     };
     
     try {
-        const res = await fetch('/api/master/models_pricing/upsert', {
+        const res = await fetch('https://api.apolloedit.com/api/master/models_pricing/upsert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -628,7 +628,7 @@ async function runMarketAnalyst() {
 async function deleteModelPricing(id) {
     if(!confirm("Tem certeza que deseja apagar este modelo?")) return;
     try {
-        const res = await fetch('/api/master/models_pricing/delete', {
+        const res = await fetch('https://api.apolloedit.com/api/master/models_pricing/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, id: id })
@@ -712,7 +712,7 @@ async function seedDefaultOrchestratorNodes() {
     ];
     
     for(let n of defaultNodes) {
-        await fetch('/api/master/orchestrator/nodes/upsert', {
+        await fetch('https://api.apolloedit.com/api/master/orchestrator/nodes/upsert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, node: n })
@@ -732,7 +732,7 @@ async function saveAgentsConfig() {
 
     try {
         const payload = { token: API_TOKEN, updates: keys };
-        await fetch('/api/master/settings/batch', {
+        await fetch('https://api.apolloedit.com/api/master/settings/batch', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -750,7 +750,7 @@ async function saveAgentsConfig() {
                     system_prompt: document.getElementById(`nodePrompt_${n.id}`).value
                 };
                 
-                await fetch('/api/master/orchestrator/nodes/upsert', {
+                await fetch('https://api.apolloedit.com/api/master/orchestrator/nodes/upsert', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: API_TOKEN, node: nodeData })
@@ -845,7 +845,7 @@ async function savePageSettings() {
 
     try {
         for(const u of updates) {
-            await fetch('/api/master/settings/toggle', {
+            await fetch('https://api.apolloedit.com/api/master/settings/toggle', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: API_TOKEN, key: u.key, value: u.val })
@@ -899,7 +899,7 @@ async function showCreateAdModal() {
     const link = prompt("URL de Destino:");
     
     try {
-        const res = await fetch('/api/master/ads/create', {
+        const res = await fetch('https://api.apolloedit.com/api/master/ads/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, title: title, image_url: img, link_url: link, is_active: true })
@@ -911,7 +911,7 @@ async function showCreateAdModal() {
 
 async function toggleAd(id, activate) {
     try {
-        await fetch('/api/master/ads/toggle', {
+        await fetch('https://api.apolloedit.com/api/master/ads/toggle', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, ad_id: id, is_active: activate })
@@ -923,7 +923,7 @@ async function toggleAd(id, activate) {
 async function deleteAd(id) {
     if(!confirm("Deletar a campanha?")) return;
     try {
-        await fetch('/api/master/ads/delete', {
+        await fetch('https://api.apolloedit.com/api/master/ads/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, ad_id: id })
@@ -935,7 +935,7 @@ async function deleteAd(id) {
 async function toggleBan(userId, isBanned) {
     if(isBanned && !confirm("Tem certeza que deseja BANIR este usuário?")) return;
     try {
-        const res = await fetch('/api/master/users/ban', {
+        const res = await fetch('https://api.apolloedit.com/api/master/users/ban', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, user_id: userId, is_banned: isBanned })
@@ -1061,7 +1061,7 @@ async function loadSettingsConfig() {
 
 async function saveSettingKey(key, value) {
     try {
-        await fetch('/api/master/settings/toggle', {
+        await fetch('https://api.apolloedit.com/api/master/settings/toggle', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: API_TOKEN, key: key, value: String(value) })
@@ -1129,7 +1129,7 @@ async function saveBroadcastMsg() {
 
 async function loadTrends() {
     try {
-        const res = await fetch('/api/admin/trends');
+        const res = await fetch('https://api.apolloedit.com/api/admin/trends');
         const data = await res.json();
         const container = document.getElementById('trends-reports');
         if(data.success && data.trends) {
@@ -1160,7 +1160,7 @@ async function triggerTrends() {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Vasculhando...';
         btn.disabled = true;
         
-        const res = await fetch('/api/admin/trigger-trends', { method: 'POST' });
+        const res = await fetch('https://api.apolloedit.com/api/admin/trigger-trends', { method: 'POST' });
         const data = await res.json();
         if(data.success) {
             alert(`Pesquisa concluída! ${data.discoveries} novos modelos encontrados.`);

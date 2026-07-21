@@ -296,7 +296,7 @@ html
 
         async function carregarPersonagens() {
             try {
-                const res = await fetch('/api/tts/personagens');
+                const res = await fetch('https://api.apolloedit.com/api/tts/personagens');
                 const data = await res.json();
                 if(data.success) {
                     personDict = data.detalhes;

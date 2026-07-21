@@ -278,7 +278,7 @@ html
 
         async function carregarDados() {
             try {
-                const res = await fetch('/api/podcast/dados');
+                const res = await fetch('https://api.apolloedit.com/api/podcast/dados');
                 const data = await res.json();
                 
                 if (data.success) {
@@ -368,7 +368,7 @@ html
             document.getElementById('log_content').innerText = "Iniciando geração do podcast...\n";
 
             try {
-                const res = await fetch('/api/podcast/gerar', {
+                const res = await fetch('https://api.apolloedit.com/api/podcast/gerar', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)

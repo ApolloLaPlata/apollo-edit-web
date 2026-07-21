@@ -30,7 +30,7 @@ function startPolling() {
 
 async function fetchStatus() {
     try {
-        const r = await fetch('/api/fila/status');
+        const r = await fetch('https://api.apolloedit.com/api/fila/status');
         if (!r.ok) return;
         const d = await r.json();
         filaData = d.fila || [];
@@ -181,7 +181,7 @@ function renderLog(linhas) {
 // ════════════════════════════════════════════════════
 async function iniciarFila() {
     try {
-        const r = await fetch('/api/fila/iniciar', { method: 'POST' });
+        const r = await fetch('https://api.apolloedit.com/api/fila/iniciar', { method: 'POST' });
         const d = await r.json();
         if (!d.success) { showToast('⚠️ ' + d.message, 'warn'); }
         else { showToast('▶ Fila iniciada!', 'ok'); }
@@ -190,14 +190,14 @@ async function iniciarFila() {
 
 async function pararFila() {
     try {
-        await fetch('/api/fila/parar', { method: 'POST' });
+        await fetch('https://api.apolloedit.com/api/fila/parar', { method: 'POST' });
         showToast('⏸ Sinal de parada enviado.', 'warn');
     } catch(e) { showToast('❌ Erro de conexão', 'err'); }
 }
 
 async function removerItem(idx) {
     try {
-        await fetch('/api/fila/remover', {
+        await fetch('https://api.apolloedit.com/api/fila/remover', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idx })
@@ -214,7 +214,7 @@ async function removerSelecionado() {
 
 async function moverItemDireto(idx, direcao) {
     try {
-        await fetch('/api/fila/reordenar', {
+        await fetch('https://api.apolloedit.com/api/fila/reordenar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idx, direcao })
@@ -230,7 +230,7 @@ async function moverItem(direcao) {
 
 async function limparConcluidos() {
     try {
-        const r = await fetch('/api/fila/limpar_concluidos', { method: 'POST' });
+        const r = await fetch('https://api.apolloedit.com/api/fila/limpar_concluidos', { method: 'POST' });
         const d = await r.json();
         showToast(`🧹 ${d.removidos} item(s) removido(s).`, 'ok');
     } catch(e) {}
@@ -262,7 +262,7 @@ async function confirmarAdd() {
     };
 
     try {
-        const r = await fetch('/api/fila/adicionar', {
+        const r = await fetch('https://api.apolloedit.com/api/fila/adicionar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -295,7 +295,7 @@ async function confirmarLote() {
     const perfil = document.getElementById('lote-perfil').value;
 
     try {
-        const r = await fetch('/api/fila/adicionar_lote', {
+        const r = await fetch('https://api.apolloedit.com/api/fila/adicionar_lote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ audios, saida, perfil })
@@ -320,7 +320,7 @@ function openHotfolderPanel() {
 
 async function browsePastaHotfolder() {
     try {
-        const r = await fetch('/api/browse_file?type=folder');
+        const r = await fetch('https://api.apolloedit.com/api/browse_file?type=folder');
         const d = await r.json();
         if (d.status === 'success') {
             document.getElementById('hotfolder-path').value = d.path;
@@ -333,7 +333,7 @@ async function ativarHotfolder() {
     if (!pasta) { showToast('Selecione uma pasta primeiro!', 'warn'); return; }
 
     try {
-        await fetch('/api/fila/hotfolder', {
+        await fetch('https://api.apolloedit.com/api/fila/hotfolder', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pasta, ativo: true })
@@ -347,7 +347,7 @@ async function ativarHotfolder() {
 
 async function desativarHotfolder() {
     try {
-        await fetch('/api/fila/hotfolder', {
+        await fetch('https://api.apolloedit.com/api/fila/hotfolder', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pasta: '', ativo: false })
@@ -369,7 +369,7 @@ function toggleTimeline(el) {
 // ════════════════════════════════════════════════════
 async function carregarPerfis() {
     try {
-        const r = await fetch('/api/fila/perfis_diretor');
+        const r = await fetch('https://api.apolloedit.com/api/fila/perfis_diretor');
         const d = await r.json();
         const perfis = d.perfis || [];
         ['f-perfil', 'lote-perfil'].forEach(id => {

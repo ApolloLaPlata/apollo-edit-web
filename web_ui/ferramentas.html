@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Ferramentas (Apollo)</title>
+    <title>Apollo Edit ó Ferramentas (Apollo)</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -165,12 +165,12 @@
     <div id="global-3d-bg"></div>
 
     <header style="padding: 10px 30px; margin-bottom: 20px;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
             </a>
-            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="tools.title_badge">Canivete Su√≠√ßo</span>
+            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="tools.title_badge">Canivete SuÌÁo</span>
             <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
                 <span class="gas-icon"></span>
                 <strong id="user-credits" data-i18n="common.loading">Carregando...</strong>&nbsp;<span data-i18n="common.gasoline">Gasolina</span>
@@ -179,7 +179,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -192,20 +192,20 @@
 
     <div class="main-container">
         
-        <!-- PAINEL ESQUERDO: V√çDEO GLOBAL -->
+        <!-- PAINEL ESQUERDO: VÕDEO GLOBAL -->
         <div class="left-panel">
-            <h3>V√≠deo de Entrada</h3>
-            <button class="btn-select-video" onclick="document.getElementById('video_input').click()">üìÅ Selecionar V√≠deo</button>
+            <h3>VÌdeo de Entrada</h3>
+            <button class="btn-select-video" onclick="document.getElementById('video_input').click()">?? Selecionar VÌdeo</button>
             <input type="file" id="video_input" accept="video/*" style="display: none;" onchange="handleGlobalVideo(this)">
             
             <div class="video-info" id="video_info">
-                Informa√ß√µes do v√≠deo aparecer√£o aqui...
+                InformaÁıes do vÌdeo aparecer„o aqui...
             </div>
         </div>
 
         <!-- PAINEL DIREITO: LISTA DE FERRAMENTAS -->
         <div class="right-panel" id="tools_list">
-            <h3>Ferramentas de Edi√ß√£o R√°pida</h3>
+            <h3>Ferramentas de EdiÁ„o R·pida</h3>
             <!-- Gerado via JS para manter a mesma ordem do Tkinter -->
         </div>
 
@@ -222,18 +222,18 @@
 
         const toolsConfig = [
             { id: 'adicionar_capa', title: 'Adicionar Capa', desc: 'Selecione uma imagem para gerar 1s de capa.', inputs: [{id: 'capa', type: 'file', accept: 'image/*'}] },
-            { id: 'inverter_video', title: 'Inverter V√≠deo', desc: 'Aplica efeito rewind (tr√°s para frente).', inputs: [] },
-            { id: 'remover_ultimo_frame', title: 'Remover √öltimo Frame', desc: 'Corta o final (0.1s).', inputs: [] },
-            { id: 'extrair_audio', title: 'Extrair √Åudio', desc: 'Salva apenas o √°udio em .mp3', inputs: [] },
-            { id: 'redimensionar', title: 'Redimensionar', desc: 'Altera resolu√ß√£o.', inputs: [{id: 'largura', placeholder: 'Largura'}, {id: 'altura', placeholder: 'Altura'}] },
+            { id: 'inverter_video', title: 'Inverter VÌdeo', desc: 'Aplica efeito rewind (tr·s para frente).', inputs: [] },
+            { id: 'remover_ultimo_frame', title: 'Remover ⁄ltimo Frame', desc: 'Corta o final (0.1s).', inputs: [] },
+            { id: 'extrair_audio', title: 'Extrair ¡udio', desc: 'Salva apenas o ·udio em .mp3', inputs: [] },
+            { id: 'redimensionar', title: 'Redimensionar', desc: 'Altera resoluÁ„o.', inputs: [{id: 'largura', placeholder: 'Largura'}, {id: 'altura', placeholder: 'Altura'}] },
             { id: 'acelerar_desacelerar', title: 'Acelerar/Desacelerar', desc: 'Altera velocidade.', inputs: [{id: 'velocidade', placeholder: 'Velocidade (Ex: 2.0)'}] },
             { id: 'ajustar_brilho_contraste', title: 'Brilho/Contraste', desc: 'Ajusta imagem.', inputs: [{id: 'brilho', placeholder: 'Brilho'}, {id: 'contraste', placeholder: 'Contraste'}] },
-            { id: 'remover_audio', title: 'Remover √Åudio', desc: 'Deixa o v√≠deo mudo.', inputs: [] },
-            { id: 'rotacionar', title: 'Rotacionar', desc: 'Gira o v√≠deo.', inputs: [{id: 'rotacao', type: 'select', options: [{v:'1', t:'90 Direita'},{v:'2', t:'90 Esquerda'},{v:'3', t:'180 Graus'}]}] },
+            { id: 'remover_audio', title: 'Remover ¡udio', desc: 'Deixa o vÌdeo mudo.', inputs: [] },
+            { id: 'rotacionar', title: 'Rotacionar', desc: 'Gira o vÌdeo.', inputs: [{id: 'rotacao', type: 'select', options: [{v:'1', t:'90 Direita'},{v:'2', t:'90 Esquerda'},{v:'3', t:'180 Graus'}]}] },
             { id: 'criador_stories', title: 'Criador de Stories', desc: 'Corta os primeiros 30s.', inputs: [] },
-            { id: 'compressor_video', title: 'Compressor de V√≠deo', desc: 'Otimiza H.264 CRF 28.', inputs: [] },
+            { id: 'compressor_video', title: 'Compressor de VÌdeo', desc: 'Otimiza H.264 CRF 28.', inputs: [] },
             { id: 'espelhar_video', title: 'Espelhar Horizontal', desc: 'Efeito HFLIP.', inputs: [] },
-            { id: 'remover_silencios', title: 'Remover Sil√™ncios', desc: 'Corta √°udio mudo automaticamente.', inputs: [] },
+            { id: 'remover_silencios', title: 'Remover SilÍncios', desc: 'Corta ·udio mudo automaticamente.', inputs: [] },
             { id: 'converter_mp4', title: 'Converter para MP4', desc: 'Padroniza formatos.', inputs: [] },
             { id: 'extrair_frames', title: 'Extrair Frames', desc: '1 frame por seg (ZIP).', inputs: [] },
             { id: 'padronizar_celular', title: 'Padronizar p/ Celular', desc: 'Scale 1080x1920 com bordas.', inputs: [] }
@@ -250,10 +250,10 @@
             
             if (toolFilter) {
                 toolsToRender = toolsConfig.filter(t => t.id === toolFilter);
-                if (toolsToRender.length === 0) toolsToRender = toolsConfig; // Fallback se n√£o encontrar
+                if (toolsToRender.length === 0) toolsToRender = toolsConfig; // Fallback se n„o encontrar
             }
             
-            // Conserta o Esmagamento de Layout: Coloca o V√≠deo em cima e a Ferramenta embaixo
+            // Conserta o Esmagamento de Layout: Coloca o VÌdeo em cima e a Ferramenta embaixo
             const mainContainer = document.querySelector('.main-container');
             if (toolsToRender.length === 1) {
                 if (mainContainer) mainContainer.style.flexDirection = 'column';
@@ -261,11 +261,11 @@
                 if (mainContainer) mainContainer.style.flexDirection = 'row';
             }
 
-            // Atualiza o t√≠tulo do painel se for uma ferramenta espec√≠fica
+            // Atualiza o tÌtulo do painel se for uma ferramenta especÌfica
             if (toolsToRender.length === 1) {
                 container.innerHTML = `
                     <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px;">
-                        <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark);">‚öôÔ∏è</div>
+                        <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark);">??</div>
                         <div>
                             <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
                                 ${toolsToRender[0].title.toUpperCase()}
@@ -276,10 +276,10 @@
                         </div>
                     </div>
                 `;
-                // Atualiza tamb√©m o badge do cabe√ßalho
+                // Atualiza tambÈm o badge do cabeÁalho
                 document.querySelector('.badge').innerText = toolsToRender[0].title.toUpperCase();
             } else {
-                container.innerHTML = `<h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: var(--btn-yellow); text-shadow: 2px 2px 0 var(--border-dark);">üõ†Ô∏è Todas as Ferramentas de Edi√ß√£o</h3>`;
+                container.innerHTML = `<h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: var(--btn-yellow); text-shadow: 2px 2px 0 var(--border-dark);">??? Todas as Ferramentas de EdiÁ„o</h3>`;
             }
             
             toolsToRender.forEach(t => {
@@ -322,7 +322,7 @@
                 container.innerHTML += `
                     <div class="tool-row" style="${rowStyle}">
                         <!-- Decorativos de Corrida -->
-                        ${toolsToRender.length === 1 ? '<div style="position:absolute; bottom:-30px; right:-30px; font-size: 200px; opacity: 0.03; transform: rotate(-15deg); pointer-events: none;">üèéÔ∏è</div>' : ''}
+                        ${toolsToRender.length === 1 ? '<div style="position:absolute; bottom:-30px; right:-30px; font-size: 200px; opacity: 0.03; transform: rotate(-15deg); pointer-events: none;">???</div>' : ''}
                         
                         <div class="tool-info" style="position: relative; z-index: 2;">
                             ${toolsToRender.length > 1 ? `
@@ -332,7 +332,7 @@
                             ${inputsHTML}
                         </div>
                         <button class="${toolsToRender.length === 1 ? 'btn yellow' : 'btn-aplicar'}" id="btn_${t.id}" onclick="applyTool('${t.id}')" style="${toolsToRender.length === 1 ? 'font-size: 2rem; padding: 20px; width: 100%; border-radius: 16px; margin-top: 10px;' : ''}">
-                            ${toolsToRender.length === 1 ? 'APLICAR M√ÅGICA ‚ú®' : 'Aplicar'}
+                            ${toolsToRender.length === 1 ? 'APLICAR M¡GICA ?' : 'Aplicar'}
                         </button>
                     </div>
                 `;
@@ -342,7 +342,7 @@
             if (toolsToRender.length === 1) {
                 container.innerHTML += `
                     <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-                        <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+                        <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
                     </div>
                 `;
             }
@@ -352,21 +352,21 @@
             if(input.files.length > 0) {
                 currentGlobalVideo = input.files[0];
                 document.getElementById('video_info').innerHTML = `
-                    <strong style="color:#10b981">V√≠deo Carregado:</strong><br><br>
+                    <strong style="color:#10b981">VÌdeo Carregado:</strong><br><br>
                     Nome: ${currentGlobalVideo.name}<br>
                     Tamanho: ${(currentGlobalVideo.size / 1024 / 1024).toFixed(2)} MB
                 `;
                 document.querySelectorAll('.btn-aplicar').forEach(btn => btn.classList.add('active'));
             } else {
                 currentGlobalVideo = null;
-                document.getElementById('video_info').innerText = "Informa√ß√µes do v√≠deo aparecer√£o aqui...";
+                document.getElementById('video_info').innerText = "InformaÁıes do vÌdeo aparecer„o aqui...";
                 document.querySelectorAll('.btn-aplicar').forEach(btn => btn.classList.remove('active'));
             }
         }
 
         async function applyTool(toolId) {
             if(!currentGlobalVideo) {
-                alert("Selecione um v√≠deo de entrada no painel esquerdo primeiro!");
+                alert("Selecione um vÌdeo de entrada no painel esquerdo primeiro!");
                 return;
             }
 
@@ -393,7 +393,7 @@
             document.getElementById('loading').style.display = 'flex';
 
             try {
-                const res = await fetch('/api/ferramentas/processar', {
+                const res = await fetch('https://api.apolloedit.com/api/ferramentas/processar', {
                     method: 'POST',
                     body: fd
                 });
@@ -402,13 +402,13 @@
                 document.getElementById('loading').style.display = 'none';
                 
                 if (data.success) {
-                    alert(`‚úÖ Processo conclu√≠do com sucesso!\nArquivo gerado: ${data.file}`);
+                    alert(`? Processo concluÌdo com sucesso!\nArquivo gerado: ${data.file}`);
                 } else {
-                    alert(`‚ùå Falha no processamento:\n${data.error}`);
+                    alert(`? Falha no processamento:\n${data.error}`);
                 }
             } catch (e) {
                 document.getElementById('loading').style.display = 'none';
-                alert(`Erro cr√≠tico: ${e}`);
+                alert(`Erro crÌtico: ${e}`);
             }
         }
 
@@ -418,7 +418,7 @@
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

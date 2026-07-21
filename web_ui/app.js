@@ -561,7 +561,7 @@ async function browseFile(id) {
         const originalText = btn ? btn.innerHTML : '📁';
         if (btn) btn.innerHTML = '⌛';
         
-        const res = await fetch('/api/browse_file');
+        const res = await fetch('https://api.apolloedit.com/api/browse_file');
         const data = await res.json();
         
         btn.innerHTML = originalText;
@@ -913,7 +913,7 @@ async function saveProfile() {
 
     btn.innerText = 'Salvando...';
     try {
-        const r = await fetch('/api/save_profile', {
+        const r = await fetch('https://api.apolloedit.com/api/save_profile', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -937,7 +937,7 @@ async function saveProfile() {
 // ── LIST E PREVIEW
 async function loadProfileList() {
     try {
-        const r = await fetch('/api/list_profiles');
+        const r = await fetch('https://api.apolloedit.com/api/list_profiles');
         const res = await r.json();
         const sel = document.getElementById('profile-list');
         if (res.status === 'success') {
@@ -980,7 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newName = prompt(`Novo nome para o perfil "${name}":`, name);
             if (!newName || newName === name) return;
             try {
-                const r = await fetch('/api/rename_profile', {
+                const r = await fetch('https://api.apolloedit.com/api/rename_profile', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ old_name: name, new_name: newName })

@@ -1,11 +1,11 @@
-ÔªøÔªø<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit ‚Äî Gerador de Legendas</title>
+    <title>Apollo Edit ó Gerador de Legendas</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -15,7 +15,7 @@
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            padding-bottom: 60px; /* Garante espa√ßo no final */
+            padding-bottom: 60px; /* Garante espaÁo no final */
             min-height: 100vh;
             overflow-y: auto;
         }
@@ -117,12 +117,12 @@
     <div id="global-3d-bg"></div>
 
     <header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333;">
-        <!-- Logo e Cr√©ditos -->
+        <!-- Logo e CrÈditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
             </a>
-            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="legendas.title_badge">üìù Gerador de Legendas Autom√°ticas</span>
+            <span class="badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;" data-i18n="legendas.title_badge">?? Gerador de Legendas Autom·ticas</span>
             <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
                 <span class="gas-icon"></span>
                 <strong id="user-credits" data-i18n="common.loading">Carregando...</strong>&nbsp;<span data-i18n="common.gasoline">Gasolina</span>
@@ -131,7 +131,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu√°rio Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usu·rio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -146,9 +146,9 @@
 
         <div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
             <!-- Decorativo fundo -->
-            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">üèéÔ∏è</div>
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">???</div>
             
-            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">üìù</div>
+            <div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">??</div>
             <div style="z-index: 2;">
                 <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
                     AUTO LEGENDAS
@@ -164,15 +164,15 @@
         
         <div class="form-row">
             <div class="form-group">
-                <label>V√≠deo Base (.mp4, .mov):</label>
+                <label>VÌdeo Base (.mp4, .mov):</label>
                 <div class="file-upload-wrapper">
-                    <button class="btn-upload" onclick="document.getElementById('video_file').click()">Selecionar V√≠deo</button>
+                    <button class="btn-upload" onclick="document.getElementById('video_file').click()">Selecionar VÌdeo</button>
                     <input type="file" id="video_file" accept="video/*" style="display: none;" onchange="updateLabel('video_file', 'lbl_video')">
-                    <span class="file-label" id="lbl_video">Nenhum v√≠deo</span>
+                    <span class="file-label" id="lbl_video">Nenhum vÌdeo</span>
                 </div>
             </div>
             <div class="form-group">
-                <label>Legenda SRT (Opcional - Pula a transcri√ß√£o):</label>
+                <label>Legenda SRT (Opcional - Pula a transcriÁ„o):</label>
                 <div class="file-upload-wrapper">
                     <button class="btn-upload" onclick="document.getElementById('srt_file').click()">Selecionar .SRT</button>
                     <input type="file" id="srt_file" accept=".srt" style="display: none;" onchange="updateLabel('srt_file', 'lbl_srt')">
@@ -181,10 +181,10 @@
             </div>
         </div>
 
-        <div class="section-title">2. Motor de Transcri√ß√£o</div>
+        <div class="section-title">2. Motor de TranscriÁ„o</div>
         <div class="form-group">
             <div class="radio-group">
-                <label><input type="radio" name="engine" value="vosk" checked> Vosk (R√°pido, Offline)</label>
+                <label><input type="radio" name="engine" value="vosk" checked> Vosk (R·pido, Offline)</label>
                 <label><input type="radio" name="engine" value="whisper"> Whisper (Preciso, Demorado)</label>
             </div>
         </div>
@@ -229,7 +229,7 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label>Posi√ß√£o:</label>
+                <label>PosiÁ„o:</label>
                 <select id="sub_pos">
                     <option value="meio baixo">Meio Baixo</option>
                     <option value="meio">Meio</option>
@@ -244,7 +244,7 @@
                     <option value="branco azul">Branco Azul</option>
                     <option value="verde preto">Verde Preto</option>
                     <option value="rosa roxo">Rosa Roxo</option>
-                    <option value="padrao branco">Padr√£o Branco</option>
+                    <option value="padrao branco">Padr„o Branco</option>
                 </select>
             </div>
             <div class="form-group">
@@ -255,11 +255,11 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label>Anima√ß√£o (Efeito):</label>
+                <label>AnimaÁ„o (Efeito):</label>
                 <select id="sub_effect">
                     <option value="Nenhum">Nenhum</option>
                     <option value="Pulo (Pop)" selected>Pulo (Pop)</option>
-                    <option value="Balan√ßo">Balan√ßo</option>
+                    <option value="BalanÁo">BalanÁo</option>
                     <option value="Giro Zoom">Giro Zoom</option>
                     <option value="Neon">Neon</option>
                 </select>
@@ -270,14 +270,14 @@
             </div>
         </div>
 
-        <button class="btn-gerar" id="btnGerar" onclick="gerarLegendas()">üé¨ GERAR V√çDEO LEGENDADO</button>
+        <button class="btn-gerar" id="btnGerar" onclick="gerarLegendas()">?? GERAR VÕDEO LEGENDADO</button>
 
         <div class="status-bar" id="status"></div>
     </div>
 
 
         <div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
-            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA√áO PUBLICIT√ÅRIO - 728x90 INFERIOR]</span>
+            <span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPA«O PUBLICIT¡RIO - 728x90 INFERIOR]</span>
         </div>
 
     <script>
@@ -297,7 +297,7 @@
 
         async function carregarPerfis() {
             try {
-                const res = await fetch('/api/config/perfis_legenda');
+                const res = await fetch('https://api.apolloedit.com/api/config/perfis_legenda');
                 const data = await res.json();
                 if(data.success && data.perfis) {
                     const sel = document.getElementById('preset');
@@ -314,7 +314,7 @@
         async function gerarLegendas() {
             const videoInput = document.getElementById('video_file');
             if(videoInput.files.length === 0) {
-                alert("Selecione o v√≠deo base!"); return;
+                alert("Selecione o vÌdeo base!"); return;
             }
 
             const fd = new FormData();
@@ -337,28 +337,28 @@
 
             const btn = document.getElementById('btnGerar');
             btn.disabled = true;
-            btn.innerText = "‚è≥ Processando... (Pode demorar minutos)";
-            setStatus("üöÄ Transcrevendo e processando FFmpeg. Aguarde...", "loading");
+            btn.innerText = "? Processando... (Pode demorar minutos)";
+            setStatus("?? Transcrevendo e processando FFmpeg. Aguarde...", "loading");
 
             try {
-                const res = await fetch('/api/legendas/gerar', {
+                const res = await fetch('https://api.apolloedit.com/api/legendas/gerar', {
                     method: 'POST',
                     body: fd
                 });
                 const data = await res.json();
 
                 if(data.success) {
-                    setStatus(`‚úÖ V√≠deo Legendado com Sucesso!\nüìÅ Salvo em: ${data.file}`, "success");
+                    setStatus(`? VÌdeo Legendado com Sucesso!\n?? Salvo em: ${data.file}`, "success");
                     alert("Sucesso!\nArquivo salvo em: " + data.file);
                 } else {
-                    setStatus(`‚ùå Erro: ${data.error}`, "error");
+                    setStatus(`? Erro: ${data.error}`, "error");
                     alert("Falha: " + data.error);
                 }
             } catch(e) {
-                setStatus(`‚ùå Erro de Conex√£o: ${e}`, "error");
+                setStatus(`? Erro de Conex„o: ${e}`, "error");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "üé¨ GERAR V√çDEO LEGENDADO";
+                btn.innerText = "?? GERAR VÕDEO LEGENDADO";
             }
         }
 
@@ -367,7 +367,7 @@
     <!-- I18N Loader -->
     <script src="i18n_loader.js"></script>
 
-    <!-- Supabase SDK e Autentica√ß√£o -->
+    <!-- Supabase SDK e AutenticaÁ„o -->
     <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

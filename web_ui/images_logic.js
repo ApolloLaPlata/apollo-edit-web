@@ -191,7 +191,7 @@ async function imagesAnalyze() {
     updateImagesUI();
 
     try {
-        const response = await fetch('/api/noticias/ai', {
+        const response = await fetch('https://api.apolloedit.com/api/noticias/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(buildNoticiasBody({
@@ -435,7 +435,7 @@ async function imagesDownloadZIP() {
     // Na versão real a exportação vai depender do JSZip ou chamada ao server.
     // Aqui faremos um fallback para baixar uma a uma para o navegador
     try {
-        const response = await fetch('/api/download-zip', {
+        const response = await fetch('https://api.apolloedit.com/api/download-zip', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ images: assetsWithImages })
