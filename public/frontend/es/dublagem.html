@@ -1,0 +1,600 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit — Dublagem Externa</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&amp;family=Consolas&amp;display=swap" rel="stylesheet"/>
+<link href="../styles.css" rel="stylesheet"/>
+<style>
+        body {
+            /* background removed for 3d */ color: #F0F0F0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; padding-bottom: 60px; min-height: 100vh; overflow-y: auto;
+        }
+        .header { display: flex; align-items: center; justify-content: space-between; background: #1e1e1e; padding: 15px 30px; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .header a { color: #9B59B6; text-decoration: none; font-weight: bold; }
+        .header h1 { margin: 0; font-size: 20px; color: #fff; }
+        
+        .main-container { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+        
+        .left-panel { width: 350px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; }
+        .right-panel { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
+        
+        .box { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 20px; }
+        .box h3 { margin-top: 0; font-size: 15px; color: #9B59B6; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .btn-group .btn { flex: 1; }
+        
+        .btn { background: #4a4a6a; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; text-align: center; }
+        .btn:hover { background: #5a5a7a; }
+        .btn.primary { background: #9B59B6; }
+        .btn.primary:hover { background: #8e44ad; }
+        .btn.danger { background: #E74C3C; }
+        
+        .btn-processar { background: #2980B9; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 20px; }
+        .btn-processar:hover { opacity: 0.8; }
+        
+        select { background: #121212; border: 1px solid #444; color: #fff; padding: 8px 10px; border-radius: 4px; font-family: "Segoe UI"; width: 100%; margin-bottom: 15px; }
+        
+        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 14px; margin-top: 10px; }
+        
+        .queue-container { display: flex; flex-direction: column; gap: 15px; max-height: 500px; overflow-y: auto; padding-right: 10px; }
+        
+        .video-card { background: #2a2a2a; border: 1px solid #444; border-radius: 6px; display: flex; padding: 15px; gap: 15px; position: relative; }
+        .video-card.multi { border-left: 5px solid #3498DB; }
+        .video-card canvas { width: 120px; height: 80px; background: #000; border-radius: 4px; object-fit: cover; }
+        
+        .card-info { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
+        .card-title { font-weight: bold; font-size: 14px; word-break: break-all; }
+        .card-subtitle { font-size: 12px; color: #888; }
+        
+        .card-actions { display: flex; flex-direction: column; gap: 5px; min-width: 150px; }
+        .card-actions .btn { padding: 5px 10px; font-size: 11px; }
+        
+        .multi-voice-label { font-size: 11px; color: #3498DB; background: #1a252f; padding: 5px; border-radius: 4px; margin-top: 5px; display: none; white-space: pre-line;}
+        
+        .log-content { background: #000; color: #0f0; font-family: "Consolas", monospace; font-size: 12px; padding: 15px; overflow-y: auto; white-space: pre-wrap; height: 200px; border-radius: 4px; border: 1px solid #333; }
+        
+        /* Modal Diarization */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background: #1e1e1e; padding: 25px; border-radius: 8px; width: 600px; max-width: 90%; border: 1px solid #444; }
+        .modal h2 { margin-top: 0; color: #9B59B6; font-size: 18px; }
+        .modal-status { font-weight: bold; margin-bottom: 15px; font-size: 14px; color: #F1C40F; }
+        
+        .speaker-row { display: flex; align-items: center; gap: 10px; background: #2a2a2a; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+        .speaker-row span { font-weight: bold; min-width: 100px; font-size: 13px; }
+        .speaker-row button { background: #27ae60; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .speaker-row select { margin-bottom: 0; flex-grow: 1; }
+        
+    </style>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header style="padding: 10px 30px; margin-bottom: 20px;">
+ Logo e Créditos 
+<div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" data-i18n="dublagem.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">Doblaje Externo (RVC + Demucs)</span>
+<div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+<span class="gas-icon"></span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+</div>
+</div>
+<div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+<div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuario Pro</span>
+</div>
+<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+</div>
+</header>
+<div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+<span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+</div>
+<div class="main-container">
+<div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
+ Decorativo fundo 
+<div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">🏎️</div>
+<div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">🎙️</div>
+<div style="z-index: 2;">
+<h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
+                    DUBLAGEM RVC
+                </h3>
+<p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
+                    Clone vozes e duble automaticamente.
+                </p>
+</div>
+</div>
+ Left Panel 
+<div class="left-panel">
+<div class="box">
+<h3>⚙️ Configurações e Seleção</h3>
+<div class="btn-group">
+<button class="btn primary" onclick="document.getElementById('video_input').click()">📄 Add Vídeos</button>
+ Folders input for webKit browsers 
+<button class="btn primary" onclick="document.getElementById('folder_input').click()">📁 Add Pasta</button>
+</div>
+<button class="btn" onclick="limparFila()" style="width: 100%; margin-bottom: 20px;">🗑️ Limpar Fila</button>
+<input accept="video/*" id="video_input" multiple="" onchange="addFiles(event)" style="display:none" type="file"/>
+<input accept="video/*" directory="" id="folder_input" multiple="" onchange="addFiles(event)" style="display:none" type="file" webkitdirectory=""/>
+<label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">👤 Padrão Global (Fallback):</label>
+<select id="global_char">
+<option value="Automático (Pelo Nome)">Automático (Pelo Nome)</option>
+</select>
+<div class="checkbox-group" id="adv-demucs-toggle" style="display: none;">
+<input id="skip_demucs" type="checkbox"/>
+<label for="skip_demucs">Pular Demucs (Vídeo Seco)</label>
+</div>
+<button class="btn-processar" id="btn_process" onclick="startProcessing()">🚀 INICIAR DUBLAGEM <br/><small id="btn-cost" style="font-size: 11px; color: #FFD32A;">(Calculando Custo...)</small></button>
+</div>
+</div>
+ Right Panel 
+<div class="right-panel">
+<div class="box">
+<h3>📋 Cenas para Processar</h3>
+<div class="queue-container" id="queue_container">
+<div id="empty_msg" style="padding: 30px; text-align: center; color: #888; font-style: italic;">
+                        Nenhum vídeo na fila. Adicione pelo painel à esquerda.
+                    </div>
+</div>
+</div>
+<div class="box">
+<h3>📝 Logs da Operação</h3>
+<div class="log-content" id="log_content">Aguardando...</div>
+</div>
+</div>
+</div>
+ Modal Diarization 
+<div class="modal-overlay" id="diarize_modal">
+<div class="modal">
+<h2>Mapeamento de Múltiplos Falantes</h2>
+<div class="modal-status" id="modal_status">Status: Preparando ambiente Pyannote...</div>
+<div id="speakers_container" style="display: none; max-height: 300px; overflow-y: auto;">
+ Preenchido via JS 
+</div>
+<button class="btn primary" id="btn_save_diarization" onclick="saveDiarization()" style="width: 100%; margin-top: 15px; display: none;">💾 Confirmar Escalação de Atores</button>
+<button class="btn danger" onclick="closeModal()" style="width: 100%; margin-top: 10px;">Cancelar / Fechar</button>
+</div>
+</div>
+<div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
+<span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPAÇO PUBLICITÁRIO - 728x90 INFERIOR]</span>
+</div>
+<script>
+        let charList = [];
+        let queueItems = [];
+        let currentModalItemIndex = -1;
+        let isProcessing = false;
+        
+        async function loadConfig() {
+            try {
+                const res = await fetch('https://api.apolloedit.com/api/config/personagens');
+                const data = await res.json();
+                charList = Object.keys(data);
+                
+                const sel = document.getElementById('global_char');
+                charList.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.innerText = c;
+                    sel.appendChild(opt);
+                });
+            } catch(e) {
+                console.error("Erro ao carregar personagens", e);
+            }
+        }
+        
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Generate a thumbnail using Canvas
+        function captureThumbnail(file, canvasId) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.src = URL.createObjectURL(file);
+                video.muted = true;
+                video.playsInline = true;
+                video.currentTime = 1; // get frame at 1s
+                
+                video.onloadeddata = () => {
+                    // if video is super short, wait a bit
+                };
+                
+                video.onseeked = () => {
+                    const canvas = document.getElementById(canvasId);
+                    if(!canvas) return resolve();
+                    canvas.width = 120;
+                    canvas.height = 80;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    URL.revokeObjectURL(video.src);
+                    resolve();
+                };
+                
+                video.onerror = () => {
+                    resolve();
+                };
+            });
+        }
+        
+        async function addFiles(event) {
+            const files = Array.from(event.target.files).filter(f => f.type.startsWith('video/'));
+            if(files.length === 0) return;
+            
+            files.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true}));
+            
+            const emptyMsg = document.getElementById('empty_msg');
+            if(emptyMsg) emptyMsg.style.display = 'none';
+            
+            const queueCont = document.getElementById('queue_container');
+            const globalFallback = document.getElementById('global_char').value;
+            
+            for(let file of files) {
+                const id = generateId();
+                
+                // Decide initial character
+                let initChar = globalFallback;
+                if(initChar === "Automático (Pelo Nome)") {
+                    const lowerName = file.name.toLowerCase();
+                    const matched = charList.find(c => lowerName.includes(c.toLowerCase()));
+                    initChar = matched || (charList.length > 0 ? charList[0] : "");
+                }
+                
+                const item = {
+                    id: id,
+                    file: file,
+                    isDupe: false,
+                    charValue: initChar,
+                    diarizationMap: null
+                };
+                queueItems.push(item);
+                
+                renderCard(item, queueCont);
+                await captureThumbnail(file, `thumb_${id}`);
+            }
+            event.target.value = '';
+        }
+        
+        function duplicateItem(id) {
+            const originalIndex = queueItems.findIndex(i => i.id === id);
+            if(originalIndex === -1) return;
+            
+            const original = queueItems[originalIndex];
+            const newId = generateId();
+            
+            const cloned = {
+                id: newId,
+                file: original.file, // same file reference
+                isDupe: true,
+                charValue: document.getElementById(`char_${id}`).value,
+                diarizationMap: null
+            };
+            
+            // Insert right after
+            queueItems.splice(originalIndex + 1, 0, cloned);
+            
+            const queueCont = document.getElementById('queue_container');
+            queueCont.innerHTML = '';
+            queueItems.forEach(i => renderCard(i, queueCont));
+            
+            // Re-render thumbnails (asynchronously)
+            queueItems.forEach(i => captureThumbnail(i.file, `thumb_${i.id}`));
+        }
+        
+        function removeItem(id) {
+            queueItems = queueItems.filter(i => i.id !== id);
+            const card = document.getElementById(`card_${id}`);
+            if(card) card.remove();
+            
+            if(queueItems.length === 0) {
+                const emptyMsg = document.getElementById('empty_msg');
+                if(emptyMsg) emptyMsg.style.display = 'block';
+            }
+            updateCost();
+        }
+        
+        function renderCard(item, container) {
+            let optionsHtml = '';
+            charList.forEach(c => {
+                optionsHtml += `<option value="${c}" ${c === item.charValue ? 'selected' : ''}>${c}</option>`;
+            });
+            
+            const dupeHtml = item.isDupe ? `<div class="card-subtitle">⚠️ Cena Duplicada: Ideal para segunda trilha ou segundo ator.</div>` : '';
+            
+            const mode = localStorage.getItem('apollo_user_mode') || 'cloud';
+            const isLocal = mode === 'local';
+            
+            // UI simplification for Cloud mode
+            const rvcVisualsHtml = isLocal 
+                ? `<div style="display:flex; flex-direction: column; gap:10px; margin-top:10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px dashed #555;">
+                        <div style="display:flex; align-items:center; justify-content: space-between; font-size:11px;">
+                            <span style="color: #F59E0B; font-weight: bold;">[Slot 1] Entrada Bruta (Local)</span>
+                            <span>▶</span>
+                            <span style="color: #10B981; font-weight: bold;">[Slot 2] Filtro RVC (Local)</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:12px;">Voz Final de Saída:</span>
+                            <select id="char_${item.id}" style="width: 200px; margin-bottom:0; padding:4px;" onchange="updateItemChar('${item.id}', this.value)">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                    </div>`
+                : `<div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                        <span style="font-size:12px;">Voz da Nuvem:</span>
+                        <select id="char_${item.id}" style="width: 200px; margin-bottom:0; padding:4px;" onchange="updateItemChar('${item.id}', this.value)">
+                            ${optionsHtml}
+                        </select>
+                    </div>`;
+                    
+            const detectVoicesBtn = isLocal ? `<button class="btn" style="background:#8E44AD;" onclick="openDiarization('${item.id}')">Detectar Vozes 🕵️</button>` : '';
+
+            const cardHtml = `
+                <div class="video-card" id="card_${item.id}">
+                    <canvas id="thumb_${item.id}"></canvas>
+                    <div class="card-info">
+                        <div class="card-title">${item.file.name}</div>
+                        ${dupeHtml}
+                        ${rvcVisualsHtml}
+                        <div class="multi-voice-label" id="multi_${item.id}"></div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn" onclick="duplicateItem('${item.id}')">Duplicar ➕</button>
+                        <button class="btn danger" onclick="removeItem('${item.id}')">Remover ❌</button>
+                        ${detectVoicesBtn}
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', cardHtml);
+            
+            if(item.diarizationMap) {
+                showMultiVoiceLabel(item);
+            }
+            updateCost();
+        }
+        
+        function updateItemChar(id, val) {
+            const item = queueItems.find(i => i.id === id);
+            if(item) item.charValue = val;
+        }
+
+        function updateCost() {
+            const mode = localStorage.getItem('apollo_user_mode') || 'cloud';
+            const costEl = document.getElementById('btn-cost');
+            if (!costEl) return;
+            
+            if (mode === 'local') {
+                costEl.innerText = "(Custo: GRÁTIS - Processamento Local)";
+                costEl.style.color = "#10B981";
+                document.getElementById('adv-demucs-toggle').style.display = 'flex';
+            } else {
+                const totalCost = queueItems.length * 15; // 15L per scene
+                costEl.innerText = \`(Custo: \${totalCost}L Gasolina na Nuvem)\`;
+                costEl.style.color = "#FFD32A";
+                document.getElementById('adv-demucs-toggle').style.display = 'none';
+            }
+        }
+        
+        // --- Diarization ---
+        async function openDiarization(id) {
+            const index = queueItems.findIndex(i => i.id === id);
+            if(index === -1) return;
+            
+            currentModalItemIndex = index;
+            const item = queueItems[index];
+            
+            document.getElementById('diarize_modal').style.display = 'flex';
+            const status = document.getElementById('modal_status');
+            const container = document.getElementById('speakers_container');
+            const btnSave = document.getElementById('btn_save_diarization');
+            
+            container.style.display = 'none';
+            btnSave.style.display = 'none';
+            status.innerText = "Status: 1/2 Extraindo Vocais com Demucs e Analisando Biometria com IA Pyannote (Lento)...";
+            
+            const formData = new FormData();
+            formData.append("video", item.file);
+            
+            try {
+                const res = await fetch('https://api.apolloedit.com/api/dublagem/diarizar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if(!res.ok || !data.success) {
+                    alert(data.error || "Erro ao diarizar o áudio.");
+                    closeModal();
+                    return;
+                }
+                
+                if(data.speakers.length === 0) {
+                    alert("Nenhum falante claro ou vozes distanciadas foram encontrados. Faça o lote normal.");
+                    closeModal();
+                    return;
+                }
+                
+                status.innerText = "Status: Falantes Mapeados! Assinale os personagens:";
+                container.innerHTML = '';
+                
+                let charOptions = `<option value="[Manter Voz Original]">[Manter Voz Original]</option>`;
+                charList.forEach(c => charOptions += `<option value="${c}">${c}</option>`);
+                
+                data.speakers.forEach((spk, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'speaker-row';
+                    
+                    const span = document.createElement('span');
+                    span.innerText = `🎙️ Falante ${idx+1} (${spk.id}):`;
+                    
+                    const btn = document.createElement('button');
+                    btn.innerText = '▶ Ouvir';
+                    btn.onclick = () => {
+                        const audio = new Audio(spk.sample_url);
+                        audio.play();
+                    };
+                    
+                    const sel = document.createElement('select');
+                    sel.id = `map_${spk.id}`;
+                    sel.innerHTML = charOptions;
+                    // pre-select first character for the first speaker, etc
+                    if(charList.length > 0 && idx < charList.length) {
+                        sel.value = charList[idx];
+                    }
+                    
+                    row.appendChild(span);
+                    row.appendChild(btn);
+                    row.appendChild(sel);
+                    container.appendChild(row);
+                });
+                
+                // Store the segments on the item so we can send them later
+                item.diarizationSegments = data.segments;
+                item.vocalsPath = data.vocals_path;
+                item.bgPath = data.bg_path;
+                item.tempDir = data.temp_dir;
+                
+                container.style.display = 'block';
+                btnSave.style.display = 'block';
+                
+            } catch(e) {
+                alert("Falha de rede ao tentar diarizar: " + e);
+                closeModal();
+            }
+        }
+        
+        function saveDiarization() {
+            if(currentModalItemIndex === -1) return;
+            const item = queueItems[currentModalItemIndex];
+            const selects = document.querySelectorAll('#speakers_container select');
+            
+            const mapData = {};
+            selects.forEach(sel => {
+                const spkId = sel.id.replace('map_', '');
+                mapData[spkId] = sel.value;
+            });
+            
+            item.diarizationMap = mapData;
+            
+            // Visual Update
+            showMultiVoiceLabel(item);
+            
+            closeModal();
+        }
+        
+        function showMultiVoiceLabel(item) {
+            const card = document.getElementById(`card_${item.id}`);
+            const lbl = document.getElementById(`multi_${item.id}`);
+            const mainSel = document.getElementById(`char_${item.id}`);
+            
+            card.classList.add('multi');
+            mainSel.disabled = true; // disable main char select because map overrides it
+            
+            const keys = Object.keys(item.diarizationMap);
+            let text = `🎙️ Modo Estúdio (${keys.length} Falantes Mapeados):\n`;
+            for(let k in item.diarizationMap) {
+                text += `   • ${k}: ${item.diarizationMap[k]}\n`;
+            }
+            lbl.innerText = text;
+            lbl.style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('diarize_modal').style.display = 'none';
+            currentModalItemIndex = -1;
+        }
+        
+        function limparFila() {
+            queueItems = [];
+            const cont = document.getElementById('queue_container');
+            cont.innerHTML = `<div style="padding: 30px; text-align: center; color: #888; font-style: italic;" id="empty_msg">Nenhum vídeo na fila. Adicione pelo painel à esquerda.</div>`;
+            updateCost();
+        }
+        
+        function log(msg) {
+            const lg = document.getElementById('log_content');
+            lg.innerText += "\n" + msg;
+            lg.scrollTop = lg.scrollHeight;
+        }
+        
+        // --- Processamento Lote ---
+        async function startProcessing() {
+            if(isProcessing) return;
+            if(queueItems.length === 0) {
+                alert("A fila está vazia!");
+                return;
+            }
+            
+            isProcessing = true;
+            const btn = document.getElementById('btn_process');
+            btn.innerText = "⏳ PROCESSANDO LOTE...";
+            btn.style.background = "#555";
+            btn.disabled = true;
+            document.getElementById('log_content').innerText = "Iniciando processamento em lote...";
+            
+            const formData = new FormData();
+            formData.append("skip_demucs", document.getElementById('skip_demucs').checked);
+            
+            // Prepare configs array as JSON
+            const configs = queueItems.map(item => ({
+                id: item.id,
+                filename: item.file.name,
+                char: item.charValue,
+                is_multi: !!item.diarizationMap,
+                diarization_map: item.diarizationMap,
+                segments: item.diarizationSegments,
+                vocals_path: item.vocalsPath,
+                bg_path: item.bgPath,
+                temp_dir: item.tempDir
+            }));
+            
+            formData.append("configs", JSON.stringify(configs));
+            
+            // Append all files in order
+            queueItems.forEach(item => {
+                formData.append("files", item.file);
+            });
+            
+            try {
+                const response = await fetch('https://api.apolloedit.com/api/dublagem/processar', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let done = false;
+
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+                    if (value) {
+                        const chunk = decoder.decode(value);
+                        log(chunk);
+                    }
+                }
+                
+                alert("Lote finalizado! Verifique os logs.");
+            } catch(e) {
+                log("❌ Erro de conexão com o servidor durante o processamento: " + e);
+            } finally {
+                btn.innerText = "🚀 INICIAR DUBLAGEM";
+                btn.style.background = "#2980B9";
+                btn.disabled = false;
+                isProcessing = false;
+            }
+        }
+        
+        // Init
+        loadConfig();
+    </script>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+</body>
+</html>

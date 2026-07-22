@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="global_style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Estúdio de Imagens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Bangers&family=Nunito:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        .layout-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1600px;
+            height: calc(100vh - 120px);
+            margin: 0 auto;
+            flex-direction: column;
+        }
+
+        @media (min-width: 1024px) {
+            .layout-container {
+                flex-direction: row;
+            }
+        }
+
+        /* PAINEL ESQUERDO (Configs & Prompt) */
+        .left-panel {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            border-color: #8b5cf6;
+        }
+
+        .input-group textarea {
+            resize: none;
+        }
+
+        /* ROSTER INJECTOR */
+        .roster-mini {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .char-tag-btn {
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .char-tag-btn:hover {
+            background: #8b5cf6;
+            color: white;
+            border-color: #7c3aed;
+        }
+
+        .char-tag-btn img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* UPLOAD REFERÊNCIA */
+        .ref-upload {
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(30, 41, 59, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .ref-upload:hover { border-color: #8b5cf6; }
+        .ref-upload img { max-height: 80px; border-radius: 4px; display: none; }
+        
+        .btn-remove-ref {
+            position: absolute;
+            top: 5px; right: 5px;
+            background: #ef4444; color: white;
+            border: none; border-radius: 50%;
+            width: 20px; height: 20px;
+            cursor: pointer; display: none;
+            font-size: 10px;
+        }
+
+        /* BOTÃO PRINCIPAL */
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s;
+            margin-top: auto;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.6);
+        }
+
+        .btn-generate:disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* PAINEL DIREITO (Resultado) */
+        .right-panel {
+            flex: 2;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            background: repeating-linear-gradient(45deg, #0f172a, #0f172a 10px, #1e293b 10px, #1e293b 20px);
+        }
+
+        .result-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+
+        .result-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            border: 1px solid #334155;
+        }
+
+        .overlay-tools {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 12px;
+        }
+        .result-wrapper:hover .overlay-tools { opacity: 1; }
+
+        .tool-btn {
+            background: #fff;
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .tool-btn:hover { transform: scale(1.05); }
+
+        .placeholder-text {
+            color: #475569;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #60a5fa;
+            font-weight: bold;
+            gap: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(59, 130, 246, 0.3);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+    
+    <header style="padding: 10px 20px;">
+        <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;">
+                <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+            </a>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 4px;">Estúdio</span>
+            <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+                <span class="gas-icon"></span>
+                <strong id="user-credits">...</strong>&nbsp;<span>Gasolina</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="workspace" style="padding: 20px; overflow: hidden;">
+        
+        <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
+            <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="font-size:2.5rem;">🎬</span> ESTÚDIO DE IMAGENS
+            </h3>
+            <p style="color: #94a3b8; margin-top: 5px;">Configure a direção de arte global e gere cenas usando as tags do seu Roster.</p>
+        </div>
+
+        <div class="layout-container">
+            
+            <!-- Esquerda: Configs -->
+            <div class="left-panel">
+                
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>Proporção (Aspect Ratio)</label>
+                        <select id="aspect-ratio">
+                            <option value="16:9">16:9 (Cinematográfico)</option>
+                            <option value="9:16">9:16 (Vertical / Reels)</option>
+                            <option value="1:1">1:1 (Quadrado)</option>
+                            <option value="21:9">21:9 (Ultrawide)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Direção de Arte / Contexto Global</label>
+                    <textarea id="global-context" rows="2" placeholder="Ex: Estilo anime anos 90, pintura a óleo, iluminação dramática, cyberpunk..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Prompt Negativo Global</label>
+                    <input type="text" id="negative-prompt" placeholder="Ex: Texto, marcas d'água, baixa qualidade...">
+                </div>
+
+                <div class="input-group">
+                    <label>Personagens (Clique para inserir a tag)</label>
+                    <div class="roster-mini" id="roster-mini">
+                        <div style="color: #64748b; font-size: 0.8rem; width: 100%; text-align: center;">Carregando elenco...</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Imagem Base / Style Transfer (Opcional)</label>
+                    <div class="ref-upload" id="ref-dropzone">
+                        <span id="ref-placeholder" style="color:#64748b; font-size: 0.8rem;">Clique ou arraste a imagem aqui</span>
+                        <img id="ref-preview">
+                        <button class="btn-remove-ref" id="btn-remove-ref">X</button>
+                        <input type="file" id="ref-file" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="input-group" style="flex-grow: 1;">
+                    <label>
+                        Prompt da Cena
+                        <button id="btn-enhance" style="background:none; border:none; color:#a78bfa; cursor:pointer; font-weight:bold; font-size:0.8rem;">✨ Melhorar</button>
+                    </label>
+                    <textarea id="main-prompt" style="flex-grow: 1; min-height: 100px;" placeholder="Ex: #Capitão caminhando por uma rua deserta com chamas ao fundo..."></textarea>
+                </div>
+
+                <button class="btn-generate" id="btn-generate">
+                    📸 Capturar Cena
+                </button>
+
+            </div>
+
+            <!-- Direita: Viewer -->
+            <div class="right-panel">
+                
+                <div class="loading-overlay" id="loading-overlay">
+                    <div class="spinner"></div>
+                    <div id="loading-text">Renderizando Cena...</div>
+                </div>
+
+                <div class="placeholder-text" id="viewer-placeholder">
+                    <div style="font-size: 4rem; opacity: 0.5;">🎬</div>
+                    <div>
+                        <strong style="color: white; font-size: 1.2rem; display:block;">Estúdio Vazio</strong>
+                        Luz, Câmera e Ação! Preencha as informações para gerar.
+                    </div>
+                </div>
+
+                <div class="result-wrapper" id="result-wrapper">
+                    <img id="result-image" src="" alt="Cena">
+                    <div class="overlay-tools">
+                        <button class="tool-btn" id="tool-download" title="Baixar Imagem">📥 Baixar</button>
+                        <button class="tool-btn" id="tool-reroll" style="background: #3b82f6; color: white;">🔄 Re-rolar</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="bg_parallax.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="laplata_ai.js"></script>
+    <script src="laplata_studio.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

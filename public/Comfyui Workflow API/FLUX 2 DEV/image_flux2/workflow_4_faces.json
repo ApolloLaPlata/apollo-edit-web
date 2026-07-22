@@ -1,0 +1,534 @@
+{
+    "9": {
+        "inputs": {
+            "filename_prefix": "Flux2_dev",
+            "images": [
+                "98:8",
+                0
+            ]
+        },
+        "class_type": "SaveImage",
+        "_meta": {
+            "title": "Salvar Imagem"
+        }
+    },
+    "98:22": {
+        "inputs": {
+            "model": [
+                "PULID_4",
+                0
+            ],
+            "conditioning": [
+                "1009",
+                0
+            ]
+        },
+        "class_type": "BasicGuider",
+        "_meta": {
+            "title": "Guia B\u00e1sico"
+        }
+    },
+    "98:26": {
+        "inputs": {
+            "guidance": 4,
+            "conditioning": [
+                "98:6",
+                0
+            ]
+        },
+        "class_type": "FluxGuidance",
+        "_meta": {
+            "title": "FluxGuidance"
+        }
+    },
+    "98:16": {
+        "inputs": {
+            "sampler_name": "euler"
+        },
+        "class_type": "KSamplerSelect",
+        "_meta": {
+            "title": "KSamplerSelect"
+        }
+    },
+    "98:10": {
+        "inputs": {
+            "vae_name": "ae.safetensors"
+        },
+        "class_type": "VAELoader",
+        "_meta": {
+            "title": "Carregar VAE"
+        }
+    },
+    "98:13": {
+        "inputs": {
+            "noise": [
+                "98:25",
+                0
+            ],
+            "guider": [
+                "98:22",
+                0
+            ],
+            "sampler": [
+                "98:16",
+                0
+            ],
+            "sigmas": [
+                "98:48",
+                0
+            ],
+            "latent_image": [
+                "98:47",
+                0
+            ]
+        },
+        "class_type": "SamplerCustomAdvanced",
+        "_meta": {
+            "title": "SamplerCustomAdvanced"
+        }
+    },
+    "98:8": {
+        "inputs": {
+            "samples": [
+                "98:13",
+                0
+            ],
+            "vae": [
+                "98:10",
+                0
+            ]
+        },
+        "class_type": "VAEDecode",
+        "_meta": {
+            "title": "VAE Decodificar"
+        }
+    },
+    "98:38": {
+        "inputs": {
+            "clip_name1": "t5xxl_fp16.safetensors",
+            "clip_name2": "clip_l.safetensors",
+            "type": "flux"
+        },
+        "class_type": "DualCLIPLoader",
+        "_meta": {
+            "title": "Carregar CLIP"
+        }
+    },
+    "98:48": {
+        "inputs": {
+            "steps": [
+                "98:103",
+                0
+            ],
+            "width": 1024,
+            "height": 1024
+        },
+        "class_type": "Flux2Scheduler",
+        "_meta": {
+            "title": "Flux2Scheduler"
+        }
+    },
+    "98:47": {
+        "inputs": {
+            "width": 1024,
+            "height": 1024,
+            "batch_size": 1
+        },
+        "class_type": "EmptyFlux2LatentImage",
+        "_meta": {
+            "title": "Empty Flux 2 Latent"
+        }
+    },
+    "98:25": {
+        "inputs": {
+            "noise_seed": 1027111520328378
+        },
+        "class_type": "RandomNoise",
+        "_meta": {
+            "title": "Ru\u00eddo Aleat\u00f3rio"
+        }
+    },
+    "98:6": {
+        "inputs": {
+            "text": "high fashion, vintage couture, street photography, luxury fashion shoot, neo brutalist architecture, pastel paints",
+            "clip": [
+                "98:38",
+                0
+            ]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Positive Prompt)"
+        }
+    },
+    "98:100": {
+        "inputs": {
+            "value": 20
+        },
+        "class_type": "PrimitiveInt",
+        "_meta": {
+            "title": "Steps"
+        }
+    },
+    "98:99": {
+        "inputs": {
+            "value": 8
+        },
+        "class_type": "PrimitiveInt",
+        "_meta": {
+            "title": "Steps"
+        }
+    },
+    "98:103": {
+        "inputs": {
+            "switch": [
+                "98:104",
+                0
+            ],
+            "on_false": [
+                "98:100",
+                0
+            ],
+            "on_true": [
+                "98:99",
+                0
+            ]
+        },
+        "class_type": "ComfySwitchNode",
+        "_meta": {
+            "title": "Switch(steps)"
+        }
+    },
+    "98:104": {
+        "inputs": {
+            "value": false
+        },
+        "class_type": "PrimitiveBoolean",
+        "_meta": {
+            "title": "Enable Turbo LoRA"
+        }
+    },
+    "98:12": {
+        "inputs": {
+            "unet_name": "flux1-dev.safetensors",
+            "weight_dtype": "default"
+        },
+        "class_type": "UNETLoader",
+        "_meta": {
+            "title": "Carregar Modelo de Difus\u00e3o"
+        }
+    },
+    "1001": {
+        "class_type": "PulidFluxModelLoader",
+        "inputs": {
+            "pulid_file": "pulid_flux_v0.9.0.safetensors"
+        }
+    },
+    "1002": {
+        "class_type": "PulidFluxInsightFaceLoader",
+        "inputs": {
+            "provider": "CUDA"
+        }
+    },
+    "1003": {
+        "class_type": "PulidFluxEvaClipLoader",
+        "inputs": {}
+    },
+    "1006": {
+        "class_type": "StyleModelLoader",
+        "inputs": {
+            "style_model_name": "flux1-redux-dev.safetensors"
+        }
+    },
+    "1007": {
+        "class_type": "CLIPVisionLoader",
+        "inputs": {
+            "clip_name": "sigclip_vision_patch14_384.safetensors"
+        }
+    },
+    "1008": {
+        "class_type": "CLIPVisionEncode",
+        "inputs": {
+            "clip_vision": [
+                "1007",
+                0
+            ],
+            "image": [
+                "1005",
+                0
+            ],
+            "crop": "center"
+        }
+    },
+    "1009": {
+        "class_type": "StyleModelApply",
+        "inputs": {
+            "conditioning": [
+                "98:26",
+                0
+            ],
+            "style_model": [
+                "1006",
+                0
+            ],
+            "clip_vision_output": [
+                "1008",
+                0
+            ],
+            "strength": 1.0,
+            "strength_type": "multiply"
+        }
+    },
+    "APOLLO_INPUT_IMAGE_1": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "image_1.png"
+        },
+        "_meta": {
+            "title": "APOLLO_INPUT_IMAGE_1"
+        }
+    },
+    "APOLLO_MASK_LOAD_1": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "apollo_mask_4_0.png"
+        },
+        "_meta": {
+            "title": "Mask Load 1"
+        }
+    },
+    "APOLLO_MASK_CONVERT_1": {
+        "class_type": "ImageToMask",
+        "inputs": {
+            "image": [
+                "APOLLO_MASK_LOAD_1",
+                0
+            ],
+            "channel": "red"
+        },
+        "_meta": {
+            "title": "Mask Convert 1"
+        }
+    },
+    "PULID_1": {
+        "class_type": "ApplyPulidFlux",
+        "inputs": {
+            "model": [
+                "98:12",
+                0
+            ],
+            "pulid_flux": [
+                "1001",
+                0
+            ],
+            "eva_clip": [
+                "1003",
+                0
+            ],
+            "face_analysis": [
+                "1002",
+                0
+            ],
+            "image": [
+                "APOLLO_INPUT_IMAGE_1",
+                0
+            ],
+            "weight": 1.0,
+            "start_at": 0.0,
+            "end_at": 1.0,
+            "attn_mask": [
+                "APOLLO_MASK_CONVERT_1",
+                0
+            ]
+        }
+    },
+    "APOLLO_INPUT_IMAGE_2": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "image_2.png"
+        },
+        "_meta": {
+            "title": "APOLLO_INPUT_IMAGE_2"
+        }
+    },
+    "APOLLO_MASK_LOAD_2": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "apollo_mask_4_1.png"
+        },
+        "_meta": {
+            "title": "Mask Load 2"
+        }
+    },
+    "APOLLO_MASK_CONVERT_2": {
+        "class_type": "ImageToMask",
+        "inputs": {
+            "image": [
+                "APOLLO_MASK_LOAD_2",
+                0
+            ],
+            "channel": "red"
+        },
+        "_meta": {
+            "title": "Mask Convert 2"
+        }
+    },
+    "PULID_2": {
+        "class_type": "ApplyPulidFlux",
+        "inputs": {
+            "model": [
+                "PULID_1",
+                0
+            ],
+            "pulid_flux": [
+                "1001",
+                0
+            ],
+            "eva_clip": [
+                "1003",
+                0
+            ],
+            "face_analysis": [
+                "1002",
+                0
+            ],
+            "image": [
+                "APOLLO_INPUT_IMAGE_2",
+                0
+            ],
+            "weight": 1.0,
+            "start_at": 0.0,
+            "end_at": 1.0,
+            "attn_mask": [
+                "APOLLO_MASK_CONVERT_2",
+                0
+            ]
+        }
+    },
+    "APOLLO_INPUT_IMAGE_3": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "image_3.png"
+        },
+        "_meta": {
+            "title": "APOLLO_INPUT_IMAGE_3"
+        }
+    },
+    "APOLLO_MASK_LOAD_3": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "apollo_mask_4_2.png"
+        },
+        "_meta": {
+            "title": "Mask Load 3"
+        }
+    },
+    "APOLLO_MASK_CONVERT_3": {
+        "class_type": "ImageToMask",
+        "inputs": {
+            "image": [
+                "APOLLO_MASK_LOAD_3",
+                0
+            ],
+            "channel": "red"
+        },
+        "_meta": {
+            "title": "Mask Convert 3"
+        }
+    },
+    "PULID_3": {
+        "class_type": "ApplyPulidFlux",
+        "inputs": {
+            "model": [
+                "PULID_2",
+                0
+            ],
+            "pulid_flux": [
+                "1001",
+                0
+            ],
+            "eva_clip": [
+                "1003",
+                0
+            ],
+            "face_analysis": [
+                "1002",
+                0
+            ],
+            "image": [
+                "APOLLO_INPUT_IMAGE_3",
+                0
+            ],
+            "weight": 1.0,
+            "start_at": 0.0,
+            "end_at": 1.0,
+            "attn_mask": [
+                "APOLLO_MASK_CONVERT_3",
+                0
+            ]
+        }
+    },
+    "APOLLO_INPUT_IMAGE_4": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "image_4.png"
+        },
+        "_meta": {
+            "title": "APOLLO_INPUT_IMAGE_4"
+        }
+    },
+    "APOLLO_MASK_LOAD_4": {
+        "class_type": "LoadImage",
+        "inputs": {
+            "image": "apollo_mask_4_3.png"
+        },
+        "_meta": {
+            "title": "Mask Load 4"
+        }
+    },
+    "APOLLO_MASK_CONVERT_4": {
+        "class_type": "ImageToMask",
+        "inputs": {
+            "image": [
+                "APOLLO_MASK_LOAD_4",
+                0
+            ],
+            "channel": "red"
+        },
+        "_meta": {
+            "title": "Mask Convert 4"
+        }
+    },
+    "PULID_4": {
+        "class_type": "ApplyPulidFlux",
+        "inputs": {
+            "model": [
+                "PULID_3",
+                0
+            ],
+            "pulid_flux": [
+                "1001",
+                0
+            ],
+            "eva_clip": [
+                "1003",
+                0
+            ],
+            "face_analysis": [
+                "1002",
+                0
+            ],
+            "image": [
+                "APOLLO_INPUT_IMAGE_4",
+                0
+            ],
+            "weight": 1.0,
+            "start_at": 0.0,
+            "end_at": 1.0,
+            "attn_mask": [
+                "APOLLO_MASK_CONVERT_4",
+                0
+            ]
+        }
+    }
+}

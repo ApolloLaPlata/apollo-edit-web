@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo - Teleprompter Web</title>
+    <link rel="stylesheet" href="global_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .controls {
+            height: 60px;
+            background: #111;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .controls button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .controls button:hover { background: #555; }
+        .controls button.play { background: #ec4899; }
+        
+        .sliders {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .sliders label { font-size: 12px; color: #aaa; }
+
+        .prompter-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .text-scroll {
+            width: 80%;
+            max-width: 1000px;
+            font-size: 60px;
+            line-height: 1.5;
+            text-align: center;
+            position: absolute;
+            top: 100%;
+            white-space: pre-wrap;
+            transform: scaleY(-1); /* Para espelhar no vidro do teleprompter (Opcional, vamos deixar normal por padrão) */
+            transform: none;
+        }
+
+        .focus-line {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(236, 72, 153, 0.5);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .focus-fade {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #000 0%, transparent 40%, transparent 60%, #000 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .edit-area {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #111;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .edit-area textarea {
+            flex: 1;
+            background: #000;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 20px;
+            font-size: 20px;
+            border-radius: 8px;
+            resize: none;
+            outline: none;
+        }
+        .edit-area .btn-close {
+            margin-top: 10px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+
+    <div class="controls">
+        <div>
+            <a href="hub.html" style="color: #aaa; text-decoration: none; font-weight: bold; margin-right: 20px;">← Voltar</a>
+            <button onclick="toggleEdit()">📝 Editar Texto</button>
+            <button onclick="toggleMirror()">🪞 Espelhar Texto</button>
+        </div>
+        <div class="sliders">
+            <div>
+                <label>Tamanho da Fonte</label>
+                <input type="range" id="fontSize" min="30" max="120" value="60" oninput="updateSettings()">
+            </div>
+            <div>
+                <label>Velocidade</label>
+                <input type="range" id="speed" min="1" max="10" value="3">
+            </div>
+            <button class="play" id="btnPlay" onclick="togglePlay()">▶ Iniciar</button>
+        </div>
+    </div>
+
+    <div class="prompter-container" id="prompter">
+        <div class="focus-line"></div>
+        <div class="focus-fade"></div>
+        <div class="text-scroll" id="scrollText">Cole seu roteiro aqui e clique em Iniciar. Olhe diretamente para a lente da câmera enquanto lê!</div>
+    </div>
+
+    <div class="edit-area" id="editArea" style="display: none;">
+        <h2 style="margin-top: 0;">Colar Roteiro</h2>
+        <textarea id="inputText">Cole seu roteiro aqui e clique em Iniciar. Olhe diretamente para a lente da câmera enquanto lê!</textarea>
+        <button class="btn-close" onclick="saveText()">Salvar e Ir para Teleprompter</button>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        let position = document.getElementById('prompter').clientHeight;
+        let animationId;
+        let isMirrored = false;
+
+        const scrollText = document.getElementById('scrollText');
+        const inputText = document.getElementById('inputText');
+        const editArea = document.getElementById('editArea');
+        const btnPlay = document.getElementById('btnPlay');
+        const speedInput = document.getElementById('speed');
+        const fontInput = document.getElementById('fontSize');
+
+        function toggleEdit() {
+            editArea.style.display = 'flex';
+            isPlaying = false;
+            btnPlay.innerText = "▶ Iniciar";
+            cancelAnimationFrame(animationId);
+        }
+
+        function saveText() {
+            scrollText.innerText = inputText.value;
+            editArea.style.display = 'none';
+            position = document.getElementById('prompter').clientHeight;
+            scrollText.style.top = position + 'px';
+        }
+
+        function updateSettings() {
+            scrollText.style.fontSize = fontInput.value + 'px';
+        }
+
+        function toggleMirror() {
+            isMirrored = !isMirrored;
+            scrollText.style.transform = isMirrored ? 'scaleX(-1)' : 'none';
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                btnPlay.innerText = "⏸ Pausar";
+                btnPlay.style.background = "#555";
+                scrollLoop();
+            } else {
+                btnPlay.innerText = "▶ Continuar";
+                btnPlay.style.background = "#ec4899";
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        function scrollLoop() {
+            if (!isPlaying) return;
+            const speed = parseInt(speedInput.value);
+            position -= speed;
+            scrollText.style.top = position + 'px';
+
+            if (position < -scrollText.clientHeight) {
+                isPlaying = false;
+                btnPlay.innerText = "▶ Reiniciar";
+                btnPlay.style.background = "#ec4899";
+                position = document.getElementById('prompter').clientHeight;
+                return;
+            }
+
+            animationId = requestAnimationFrame(scrollLoop);
+        }
+
+        // Setup inicial
+        scrollText.style.top = position + 'px';
+    </script>
+        <!-- Supabase SDK e Autenticao -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+

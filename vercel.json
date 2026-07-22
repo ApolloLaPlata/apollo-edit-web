@@ -1,7 +1,7 @@
 {
   "framework": null,
   "buildCommand": null,
-  "outputDirectory": ".",
+  "outputDirectory": "public",
   "redirects": [
     {
       "source": "/web_ui/(.*)",

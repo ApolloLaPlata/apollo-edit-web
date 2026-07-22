@@ -1,0 +1,61 @@
+{
+  "app_info": {
+    "name": "Descarga News Editor",
+    "version": "1.0.0",
+    "description": "Editor de vídeo automatizado para o canal Descarga News"
+  },
+  "personagens": {
+    "Rafael Descargas": {
+      "video_source": "../Midias\\Personagens\\Rafael Descarga\\RAFAEL_DESCARGA_NORMAL.mp4",
+      "vozes_voicemaker": "proplus-DJ_Jax",
+      "posicao_pip": {
+        "x": 25,
+        "y": "bottom",
+        "offset": 25,
+        "escala": 0.25
+      }
+    }
+  },
+  "backgrounds": {
+    "Padrão": "../Midias\\BG PARA VIDEOS DO DESCARGA NEWS\\BG PARA VIDEOS DO DESCARGA NEWS_1.mp4"
+  },
+  "paths": {
+    "output_dir": "../Midias\\Outputs",
+    "temp_dir": "../Midias\\Temp",
+    "assets_dir": "../Midias"
+  },
+  "subtitles": {
+    "enabled": false,
+    "font_name": "Arial",
+    "font_size": 24,
+    "text_color": "#FFFFFF",
+    "outline_color": "#000000",
+    "outline": 2,
+    "shadow": 0,
+    "alignment": "Bottom-Center",
+    "margin_v": 20,
+    "margin_l": 20,
+    "margin_r": 20
+  },
+  "capa": {
+    "mode": "none",
+    "path_h": "",
+    "path_v": ""
+  },
+  "admin_config": {
+    "master_password": "ApolloAdmin2026",
+    "credit_prices": {
+      "chatgpt_message": 2,
+      "grok_search": 1,
+      "comfyui_image": 5,
+      "pexels_video": 1
+    }
+  },
+  "music_factory": {
+    "channel_context": "Este é um canal de instrumentais e beats. As músicas não possuem vocais. O objetivo é vender o beat na BeatStars.",
+    "metadata_example": "Title: [Original Name] | Type Beat\\nDescription: Buy this beat on BeatStars! Link: https://beatstars.com/meucanal\\nTags: type beat, instrumental"
+  },
+  "shortcuts": {},
+  "perfis_diretor": {},
+  "whatsapp_group_id": "120363427510210808@g.us"
+}

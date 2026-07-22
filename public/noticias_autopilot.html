@@ -1,0 +1,272 @@
+﻿﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="latin-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Edit Web - Piloto Automático</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <style>
+        /* Background animado imersivo para o AutoPilot */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #0f172a, #3b0764, #000000, #1e1b4b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .autopilot-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            padding: 30px;
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        .chat-section {
+            flex: 2;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--btn-purple, #8b5cf6);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+        }
+
+        .config-section {
+            flex: 1;
+            background: rgba(20, 20, 20, 0.9);
+            border-left: 4px solid var(--btn-yellow, #facc15);
+            border-radius: 20px;
+            padding: 25px;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+        }
+
+        .chat-header {
+            background: var(--btn-purple, #8b5cf6);
+            padding: 20px;
+            text-align: center;
+            font-family: 'Bangers', cursive;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 2px;
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg-ai {
+            background: #2a2a2a;
+            border-left: 5px solid var(--btn-purple, #8b5cf6);
+            padding: 15px;
+            border-radius: 12px;
+            width: 80%;
+            align-self: flex-start;
+        }
+
+        .msg-user {
+            background: var(--btn-blue, #3b82f6);
+            padding: 15px;
+            border-radius: 12px;
+            width: 80%;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 20px;
+            background: #111;
+            border-top: 1px solid #333;
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #444;
+            background: #222;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .chat-input-area button {
+            background: var(--btn-green, #10b981);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            transform: scale(1.05);
+        }
+
+        .config-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            color: var(--btn-yellow, #facc15);
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px dashed #444;
+            padding-bottom: 10px;
+        }
+
+        .config-group {
+            margin-bottom: 20px;
+            background: #222;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+
+        .config-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ddd;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            font-weight: normal;
+        }
+
+        .checkbox-label input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .return-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--btn-red);
+            color: white;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Bangers';
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10000;
+            text-decoration: none;
+        }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <a href="noticias.html" class="return-btn">⬅ VOLTAR AO HUB</a>
+
+    <div class="autopilot-container">
+        <!-- CHAT PRINCIPAL -->
+        <div class="chat-section">
+            <div class="chat-header">✈️ PILOTO AUTOMÁTICO IA</div>
+            <div class="chat-history" id="main-chat-history">
+                <div class="msg-ai">
+                    <strong style="color:var(--btn-yellow); display:block; margin-bottom:5px;">🤖 Copiloto Supremo</strong>
+                    Olá! Bem-vindo ao modo de delegação total. Preencha suas configurações no painel ao lado e me diga o que você quer produzir hoje.
+                    <br><br>
+                    Lembre-se: Isso custará <strong>Combustível</strong>, mas eu farei todo o trabalho chato por você (pesquisa, roteiro, geração, montagem na timeline e finalização).
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="autopilot-input" placeholder="Ex: Gere um vídeo de 1 min sobre dicas de finanças usando o Template 1...">
+                <button onclick="sendAutoPilotMessage()">ENVIAR INSTRUÇÃO</button>
+            </div>
+        </div>
+
+        <!-- PAINEL DE CONFIGURAÇÕES -->
+        <div class="config-section">
+            <div class="config-title">⚙️ REGRAS DO DIRETOR</div>
+            
+            <div class="config-group">
+                <label>Voz e Áudio</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-narration" checked> Incluir Narração Inteligente</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-lipsync"> Ativar Lip Sync Dinâmico (Custo Extra)</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-bgm" checked> Inserir Trilha Sonora (Automático)</label>
+            </div>
+
+            <div class="config-group">
+                <label>Perfil de Identidade Visual (Templates)</label>
+                <select style="width:100%; padding:10px; background:#111; color:#fff; border:1px solid #555; border-radius:8px; margin-bottom:10px;">
+                    <option>Canal: Curiosidades Sombrias</option>
+                    <option>Canal: Dicas de Finanças</option>
+                    <option>Canal: Genérico</option>
+                </select>
+                
+                <label class="checkbox-label"><input type="checkbox" id="cfg-temp1" checked> Usar Template 1 (Intro)</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-temp2" checked> Usar Template 2 (Corpo)</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-temp3"> Usar Template 3 (Especial)</label>
+            </div>
+
+            <div class="config-group">
+                <label>Estilo de B-Roll (Geração/Busca)</label>
+                <label class="checkbox-label"><input type="radio" name="broll" value="ai" checked> Gerar Imagens 100% via IA</label>
+                <label class="checkbox-label"><input type="radio" name="broll" value="stock"> Buscar Banco de Imagens (Pexels/Pixabay)</label>
+                <label class="checkbox-label"><input type="radio" name="broll" value="mixed"> Híbrido (IA + Banco de Imagens)</label>
+            </div>
+
+            <button onclick="saveAutoPilotConfig()" style="width:100%; background:var(--btn-yellow, #facc15); color:#000; border:none; padding:15px; font-family:'Bangers'; font-size:1.5rem; border-radius:12px; cursor:pointer;">💾 SALVAR PERFIL</button>
+        </div>
+    </div>
+
+    <script src="autopilot_logic.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_tour.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+
+

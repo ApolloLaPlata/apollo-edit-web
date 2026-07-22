@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="global_style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Sala de Roteiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Bangers&family=Nunito:wght@400;800&display=swap" rel="stylesheet">
+    <!-- JSZip via CDN para funcionalidade de Exportação -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        .layout-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1600px;
+            height: calc(100vh - 120px);
+            margin: 0 auto;
+            flex-direction: column;
+        }
+
+        @media (min-width: 1024px) {
+            .layout-container {
+                flex-direction: row;
+            }
+        }
+
+        /* PAINEL ESQUERDO */
+        .left-panel {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* ABAS SUPERIORES */
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: #1e293b;
+            padding: 8px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        @media (min-width: 1200px) {
+            .tabs { grid-template-columns: repeat(5, 1fr); }
+        }
+
+        .tab-btn {
+            padding: 10px 5px;
+            background: transparent;
+            color: #94a3b8;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tab-btn:hover { background: #334155; color: white; }
+        .tab-btn.active { background: #8b5cf6; color: white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+        .tab-btn.active-veo { background: #4f46e5; border: 1px solid #818cf8; color: white; }
+
+        .tab-content { display: none; flex-direction: column; gap: 15px; flex-grow: 1; }
+        .tab-content.active { display: flex; }
+
+        /* INPUTS GERAIS */
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 0.8rem; color: #94a3b8; font-weight: bold; }
+        .input-group textarea, .input-group input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            resize: none;
+        }
+        .input-group textarea:focus { border-color: #8b5cf6; }
+
+        /* UPLOAD */
+        .ref-upload {
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(30, 41, 59, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            position: relative;
+        }
+        .ref-upload:hover { border-color: #8b5cf6; }
+        .ref-upload img { max-height: 150px; border-radius: 8px; display: none; }
+        
+        /* BOTÕES DE AÇÃO */
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(109, 40, 217, 0.4);
+            transition: all 0.2s;
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-action:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(109, 40, 217, 0.6); }
+        .btn-action:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+        
+        .btn-veo { background: linear-gradient(135deg, #4f46e5, #3730a3); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); }
+        .btn-veo:hover:not(:disabled) { box-shadow: 0 10px 25px rgba(79, 70, 229, 0.6); }
+
+        /* PAINEL DIREITO (Resultado) */
+        .right-panel {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(5px);
+            padding: 20px;
+        }
+
+        .result-box {
+            flex-grow: 1;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            color: #cbd5e1;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        .btn-copy {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-copy:hover { background: #475569; }
+        .btn-copy.copied { background: #22c55e; }
+
+        .loading-text {
+            color: #a78bfa;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 20px; height: 20px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* CHECKBOX CUSTOMIZADO */
+        .custom-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .custom-check:hover { background: #334155; }
+        .custom-check.checked { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
+        .check-box {
+            width: 20px; height: 20px;
+            border: 2px solid #475569;
+            border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .custom-check.checked .check-box { background: #8b5cf6; border-color: #8b5cf6; }
+
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+    
+    <header style="padding: 10px 20px;">
+        <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;">
+                <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+            </a>
+            <span class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 4px 8px; border-radius: 4px;">Roteiro</span>
+            <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+                <span class="gas-icon"></span>
+                <strong id="user-credits">...</strong>&nbsp;<span>Gasolina</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="workspace" style="padding: 20px; overflow: hidden;">
+        
+        <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
+            <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="font-size:2.5rem;">📖</span> SALA DE ROTEIRO
+            </h3>
+            <p style="color: #94a3b8; margin-top: 5px;">Converta textos em prompts, extraia estilos de imagens e prepare exportações para vídeo.</p>
+        </div>
+
+        <div class="layout-container">
+            
+            <!-- Esquerda: Inputs & Abas -->
+            <div class="left-panel">
+                
+                <div class="tabs">
+                    <button class="tab-btn active" data-target="tab-enhancer">✨<br>Refinador</button>
+                    <button class="tab-btn" data-target="tab-script">📜<br>Roteiro</button>
+                    <button class="tab-btn" data-target="tab-style">👁️<br>Estilos</button>
+                    <button class="tab-btn" data-target="tab-motion">🎬<br>Animador</button>
+                    <button class="tab-btn" data-target="tab-veo" style="color:#a5b4fc;">📥<br>Exportar VEO</button>
+                </div>
+
+                <!-- CONTEÚDO DAS ABAS -->
+                
+                <!-- ABA 1: Refinador -->
+                <div id="tab-enhancer" class="tab-content active">
+                    <div class="input-group" style="flex-grow: 1;">
+                        <label>1. Conceito / Ideia Base</label>
+                        <textarea id="enhancer-prompt" placeholder="Ex: Um cavaleiro lutando contra um dragão na chuva..." style="min-height: 100px;"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>2. Estilo Visual (Opcional)</label>
+                        <textarea id="enhancer-style" placeholder="Ex: Cyberpunk Neon, Pintura a Óleo..." style="min-height: 60px;"></textarea>
+                    </div>
+                    <button class="btn-action" id="btn-run-enhancer">✨ Mesclar Estilo & Gerar Prompt</button>
+                </div>
+
+                <!-- ABA 2: Roteiro (Quebrador de Texto) -->
+                <div id="tab-script" class="tab-content">
+                    <div class="input-group" style="flex-grow: 1;">
+                        <label>Texto Narrativo / História do Livro</label>
+                        <textarea id="script-text" placeholder="Cole aqui um parágrafo da sua história. A IA criará cenas e identificará as tags." style="min-height: 180px;"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Estilo Global para as Cenas</label>
+                        <input type="text" id="script-style" placeholder="Ex: Fantasia, HDR...">
+                    </div>
+                    <button class="btn-action" id="btn-run-script">📜 Converter em Lista de Prompts</button>
+                </div>
+
+                <!-- ABA 3: Estilos -->
+                <div id="tab-style" class="tab-content">
+                    <p style="color: #94a3b8; font-size: 0.85rem;">Faça upload de uma imagem para a IA analisar e extrair o estilo de arte, iluminação e traço (ignorando a pessoa em si).</p>
+                    <div class="ref-upload" id="style-dropzone">
+                        <span id="style-placeholder" style="font-size:3rem; opacity:0.5;">🖼️</span>
+                        <span style="color:#64748b; margin-top:10px;">Clique ou Arraste a Imagem</span>
+                        <img id="style-preview">
+                        <button class="btn-remove-ref" id="btn-remove-style" style="top:10px; right:10px; padding:5px; font-size:12px;">X</button>
+                        <input type="file" id="style-file" accept="image/*" style="display: none;">
+                    </div>
+                    <button class="btn-action" id="btn-run-style" disabled>👁️ Extrair Estilo Visual</button>
+                </div>
+
+                <!-- ABA 4: Animador -->
+                <div id="tab-motion" class="tab-content">
+                    <p style="color: #94a3b8; font-size: 0.85rem;">Cole prompts de imagem (um por linha) para a IA reescrevê-los como prompts de VÍDEO ANIMADO com instruções de câmera.</p>
+                    <div class="input-group" style="flex-grow: 1;">
+                        <label>Lista de Prompts (Img) - Um por linha</label>
+                        <textarea id="motion-prompts" placeholder="#Heroi parado na chuva\nCarro futurista voando..." style="min-height: 200px; font-family: monospace;"></textarea>
+                    </div>
+                    <button class="btn-action" id="btn-run-motion">🎬 Gerar Prompts de Animação</button>
+                </div>
+
+                <!-- ABA 5: VEO -->
+                <div id="tab-veo" class="tab-content">
+                    <div style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); padding: 15px; border-radius: 8px; color: #a5b4fc; font-size: 0.85rem;">
+                        <strong>Auto VEO Anti-Censura:</strong> Cole os prompts da sua história contendo tags reais (ex: <code>#Lula</code>). A IA trocará por <code>#Personagem1</code>, escreverá um prompt genérico, e fará o Download do ZIP contendo a Foto Guia que será lida pela Extensão VEO.
+                    </div>
+                    <div class="input-group" style="flex-grow: 1; margin-top: 10px;">
+                        <label>Prompts de Cena com Tags</label>
+                        <textarea id="veo-text" placeholder="#ElonMusk pilotando um foguete vermelho..." style="min-height: 150px; font-family: monospace;"></textarea>
+                    </div>
+                    
+                    <div class="custom-check checked" id="check-veo-video">
+                        <div class="check-box">✔</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <strong style="color:white; font-size: 0.9rem;">Gerar Prompts de Vídeo Extra</strong>
+                            <span style="font-size: 0.7rem; color: #94a3b8;">Também gera versão de animação no ZIP</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-action btn-veo" id="btn-run-veo">📥 Processar & Baixar ZIP</button>
+                </div>
+
+            </div>
+
+            <!-- Direita: Viewer -->
+            <div class="right-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: white; margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                        <span>📝</span> Resultado Gerado
+                    </h3>
+                    <div id="output-loading" class="loading-text" style="display: none;">
+                        <div class="spinner"></div> Processando IA... <span id="output-progress" style="font-size:0.8rem; margin-left:5px;"></span>
+                    </div>
+                </div>
+
+                <div class="result-box" id="result-box">
+                    <div style="opacity: 0.3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 15px;">
+                        <span style="font-size: 3rem;">🤖</span>
+                        <span id="result-placeholder-text">Aguardando instruções na Sala de Roteiro...</span>
+                    </div>
+                </div>
+                
+                <button class="btn-copy" id="btn-copy" style="display: none;">Copiar</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="bg_parallax.js"></script>
+    <script src="laplata_ai.js"></script>
+    <script src="laplata_script.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

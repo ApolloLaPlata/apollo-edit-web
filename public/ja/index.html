@@ -1,0 +1,129 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Visual Studio — Template Creator</title>
+<link href="favicon.png?v=3" rel="icon" type="image/png"/>
+<link href="../styles.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="app-container">
+ Sidebar Esquerda: Camadas 
+<aside class="sidebar">
+<div class="sidebar-header">
+<h2>🚀 Apollo Edit</h2>
+<p>Ecossistema Web de Produção</p>
+<div style="display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap;">
+<a class="btn primary mini" href="index.html" style="flex:1; text-decoration: none;">🎨 Estúdio</a>
+<a class="btn outline mini" href="diretor.html" style="flex:1; text-decoration: none;">🎬 Diretor</a>
+<a class="btn outline mini" href="timeline.html" style="flex:1; text-decoration: none;">✂️ Timeline</a>
+<a class="btn outline mini" href="config.html" style="flex:1 1 100%; text-decoration: none;">⚙️ Configurações</a>
+</div>
+</div>
+ Formato 
+<div class="panel">
+<h3>📐 Formato do Projeto</h3>
+<div class="radio-group">
+<input checked="" id="fmt_vert" name="canvas_format" type="radio" value="vertical"/>
+<label for="fmt_vert">📱 Vertical (9:16)</label>
+<input id="fmt_horiz" name="canvas_format" type="radio" value="horizontal"/>
+<label for="fmt_horiz">🖥️ Horizontal (16:9)</label>
+</div>
+</div>
+ Legenda de Tipo de Camada 
+<div class="panel legend-panel">
+<div class="legend-item"><span class="legend-dot fixed"></span> <b>FIXO</b> — Path salvo no perfil (bg, moldura)</div>
+<div class="legend-item"><span class="legend-dot variable"></span> <b>VARIÁVEL</b> — Só posição salva (narrador, vídeo base)</div>
+</div>
+ Camadas geradas por JS 
+<div class="layers-container" id="layers-container"></div>
+ Botão de adicionar camada extra 
+<div style="padding: 10px 16px;">
+<button class="btn secondary" id="btn-add-layer" style="width:100%; margin-bottom: 5px;">➕ Camada de Imagem Fixa</button>
+<div style="display:flex; flex-wrap:wrap; gap: 5px;">
+<button class="btn outline mini" id="btn-add-wave" style="flex:1 1 45%; border-color: #ec4899; color: #ec4899;" title="Adicionar Onda Sonora">🎵 Onda</button>
+<button class="btn outline mini" id="btn-add-title" style="flex:1 1 45%; border-color: #eab308; color: #eab308;" title="Adicionar Título da Música">🎵 Título</button>
+<button class="btn outline mini" id="btn-add-prog" style="flex:1 1 45%; border-color: #ef4444; color: #ef4444;" title="Adicionar Barra de Progresso">🎵 Barra</button>
+<button class="btn outline mini" id="btn-add-capa" style="flex:1 1 45%; border-color: #8b5cf6; color: #8b5cf6;" title="Adicionar Capa da Música">🎵 Capa</button>
+</div>
+</div>
+</aside>
+ Canvas Central 
+<main class="workspace">
+<div class="canvas-wrapper" id="canvas-wrapper">
+ Espaço virtual invisível para criar scroll infinito 
+<div class="virtual-space"></div>
+<div id="canvas-scaler">
+<div class="canvas vertical" id="render-canvas">
+<div class="canvas-guide">Tela: 1080x1920</div>
+</div>
+</div>
+</div>
+</main>
+ Painel Direito: Salvar/Carregar 
+<aside class="right-panel">
+ Controle de Zoom e Dicas (Movido da barra superior) 
+<div class="panel">
+<h3>🔍 Visualização &amp; Controles</h3>
+<div class="zoom-controls" style="margin-bottom: 10px;">
+<span>Zoom: </span>
+<input id="workspace-zoom" max="150" min="10" style="flex:1;" type="range" value="35"/>
+<span id="zoom-val" style="min-width: 35px;">35%</span>
+<button class="btn-mini" id="btn-fit" style="margin-left: 5px;">🔲 Ajustar</button>
+</div>
+<div style="font-size: 0.75rem; color: #94a3b8; line-height: 1.4; background: #0f172a; padding: 6px; border-radius: 4px; border: 1px solid #334155;">
+<b>Navegação:</b> Ctrl+Scroll (Zoom) | Espaço+Arraste (Mover a tela)<br/>
+<b>Objetos:</b> 🖱 Centro (Mover) | ↘ Canto (Escala) | ▶ Lados (Amassar)
+                </div>
+</div>
+<div class="panel highlight">
+<h3>💾 Salvar Template</h3>
+<div class="input-group">
+<label>Nome do Perfil:</label>
+<input id="profile-name" placeholder="ex: perfil_descarga_tv" type="text"/>
+</div>
+<button class="btn primary" id="btn-save">💾 Salvar no Apollo</button>
+</div>
+<div class="panel">
+<h3>📂 Carregar Existente</h3>
+<div class="input-group">
+<select id="profile-list">
+<option value="">Selecione um perfil...</option>
+</select>
+</div>
+<button class="btn secondary" id="btn-load">📂 Carregar Perfil</button>
+</div>
+ GESTÃO DE TEMPLATES INLINE 
+<div class="panel" id="panel-gestao" style="border-top: 3px solid #8b5cf6; padding-top: 14px;">
+<h3>🗂️ Gestão de Templates</h3>
+ Preview do template selecionado 
+<div id="template-preview-box" style="width: 100%; height: 160px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden;">
+<span style="color: #475569; font-size: 0.82rem;">Sem preview...<br/><small>Selecione um perfil acima</small></span>
+</div>
+ Nome selecionado 
+<p id="selected-profile-name" style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-bottom: 8px; font-style: italic;">Nenhum perfil selecionado</p>
+ Botões de ação 
+<button class="btn secondary" id="btn-rename-profile" style="width: 100%; margin-bottom: 6px;">✏️ Renomear Perfil</button>
+<button class="btn secondary" id="btn-delete-profile" style="width: 100%; border-color: #ef4444; color: #ef4444;">🗑️ Excluir Perfil</button>
+</div>
+<div class="panel instructions">
+<h3>ℹ️ Guia Rápido</h3>
+<ul>
+<li>🔵 <b>Fixo</b> = Preencha o path (salvo no perfil)</li>
+<li>🟠 <b>Variável</b> = Só posicione (path não salvo)</li>
+<li>👁 Clique no 👁 para ver thumbnail do arquivo</li>
+<li>↔ Arraste o <b>lado</b> para amassar/esticar</li>
+<li>↘ Arraste o <b>canto</b> para escala proporcional</li>
+<li>✅ Chroma Key = fundo verde removido no render</li>
+<li>🎲 Sortear = trecho aleatório do vídeo longo</li>
+</ul>
+</div>
+</aside>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="../app.js?v=7"></script>
+</body>
+</html>

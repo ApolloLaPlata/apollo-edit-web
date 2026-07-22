@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding-bottom: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+    <h2 style="color: var(--accent);">🎬 Transition — Adicionar Transições e Logomarcas</h2>
+</div>
+
+<div style="display: flex; gap: 20px; height: calc(100vh - 200px);">
+
+    <!-- LEFT: Seleção de Vídeos -->
+    <div class="group-box" style="flex: 2; display: flex; flex-direction: column;">
+        <div class="group-title">📁 Seleção de Vídeos</div>
+        
+        <button class="btn primary" style="margin-bottom: 10px;" onclick="browseMultipleVideos()">
+            📂 Selecionar Vídeos
+        </button>
+        
+        <label style="color: #aaa; font-size: 12px; margin-bottom: 8px;">Vídeos Selecionados:</label>
+        
+        <div id="video-list" style="flex: 1; overflow-y: auto; background: #111; border: 1px solid #333; border-radius: 5px; padding: 10px; min-height: 300px;">
+            <div style="color: #555; text-align: center; margin-top: 80px;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🎬</div>
+                Nenhum vídeo selecionado.<br>
+                Clique em "Selecionar Vídeos" para começar.
+            </div>
+        </div>
+
+        <button class="btn" style="margin-top: 10px; background: #5a1a1a; border-color: #c0392b;" onclick="clearVideoList()">
+            🗑️ Limpar Seleção
+        </button>
+    </div>
+
+    <!-- RIGHT: Configurações -->
+    <div class="group-box" style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+        <div class="group-title">⚙️ Configurações</div>
+        
+        <div>
+            <label style="color: #aaa; font-size: 12px; display: block; margin-bottom: 8px;">📐 Formato:</label>
+            <div style="display: flex; gap: 15px;">
+                <label><input type="radio" name="trans_formato" value="horizontal" checked> Horizontal</label>
+                <label><input type="radio" name="trans_formato" value="vertical"> Vertical</label>
+            </div>
+        </div>
+        
+        <div>
+            <label style="color: #aaa; font-size: 12px; display: block; margin-bottom: 8px;">🎬 Tipo de Processamento:</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label><input type="radio" name="trans_tipo" value="transicao" checked> Transição (2s)</label>
+                <label><input type="radio" name="trans_tipo" value="logomarca"> Logomarca com CTA (2s)</label>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid #333; padding-top: 15px;">
+            <label style="color: #aaa; font-size: 12px; display: block; margin-bottom: 5px;">📁 Pasta de Transições Horizontal:</label>
+            <input type="text" style="width: 100%; font-size: 11px;" value="G:\YOUTUBE\DESCARGA NEWS NOTICIAS\Imagens Transição\HORIZONTAL" readonly>
+            <label style="color: #aaa; font-size: 12px; display: block; margin-top: 8px; margin-bottom: 5px;">📁 Pasta de Transições Vertical:</label>
+            <input type="text" style="width: 100%; font-size: 11px;" value="G:\YOUTUBE\DESCARGA NEWS NOTICIAS\Imagens Transição\VERTICAL" readonly>
+        </div>
+
+        <button class="btn primary" style="padding: 12px; font-size: 16px; margin-top: auto;">
+            🚀 Processar Vídeos
+        </button>
+        
+        <div id="trans-status" style="color: #888; font-size: 12px; text-align: center;">
+            Status: Aguardando seleção de vídeos...
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedVideos = [];
+
+    async function browseMultipleVideos() {
+        try {
+            const response = await fetch('/api/browse_file?type=video&multiple=true');
+            const data = await response.json();
+            if (data.paths && data.paths.length > 0) {
+                data.paths.forEach(p => {
+                    if (!selectedVideos.includes(p)) selectedVideos.push(p);
+                });
+            } else if (data.path) {
+                if (!selectedVideos.includes(data.path)) selectedVideos.push(data.path);
+            }
+            renderVideoList();
+        } catch(e) { console.error(e); }
+    }
+
+    function renderVideoList() {
+        const list = document.getElementById('video-list');
+        if (selectedVideos.length === 0) {
+            list.innerHTML = '<div style="color:#555; text-align:center; margin-top:80px;"><div style="font-size:32px; margin-bottom:10px;">🎬</div>Nenhum vídeo selecionado.</div>';
+            return;
+        }
+        list.innerHTML = selectedVideos.map((p, i) => `
+            <div style="display:flex; align-items:center; gap:10px; padding:8px; border:1px solid #333; border-radius:4px; margin-bottom:5px; background:#1a1a1a;">
+                <span style="color:#0af; font-size:20px;">🎬</span>
+                <span style="flex:1; font-size:11px; word-break:break-all;">${p.split('\\').pop()}</span>
+                <button onclick="removeVideo(${i})" style="background:transparent; border:none; color:#c0392b; cursor:pointer; font-size:16px;">✕</button>
+            </div>
+        `).join('');
+        document.getElementById('trans-status').textContent = `Status: ${selectedVideos.length} vídeo(s) selecionado(s)`;
+    }
+
+    function removeVideo(index) {
+        selectedVideos.splice(index, 1);
+        renderVideoList();
+    }
+
+    function clearVideoList() {
+        selectedVideos = [];
+        renderVideoList();
+    }
+</script>
+{% endblock %}

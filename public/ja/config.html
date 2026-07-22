@@ -1,0 +1,216 @@
+html
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chaves da Oficina — Apollo Edit Pro</title>
+<link href="favicon.png" rel="icon" type="image/png"/>
+<link href="../global_style.css" rel="stylesheet"/>
+<style>
+        .config-layout {
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .settings-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .form-group input {
+            width: 100%;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-help {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header>
+ Logo e Créditos 
+<div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" data-i18n="config.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">Oficina de Chaves</span>
+<div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+<span class="gas-icon"></span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+</div>
+</div>
+<div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+<div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuário Pro</span>
+</div>
+<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+</div>
+</header>
+<div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+<span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+</div>
+<div class="config-layout">
+ MODO CLOUD (CASUAL) 
+<div id="cloud-settings" style="display: none;">
+<h2 style="margin-bottom: 10px; color: var(--text-main);">Minha Conta (Nuvem)</h2>
+<p style="color: var(--text-muted); margin-bottom: 30px;">Gerencie sua assinatura, saldo de Gasolina e integrações sociais.</p>
+<div class="settings-card" style="border-color: var(--btn-yellow);">
+<h3 style="color: var(--btn-yellow); margin-top: 0; margin-bottom: 15px;">Assinatura Apollo Pro</h3>
+<p style="font-size: 0.9rem; color: #ccc;">Você está no plano <strong>Freemium</strong>. Assine para ganhar Gasolina Infinita.</p>
+<button class="btn yellow" style="margin-top: 10px;">Fazer Upgrade (R$ 49/mês)</button>
+</div>
+<div class="settings-card">
+<h3 style="color: var(--text-main); margin-top: 0; margin-bottom: 15px;">Integrações Sociais</h3>
+<div class="form-group">
+<label>Vincular Conta do Discord</label>
+<button class="btn" style="background: #5865F2;">👾 Conectar Discord</button>
+<div class="form-help">Ganhe 500L de Gasolina ao conectar!</div>
+</div>
+<div class="form-group">
+<label>Vincular Conta do YouTube</label>
+<button class="btn" style="background: #FF0000;">▶ Conectar YouTube</button>
+<div class="form-help">Permite publicação automática direto do Diretor.</div>
+</div>
+</div>
+</div>
+ MODO LOCAL (HACKER) 
+<div id="local-settings" style="display: none;">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px;">
+<h2 style="margin: 0; color: #10B981;">⚡ Oficina Hacker (Modo Pro)</h2>
+<span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem;">Custos Zerados</span>
+</div>
+<p data-i18n="config.byok_desc" style="color: var(--text-muted); margin-bottom: 30px;">Conecte seu servidor local e traga suas próprias chaves de API. O Apollo usará elas diretamente e você gastará Gasolina quase zero para gerar os vídeos.</p>
+<div class="settings-card" style="border-color: #10B981; box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.1);">
+<h3 style="color: #10B981; margin-top: 0; margin-bottom: 15px;">🔌 Conexão de Servidor Local (Pinokio)</h3>
+<div class="form-group">
+<label>Endereço IP do Servidor RVC Local</label>
+<input id="ip-pinokio-rvc" placeholder="http://127.0.0.1:4000" type="text"/>
+<div class="form-help">Para dublagem sem custo de API Nuvem.</div>
+</div>
+<div class="form-group">
+<label>Endereço IP do ComfyUI Local</label>
+<input id="ip-pinokio-comfy" placeholder="http://127.0.0.1:8188" type="text"/>
+<div class="form-help">Para geração de imagem B-Roll sem usar OpenRouter.</div>
+</div>
+<h3 style="color: #10B981; margin-top: 25px; margin-bottom: 15px;">🌐 Ferramentas Externas Python (Iframe)</h3>
+<div class="form-group">
+<label>URL do Gerador de Histórias</label>
+<input id="ip-plugin-story" placeholder="http://127.0.0.1:5000" type="text"/>
+<div class="form-help">Endereço do seu app Python de histórias. Será carregado na Aba Web.</div>
+</div>
+<div class="form-group">
+<label>URL do Gerador de Notícias</label>
+<input id="ip-plugin-news" placeholder="http://127.0.0.1:5001" type="text"/>
+<div class="form-help">Endereço do seu app Python de notícias. Será carregado na Aba Web.</div>
+</div>
+</div>
+<div class="settings-card">
+<h3 data-i18n="config.byok_title" style="color: var(--text-main); margin-top: 0; margin-bottom: 15px;">Cofre de Chaves (BYOK)</h3>
+<div class="form-group">
+<label data-i18n="config.openrouter">Chave OpenRouter (Modelos IA)</label>
+<input id="key-openrouter" placeholder="sk-or-v1-xxxxxxxxxxxxxxxxx" type="password"/>
+<div class="form-help" data-i18n="config.openrouter_help">Usado para gerador de histórias e transcrição.</div>
+</div>
+<div class="form-group">
+<label data-i18n="config.pixabay">Chave Pixabay (Imagens/Vídeos)</label>
+<input id="key-pixabay" placeholder="xxxxxxxx-xxxxxxxxxxxxxxxxx" type="password"/>
+<div class="form-help" data-i18n="config.pixabay_help">Banco de imagens e vídeos B-Roll de graça.</div>
+</div>
+<div class="form-group">
+<label data-i18n="config.elevenlabs">Chave ElevenLabs (Vozes Premium)</label>
+<input id="key-elevenlabs" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxx" type="password"/>
+<div class="form-help" data-i18n="config.elevenlabs_help">Opcional. Se não preencher, usará o TTS Local do Apollo.</div>
+</div>
+</div>
+<div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+<button class="btn primary" data-i18n="config.save_keys" onclick="saveKeys()">Salvar Chaves no Cofre</button>
+</div>
+</div>
+</div>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mode = localStorage.getItem('apollo_user_mode') || 'cloud';
+            
+            if (mode === 'local') {
+                document.getElementById('local-settings').style.display = 'block';
+            } else {
+                document.getElementById('cloud-settings').style.display = 'block';
+            }
+
+            const openRouterKey = localStorage.getItem('apollo_openrouter_key');
+            if(openRouterKey) {
+                document.getElementById('key-openrouter').value = openRouterKey;
+            }
+            
+            const rvcIp = localStorage.getItem('apollo_pinokio_rvc');
+            if(rvcIp) document.getElementById('ip-pinokio-rvc').value = rvcIp;
+            
+            const comfyIp = localStorage.getItem('apollo_pinokio_comfy');
+            if(comfyIp) document.getElementById('ip-pinokio-comfy').value = comfyIp;
+
+            const pluginStory = localStorage.getItem('apollo_plugin_story_url');
+            if(pluginStory) document.getElementById('ip-plugin-story').value = pluginStory;
+
+            const pluginNews = localStorage.getItem('apollo_plugin_news_url');
+            if(pluginNews) document.getElementById('ip-plugin-news').value = pluginNews;
+        });
+
+        function saveKeys() {
+            const orKey = document.getElementById('key-openrouter').value;
+            if(orKey) localStorage.setItem('apollo_openrouter_key', orKey);
+            else localStorage.removeItem('apollo_openrouter_key');
+            
+            const rvc = document.getElementById('ip-pinokio-rvc').value;
+            if(rvc) localStorage.setItem('apollo_pinokio_rvc', rvc);
+            
+            const comfy = document.getElementById('ip-pinokio-comfy').value;
+            if(comfy) localStorage.setItem('apollo_pinokio_comfy', comfy);
+
+            const pluginStory = document.getElementById('ip-plugin-story').value;
+            if(pluginStory) localStorage.setItem('apollo_plugin_story_url', pluginStory);
+
+            const pluginNews = document.getElementById('ip-plugin-news').value;
+            if(pluginNews) localStorage.setItem('apollo_plugin_news_url', pluginNews);
+
+            alert('Chaves, Conexões Locais e Ferramentas Externas salvas com sucesso no cofre!');
+        }
+    </script>
+</body>
+</html>

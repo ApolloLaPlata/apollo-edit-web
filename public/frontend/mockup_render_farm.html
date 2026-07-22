@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup Mecânica: Render Farm Simutânea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0A0612;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            padding: 40px;
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+        }
+
+        /* O item arrastável que simula uma Receita ou Vídeo */
+        .draggable-item {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #8B5CF6, #D946EF);
+            border: 2px solid #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 0 #000;
+            cursor: grab;
+            box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        /* O painel da Render Farm */
+        .render-farm-panel {
+            background: #1A1332;
+            border: 2px solid #4a2b6e;
+            border-radius: 16px;
+            padding: 20px;
+            width: 500px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .rf-title {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            color: #F59E0B;
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+
+        .rf-slot {
+            background: rgba(0,0,0,0.5);
+            border: 2px dashed #64748b;
+            border-radius: 8px;
+            height: 80px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rf-slot.unlocked {
+            border-color: #3B82F6;
+        }
+
+        .rf-slot.locked {
+            border-color: #333;
+            background: rgba(0,0,0,0.8);
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        /* Feedbacks de Drag and Drop */
+        .rf-slot.drag-over-valid {
+            border-color: #10B981 !important;
+            background: rgba(16, 185, 129, 0.2) !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .rf-slot.drag-over-invalid {
+            border-color: #EF4444 !important;
+            background: rgba(239, 68, 68, 0.2) !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .lock-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .pro-badge {
+            background: #D946EF;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+
+        .slot-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .slot-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* Barra de Progresso Interna */
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #000;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #333;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3B82F6, #10B981);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        .status-text {
+            font-size: 0.7rem;
+            color: #10B981;
+            margin-top: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+
+    <!-- A Mídia sendo arrastada -->
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+        <h2 style="font-family: 'Bangers'; letter-spacing: 1px;">Área de Transferência</h2>
+        <div class="draggable-item" draggable="true" id="receita-item">
+            RECEITA VIRAL
+        </div>
+        <p style="color: #94A3B8; text-align: center; font-size: 0.8rem; max-width: 200px;">
+            Arraste esta caixa para os slots ao lado para ver a mecânica em ação.
+        </p>
+    </div>
+
+    <!-- O Painel da Fábrica -->
+    <div class="render-farm-panel">
+        <h2 class="rf-title">Fábrica de Vídeos</h2>
+
+        <!-- Slot 1: Desbloqueado -->
+        <div class="rf-slot unlocked" id="slot-1">
+            <div class="slot-content">
+                <span class="slot-title" style="color: #3B82F6;">Linha de Montagem 1</span>
+                <span style="font-size: 0.8rem; color: #cbd5e1;">Aguardando missão...</span>
+            </div>
+        </div>
+
+        <!-- Slot 2: Bloqueado (Conta Free) -->
+        <div class="rf-slot locked" id="slot-2">
+            <span class="pro-badge">PRO</span>
+            <span class="lock-icon">🔒</span>
+            <div class="slot-content">
+                <span class="slot-title">Linha de Montagem 2</span>
+                <span style="font-size: 0.8rem;">Atualize para desbloquear</span>
+            </div>
+        </div>
+
+        <!-- Slot 3: Bloqueado (Conta Free) -->
+        <div class="rf-slot locked" id="slot-3">
+            <span class="pro-badge">PRO</span>
+            <span class="lock-icon">🔒</span>
+            <div class="slot-content">
+                <span class="slot-title">Linha de Montagem 3</span>
+                <span style="font-size: 0.8rem;">Atualize para desbloquear</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const draggableItem = document.getElementById('receita-item');
+        const slots = document.querySelectorAll('.rf-slot');
+
+        // Drag Start
+        draggableItem.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', 'receita-viral');
+            setTimeout(() => {
+                draggableItem.style.opacity = '0.5';
+            }, 0);
+        });
+
+        // Drag End
+        draggableItem.addEventListener('dragend', () => {
+            draggableItem.style.opacity = '1';
+        });
+
+        // Iterar sobre todos os slots para configurar eventos
+        slots.forEach(slot => {
+            
+            // Drag Over (passando por cima)
+            slot.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Necessário para permitir o drop
+                
+                if (slot.classList.contains('unlocked')) {
+                    slot.classList.add('drag-over-valid');
+                } else if (slot.classList.contains('locked')) {
+                    slot.classList.add('drag-over-invalid');
+                }
+            });
+
+            // Drag Leave (saiu de cima)
+            slot.addEventListener('dragleave', () => {
+                slot.classList.remove('drag-over-valid');
+                slot.classList.remove('drag-over-invalid');
+            });
+
+            // Drop (soltou o item)
+            slot.addEventListener('drop', (e) => {
+                e.preventDefault();
+                slot.classList.remove('drag-over-valid');
+                slot.classList.remove('drag-over-invalid');
+
+                if (slot.classList.contains('locked')) {
+                    // Feedback de Erro: Tremidinha e Alerta de Monetização
+                    slot.style.transform = 'translateX(-10px)';
+                    setTimeout(() => slot.style.transform = 'translateX(10px)', 50);
+                    setTimeout(() => slot.style.transform = 'translateX(-10px)', 100);
+                    setTimeout(() => slot.style.transform = 'translateX(0)', 150);
+                    alert("⚠️ Assine o plano APOLLO PRO para renderizar múltiplos vídeos simultaneamente!");
+                    return;
+                }
+
+                if (slot.classList.contains('unlocked')) {
+                    // Sucesso! Inicia a barra de progresso
+                    startRenderMission(slot);
+                }
+            });
+        });
+
+        function startRenderMission(slot) {
+            // Impede iniciar se já estiver rolando
+            if (slot.querySelector('.progress-track')) return;
+
+            const content = slot.querySelector('.slot-content');
+            content.innerHTML = `
+                <span class="slot-title" style="color: #10B981;">Gerando Receita Viral...</span>
+                <div class="progress-track">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="status-text">Criando Roteiro IA...</div>
+            `;
+
+            const fill = slot.querySelector('.progress-fill');
+            const status = slot.querySelector('.status-text');
+            
+            let progress = 0;
+            
+            // Simulação de etapas (Mecânica viva)
+            const interval = setInterval(() => {
+                progress += 5;
+                fill.style.width = `${progress}%`;
+
+                if(progress === 30) status.innerText = 'Buscando Imagens de Fundo...';
+                if(progress === 60) status.innerText = 'Sintetizando Narração (TTS)...';
+                if(progress === 85) status.innerText = 'Renderizando Vídeo...';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    status.innerText = '✅ VÍDEO CONCLUÍDO!';
+                    status.style.color = '#F59E0B';
+                }
+            }, 300);
+        }
+    </script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

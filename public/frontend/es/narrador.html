@@ -1,0 +1,306 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Edit — Gerar Vídeo do Narrador</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&amp;family=Consolas&amp;display=swap" rel="stylesheet"/>
+<link href="../styles.css" rel="stylesheet"/>
+<style>
+        body {
+            /* background removed for 3d */
+            color: #F0F0F0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+        }
+        .form-group {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .file-upload-wrapper {
+            position: relative;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .file-upload-wrapper input[type="file"] {
+            display: none;
+        }
+        .btn-upload {
+            background: #444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .btn-upload:hover { opacity: 0.8; }
+        .audio-label {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .btn-gerar {
+            background: #9B59B6;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: opacity 0.2s;
+        }
+        .btn-gerar:hover { opacity: 0.8; }
+        .btn-gerar:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .status-bar {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #1e1e1e;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        .status-success { color: #4CAF50; border-color: #4CAF50; }
+        .status-error { color: #f44336; border-color: #f44336; }
+        .status-loading { color: #FFD32A; border-color: #FFD32A; }
+        .status-success { color: #4CAF50; border-color: #4CAF50; }
+        .status-error { color: #f44336; border-color: #f44336; }
+        .status-loading { color: #FFD32A; border-color: #FFD32A; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e1e1e;
+            padding: 15px 30px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header a {
+            color: #9B59B6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="global-3d-bg"></div>
+<header style="padding: 10px 30px; margin-bottom: 20px;">
+ Logo e Créditos 
+<div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" data-i18n="narrador.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">DeepFake Narrador</span>
+<div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+<span class="gas-icon"></span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+</div>
+</div>
+<div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+<div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuario Pro</span>
+</div>
+<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+</div>
+</header>
+<div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+<span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+</div>
+<div class="main-container">
+<div class="single-tool-header" style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #2a164d 0%, #170d2b 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--btn-purple); position: relative; overflow: hidden;">
+ Decorativo fundo 
+<div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(15deg); pointer-events: none;">🏎️</div>
+<div style="font-size: 3.5rem; background: var(--btn-purple); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">🧙‍♂️</div>
+<div style="z-index: 2;">
+<h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--btn-yellow); text-shadow: 4px 4px 0 var(--border-dark); margin: 0; letter-spacing: 3px;">
+                    AVATAR MÁGICO
+                </h3>
+<p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
+                    Avatar falante movido a IA.
+                </p>
+</div>
+</div>
+<div class="form-group">
+<label>Selecione o Narrador:</label>
+<select id="personagem" onchange="atualizarPersonagem()"></select>
+</div>
+<div class="form-group">
+<label>Estado Emocional:</label>
+<select id="estado_emocional">
+<option value="normal">normal</option>
+<option value="feliz">feliz</option>
+<option value="raiva">raiva</option>
+<option value="triste">triste</option>
+</select>
+</div>
+<div class="form-group">
+<div class="file-upload-wrapper">
+<button class="btn-upload" onclick="document.getElementById('audio_file').click()">Carregar Arquivo de Áudio (.mp3)</button>
+<input accept=".mp3" id="audio_file" onchange="atualizarLabelAudio()" type="file"/>
+<span class="audio-label" id="lbl_audio">Nenhum áudio carregado.</span>
+</div>
+</div>
+<button class="btn-gerar" id="btn_gerar" onclick="gerarVideo()">Gerar Vídeo do Narrador</button>
+<div class="status-bar" id="status" style="display: none;"></div>
+</div>
+<div class="ad-slot" style="margin-top: 30px; min-height: 90px; padding: 10px; background: repeating-linear-gradient(45deg, #1e1e1e, #1e1e1e 10px, #2a2a2a 10px, #2a2a2a 20px); border: 2px dashed #444;">
+<span style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #666; letter-spacing: 2px;">[ESPAÇO PUBLICITÁRIO - 728x90 INFERIOR]</span>
+</div>
+<script>
+        let personDict = {};
+
+        async function carregarPersonagens() {
+            try {
+                const res = await fetch('https://api.apolloedit.com/api/tts/personagens'); // Usamos o mesmo endpoint pra pegar os personagens cadastrados
+                const data = await res.json();
+                if(data.success) {
+                    personDict = data.detalhes;
+                    const sel = document.getElementById('personagem');
+                    sel.innerHTML = '';
+                    data.personagens.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p;
+                        opt.innerText = p;
+                        sel.appendChild(opt);
+                    });
+                    if(data.personagens.length > 0) atualizarPersonagem();
+                } else {
+                    const sel = document.getElementById('personagem');
+                    sel.innerHTML = '<option disabled selected>Nenhum personagem disponível</option>';
+                    document.getElementById('btn_gerar').disabled = true;
+                }
+            } catch(e) {
+                setStatus('❌ Erro ao carregar personagens: ' + e, 'error');
+            }
+        }
+
+        function atualizarPersonagem() {
+            const p = document.getElementById('personagem').value;
+            // Aqui poderíamos atualizar dinamicamente os estados emocionais caso o banco de dados suporte,
+            // Mas o Tkinter original deixava as 4 opções fixas.
+        }
+
+        function atualizarLabelAudio() {
+            const fileInput = document.getElementById('audio_file');
+            const label = document.getElementById('lbl_audio');
+            if(fileInput.files.length > 0) {
+                label.innerText = fileInput.files[0].name;
+            } else {
+                label.innerText = "Nenhum áudio carregado.";
+            }
+        }
+
+        function setStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.style.display = 'block';
+            el.innerHTML = msg.replace(/\n/g, '<br>');
+            el.className = 'status-bar status-' + type;
+        }
+
+        async function gerarVideo() {
+            const personagem = document.getElementById('personagem').value;
+            const estado = document.getElementById('estado_emocional').value;
+            const fileInput = document.getElementById('audio_file');
+
+            if(!personagem) {
+                alert("Erro: Selecione um personagem válido.");
+                return;
+            }
+            if(fileInput.files.length === 0) {
+                alert("Erro: Carregue um arquivo de áudio primeiro.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("personagem", personagem);
+            formData.append("estado_emocional", estado);
+            formData.append("audio_file", fileInput.files[0]);
+
+            const btn = document.getElementById('btn_gerar');
+            btn.disabled = true;
+            btn.innerText = "🎬 Processando FFmpeg... Aguarde";
+            setStatus("🔧 Cortando vídeo base e injetando áudio (FFmpeg)...", "loading");
+
+            try {
+                const res = await fetch('https://api.apolloedit.com/api/narrador/gerar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if(data.success) {
+                    setStatus(`✅ Vídeo do narrador gerado com sucesso!\n📁 Salvo em: ${data.file}\n⏱️ Duração: ${data.duracao.toFixed(2)}s`, 'success');
+                    alert(`Sucesso!\nVídeo salvo em: ${data.file}`);
+                } else {
+                    setStatus(`❌ Erro: ${data.error}`, 'error');
+                    alert(`Erro ao gerar vídeo:\n${data.error}`);
+                }
+            } catch(e) {
+                setStatus(`❌ Erro de conexão: ${e}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Gerar Vídeo do Narrador";
+            }
+        }
+
+        window.onload = carregarPersonagens;
+    </script>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+<script src="../bg_parallax.js"></script>
+</body>
+</html>
