@@ -1,9 +1,6 @@
 {
-  "framework": null,
-  "buildCommand": null,
-  "installCommand": null,
-  "outputDirectory": ".",
   "rewrites": [
-    { "source": "/", "destination": "/web_ui/hub.html" }
+    { "source": "/", "destination": "/hub.html" },
+    { "source": "/web_ui/(.*)", "destination": "/$1" }
   ]
 }
