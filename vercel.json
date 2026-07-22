@@ -1,6 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/hub.html" },
-    { "source": "/web_ui/(.*)", "destination": "/$1" }
+  "redirects": [
+    { "source": "/web_ui/(.*)", "destination": "/$1", "permanent": false },
+    { "source": "/", "destination": "/hub.html", "permanent": false }
   ]
 }
