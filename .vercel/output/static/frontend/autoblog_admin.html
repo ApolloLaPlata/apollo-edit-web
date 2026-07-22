@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Edit - Central Auto Blog</title>
+    <!-- TailwindCSS & DaisyUI (from CDN, standard for Apollo Edit) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        .glass-panel { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen font-sans">
+    
+    <!-- Navbar -->
+    <div class="navbar bg-base-300 border-b border-gray-700 px-4">
+        <div class="flex-1">
+            <a href="hub.html" class="btn btn-ghost normal-case text-xl text-primary font-bold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                Voltar ao Hub
+            </a>
+            <span class="ml-4 font-semibold text-lg text-gray-300">Central do Auto Blog CMS</span>
+        </div>
+        <div class="flex-none">
+            <span id="userEmail" class="mr-4 text-sm text-gray-400">Verificando sessão...</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6 mt-4">
+        
+        <!-- Headers & Actions -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-4xl font-bold text-white mb-2">Rede de Blogs (Vitrines)</h1>
+                <p class="text-gray-400">Gerencie domínios, personas de IA e fila de postagens autônomas.</p>
+            </div>
+            <div>
+                <button onclick="document.getElementById('modalNewBlog').showModal()" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Novo Domínio
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid de Blogs -->
+        <div id="blogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Os cards dos blogs serão carregados aqui via JS -->
+            <div class="animate-pulse flex space-x-4 glass-panel p-6 rounded-xl" id="loadingBlogs">
+                <div class="flex-1 space-y-4 py-1">
+                    <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 bg-gray-700 rounded"></div>
+                        <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Blog -->
+    <dialog id="modalNewBlog" class="modal">
+        <div class="modal-box bg-gray-800 border border-gray-700 text-white">
+            <h3 class="font-bold text-lg mb-4">Adicionar Novo Auto-Blog</h3>
+            <form id="newBlogForm" class="space-y-4">
+                <div class="form-control">
+                    <label class="label"><span class="label-text text-gray-300">Domínio (Ex: descarganews.com)</span></label>
+                    <input type="text" id="bDomain" class="input input-bordered bg-gray-900 border-gray-700" required>
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text text-gray-300">Nome do Blog</span></label>
+                    <input type="text" id="bName" class="input input-bordered bg-gray-900 border-gray-700" required>
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text text-gray-300">Nicho / Tema Principal</span></label>
+                    <input type="text" id="bNiche" class="input input-bordered bg-gray-900 border-gray-700" required>
+                </div>
+                <div class="modal-action">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('modalNewBlog').close()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveBlog">Salvar na Rede</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="auth.js"></script>
+    <script src="autoblog_admin.js"></script>
+</body>
+</html>

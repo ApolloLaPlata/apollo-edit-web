@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Admin Dashboard</title>
+    <!-- Substituindo Tailwind v2 por script para funcionar bem com as classes slate e flex layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .input-dark { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.2s; }
+        .input-dark:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); }
+        /* Scrollbar customizada */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body class="bg-slate-900 text-slate-200 flex h-screen overflow-hidden font-sans">
+
+    <!-- Sidebar Lateral -->
+    <aside class="w-72 bg-slate-800/80 border-r border-slate-700/50 flex flex-col shadow-2xl z-20 backdrop-blur-md">
+        <div class="p-6 border-b border-slate-700/50 flex flex-col items-center text-center">
+            <div class="w-16 h-16 bg-blue-600/20 text-blue-500 rounded-2xl flex items-center justify-center text-3xl mb-3 shadow-[0_0_15px_rgba(59,130,246,0.3)]">🚀</div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-white">Apollo <span class="text-blue-500">SaaS</span></h1>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">Painel Executivo</p>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3" id="sidebar-nav">
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2 ml-2 mt-2">Visão Geral</p>
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">📊</span> Visão Geral
+            </button>
+            <button onclick="switchTab('logs')" id="tab-logs" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">📋</span> Auditoria & Logs
+            </button>
+            <button onclick="switchTab('strategy')" id="tab-strategy" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">📈</span> Estratégia
+            </button>
+            <button onclick="switchTab('lab')" id="tab-lab" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">🔭</span> Laboratório / Pesquisa
+            </button>
+            <button onclick="window.parent.openAppTab('admin_financeiro.html', 'Financeiro', true)" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">💵</span> Analytics Financeiro
+            </button>
+            
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2 ml-2 mt-6">Administração</p>
+            <button onclick="switchTab('users')" id="tab-users" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">👥</span> Base de Clientes
+            </button>
+            <button onclick="switchTab('pages')" id="tab-pages" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">📄</span> Páginas & UX
+            </button>
+            <button onclick="switchTab('ads')" id="tab-ads" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">📈</span> Banners & Ads
+            </button>
+
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2 ml-2 mt-6">Infraestrutura</p>
+            <button onclick="switchTab('economy')" id="tab-economy" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">💰</span> Economia & IA
+            </button>
+            <button onclick="switchTab('keys')" id="tab-keys" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">🔑</span> Vault de Chaves
+            </button>
+            <button onclick="switchTab('agents')" id="tab-agents" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20">
+                <span class="text-lg">🤖</span> Agentes & Fluxos
+            </button>
+            <button onclick="switchTab('models')" id="tab-models" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">📈</span> Preços de Modelos
+            </button>
+            <button onclick="switchTab('security')" id="tab-security" class="sidebar-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-3 transition-colors border-l-4 border-transparent">
+                <span class="text-lg">🛡️</span> Segurança (CSO)
+            </button>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-700/50 bg-slate-800/30">
+            <button onclick="logout()" class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 py-2.5 rounded-lg font-bold text-sm flex justify-center items-center gap-2 transition-colors">
+                🚪 Sair para o Hub
+            </button>
+        </div>
+    </aside>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-900 relative">
+        
+        <!-- Header Topbar -->
+        <header class="h-16 border-b border-slate-800 bg-slate-900/50 backdrop-blur flex justify-between items-center px-8 z-10 shrink-0">
+            <h2 class="text-xl font-bold text-slate-200" id="topbar-title">Visão Geral</h2>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 bg-green-500/10 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_10px_rgba(34,197,94,0.2)]">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    Sistemas Online
+                </div>
+                <div class="h-8 w-8 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-sm font-bold text-slate-300">
+                    AD
+                </div>
+            </div>
+        </header>
+
+        <!-- Area de Rolagem do Conteúdo -->
+        <div class="flex-1 overflow-y-auto p-8" id="main-content-scroll">
+            
+            <!-- Tab: Dashboard -->
+            <div id="content-dashboard" class="tab-content space-y-6">
+                
+                <!-- WordPress Style "At a Glance" Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 shadow-lg flex items-center gap-4 backdrop-blur-sm hover:border-slate-600 transition">
+                        <div class="w-14 h-14 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-2xl shadow-inner">👥</div>
+                        <div>
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Clientes</p>
+                            <p id="dash-users" class="text-3xl font-extrabold text-slate-100 leading-none">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 shadow-lg flex items-center gap-4 backdrop-blur-sm hover:border-slate-600 transition">
+                        <div class="w-14 h-14 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-2xl shadow-inner">🚀</div>
+                        <div>
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Renders Hoje</p>
+                            <p id="dash-renders" class="text-3xl font-extrabold text-green-400 leading-none">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 shadow-lg flex items-center gap-4 backdrop-blur-sm hover:border-slate-600 transition">
+                        <div class="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-2xl shadow-inner">🌐</div>
+                        <div>
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Req. Web Totais</p>
+                            <p id="dash-visits" class="text-3xl font-extrabold text-indigo-400 leading-none">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 shadow-lg flex items-center gap-4 backdrop-blur-sm hover:border-slate-600 transition">
+                        <div class="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-2xl shadow-inner">💰</div>
+                        <div>
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Lucro Estimado</p>
+                            <p id="dash-profit" class="text-3xl font-extrabold text-purple-400 leading-none">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid Principal (Grafico + Widgets laterais) -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    
+                    <!-- Left Column: Chart & Health (Takes up 2 cols) -->
+                    <div class="xl:col-span-2 flex flex-col gap-6">
+                        
+                        <!-- Grafico de Acessos -->
+                        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 shadow-lg flex-1 backdrop-blur-sm">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <span class="text-blue-500">📊</span> Gráfico Operacional
+                                </h3>
+                                <span class="text-xs text-slate-500 font-bold bg-slate-900 px-3 py-1 rounded-full border border-slate-700">Tempo Real</span>
+                            </div>
+                            <div class="h-64 w-full">
+                                <canvas id="mainChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Mini Widgets de Status -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Site Health Widget -->
+                            <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 shadow-lg backdrop-blur-sm flex flex-col">
+                                <h3 class="text-md font-bold mb-4 border-b border-slate-700/50 pb-3 flex items-center gap-2 text-white">
+                                    <span class="text-green-500">💚</span> Saúde da Infra
+                                </h3>
+                                <ul id="health-widget-container" class="space-y-4 text-xs text-slate-300 flex-1">
+                                    <li class="flex items-center justify-between bg-slate-900/50 p-2.5 rounded-lg border border-slate-800">
+                                        Banco Supabase 
+                                        <span class="text-green-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> OK</span>
+                                    </li>
+                                    <li class="flex items-center justify-between bg-slate-900/50 p-2.5 rounded-lg border border-slate-800">
+                                        Rede Edge 
+                                        <span class="text-green-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> OK</span>
+                                    </li>
+                                    <li class="flex items-center justify-between bg-slate-900/50 p-2.5 rounded-lg border border-slate-800">
+                                        WhatsApp Bridge
+                                        <div id="wa-status-container" class="flex items-center gap-2">
+                                            <span id="wa-status-text" class="text-red-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> OFFLINE</span>
+                                            <button id="wa-connect-btn" onclick="startWhatsApp()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded transition">Ligar</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- WhatsApp QR Modal (Hidden by default) -->
+                            <div id="wa-qr-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex justify-center items-center">
+                                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-600 shadow-2xl flex flex-col items-center max-w-sm w-full mx-4 relative">
+                                    <button onclick="document.getElementById('wa-qr-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+                                    <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><span class="text-green-500">📱</span> Conectar WhatsApp</h2>
+                                    <p class="text-slate-400 text-xs text-center mb-6">Escaneie o QR Code abaixo com o seu WhatsApp para ligar a Ponte do Apollo Prime.</p>
+                                    <div id="wa-qr-image-container" class="bg-white p-2 rounded-xl mb-4 w-48 h-48 flex justify-center items-center">
+                                        <!-- QR code goes here -->
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+                                    </div>
+                                    <p id="wa-qr-status" class="text-yellow-400 text-xs font-bold animate-pulse">Aguardando leitura...</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Doughnut Chart Widget -->
+                            <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 shadow-lg backdrop-blur-sm flex flex-col">
+                                <h3 class="text-md font-bold mb-4 border-b border-slate-700/50 pb-3 flex items-center gap-2 text-white">
+                                    <span class="text-purple-400">🍩</span> Distribuição de Planos
+                                </h3>
+                                <div class="flex-1 flex justify-center items-center relative h-32 w-full">
+                                    <canvas id="doughnutChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Live Activity Feed -->
+                            <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 shadow-lg backdrop-blur-sm flex flex-col">
+                                <h3 class="text-md font-bold mb-4 border-b border-slate-700/50 pb-3 flex items-center gap-2 text-white">
+                                    <span class="text-blue-400">⚡</span> Live Terminal Feed
+                                </h3>
+                                <div class="flex-1 overflow-hidden relative">
+                                    <!-- A div that scrolls slowly upwards -->
+                                    <div id="liveFeedContainer" class="space-y-2 text-[10px] font-mono text-slate-400 h-32 overflow-y-auto pr-2">
+                                        <p><span class="text-green-400">[SYSLOG]</span> Servidores online.</p>
+                                        <p><span class="text-blue-400">[USER_EVT]</span> Cliente <span class="text-slate-200">alpha9</span> fez login.</p>
+                                        <p><span class="text-purple-400">[API_CALL]</span> Rota '/gen-image' disparada.</p>
+                                        <p><span class="text-yellow-400">[ECONOMY]</span> -5 Gasolina (alpha9).</p>
+                                        <p><span class="text-green-400">[SYSLOG]</span> Memória otimizada.</p>
+                                        <p><span class="text-blue-400">[USER_EVT]</span> Cliente <span class="text-slate-200">johndoe</span> fez upgrade para PRO.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Apollo Prime Console -->
+                    <div class="xl:col-span-1 flex flex-col">
+                        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 shadow-lg flex-1 backdrop-blur-sm flex flex-col relative overflow-hidden">
+                            <!-- Background Decoration -->
+                            <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                            
+                            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2 z-10">
+                                <span class="text-blue-500">👑</span> Assessor Executivo
+                            </h3>
+                            <p class="text-xs text-slate-400 mb-4 z-10">Use este canal para delegar ordens (Top-Down) para toda a sua diretoria de agentes IA.</p>
+                            
+                            <!-- Este div será alvo da injeção do Prime Agent no apollo_agents.js -->
+                            <div id="prime-chat-container" class="flex-1 w-full h-full min-h-[400px]"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab: Pages -->
+            <div id="content-pages" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">📄 Páginas Encontradas (<span id="pages-count">0</span>)</h2>
+                        <p class="text-slate-400 text-sm mt-1">Controle acesso e UX de todas as Páginas da pasta web_ui.</p>
+                    </div>
+                    <button onclick="loadPages()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg transition">Escanear Diretório</button>
+                </div>
+                <div id="pagesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Preenchido via JS -->
+                </div>
+                <div id="pages-agent-container"></div>
+            </div>
+
+            <!-- Tab: Keys -->
+            <div id="content-keys" class="tab-content space-y-6 hidden">
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2">🔑 Vault de Chaves API (Básico)</h2>
+                    <p class="text-slate-400 text-sm">Gerenciador de chaves global. Para gerenciamento avançado de frotas (Free vs Paid), use a aba Agentes & Fluxos.</p>
+                </div>
+                <div id="keysContainer" class="space-y-6">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+
+            <!-- Tab: Agentes & Fluxos -->
+            <div id="content-agents" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-6 rounded-2xl border border-blue-700/30 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+                            <span class="text-blue-400">🤖</span> Frota de Agentes & Chaves
+                        </h2>
+                        <p class="text-blue-200/70 text-sm mt-2">Configure o Rodízio Duplo (Chaves Pagas vs Gratuitas) e delegue tarefas para a IA correta.</p>
+                    </div>
+                    <button onclick="saveAgentsConfig()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(59,130,246,0.5)] transition flex items-center gap-2">
+                        💾 Salvar Arquitetura
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <!-- Frotas de Chaves -->
+                    <div class="space-y-6">
+                        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                            <h3 class="font-bold text-yellow-400 mb-4 border-b border-slate-700/50 pb-2 flex items-center gap-2">⭐ Frota de Alta Performance (Pagas)</h3>
+                            <p class="text-xs text-slate-400 mb-4">Usadas para Geração de Imagem, Vídeo e Roteiros Complexos.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                                    <label class="block text-xs font-bold text-slate-400 mb-2">Google Gemini (Pago)</label>
+                                    <textarea id="fleetGeminiPaid" class="w-full input-dark rounded-lg p-2 text-xs font-mono h-20" placeholder="Cole as chaves aqui (uma por linha)..."></textarea>
+                                </div>
+                                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                                    <label class="block text-xs font-bold text-slate-400 mb-2">OpenRouter (Pago / c/ Crédito)</label>
+                                    <textarea id="fleetOpenRouterPaid" class="w-full input-dark rounded-lg p-2 text-xs font-mono h-20" placeholder="Cole as chaves aqui (uma por linha)..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                            <h3 class="font-bold text-green-400 mb-4 border-b border-slate-700/50 pb-2 flex items-center gap-2">🌍 Frota "Povão" (Gratuitas / Rodízio)</h3>
+                            <p class="text-xs text-slate-400 mb-4">Usadas para Atendimento no WhatsApp, Revisão, SEO e Extração (Custo Zero).</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                                    <label class="block text-xs font-bold text-slate-400 mb-2">Groq (Plano Free - Llama 3)</label>
+                                    <textarea id="fleetGroqFree" class="w-full input-dark rounded-lg p-2 text-xs font-mono h-24" placeholder="Cole suas 14+ chaves do Groq aqui (uma por linha)..."></textarea>
+                                </div>
+                                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                                    <label class="block text-xs font-bold text-slate-400 mb-2">OpenRouter (Modelos Free - Gemma/Nemotron)</label>
+                                    <textarea id="fleetOpenRouterFree" class="w-full input-dark rounded-lg p-2 text-xs font-mono h-24" placeholder="Cole chaves OpenRouter criadas sem crédito (uma por linha)..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuração dos Agentes Específicos -->
+                    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 flex flex-col">
+                        <h3 class="font-bold text-purple-400 mb-4 border-b border-slate-700/50 pb-2 flex items-center gap-2">🧠 Atribuição de Agentes</h3>
+                        <p class="text-xs text-slate-400 mb-6">Defina qual frota e modelo cada agente corporativo vai utilizar.</p>
+                        
+                        <div class="space-y-4 flex-1 overflow-y-auto pr-2" id="agentsConfigContainer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Modelos API -->
+            <div id="content-models" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">📈 Preços de Modelos API</h2>
+                        <p class="text-slate-400 text-sm mt-1">Configure o custo de Input/Output (por 1M tokens) para cálculo da margem de lucro em Gas.</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="syncPricesNow()" id="btn-sync-prices" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded font-bold shadow transition flex items-center gap-2">
+                            <i class="fas fa-sync-alt"></i> Sincronizar Preços
+                        </button>
+                        <button onclick="showModelModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold shadow transition">
+                            + Novo Modelo
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto bg-slate-800/80 rounded-2xl border border-slate-700/50">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/50 text-slate-400 text-sm">
+                                <th class="py-3 px-4">Provider</th>
+                                <th class="py-3 px-4">Model ID</th>
+                                <th class="py-3 px-4">Tier</th>
+                                <th class="py-3 px-4">Input ($)</th>
+                                <th class="py-3 px-4">Output ($)</th>
+                                <th class="py-3 px-4">Rate Limits</th>
+                                <th class="py-3 px-4 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modelsTableBody" class="text-sm">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Users -->
+            <div id="content-users" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">👥 Clientes Cadastrados</h2>
+                        <p class="text-slate-400 text-sm mt-1">Gerencie saldo e planos dos usuários.</p>
+                    </div>
+                    <button onclick="showCreateUserModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg transition">+ Novo Cliente</button>
+                </div>
+                
+                <div class="bg-slate-800/80 rounded-2xl border border-slate-700/50 overflow-hidden shadow-lg">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/80 border-b border-slate-700/50 text-slate-400 text-sm uppercase tracking-wider">
+                                <th class="py-4 px-6 font-semibold">ID</th>
+                                <th class="py-4 px-6 font-semibold">Usuário</th>
+                                <th class="py-4 px-6 font-semibold">Status</th>
+                                <th class="py-4 px-6 font-semibold">Plano</th>
+                                <th class="py-4 px-6 font-semibold">Carteira</th>
+                                <th class="py-4 px-6 font-semibold text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="divide-y divide-slate-700/50">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Ads -->
+            <div id="content-ads" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">📈 Campanhas e Banners</h2>
+                        <p class="text-slate-400 text-sm mt-1">Exiba banners dentro do sistema para alavancar upgrades de plano.</p>
+                    </div>
+                    <button onclick="showCreateAdModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg transition">+ Nova Campanha</button>
+                </div>
+                <div id="adsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+
+            <!-- Tab: Logs/Auditoria -->
+            <div id="content-logs" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">📋 Auditoria do Sistema</h2>
+                        <p class="text-slate-400 text-sm mt-1">Extrato detalhado de transações e logs de erro.</p>
+                    </div>
+                    <button onclick="loadLogs()" class="bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow transition">🔄 Sincronizar Logs</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">👁️</div>
+                        <div>
+                            <h4 class="text-sm text-slate-400 font-bold uppercase">Total Visitas (Logs)</h4>
+                            <p id="audit-total-visits" class="text-3xl font-extrabold text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-xl">🔥</div>
+                        <div>
+                            <h4 class="text-sm text-slate-400 font-bold uppercase">Chamadas API (Logs)</h4>
+                            <p id="audit-total-api" class="text-3xl font-extrabold text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 overflow-hidden flex flex-col h-[600px]">
+                        <h3 class="font-bold text-blue-400 mb-4 flex items-center gap-2 border-b border-slate-700/50 pb-2">🌐 Visitas</h3>
+                        <div class="overflow-y-auto flex-1 pr-2">
+                            <table class="w-full text-sm">
+                                <tbody id="logVisitsTable" class="divide-y divide-slate-700/50"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 overflow-hidden flex flex-col h-[600px]">
+                        <h3 class="font-bold text-red-400 mb-4 flex items-center gap-2 border-b border-slate-700/50 pb-2">🤖 Consumo API</h3>
+                        <div class="overflow-y-auto flex-1 pr-2">
+                            <table class="w-full text-sm">
+                                <tbody id="logApiTable" class="divide-y divide-slate-700/50"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50 overflow-hidden flex flex-col h-[600px]">
+                        <h3 class="font-bold text-yellow-400 mb-4 flex items-center gap-2 border-b border-slate-700/50 pb-2">💳 Transações</h3>
+                        <div class="overflow-y-auto flex-1 pr-2">
+                            <table class="w-full text-sm">
+                                <tbody id="logTransactionsTable" class="divide-y divide-slate-700/50"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Economia & IA -->
+            <div id="content-economy" class="tab-content space-y-6 hidden">
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2">💰 Economia e Comportamento Neural</h2>
+                    <p class="text-slate-400 text-sm">Configure os preços do site, tokens iniciais e comportamento da IA assistente.</p>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <!-- Economia Base -->
+                    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                        <h3 class="font-bold text-yellow-400 mb-5 border-b border-slate-700/50 pb-2">⚙️ Cadastro Base</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Créditos Iniciais</label>
+                                <input type="number" id="cfgInitialCredits" class="w-full input-dark rounded-lg p-3 text-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Gas Inicial (⛽)</label>
+                                    <input type="number" id="cfgInitialGas" class="w-full input-dark rounded-lg p-3 text-sm" value="100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Cristais Iniciais (🔮)</label>
+                                    <input type="number" id="cfgInitialCrystals" class="w-full input-dark rounded-lg p-3 text-sm" value="0">
+                                </div>
+                            </div>
+                            <button onclick="saveEconomyConfig()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold text-sm shadow mt-2">Salvar Cadastro Base</button>
+                        </div>
+                    </div>
+                    <!-- IA Global -->
+                    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                        <h3 class="font-bold text-purple-400 mb-5 border-b border-slate-700/50 pb-2">🧠 Rede Neural (Gemini)</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Gemini API Key (Primária)</label>
+                                <input type="password" id="cfgGeminiKey" class="w-full input-dark rounded-lg p-3 text-sm" placeholder="AIzaSy...">
+                            </div>
+                            <div class="grid grid-cols-12 gap-4">
+                                <div class="col-span-8">
+                                    <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">System Prompt (Assessor Global)</label>
+                                    <input type="text" id="cfgSystemPrompt" class="w-full input-dark rounded-lg p-3 text-sm" placeholder="Sua personalidade...">
+                                </div>
+                                <div class="col-span-4">
+                                    <label class="block text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Temperatura</label>
+                                    <input type="number" step="0.1" id="cfgTemperature" class="w-full input-dark rounded-lg p-3 text-sm" placeholder="0.7">
+                                </div>
+                            </div>
+                            <button onclick="saveAiConfig()" class="w-full bg-purple-600 hover:bg-purple-500 py-3 rounded-lg font-bold text-sm shadow mt-2">Salvar Rede Neural</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Preços -->
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <h3 class="font-bold text-green-400 mb-2 border-b border-slate-700/50 pb-2">Tabela de Preços de Tools (Precificação)</h3>
+                    <p class="text-sm text-slate-400 mb-6">Custos descontados das carteiras dos clientes a cada invocação de IA.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">💬 Chat Texto</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostChat" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostChatUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">🖼️ Geração IMG</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostImage" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostImageUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">🎬 Texto/Video</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostVideo" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostVideoUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">🎙️ Dublagem</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostDubbing" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostDubbingUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">🎵 Música</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostMusic" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostMusicUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">🎞️ Render 3D</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostRender" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostRenderUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">🤖 Autopilot</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostAutopilot" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostAutopilotUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                            <label class="block text-xs font-bold text-slate-400 mb-2">✂️ BG Remove</label>
+                            <div class="flex gap-2"><input type="number" id="cfgCostBgRemove" class="flex-1 input-dark rounded p-2 text-sm"><select id="cfgCostBgRemoveUnit" class="input-dark rounded p-2 text-xs w-24"><option value="gas">⛽ Gas</option><option value="crystals">🔮 Cristal</option></select></div>
+                        </div>
+                    </div>
+                    <button onclick="saveToolPrices()" class="w-full bg-green-600 hover:bg-green-500 py-3 mt-6 rounded-lg font-bold text-sm shadow">💾 Consolidar Tabela de Preços</button>
+                </div>
+            </div>
+
+            <!-- Tab: Segurança -->
+            <div id="content-security" class="tab-content space-y-6 hidden">
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2">🛡️ Controle de Crise</h2>
+                    <p class="text-slate-400 text-sm">Gerencie incidentes e bloqueios massivos.</p>
+                </div>
+                
+                <div class="bg-red-900/20 border border-red-700/50 p-6 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.1)]">
+                    <h3 class="font-bold text-red-500 mb-2 text-lg">⚠️ Killswitch (Modo de Manutenção)</h3>
+                    <p class="text-sm text-slate-300 mb-6">Bloqueia o SaaS para TODOS os usuários comuns. Útil sob ataque ou atualizações profundas do servidor Supabase.</p>
+                    <div class="flex items-center space-x-6 p-4 bg-slate-900/50 rounded-lg inline-flex border border-red-900/30">
+                        <label class="flex items-center space-x-2 text-slate-300 cursor-pointer">
+                            <input type="radio" name="maintenanceToggle" id="maintOff" value="off" class="w-4 h-4 accent-slate-500"> <span>Sistema Online</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-red-400 font-bold cursor-pointer">
+                            <input type="radio" name="maintenanceToggle" id="maintOn" value="on" class="w-4 h-4 accent-red-600"> <span>Modo Manutenção Ativo</span>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="saveSecurityConfig()" class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-lg font-bold text-sm shadow transition">APLICAR PROTOCOLO</button>
+                    </div>
+                </div>
+
+                <div class="bg-blue-900/20 border border-blue-700/50 p-6 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                    <h3 class="font-bold text-blue-400 mb-2 text-lg">📣 Mega-Fone (Broadcast)</h3>
+                    <p class="text-sm text-slate-300 mb-6">Esta mensagem ficará ancorada no topo de todas as páginas dos clientes instantaneamente.</p>
+                    <div class="flex gap-4">
+                        <input type="text" id="cfgBroadcastMsg" placeholder="Ex: Manutenção agendada para meia noite." class="flex-1 input-dark rounded-lg p-3">
+                        <button onclick="saveBroadcastMsg()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold text-sm shadow transition whitespace-nowrap">Propagar Mensagem</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Strategy -->
+            <div id="content-lab" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">🔭 Agente Olheiro (Trend Researcher)</h2>
+                        <p class="text-slate-400">Descobertas semanais de IAs que estão bombando no mercado.</p>
+                    </div>
+                    <button onclick="triggerTrends()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold">
+                        <i class="fas fa-search mr-2"></i> Investigar Tendências Agora
+                    </button>
+                </div>
+                
+                <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
+                    <h3 class="text-xl font-bold mb-4">Relatórios de Descoberta</h3>
+                    <div id="trends-reports" class="space-y-4">
+                        <p class="text-slate-400">Carregando tendências...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-strategy" class="tab-content space-y-6 hidden">
+                <div class="flex justify-between items-center bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">📈 Inteligência Estratégica (Post-Sales Agent)</h2>
+                        <p class="text-slate-400 text-sm mt-1">O Agente analisa o consumo de IAs e recomenda mudanças na precificação/marketing baseado em Oferta e Demanda.</p>
+                    </div>
+                    <button onclick="runMarketAnalyst()" id="btn-run-analyst" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg transition flex items-center gap-2">
+                        <i class="fas fa-brain"></i> Gerar Relatório Agora
+                    </button>
+                </div>
+                
+                <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/50">
+                    <h3 class="font-bold text-blue-400 mb-4 border-b border-slate-700/50 pb-2">📋 Últimos Relatórios Estratégicos</h3>
+                    <div id="market-reports-container" class="space-y-4">
+                        <p class="text-slate-400 text-sm">Carregando relatórios...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="apollo-agent-space" class="mt-8"></div>
+        </div>
+    </main>
+
+    <!-- Modals (Remodelados) -->
+    <div id="modalAddCredit" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex justify-center items-center z-50">
+        <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 w-96 transform transition-all">
+            <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-2">Gerenciar Saldo</h3>
+            <input type="hidden" id="manageUserId">
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Carteira Alvo</label>
+                    <select id="manageCurrency" class="w-full input-dark rounded-lg p-3">
+                        <option value="credits">💎 Créditos</option>
+                        <option value="gas">⛽ Gas</option>
+                        <option value="crystals">🔮 Cristais</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Quantia</label>
+                    <input type="number" id="manageAmount" class="w-full input-dark rounded-lg p-3" placeholder="Ex: 500">
+                </div>
+                
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                    <p class="text-xs text-slate-400 mb-2">Saldo Atual do Usuário:</p>
+                    <div class="flex gap-3 text-sm font-bold">
+                        <span id="modalBalCredits" class="text-blue-400">💎 0</span>
+                        <span id="modalBalGas" class="text-green-400">⛽ 0</span>
+                        <span id="modalBalCrystals" class="text-purple-400">🔮 0</span>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button onclick="submitCredits('add')" class="flex-1 bg-green-600 hover:bg-green-500 py-3 rounded-lg font-bold shadow">Somar</button>
+                    <button onclick="submitCredits('deduct')" class="flex-1 bg-red-600 hover:bg-red-500 py-3 rounded-lg font-bold shadow">Subtrair</button>
+                </div>
+                <button onclick="closeModals()" class="w-full text-slate-400 hover:text-white py-2 text-sm mt-2">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCreateUser" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex justify-center items-center z-50">
+        <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 w-96">
+            <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-2">Novo Cliente</h3>
+            <div class="space-y-4">
+                <input type="text" id="newUsername" class="w-full input-dark rounded-lg p-3" placeholder="Username (Login)">
+                <input type="password" id="newPassword" class="w-full input-dark rounded-lg p-3" placeholder="Senha Forte">
+                <input type="number" id="newCredits" class="w-full input-dark rounded-lg p-3" placeholder="Créditos Extras" value="100">
+                <select id="newRole" class="w-full input-dark rounded-lg p-3">
+                    <option value="Livre">Plano: Livre (Free)</option>
+                    <option value="Pro">Plano: Pro</option>
+                    <option value="Hacker">Plano: Hacker</option>
+                    <option value="Master">Plano: Master</option>
+                </select>
+                <button onclick="submitCreateUser()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold shadow mt-2">Registrar Usuário</button>
+                <button onclick="closeModals()" class="w-full text-slate-400 hover:text-white py-2 text-sm">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Model Pricing -->
+    <div id="modalModelPricing" class="fixed inset-0 bg-black/80 flex items-center justify-center hidden z-50">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 w-full max-w-md">
+            <h3 class="text-xl font-bold text-white mb-4">Adicionar/Editar Modelo</h3>
+            <div class="space-y-4">
+                <input type="hidden" id="editModelId">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Provider (ex: OpenRouter, Groq, Gemini)</label>
+                    <input type="text" id="editModelProvider" class="w-full input-dark rounded p-2">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Model ID Exato (ex: llama-3.3-70b-versatile)</label>
+                    <input type="text" id="editModelName" class="w-full input-dark rounded p-2">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Tier</label>
+                        <select id="editModelTier" class="w-full input-dark rounded p-2">
+                            <option value="Free">Free (Gratuito)</option>
+                            <option value="Premium">Premium (Pago)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Status</label>
+                        <select id="editModelStatus" class="w-full input-dark rounded p-2">
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                            <option value="Rate_Limited">Rate_Limited</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Input $ / 1M Tokens</label>
+                        <input type="number" step="0.01" id="editModelInput" class="w-full input-dark rounded p-2" value="0.0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Output $ / 1M Tokens</label>
+                        <input type="number" step="0.01" id="editModelOutput" class="w-full input-dark rounded p-2" value="0.0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Rate Limit RPM</label>
+                        <input type="number" id="editModelRpm" class="w-full input-dark rounded p-2" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Rate Limit TPM</label>
+                        <input type="number" id="editModelTpm" class="w-full input-dark rounded p-2" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="closeModals()" class="px-4 py-2 text-slate-400 hover:text-white">Cancelar</button>
+                <button onclick="submitModelPricing()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Salvar Modelo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Page Settings -->
+    <div id="modalPageSettings" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex justify-center items-center z-50">
+        <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 w-full max-w-lg">
+            <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-2">UX Config: <span id="settingsPageName" class="text-blue-400"></span></h3>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Paywall (Nível Mínimo):</label>
+                    <select id="pageAccessLevel" class="w-full input-dark rounded-lg p-3 text-sm">
+                        <option value="Free">Acesso Público (Free)</option>
+                        <option value="Pro">Apenas Pro, Hacker e Master</option>
+                        <option value="Hacker">Apenas Hacker e Master</option>
+                        <option value="Master">Apenas Admins (Master)</option>
+                        <option value="Disabled">Bloquear Página Totalmente</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Exibição de Anúncios (Monetização):</label>
+                    <select id="pageShowAds" class="w-full input-dark rounded-lg p-3 text-sm">
+                        <option value="yes">Habilitar Banners da Campanha</option>
+                        <option value="no">Esconder Ads (Clean UI)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">IA Copilot Padrão:</label>
+                    <select id="pageDefaultAI" class="w-full input-dark rounded-lg p-3 text-sm">
+                        <option value="gemini">Google Gemini 2.5</option>
+                        <option value="chatgpt">OpenAI ChatGPT</option>
+                        <option value="grok">Grok (X.AI)</option>
+                        <option value="claude">Claude (Anthropic)</option>
+                    </select>
+                </div>
+                <div class="pt-2">
+                    <button onclick="savePageSettings()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold shadow">Salvar Políticas de Acesso</button>
+                    <button onclick="closeModals()" class="w-full text-slate-400 hover:text-white py-3 text-sm mt-1">Cancelar Edição</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="apollo_agents.js?v=10"></script>
+    <script src="admin.js?v=16"></script>
+    
+    <!-- APOLLO OS CORE -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+    
+    <!-- Lógica p/ o Topbar Title -->
+    <script>
+        function updateTopbarTitle() {
+            const activeBtn = document.querySelector('.sidebar-btn.active');
+            if(activeBtn) {
+                // remove o span com o emoji pra pegar so o texto
+                let text = activeBtn.innerText.replace(/^[^\w]*/, '').trim();
+                document.getElementById('topbar-title').innerText = text;
+            }
+        }
+        // Hooking into switchTab
+        const originalSwitchTab = window.switchTab;
+        window.switchTab = function(tab) {
+            if(originalSwitchTab) originalSwitchTab(tab);
+            setTimeout(updateTopbarTitle, 50);
+        }
+    </script>
+</body>
+</html>

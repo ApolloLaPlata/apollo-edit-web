@@ -1,0 +1,118 @@
+{
+    "header": {
+        "local_workspace": "Espacio de Trabajo Local",
+        "user_pro": "Usuario Pro",
+        "coins": "Monedas Apollo"
+    },
+    "sidebar": {
+        "media_tools": "Medios y Herramientas",
+        "tools_ffmpeg": "Herramientas FFmpeg",
+        "tools_ffmpeg_desc": "Cortar, Rotar, Velocidad (Gasolina Barata)",
+        "resize": "Redimensionamiento",
+        "resize_desc": "Auto-Crop Inteligente para 9:16 y 16:9",
+        "ai_cloud": "Nube de IA (Premium)",
+        "tts": "Audio / Locución",
+        "tts_desc": "Generación vía ElevenLabs o Local TTS.",
+        "avatar": "Avatar Narrador",
+        "avatar_desc": "Animación de Lip-Sync con imagen.",
+        "external_plugins": "Plugins Externos",
+        "story_gen": "Generador de Historias",
+        "news_panel": "Panel de Noticias"
+    },
+    "main": {
+        "garage_title": "🏎️ El Garaje de Apollo",
+        "garage_desc": "Ensambla el motor de tu proyecto, llama a FFmpeg y mira la magia de la automatización.",
+        "garage_btn": "Abrir Garaje",
+        "visual_engines": "Motores Visuales de Edición",
+        "timeline": "Timeline Master",
+        "timeline_desc": "Editor Web Profesional Multi-Pista. Edita como en Premiere o CapCut.",
+        "node_studio": "Estudio Node (Visual)",
+        "node_studio_desc": "Conecta los puntos y crea flujos de trabajo generados por IA.",
+        "macro_assembler": "El Ensamblador Macro",
+        "macro_assembler_desc": "Automatización de cortes y efectos masivos. (Para canales dark automáticos).",
+        "render_queue": "Cola de Renderizado",
+        "render_queue_desc": "Administra tus videos pendientes enviados al Render Farm o VPS.",
+        "analytics": "DEXboard Analytics",
+        "analytics_desc": "Estadísticas del Canal, Costos de Gasolina y Proyectos S3.",
+        "api_keys": "Configuraciones de API Keys",
+        "api_keys_desc": "Ajustes BYOK (Bring Your Own Key) para correr con gasolina gratis.",
+        "upload_btn": "☁️ Subir Piezas"
+    },
+    "modal": {
+        "upload_title": "☁️ Subir a la Nube (S3/R2)",
+        "upload_desc": "Carga directa desde el navegador (Cero sobrecarga en el Servidor).",
+        "cancel": "Cancelar",
+        "start_upload": "Enviar Pieza"
+    },
+    "garage": {
+        "title_badge": "Taller Central",
+        "engine_bay": "El Motor (Pipeline FFmpeg)",
+        "engine_desc": "Arrastra las piezas (videos/audios) al bloque del motor y configura FFmpeg para renderizar rápido gastando Gasolina.",
+        "drop_zone": "+ Arrastrar y Soltar Piezas Aquí (Videos, Audios, Imágenes)",
+        "compiler": "Compilador FFmpeg",
+        "clear": "Limpiar Motor",
+        "ignite": "Encender el Motor (Renderizar)",
+        "inventory": "Inventario de Piezas",
+        "inventory_desc": "Videos en la Nube (S3) listos para usar."
+    },
+    "dashboard": {
+        "title_badge": "DEXboard Analytics",
+        "welcome": "Tu Desempeño en la Pista",
+        "fuel_tank": "Tanque de Combustible",
+        "fuel_desc": "Litros Disponibles",
+        "buy_fuel": "Abastecer",
+        "trunk": "Maletero (Nube S3)",
+        "trunk_desc": "Espacio utilizado de 50GB",
+        "driver_level": "Nivel del Piloto",
+        "driver_desc": "Piloto Avanzado",
+        "level_up": "75% para el Nivel Enterprise",
+        "history": "Historial de Carreras (Renders)",
+        "no_history": "Ningún proyecto renderizado hoy."
+    },
+    "config": {
+        "title_badge": "Taller de Llaves",
+        "byok_title": "Integración BYOK (Bring Your Own Key)",
+        "byok_desc": "El secreto del costo cero: trae tus propias llaves API. Apollo las usará directamente gastando gasolina cero.",
+        "openrouter": "Llave OpenRouter (Modelos de IA)",
+        "openrouter_help": "Usada para el generador de historias y transcripción.",
+        "pixabay": "Llave Pixabay (Imágenes/Videos)",
+        "pixabay_help": "Banco de imágenes y videos B-Roll gratuito.",
+        "elevenlabs": "Llave ElevenLabs (Voces Premium)",
+        "elevenlabs_help": "Opcional. Si no llenas esto, se usará TTS Local.",
+        "save_keys": "Guardar Llaves"
+    },
+    "login": {
+        "title": "Acceder al Estudio",
+        "subtitle": "Inicia sesión para continuar",
+        "signup_title": "Crear Cuenta",
+        "signup_subtitle": "Regístrate para recibir Gasolina Gratis",
+        "email": "Correo",
+        "password": "Contraseña",
+        "enter": "Entrar",
+        "signup_btn": "Registrarse",
+        "create_account": "Crear una cuenta nueva",
+        "have_account": "Ya tengo una cuenta"
+    },
+    "diretor": { "title_badge": "Director IA" },
+    "dublagem": { "title_badge": "Doblaje Externo (RVC + Demucs)" },
+    "fila": { "title_badge": "Cola Autónoma" },
+    "montador": { "title_badge": "Ensamblador" },
+    "musica": { "title_badge": "🎵 Fábrica de Videos Musicales" },
+    "podcast": { "title_badge": "🎙️ Generador de Podcast - VoiceMaker & Tags" },
+    "tanque": { 
+        "title_badge": "📚 Tanque de Combustible",
+        "description": "Explora tus medios generados en el Workspace. Haz doble clic para reproducir o 'Copiar Ruta'."
+    },
+    "volume": { "title_badge": "🔊 Control de Volumen" },
+    "legendas": { "title_badge": "📝 Generador de Subtítulos" },
+    "market": {
+        "back_hub": "⬅ Volver al Hub",
+        "hacker_course": "CURSO HACKER ÉLITE",
+        "hacker_course_desc": "¡Aprende a ejecutar Apollo Edit 100% Local (RVC, Pinokio, API BYOK) y elimina tus costos de servidor! + Insignia Vitalicia.",
+        "buy_hacker": "💎 COMPRAR POR 80 CRISTALES",
+        "cloud_storage": "Mejora: +50GB Almacenamiento en Nube",
+        "cloud_storage_desc": "Aumenta el espacio en la nube de Apollo para guardar proyectos pesados. Suscripción mensual.",
+        "cloud_price": "💎 4 Cristales / mes",
+        "cloud_btn": "SUSCRIBIR PLAN"
+    }
+}

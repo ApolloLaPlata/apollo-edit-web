@@ -1,0 +1,706 @@
+{
+  "17": {
+    "inputs": {
+      "image": "input_face-1.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Carregar Imagem"
+    }
+  },
+  "282": {
+    "inputs": {
+      "filename_prefix": "portrait-upscaled",
+      "images": [
+        "283:27",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Salvar Imagem"
+    }
+  },
+  "286": {
+    "inputs": {
+      "filename_prefix": "portrait-z-image-turbo",
+      "images": [
+        "285:8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Salvar Imagem"
+    }
+  },
+  "300": {
+    "inputs": {
+      "switch": false,
+      "on_false": [
+        "285:8",
+        0
+      ],
+      "on_true": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "Image Switch"
+    }
+  },
+  "302": {
+    "inputs": {
+      "compare_view": {
+        "__value__": [
+          "",
+          ""
+        ]
+      },
+      "image_a": [
+        "283:27",
+        0
+      ],
+      "image_b": [
+        "300",
+        0
+      ]
+    },
+    "class_type": "ImageCompare",
+    "_meta": {
+      "title": "Image Compare (Before/After)"
+    }
+  },
+  "285:288": {
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Carregar CLIP"
+    }
+  },
+  "285:29": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Carregar VAE"
+    }
+  },
+  "285:33": {
+    "inputs": {
+      "conditioning": [
+        "285:290",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "CondicionamentoZerar"
+    }
+  },
+  "285:8": {
+    "inputs": {
+      "samples": [
+        "285:3",
+        0
+      ],
+      "vae": [
+        "285:29",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decodificar"
+    }
+  },
+  "285:289": {
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Carregar Modelo de Difusão"
+    }
+  },
+  "285:290": {
+    "inputs": {
+      "text": "A clean, high-key studio portrait features a central subject captured in a sharp headshot composition against a solid, vibrant cerulean blue backdrop. The lighting is soft and even, characteristic of a professional beauty dish or large softbox, which minimizes harsh shadows and creates a subtle, healthy glow across the skin. The focus is tack-sharp on the eyes, with a shallow depth of field that gently softens the texture of the hair as it recedes toward the shoulders.\n\nThe subject possesses a symmetrical, heart-shaped face with a neutral, poised expression and a direct gaze. Their hair is a bright, cool-toned platinum blonde, styled in a sleek, center-parted bob that falls just to the collarbone with slightly textured ends. Their complexion is smooth and radiant, complemented by a light application of makeup that emphasizes the natural arch of the well-defined, dark blonde eyebrows. The eyes are a warm hazel-brown, framed by dark, delicate lashes, while the lips are a soft, natural rose-pink with a slight satin finish.\n\nThe subject wears a crisp, minimalist white turtleneck sweater made of a fine-ribbed, lightweight knit fabric. The garment's clean lines and bright tone provide a high-contrast transition between the subject and the saturated blue background. The overall atmosphere is modern and clinical yet approachable, defined by the precision of the studio environment and the clarity of the facial features.",
+      "clip": [
+        "285:288",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Codificação de Texto CLIP (Prompt)"
+    }
+  },
+  "285:13": {
+    "inputs": {
+      "width": 896,
+      "height": 1152,
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage"
+    }
+  },
+  "285:11": {
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "285:287",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingAuraFlow",
+    "_meta": {
+      "title": "ModelSamplingAuraFlow"
+    }
+  },
+  "285:3": {
+    "inputs": {
+      "seed": 223832286985235,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "285:11",
+        0
+      ],
+      "positive": [
+        "285:290",
+        0
+      ],
+      "negative": [
+        "285:33",
+        0
+      ],
+      "latent_image": [
+        "285:13",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "285:287": {
+    "inputs": {
+      "lora_name": "zimage-grainscape_ultrareal.safetensors",
+      "strength_model": 1,
+      "model": [
+        "285:289",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "284:160": {
+    "inputs": {
+      "threshold": 0.3,
+      "dilation": 8,
+      "dilation_ratio": 0.2,
+      "by_ratio": false,
+      "bbox_detector": [
+        "284:159",
+        0
+      ],
+      "image": [
+        "300",
+        0
+      ]
+    },
+    "class_type": "BBoxDetect(FaceParsing)",
+    "_meta": {
+      "title": "BBoxDetect(FaceParsing)"
+    }
+  },
+  "284:161": {
+    "inputs": {
+      "model": [
+        "284:157",
+        0
+      ],
+      "processor": [
+        "284:165",
+        0
+      ],
+      "image": [
+        "284:163",
+        0
+      ]
+    },
+    "class_type": "FaceParse(FaceParsing)",
+    "_meta": {
+      "title": "FaceParse(FaceParsing)"
+    }
+  },
+  "284:165": {
+    "inputs": {},
+    "class_type": "FaceParsingProcessorLoader(FaceParsing)",
+    "_meta": {
+      "title": "FaceParsingProcessorLoader(FaceParsing)"
+    }
+  },
+  "284:162": {
+    "inputs": {
+      "index": 0,
+      "bbox_list": [
+        "284:160",
+        0
+      ]
+    },
+    "class_type": "BBoxListItemSelect(FaceParsing)",
+    "_meta": {
+      "title": "BBoxListItemSelect(FaceParsing)"
+    }
+  },
+  "284:163": {
+    "inputs": {
+      "bbox": [
+        "284:162",
+        0
+      ],
+      "image": [
+        "300",
+        0
+      ]
+    },
+    "class_type": "ImageCropWithBBox(FaceParsing)",
+    "_meta": {
+      "title": "ImageCropWithBBox(FaceParsing)"
+    }
+  },
+  "284:196": {
+    "inputs": {
+      "width": [
+        "284:193",
+        0
+      ],
+      "height": [
+        "284:193",
+        1
+      ],
+      "upscale_method": "lanczos",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "284:76",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "284:157": {
+    "inputs": {
+      "device": "cuda"
+    },
+    "class_type": "FaceParsingModelLoader(FaceParsing)",
+    "_meta": {
+      "title": "FaceParsingModelLoader(FaceParsing)"
+    }
+  },
+  "284:193": {
+    "inputs": {
+      "image": [
+        "284:163",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Obter Tamanho da Imagem"
+    }
+  },
+  "284:76": {
+    "inputs": {
+      "upscale_by": [
+        "284:98",
+        0
+      ],
+      "seed": 900811593556971,
+      "steps": 35,
+      "cfg": 4,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 0.2,
+      "mode_type": "Linear",
+      "tile_width": 1024,
+      "tile_height": 1024,
+      "mask_blur": 32,
+      "tile_padding": 32,
+      "seam_fix_mode": "None",
+      "seam_fix_denoise": 1,
+      "seam_fix_width": 64,
+      "seam_fix_mask_blur": 8,
+      "seam_fix_padding": 16,
+      "force_uniform_tiles": true,
+      "tiled_decode": false,
+      "image": [
+        "284:163",
+        0
+      ],
+      "model": [
+        "284:227",
+        0
+      ],
+      "positive": [
+        "284:78",
+        0
+      ],
+      "negative": [
+        "284:117",
+        0
+      ],
+      "vae": [
+        "284:116",
+        2
+      ],
+      "upscale_model": [
+        "284:72",
+        0
+      ]
+    },
+    "class_type": "UltimateSDUpscale",
+    "_meta": {
+      "title": "Ultimate SD Upscale"
+    }
+  },
+  "284:116": {
+    "inputs": {
+      "ckpt_name": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Carregar Checkpoint"
+    }
+  },
+  "284:72": {
+    "inputs": {
+      "model_name": "8xNMKDFaces160000G_v10.pt"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Carregar Modelo de Upscale"
+    }
+  },
+  "284:176": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "resize_source": false,
+      "destination": [
+        "284:163",
+        0
+      ],
+      "source": [
+        "284:196",
+        0
+      ],
+      "mask": [
+        "284:179",
+        0
+      ]
+    },
+    "class_type": "ImageCompositeMasked",
+    "_meta": {
+      "title": "Composição de Imagem com Máscara"
+    }
+  },
+  "284:180": {
+    "inputs": {
+      "bbox": [
+        "284:162",
+        0
+      ],
+      "image_src": [
+        "300",
+        0
+      ],
+      "image": [
+        "284:176",
+        0
+      ]
+    },
+    "class_type": "ImageInsertWithBBox(FaceParsing)",
+    "_meta": {
+      "title": "ImageInsertWithBBox(FaceParsing)"
+    }
+  },
+  "284:179": {
+    "inputs": {
+      "expand": -4,
+      "incremental_expandrate": 0,
+      "tapered_corners": true,
+      "flip_input": false,
+      "blur_radius": 8,
+      "lerp_alpha": 1,
+      "decay_factor": 1,
+      "fill_holes": false,
+      "mask": [
+        "284:156",
+        0
+      ]
+    },
+    "class_type": "GrowMaskWithBlur",
+    "_meta": {
+      "title": "Grow Mask With Blur"
+    }
+  },
+  "284:117": {
+    "inputs": {
+      "text": "plastic, smooth, glossy, cartoon, anime, worst quality, low quality, illustration, 3d, 2d, painting, cartoons, sketch, anime",
+      "clip": [
+        "284:116",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "284:98": {
+    "inputs": {
+      "value": 2
+    },
+    "class_type": "PrimitiveFloat",
+    "_meta": {
+      "title": "Upscale By"
+    }
+  },
+  "284:78": {
+    "inputs": {
+      "text": "Close-up professional photograph of a woman, detailed face skin and visible skin pores, detailed natural skin and blemishes without-makeup, detailed skin texure, detailed lips, natural skin pores, subtle skin imperfections, visible skin pores, slightly cracked lips, skin discoloration, intricate detailed iris, perfect eyes, soft freckles",
+      "clip": [
+        "284:116",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt"
+    }
+  },
+  "284:156": {
+    "inputs": {
+      "background": false,
+      "skin": true,
+      "nose": true,
+      "eye_g": false,
+      "r_eye": false,
+      "l_eye": false,
+      "r_brow": true,
+      "l_brow": true,
+      "r_ear": false,
+      "l_ear": false,
+      "mouth": false,
+      "u_lip": true,
+      "l_lip": true,
+      "hair": false,
+      "hat": false,
+      "ear_r": false,
+      "neck_l": false,
+      "neck": false,
+      "cloth": false,
+      "result": [
+        "284:161",
+        1
+      ]
+    },
+    "class_type": "FaceParsingResultsParser(FaceParsing)",
+    "_meta": {
+      "title": "FaceParsingResultsParser(FaceParsing)"
+    }
+  },
+  "284:159": {
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "class_type": "BBoxDetectorLoader(FaceParsing)",
+    "_meta": {
+      "title": "BBoxDetectorLoader(FaceParsing)"
+    }
+  },
+  "284:227": {
+    "inputs": {
+      "lora_name": "sdxl-skin_realism_acne_skin_details_imperfections.safetensors",
+      "strength_model": 0.6,
+      "model": [
+        "284:116",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "283:43": {
+    "inputs": {
+      "if_condition": [
+        "283:40",
+        0
+      ],
+      "when_TRUE": [
+        "283:21",
+        0
+      ],
+      "when_FALSE": [
+        "283:21",
+        1
+      ]
+    },
+    "class_type": "LayerUtility: If ",
+    "_meta": {
+      "title": "IfElse"
+    }
+  },
+  "283:40": {
+    "inputs": {
+      "cmp": "a <= b",
+      "a": [
+        "283:21",
+        0
+      ],
+      "b": [
+        "283:21",
+        1
+      ]
+    },
+    "class_type": "ImpactCompare",
+    "_meta": {
+      "title": "ImpactCompare"
+    }
+  },
+  "283:25": {
+    "inputs": {
+      "value": "a*b",
+      "a": [
+        "283:43",
+        0
+      ],
+      "b": [
+        "283:30",
+        0
+      ]
+    },
+    "class_type": "SimpleMath+",
+    "_meta": {
+      "title": "Upscale to Shortest Edge (pixels)"
+    }
+  },
+  "283:30": {
+    "inputs": {
+      "value": 4
+    },
+    "class_type": "PrimitiveFloat",
+    "_meta": {
+      "title": "Upscale Factor"
+    }
+  },
+  "283:27": {
+    "inputs": {
+      "seed": 74825977,
+      "resolution": [
+        "283:25",
+        0
+      ],
+      "max_resolution": 0,
+      "batch_size": 1,
+      "uniform_batch_size": false,
+      "color_correction": "lab",
+      "temporal_overlap": 0,
+      "prepend_frames": 0,
+      "input_noise_scale": 0,
+      "latent_noise_scale": 0,
+      "offload_device": "cpu",
+      "enable_debug": false,
+      "image": [
+        "284:180",
+        0
+      ],
+      "dit": [
+        "283:28",
+        0
+      ],
+      "vae": [
+        "283:22",
+        0
+      ]
+    },
+    "class_type": "SeedVR2VideoUpscaler",
+    "_meta": {
+      "title": "SeedVR2 Video Upscaler (v2.5.24)"
+    }
+  },
+  "283:22": {
+    "inputs": {
+      "model": "ema_vae_fp16.safetensors",
+      "device": "cuda:0",
+      "encode_tiled": true,
+      "encode_tile_size": 1024,
+      "encode_tile_overlap": 128,
+      "decode_tiled": true,
+      "decode_tile_size": 1024,
+      "decode_tile_overlap": 128,
+      "tile_debug": "false",
+      "offload_device": "none",
+      "cache_model": false
+    },
+    "class_type": "SeedVR2LoadVAEModel",
+    "_meta": {
+      "title": "SeedVR2 (Down)Load VAE Model"
+    }
+  },
+  "283:28": {
+    "inputs": {
+      "model": "seedvr2_ema_7b_fp16.safetensors",
+      "device": "cuda:0",
+      "blocks_to_swap": 0,
+      "swap_io_components": false,
+      "offload_device": "cpu",
+      "cache_model": false,
+      "attention_mode": "sdpa"
+    },
+    "class_type": "SeedVR2LoadDiTModel",
+    "_meta": {
+      "title": "SeedVR2 (Down)Load DiT Model"
+    }
+  },
+  "283:21": {
+    "inputs": {
+      "image": [
+        "284:180",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Obter Tamanho da Imagem"
+    }
+  }
+}

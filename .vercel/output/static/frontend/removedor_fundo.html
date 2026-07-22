@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo - Removedor de Fundo & Upscaler</title>
+    <link rel="stylesheet" href="global_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --brand-primary: #8b5cf6;
+            --brand-secondary: #c084fc;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --paper-bg: #1e293b;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle at top left, #1e1b4b, var(--bg-base));
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Topbar Premium */
+        .apollo-topbar-pro {
+            height: 60px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 20px; }
+        .back-btn { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+        .back-btn:hover { color: var(--brand-secondary); }
+        .topbar-left h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 0.5px; background: linear-gradient(to right, #ec4899, #8b5cf6); -webkit-background-clip: text; color: transparent; }
+
+        .editor-container { 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 40px; 
+            text-align: center;
+            flex: 1;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 50px;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: var(--brand-secondary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .btn-pro {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+        .btn-pro:hover { transform: scale(1.05); }
+
+    </style>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    
+    <header class="apollo-topbar-pro">
+        <div class="topbar-left">
+            <a href="hub.html" class="back-btn">← Voltar ao Hub</a>
+            <h1>✨ Apollo Image AI Tools</h1>
+        </div>
+        <div class="topbar-right">
+            <div class="credits-badge" style="display: flex; align-items: center; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 12px; border: 1px solid #331f4e;">
+                <span class="gas-icon" style="font-size: 1.2rem; margin-right: 5px;">⛽</span>
+                <strong id="user-credits" style="color: #ec4899; font-size: 14px;">...</strong>&nbsp;<span style="color: #94a3b8; font-size: 0.9rem; font-weight: bold;">Gasolina</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="editor-container">
+        <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 10px;">Removedor de Fundo & Upscaler 4K</h2>
+        <p style="color: var(--text-muted); margin-bottom: 40px;">Faça upload de uma imagem e a inteligência artificial fará o resto.</p>
+        
+        <div class="upload-area" id="upload-area">
+            <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
+            <h3 style="margin: 0 0 10px 0;">Arraste ou clique para enviar</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Suporta JPG, PNG, WEBP</p>
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-top: 30px;">
+            <button class="btn-pro" onclick="processImage('bg')">Remover Fundo (10 Créditos)</button>
+            <button class="btn-pro" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);" onclick="processImage('upscale')">Upscale 4K (20 Créditos)</button>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('upload-area').addEventListener('click', () => {
+            alert("Sistema de upload será conectado ao Bagageiro nativo em breve.");
+        });
+
+        function processImage(type) {
+            if (window.showToast) window.showToast("Iniciando processamento na Nuvem GPU...", "#ec4899");
+            setTimeout(() => {
+                if (window.apolloTransferOS) { window.apolloTransferOS.addItem("image", type === "bg" ? "fundo_removido.png" : "imagem_4k.png", "AI Image Studio", null, { url: "/test.png" }); }
+
+                if (window.showToast) window.showToast("Processo Concluído! Imagem salva no Bagageiro.", "#00ffcc");
+            }, 2500);
+        }
+    </script>
+
+        <!-- Supabase SDK e Autenticao -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+

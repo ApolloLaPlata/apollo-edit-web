@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecionando...</title>
+    <script>
+        // O cache do navegador ainda estava tentando jogar o usuÃ¡rio para a pÃ¡gina de login.
+        // Como o usuÃ¡rio nÃ£o quer senha localmente, esta pÃ¡gina serve como um "trampolim"
+        // para consertar o cache e devolver o usuÃ¡rio para a Ã¡rea admin.
+        
+        // 1. Plantar um token falso no localStorage para acalmar o script antigo (caso ele ainda rode)
+        localStorage.setItem('apollo_admin_token', 'bypass_token_local_dev');
+        
+        // 2. Redirecionar de volta para o admin com um cache buster
+        window.location.replace('/admin.html?nocache=' + Date.now());
+    </script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body style="background-color: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
+    <h2>Limpando cache e entrando no Admin...</h2>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

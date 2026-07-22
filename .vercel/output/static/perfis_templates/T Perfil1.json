@@ -1,0 +1,74 @@
+{
+    "profile_name": "Template Básico Com Logo H7D",
+    "format": "vertical",
+    "layers": {
+        "lay0_bg": {
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "w": null,
+            "h": null,
+            "scale": 100,
+            "chroma": false,
+            "random": false,
+            "zIndex": 0,
+            "path": ""
+        },
+        "lay1_fundo": {
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "w": 1080,
+            "h": 1920,
+            "scale": 100,
+            "chroma": false,
+            "random": false,
+            "zIndex": 1
+        },
+        "lay2_narrador": {
+            "visible": false,
+            "x": 70,
+            "y": 995,
+            "w": 324,
+            "h": 576,
+            "scale": 30,
+            "chroma": false,
+            "random": false,
+            "zIndex": 2
+        },
+        "lay3_frente": {
+            "visible": false,
+            "x": 756,
+            "y": 1588,
+            "w": 324,
+            "h": 332,
+            "scale": 30,
+            "chroma": false,
+            "random": false,
+            "zIndex": 3
+        },
+        "lay4_extra": {
+            "visible": false,
+            "x": 404,
+            "y": 258,
+            "w": 540,
+            "h": 540,
+            "scale": 50,
+            "chroma": false,
+            "random": false,
+            "zIndex": 4
+        },
+        "lay_extra_1": {
+            "visible": true,
+            "x": 743,
+            "y": 1574,
+            "w": 337,
+            "h": 346,
+            "scale": 31,
+            "chroma": false,
+            "random": false,
+            "zIndex": 11,
+            "path": "E:/Salva Aqui/HISTORIAS DE 7 DIAS/logo sem fundo 800px.png"
+        }
+    }
+}

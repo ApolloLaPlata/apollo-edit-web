@@ -1,0 +1,410 @@
+html
+<html lang="pt-br">
+<head>
+<link href="../global_style.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apollo Diretor — Editor Web Automático</title>
+<link href="favicon.png?v=3" rel="icon" type="image/png"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="../diretor.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="app-container">
+ HEADER 
+<header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.4);">
+ Logo e Créditos 
+<div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+<a href="hub.html" style="text-decoration: none;">
+<div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+</a>
+<span class="badge" data-i18n="diretor.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">Director IA</span>
+<div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+<span class="gas-icon"></span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+</div>
+</div>
+<div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+<div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuario Pro</span>
+</div>
+<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+</div>
+</header>
+<div class="ad-slot" style="margin-bottom: 20px; min-height: 90px; padding: 10px;">
+<span data-i18n="common.ad_space_728">[BANNER 728x90 ADSENSE]</span>
+</div>
+ MAIN LAYOUT 
+<div class="main-layout">
+ COLUNA ESQUERDA: CONFIGURAÇÕES 
+<div class="col-left scrollable">
+ 0. Perfil de Configuração do Diretor 
+<section class="glass-panel group-panel">
+<h2 class="panel-title"><span class="icon">⚙️</span> 0. Perfil de Configuração do Diretor</h2>
+<div class="form-row single-profile-selector">
+<div class="flex-row">
+<label>🎬 Carregar Perfil:</label>
+<select class="flex-1" id="perfil_diretor">
+<option value="">Carregando perfis...</option>
+</select>
+<button class="btn outline" onclick="salvarPerfilDiretor()">💾 Salvar Config Atual</button>
+<button class="btn danger outline" onclick="deletarPerfilDiretor()">🗑️ Deletar</button>
+</div>
+</div>
+</section>
+ 1. Entradas e Saídas 
+<section class="glass-panel group-panel">
+<h2 class="panel-title"><span class="icon">📁</span> 1. Entradas e Saídas</h2>
+<div class="form-row">
+<div class="input-group">
+<label>Formato do Projeto</label>
+<div class="radio-toggle">
+<input checked="" id="fmt_vert" name="video_format" type="radio" value="vertical"/>
+<label for="fmt_vert">📱 Vertical (9:16)</label>
+<input id="fmt_horiz" name="video_format" type="radio" value="horizontal"/>
+<label for="fmt_horiz">🖥️ Horizontal (16:9)</label>
+</div>
+</div>
+</div>
+<div class="form-row">
+<div class="input-group">
+<label>Modo de Ritmo</label>
+<div class="radio-toggle">
+<input checked="" id="modo_tts" name="modo_ritmo" onchange="toggleModoRitmo()" type="radio" value="tts"/>
+<label for="modo_tts">🗣️ Guiado por Narração (TTS)</label>
+<input id="modo_lipsync" name="modo_ritmo" onchange="toggleModoRitmo()" type="radio" value="lipsync"/>
+<label for="modo_lipsync">🎥 Lip Sync (Duração Exata)</label>
+</div>
+</div>
+</div>
+<div class="form-row file-row">
+<div class="input-group flex-1">
+<label>Áudio Narração (Completo)</label>
+<div class="file-picker">
+<input id="audio_path" placeholder="Selecione o arquivo de áudio..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFile('audio_path', 'audio')">Procurar</button>
+</div>
+</div>
+</div>
+<div class="form-row file-row">
+<div class="input-group flex-1">
+<label>Pasta de Saída</label>
+<div class="file-picker">
+<input id="saida_dir" placeholder="Selecione a pasta de destino..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFolder('saida_dir')">Pasta</button>
+</div>
+</div>
+</div>
+<div class="form-row file-row">
+<div class="input-group flex-1">
+<label>Música de Fundo (Opcional)</label>
+<div class="file-picker">
+<input id="musica_path" placeholder="Opcional..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFile('musica_path', 'audio')">Procurar</button>
+</div>
+</div>
+<div class="input-group" style="width: 100px;">
+<label>Vol (dB)</label>
+<input id="vol_musica" max="10" min="-60" type="number" value="-15"/>
+</div>
+</div>
+<div class="form-row fx-toggles" style="gap: 15px; flex-wrap: wrap;">
+<label class="switch-lbl small">
+<input checked="" id="master_hd" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">✨ HD</span>
+</label>
+<label class="switch-lbl small">
+<input checked="" id="master_overlay" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">✨ Poeira</span>
+</label>
+<label class="switch-lbl small">
+<input checked="" id="master_xfade" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">✨ XFade</span>
+</label>
+<label class="switch-lbl small">
+<input checked="" id="master_lut" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">✨ LUT</span>
+</label>
+<label class="switch-lbl small">
+<input checked="" id="master_cor" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">✨ Cor</span>
+</label>
+<label class="switch-lbl small">
+<input checked="" id="master_cam" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">✨ Cam/Mov</span>
+</label>
+<div class="input-group compact">
+<label>Probabilidade (%)</label>
+<input id="prob_transicao" max="100" min="0" type="number" value="70"/>
+</div>
+</div>
+<div class="form-row single-profile-selector">
+<div class="flex-row">
+<label>📁 Perfil Estético:</label>
+<select class="flex-1" id="perfil_estetica" onchange="aplicarPerfilEstetica()">
+<option value="[Personalizado]">[Personalizado]</option>
+</select>
+<button class="btn outline" onclick="loadPerfisEstetica()">🔄 Recarregar</button>
+</div>
+</div>
+</section>
+ 2. Legendas 
+<section class="glass-panel group-panel">
+<h2 class="panel-title"><span class="icon">📝</span> 2. Legendas Karaokê</h2>
+<label class="switch-lbl master-switch">
+<input checked="" id="var_legenda" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">Gerar &amp; Queimar Legendas Karaokê no Master Final</span>
+</label>
+<div class="form-row single-profile-selector" style="margin-bottom: 15px;">
+<div class="flex-row">
+<label>📁 Carregar Perfil:</label>
+<select class="flex-1" id="perfil_legenda" onchange="aplicarPerfilLegenda()">
+<option value="[Personalizado]">[Personalizado]</option>
+</select>
+<button class="btn outline" onclick="loadPerfisLegenda()">🔄 Recarregar</button>
+</div>
+</div>
+<div class="grid-form" id="legenda-settings">
+<div class="input-group">
+<label>Fonte</label>
+<select id="sub_font">
+<option value="Bangers">Bangers</option>
+<option value="Arial">Arial</option>
+<option value="Impact">Impact</option>
+<option value="Komika Axis">Komika Axis</option>
+</select>
+</div>
+<div class="input-group">
+<label>Palavras/bloco</label>
+<input id="sub_words" max="15" min="1" type="number" value="5"/>
+</div>
+<div class="input-group">
+<label>Posição</label>
+<select id="sub_pos">
+<option value="meio baixo">Meio Baixo</option>
+<option value="meio">Centro</option>
+<option value="topo">Topo</option>
+<option value="embaixo">Rodapé</option>
+</select>
+</div>
+<div class="input-group">
+<label>Tema de Cor</label>
+<select id="sub_theme">
+<option value="amarelo vermelho">Amarelo / Vermelho</option>
+<option value="vermelho branco">Vermelho / Branco</option>
+<option value="verde amarelo">Verde / Amarelo</option>
+</select>
+</div>
+<div class="input-group">
+<label>Tamanho (px)</label>
+<input id="sub_size" max="300" min="10" type="number" value="100"/>
+</div>
+<div class="input-group">
+<label>Margem V (px)</label>
+<input id="sub_margin_v" max="800" min="0" type="number" value="150"/>
+</div>
+<div class="input-group">
+<label>Efeito Animação</label>
+<select id="sub_effect">
+<option value="Nenhum">Nenhum</option>
+<option selected="" value="Pulo (Pop)">Pulo (Pop)</option>
+<option value="Balanço">Balanço</option>
+<option value="Giro Zoom">Giro Zoom</option>
+<option value="Tremor">Tremor</option>
+<option value="Neon">Neon</option>
+<option value="Flash">Flash</option>
+<option value="Karate">Karate</option>
+<option value="Bomba">Bomba</option>
+<option value="Sublinha">Sublinha</option>
+<option value="Cinema">Cinema</option>
+</select>
+</div>
+</div>
+<div class="form-row file-row" style="margin-top: 15px;">
+<div class="input-group flex-1">
+<label>🎨 Mapa de Cores (Podcast) <span class="hint" style="font-size:10px">(Opcional)</span></label>
+<div class="file-picker">
+<input id="mapa_temas_path" placeholder="Arquivo JSON de mapa de cores..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFile('mapa_temas_path', 'json')">📂 Carregar</button>
+<button class="btn outline" onclick="document.getElementById('mapa_temas_path').value=''">✖ Limpar</button>
+</div>
+</div>
+</div>
+</section>
+ 3. Variáveis Globais 
+<section class="glass-panel group-panel">
+<h2 class="panel-title"><span class="icon">🌍</span> 3. Variáveis Globais (Sobrescreve Templates)</h2>
+<div class="form-row file-row">
+<div class="input-group flex-1">
+<label>1. Narrador (Avatar)</label>
+<div class="file-picker">
+<input id="lay2_narrador_path" placeholder="Vídeo chroma-key..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFile('lay2_narrador_path', 'video')">Arquivo</button>
+</div>
+</div>
+</div>
+<div class="form-row file-row">
+<div class="input-group flex-1">
+<label>2. Tag / Elemento Frontal</label>
+<div class="file-picker">
+<input id="lay3_frente_path" placeholder="PNG transparente..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFile('lay3_frente_path', 'image')">Arquivo</button>
+</div>
+</div>
+</div>
+<div class="form-row file-row">
+<div class="input-group flex-1">
+<label>3. Elemento Extra (Top / Moldura)</label>
+<div class="file-picker">
+<input id="lay4_moldura_dir" placeholder="Pasta com overlays..." readonly="" type="text"/>
+<button class="btn secondary" onclick="browseFolder('lay4_moldura_dir')">Pasta</button>
+</div>
+</div>
+</div>
+</section>
+ 4. Modo de Mapeamento 
+<section class="glass-panel group-panel">
+<h2 class="panel-title"><span class="icon">🎯</span> 4. Modo de Mapeamento</h2>
+<label class="switch-lbl master-switch">
+<input checked="" id="usar_mapeamento" onchange="toggleMappingMode()" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">Ativar Roteiro Gráfico (Múltiplos Templates)</span>
+</label>
+<div class="input-group single-profile-selector" id="single_profile_box">
+<label>Perfil Único (Ativo se mapeamento desligado):</label>
+<div class="flex-row">
+<select class="flex-1" id="perfil_unico">
+<option value="">Carregando perfis...</option>
+</select>
+<button class="btn outline" onclick="loadProfiles()">🔄 Atualizar</button>
+</div>
+</div>
+</section>
+ 5.1 Roteiro Base 
+<section class="glass-panel group-panel">
+<h2 class="panel-title"><span class="icon">📜</span> 5.1 Roteiro do Vídeo Base (Cenas Fundo)</h2>
+<label class="switch-lbl">
+<input checked="" id="usar_roteiro_base" onchange="toggleRoteiroBase()" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">Sincronizar cortes com o texto (Via Whisper)</span>
+</label>
+<p class="hint">Se desativado, o áudio será dividido em pedaços iguais pelo nº de vídeos.</p>
+<textarea class="code-editor" id="text_map_base" rows="6" spellcheck="false">Cena 1 - O carro acelera na pista Cena 2 - A polícia vem logo atrás</textarea>
+</section>
+ 5.2 Roteiro Gráfico 
+<section class="glass-panel group-panel" id="section_roteiro_grafico">
+<h2 class="panel-title"><span class="icon">🎨</span> 5.2 Roteiro Gráfico (Perfis)</h2>
+<div class="form-row single-profile-selector" style="margin-bottom: 10px;">
+<div class="flex-row">
+<label>Transição entre Templates:</label>
+<select class="flex-1" id="transicao_template" onchange="aplicarTransicaoTemplate()">
+<option value="[Corte Seco]">[Corte Seco]</option>
+</select>
+<button class="btn outline" onclick="loadPerfisTransicaoTemplate()">🔄 Recarregar</button>
+</div>
+</div>
+<p class="hint">Sintaxe: [Nome_do_Perfil] Quebra de frase do áudio...</p>
+<textarea class="code-editor highlight-mode" id="text_mapeamento" rows="8" spellcheck="false">[perfil_horizontal_1] Bem-vindos ao Tutorial das Coisas! [perfil_horizontal_2] Hoje vamos aprender a dominar o FFmpeg.</textarea>
+<div class="editor-actions">
+<button class="btn outline mini">💾 Salvar .txt</button>
+<button class="btn outline mini">📂 Carregar .txt</button>
+<button class="btn danger mini right">🧹 Limpar</button>
+</div>
+</section>
+</div>
+ COLUNA DIREITA: VÍDEOS BASE E STATUS 
+<div class="col-right">
+<section class="glass-panel full-height">
+<div class="header-split">
+<h2 class="panel-title"><span class="icon">⛽</span> Roteamento de IA (Tanque Fragmentado)</h2>
+</div>
+<div class="fuel-tank-container drop-target glow-green-target" data-accepts="api_consumable" id="fuel-tank-dropzone" style="padding: 15px; border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 8px; margin-bottom: 20px; position: relative;">
+<p class="hint" style="text-align: center; margin-bottom: 10px;">Arraste "Quadradinhos de API" do HUD para preencher as Cenas.</p>
+<div class="fuel-tank-bar" id="fuel-tank-bar" style="height: 30px; width: 100%; background: #1a1a1a; border-radius: 15px; overflow: hidden; display: flex; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);">
+ The segments will be injected here via JS 
+<div class="fuel-empty" style="flex-grow: 1; text-align: center; color: #555; font-size: 11px; line-height: 30px; letter-spacing: 1px;">VAZIO (NECESSITA COMBUSTÍVEL)</div>
+</div>
+<div id="fuel-tank-legend" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; font-size: 11px;">
+ Legends like: [Blue Box] Flux (Cenas 1-5) 
+</div>
+</div>
+<div class="header-split">
+<h2 class="panel-title"><span class="icon">🎞️</span> Mídias de Base (B-Roll)</h2>
+<div class="right-controls">
+<label class="switch-lbl small">
+<input checked="" id="sincronizar_base" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">Corte Automático (Dark Fácil)</span>
+</label>
+<div class="loop-input">
+<label title="-1 = Infinito">Loops:</label>
+<input id="base_loop_count" max="100" min="-1" type="number" value="-1"/>
+</div>
+</div>
+</div>
+<div class="toolbar">
+<select class="input-dropdown" id="tipo_midia_upload" style="margin-right: 10px;">
+<option value="Fotos e Vídeos">Fotos e Vídeos</option>
+<option value="Somente Fotos">Somente Fotos</option>
+<option value="Somente Vídeos">Somente Vídeos</option>
+</select>
+<button class="btn secondary" onclick="addVideos()">➕ Adicionar</button>
+<button class="btn danger outline" onclick="removeSelectedVideos()">➖ Remover</button>
+<button class="btn outline" onclick="moveVideoUp()">⬆️</button>
+<button class="btn outline" onclick="moveVideoDown()">⬇️</button>
+<button class="btn danger outline right" onclick="limparTodosVideos()">🗑️ Limpar Todos</button>
+</div>
+<div class="header-split" style="margin-top: 5px;">
+<span class="badge float-right" id="video-count">0 vídeos</span>
+</div>
+<div class="video-grid" id="video_grid">
+ Thumbs de vídeos virão aqui dinamicamente 
+<div class="empty-state">
+<span class="icon">📂</span>
+<p>Nenhum vídeo adicionado.</p>
+<p class="sub">Arraste arquivos ou clique em Adicionar.</p>
+</div>
+</div>
+<div class="header-split" style="margin-top: 15px; margin-bottom: 10px;">
+<button class="btn outline mini" onclick="limparCacheWhisper()">🧹 Limpar Cache Whisper</button>
+<label class="switch-lbl small">
+<input checked="" id="enviar_timeline" type="checkbox"/>
+<span class="slider"></span>
+<span class="txt">Enviar para Timeline Web ao concluir</span>
+</label>
+</div>
+ Terminal / Log do Processo 
+<div class="terminal-container">
+<div class="terminal-header">
+<span>📜 Status &amp; Logs do Servidor</span>
+<button class="btn outline mini" onclick="clearLogs()">Limpar</button>
+</div>
+<div class="terminal-body" id="console_log">
+<div class="log-line success">Apollo Visual Studio carregado e pronto.</div>
+</div>
+<div class="progress-container">
+<div class="progress-bar-wrap">
+<div class="progress-bar-fill" id="render_progress" style="width: 0%;"></div>
+</div>
+<div class="progress-text" id="render_status_text">Aguardando...</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<script src="../diretor.js"></script>
+ I18N Loader 
+<script src="../i18n_loader.js"></script>
+ Supabase SDK e Autenticação 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth.js"></script>
+</body>
+</html>

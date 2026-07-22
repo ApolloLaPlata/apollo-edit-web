@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="padding-bottom:10px; border-bottom:1px solid var(--border-color); margin-bottom:15px;">
+    <h2 style="color:var(--accent);">🚀 PRODUÇÃO FINAL (ESTEIRA)</h2>
+    <p style="color:#888; font-size:13px; margin-top:5px;">Montagem Automática: Capa + Vídeo Base (com áudio/legenda) + Mascote + Música</p>
+</div>
+
+<div style="max-width: 900px;">
+    <div class="group-box" style="display:flex; flex-direction:column; gap:15px;">
+        <div class="group-title">🎬 Configuração do Vídeo Final</div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">1. VIDEO BASE (Do DarkFacil)</label>
+            <input type="text" id="pf_video_base" class="flex-1" readonly placeholder="Selecione o vídeo base...">
+            <button class="btn primary" onclick="browseFile('pf_video_base','video')">Procurar...</button>
+        </div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">2. CAPA (1 Frame inicial)</label>
+            <input type="text" id="pf_capa" class="flex-1" readonly placeholder="Selecione a imagem de capa...">
+            <button class="btn primary" onclick="browseFile('pf_capa','image')">Procurar...</button>
+        </div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">3. MUSICA DE FUNDO</label>
+            <input type="text" id="pf_musica" class="flex-1" readonly placeholder="Selecione a música...">
+            <button class="btn primary" onclick="browseFile('pf_musica','audio')">Procurar...</button>
+        </div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">Volume da Música</label>
+            <input type="range" id="pf_vol_musica" min="-40" max="10" value="-9" style="flex:1;" oninput="document.getElementById('pf_vol_lbl').textContent=this.value+' dB'">
+            <span id="pf_vol_lbl" style="width:60px; text-align:right;">-9 dB</span>
+        </div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">4. MASCOTE (Apresentador)</label>
+            <select id="pf_narrador" style="flex:1;">
+                <option>Rafael Descargas</option>
+                <option>Mona Cansada</option>
+                <option>Anonimo</option>
+                <option>Charlinho</option>
+            </select>
+            <select id="pf_estado" style="width:140px;">
+                <option value="normal">Normal</option>
+                <option value="feliz">Feliz</option>
+                <option value="raiva">Raiva</option>
+                <option value="triste">Triste</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">5. SALVAR EM (Pasta)</label>
+            <input type="text" id="pf_saida_dir" class="flex-1" readonly placeholder="Selecione a pasta de destino...">
+            <button class="btn primary" onclick="browseDir('pf_saida_dir')">Procurar...</button>
+        </div>
+
+        <div class="row">
+            <label style="width:220px; color:#aaa; font-weight:bold;">Nome do Arquivo Final:</label>
+            <input type="text" id="pf_nome_final" class="flex-1" value="video_pronto" placeholder="Nome sem extensão...">
+        </div>
+    </div>
+
+    <div style="text-align:center; margin-top:25px;">
+        <button class="btn primary pulse-animation" style="padding:18px 60px; font-size:20px; border-radius:6px;" onclick="gerarVideo()">
+            🚀 GERAR VÍDEO FINAL
+        </button>
+    </div>
+
+    <div id="pf-status" style="margin-top:20px; color:#0af; font-size:14px; font-weight:bold; text-align:center; padding:12px; background:#0a1a2a; border:1px solid #0af; border-radius:4px;">
+        Pronto para gerar.
+    </div>
+</div>
+
+<script>
+async function browseFile(id, type) {
+    const r = await fetch(`/api/browse_file?type=${type}`);
+    const d = await r.json();
+    if (d.path) document.getElementById(id).value = d.path;
+}
+async function browseDir(id) {
+    const r = await fetch('/api/browse_dir');
+    const d = await r.json();
+    if (d.path) document.getElementById(id).value = d.path;
+}
+function gerarVideo() {
+    if (!document.getElementById('pf_video_base').value) { alert('⚠️ Selecione um Vídeo Base!'); return; }
+    if (!document.getElementById('pf_saida_dir').value) { alert('⚠️ Selecione a pasta de saída!'); return; }
+    const status = document.getElementById('pf-status');
+    status.textContent = '⏳ Processando... Aguarde.';
+    status.style.color = '#f59e0b';
+    // TODO: POST para o backend Flask
+}
+</script>
+{% endblock %}

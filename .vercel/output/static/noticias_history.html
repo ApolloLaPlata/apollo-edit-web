@@ -1,0 +1,154 @@
+﻿﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Notícias — Histórico — Apollo Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <link rel="stylesheet" href="noticias.css">
+    <style>
+        .history-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .history-card:hover { border-color: #555; }
+        .history-card.expanded { border-color: var(--btn-purple, #9B59B6); }
+        .history-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-card .card-title {
+            font-weight: 700;
+            color: #fff;
+            font-size: 15px;
+            flex: 1;
+        }
+        .history-card .card-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+        .type-badge {
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .type-badge.long { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .type-badge.shorts { background: rgba(241,196,15,0.15); color: #F1C40F; }
+        .history-content {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            color: #e2e8f0;
+            line-height: 1.7;
+            font-family: 'Nunito', sans-serif;
+        }
+        .history-card.expanded .history-content { display: block; }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #333;
+        }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+
+    <header class="top-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(30, 30, 30, 0.9); border-bottom: 1px solid #333; backdrop-filter: blur(10px);">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;"><div class="main-logo"><span>APOLLO</span> EDIT</div></a>
+            <span style="background: rgba(189,195,199,.2); color: #BDC3C7; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-family: 'Nunito', sans-serif;">📜 Histórico</span>
+        </div>
+        <h2 id="tool-title" style="color: #fff; margin:0; font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 1.8rem;"></h2>
+        <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+            <span class="gas-icon"></span>
+            <strong id="user-credits">...</strong>&nbsp;Gasolina
+        </div>
+    </header>
+
+    <div class="tool-container">
+        <div id="noticias-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:15px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); flex-wrap: wrap;"></div>
+
+        <div class="ad-slot" style="margin: 0 auto 20px auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+
+        <!-- ====== CONTEÚDO: HISTÓRICO ====== -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <h3 style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: var(--btn-yellow, #FFD32A); margin: 0;">
+                    <i class="fas fa-history"></i> Roteiros Salvos
+                </h3>
+                <span id="history-count" style="background: rgba(139,92,246,0.15); color: #a78bfa; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 700;">0</span>
+            </div>
+            <button id="history-clear-btn" class="btn red" style="font-size: 13px; padding: 8px 16px;">
+                <i class="fas fa-trash"></i> Limpar Tudo
+            </button>
+        </div>
+
+        <div id="history-empty" style="text-align: center; padding: 60px 20px; color: #64748b;">
+            <i class="fas fa-scroll fa-3x" style="margin-bottom: 15px; opacity: 0.3;"></i>
+            <p style="font-size: 1.2rem; font-family: 'Nunito', sans-serif;">Nenhum roteiro no histórico ainda.</p>
+            <p style="font-size: 0.9rem; color: #475569;">Gere roteiros na aba "Roteiros" e eles aparecerão aqui.</p>
+        </div>
+
+        <div id="history-list"></div>
+
+        <div class="ad-slot" style="margin: 20px auto 0 auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="noticias_nav.js"></script>
+    <script src="history_logic.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="i18n_loader.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_tour.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+
+

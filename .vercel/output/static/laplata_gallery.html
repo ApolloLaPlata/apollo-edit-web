@@ -1,0 +1,424 @@
+﻿﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="global_style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Gallery - Galeria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Bangers&family=Nunito:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos Locais da Galeria */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .gallery-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            border-color: #F1C40F;
+            box-shadow: 0 8px 25px rgba(241, 196, 15, 0.3);
+        }
+
+        .gallery-img-wrapper {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #0f172a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-img-wrapper img, .gallery-img-wrapper video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .video-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+
+        .gallery-card-content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .prompt-text {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-style: italic;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: auto;
+        }
+
+        .toolbar-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .toolbar-btn.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+        .toolbar-btn.danger:hover { background: #ef4444; color: white; }
+
+        .toolbar-btn.action {
+            background: rgba(139, 92, 246, 0.1);
+            color: #a78bfa;
+            border-color: #8b5cf6;
+        }
+        .toolbar-btn.action:hover { background: #8b5cf6; color: white; }
+
+        .toolbar-btn.success {
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ECC71;
+            border-color: #2ECC71;
+        }
+        .toolbar-btn.success:hover { background: #2ECC71; color: #000; }
+
+        /* Lightbox Modal */
+        .lightbox-overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(15, 23, 42, 0.95); 
+            z-index: 10000; 
+            justify-content: center; 
+            align-items: center;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .lightbox-content {
+            background: #1e293b; 
+            border-radius: 16px; 
+            width: 100%; 
+            max-width: 1400px; 
+            height: 90vh;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8); 
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .lightbox-media {
+            flex: 2;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .lightbox-media img, .lightbox-media video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .lightbox-info {
+            flex: 1;
+            background: #0f172a;
+            border-left: 1px solid #334155;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn-close-lightbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-close-lightbox:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .info-block {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .info-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .info-text {
+            color: #f8fafc;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .page-btn {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #334155;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+    
+    <!-- Topbar -->
+    <header style="padding: 10px 20px;">
+        <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;">
+                <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
+            </a>
+            <span class="badge" style="background: rgba(241, 196, 15, 0.2); color: #F1C40F; padding: 4px 8px; border-radius: 4px;">La Plata V2</span>
+            <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
+                <span class="gas-icon"></span>
+                <strong id="user-credits">...</strong>&nbsp;<span>Gasolina</span>
+            </div>
+        </div>
+
+        <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+            <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
+                <span class="user-name" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuário</span>
+            </div>
+            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace" style="flex-direction: column; align-items: center; padding: 20px; overflow-y: auto;">
+
+        <!-- Header -->
+        <div style="width: 100%; max-width: 1400px; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #332700 0%, #1a1400 100%); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #F1C40F; position: relative; overflow: hidden;">
+            <div style="position:absolute; top:-30px; right:-20px; font-size: 150px; opacity: 0.05; transform: rotate(-15deg); pointer-events: none;">📸</div>
+            
+            <div style="font-size: 3.5rem; background: #F1C40F; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: var(--border-thick); box-shadow: 0 8px 0 var(--border-dark); z-index: 2;">📸</div>
+            <div style="z-index: 2; flex-grow: 1;">
+                <h3 style="font-family: 'Bangers', cursive; font-size: 3.5rem; color: #fff; text-shadow: 4px 4px 0 #000; margin: 0; letter-spacing: 3px;">
+                    ESTÚDIO GALERIA
+                </h3>
+                <p style="font-family: 'Nunito', sans-serif; font-size: 1.4rem; color: #cbd5e1; margin: 0; font-weight: 800; text-shadow: 1px 1px 0 #000;">
+                    Seu acervo de criações. Exporte roteiros, compacte arquivos ou regenere tomadas.
+                </p>
+            </div>
+        </div>
+
+        <!-- Toolbar de Ferramentas de Lote -->
+        <div style="width: 100%; max-width: 1400px; display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; padding: 15px; background: rgba(15,23,42,0.8); border: 1px solid #334155; border-radius: 12px; align-items: center;">
+            <span style="color: #94a3b8; font-weight: bold;" id="gallery-count">0 itens</span>
+            
+            <div style="display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap;">
+                <button class="toolbar-btn danger" id="btn-clear-gallery">
+                    🗑️ Esvaziar Galeria
+                </button>
+                <div style="width: 1px; background: #334155; margin: 0 5px;"></div>
+                <button class="toolbar-btn action" id="btn-export-csv" title="Baixar CSV com Prompts">
+                    📊 Exportar CSV
+                </button>
+                <button class="toolbar-btn action" id="btn-export-zip-img" title="Baixar ZIP apenas com imagens">
+                    📦 ZIP (Imagens)
+                </button>
+                <button class="toolbar-btn action" id="btn-export-zip-full" title="Baixar ZIP com roteiro e mídias">
+                    🗃️ ZIP Completo
+                </button>
+                <div style="width: 1px; background: #334155; margin: 0 5px;"></div>
+                <button class="toolbar-btn success" id="btn-copy-script" title="Copiar roteiro estruturado para clipboard">
+                    📝 Copiar Roteiro
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid da Galeria -->
+        <div class="gallery-grid" id="gallery-grid">
+            <div style="color: #94a3b8; text-align: center; grid-column: 1/-1; padding: 60px;">
+                <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4" />
+                Carregando Galeria...
+            </div>
+        </div>
+
+        <!-- Paginação -->
+        <div class="pagination" id="pagination-controls">
+            <button class="page-btn" id="btn-prev-page">◀ Anterior</button>
+            <span id="page-indicator">Página 1 de 1</span>
+            <button class="page-btn" id="btn-next-page">Próxima ▶</button>
+        </div>
+
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="lightbox-overlay">
+        <div class="lightbox-content">
+            <button id="btn-close-lightbox" class="btn-close-lightbox">&times;</button>
+            
+            <div class="lightbox-media" id="lightbox-media-container">
+                <!-- Imagem ou Vídeo grande será injetado aqui -->
+            </div>
+            
+            <div class="lightbox-info">
+                <h3 style="margin-top: 0; color: #F1C40F; font-family: 'Bangers', cursive; font-size: 2rem; letter-spacing: 1px;">Detalhes da Cena</h3>
+                
+                <div class="info-block">
+                    <span class="info-label">Prompt Original</span>
+                    <div class="info-text" id="lb-prompt">...</div>
+                    <button class="toolbar-btn action" id="btn-copy-prompt" style="margin-top: 10px; font-size: 0.8rem; padding: 4px 8px;">📋 Copiar Prompt</button>
+                </div>
+
+                <div class="info-block" id="lb-video-block" style="display: none;">
+                    <span class="info-label">Prompt de Vídeo (Motion)</span>
+                    <div class="info-text" id="lb-video-prompt">...</div>
+                </div>
+
+                <div class="info-block">
+                    <span class="info-label">Metadados</span>
+                    <div style="display: flex; flex-direction: column; gap: 5px; font-size: 0.9rem; color: #cbd5e1;">
+                        <div><strong>Data:</strong> <span id="lb-date">...</span></div>
+                        <div><strong>Aspect Ratio:</strong> <span id="lb-ratio">...</span></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn secondary" id="btn-download-media" style="width: 100%; display: flex; justify-content: center; gap: 10px;">
+                        📥 Baixar Mídia Principal
+                    </button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" id="btn-delete-item" style="flex: 1; background: #ef4444; border-color: #dc2626; color: white;">🗑️ Excluir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Base -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="apollo_quests.js"></script>
+    <!-- Scripts La Plata -->
+    <script src="laplata_gallery.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+

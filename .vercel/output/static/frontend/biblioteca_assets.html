@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Apollo (Assets) 🎨</title>
+    <!-- CSS Global e Fontes -->
+    <link rel="stylesheet" href="global_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b0b0f;
+            color: #e0e0e0;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Filtros */
+        .lib-sidebar {
+            width: 250px;
+            background: rgba(15, 15, 20, 0.95);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .lib-brand {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .lib-brand span {
+            color: #e84393;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 10px 10px 35px;
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #e84393;
+            box-shadow: 0 0 5px rgba(232, 67, 147, 0.3);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 10px;
+            top: 12px;
+            color: #888;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-section h3 {
+            font-size: 1rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .filter-btn {
+            display: block;
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            text-align: left;
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn i {
+            width: 25px;
+            text-align: center;
+            margin-right: 5px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(232, 67, 147, 0.1);
+            color: #e84393;
+        }
+
+        /* Main Area */
+        .lib-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .lib-header {
+            padding: 20px 30px;
+            background: linear-gradient(to right, rgba(232, 67, 147, 0.1), transparent);
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lib-header h2 {
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .back-btn {
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover { background: #333; }
+
+        /* Grid */
+        .asset-grid {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            align-content: start;
+        }
+
+        /* Asset Card */
+        .asset-card {
+            background: #1a1a24;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border-color: #e84393;
+        }
+
+        .asset-preview {
+            height: 140px;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .asset-preview img, .asset-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .asset-preview .play-overlay {
+            position: absolute;
+            background: rgba(0,0,0,0.6);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .asset-preview .play-overlay:hover {
+            background: rgba(232, 67, 147, 0.8);
+        }
+
+        .asset-info {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 0 5px 0;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .asset-meta {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-add {
+            margin-top: auto;
+            width: 100%;
+            background: transparent;
+            color: #e84393;
+            border: 1px solid #e84393;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background: rgba(232, 67, 147, 0.1);
+        }
+
+        .btn-add.added {
+            background: #e84393;
+            color: #fff;
+            border-color: #e84393;
+        }
+
+        /* Audio Waveform mock */
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 40px;
+        }
+        .waveform .bar {
+            width: 4px;
+            background: #e84393;
+            border-radius: 2px;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            0% { height: 10px; }
+            100% { height: 35px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Filtros -->
+    <aside class="lib-sidebar">
+        <div class="lib-brand">
+            APOLLO <span>ASSETS</span>
+        </div>
+
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Buscar efeitos...">
+        </div>
+
+        <div class="filter-section">
+            <h3>Áudio</h3>
+            <button class="filter-btn active" data-filter="sfx"><i class="fas fa-volume-up"></i> Efeitos Sonoros</button>
+            <button class="filter-btn" data-filter="bgm"><i class="fas fa-music"></i> Trilhas (BGM)</button>
+        </div>
+
+        <div class="filter-section">
+            <h3>Vídeo</h3>
+            <button class="filter-btn" data-filter="overlay"><i class="fas fa-layer-group"></i> Overlays (Alpha)</button>
+            <button class="filter-btn" data-filter="transition"><i class="fas fa-random"></i> Transições</button>
+            <button class="filter-btn" data-filter="background"><i class="fas fa-video"></i> Fundos em Loop</button>
+        </div>
+
+        <div class="filter-section">
+            <h3>Gráficos</h3>
+            <button class="filter-btn" data-filter="template"><i class="fas fa-tv"></i> Templates Prontos</button>
+        </div>
+    </aside>
+
+    <!-- Main Area -->
+    <main class="lib-main">
+        <header class="lib-header">
+            <h2 id="current-category-title">Todos os Efeitos</h2>
+            <a href="hub.html" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar à Garagem</a>
+        </header>
+
+        <div class="asset-grid" id="asset-grid">
+            <!-- Cards will be injected here by JS -->
+        </div>
+    </main>
+
+    <!-- Audio Player invisível para preview -->
+    <audio id="preview-player" style="display: none;"></audio>
+
+    <script src="biblioteca_logic.js"></script>
+</body>
+</html>

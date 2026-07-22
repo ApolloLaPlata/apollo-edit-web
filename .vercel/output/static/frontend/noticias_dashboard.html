@@ -1,0 +1,98 @@
+﻿﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Notícias — Painel Geral — Apollo Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <link rel="stylesheet" href="noticias.css">
+    <style>
+        .noticias-nav-pill { padding: 8px 16px; border-radius: 20px; font-weight: bold; white-space: nowrap; cursor: pointer; transition: 0.2s; font-family: 'Nunito', sans-serif; text-decoration: none; font-size: 13px; border: 1px solid; display: inline-flex; align-items: center; gap: 6px; }
+        .noticias-nav-pill:hover { transform: translateY(-2px); filter: brightness(1.15); }
+        .apollo-toast { padding: 12px 20px; border-radius: 8px; color: #fff; font-weight: 600; font-family: 'Nunito', sans-serif; transition: opacity 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .apollo-toast.success { background: #2ECC71; }
+        .apollo-toast.error { background: #E74C3C; }
+        .apollo-toast.info { background: #3498DB; }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+
+    <header class="top-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(30, 30, 30, 0.9); border-bottom: 1px solid #333; backdrop-filter: blur(10px);">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;"><div class="main-logo"><span>APOLLO</span> EDIT</div></a>
+            <span style="background: rgba(52,152,219,.2); color: #3498DB; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-family: 'Nunito', sans-serif;">📊 Painel Geral</span>
+        </div>
+        <h2 id="tool-title" style="color: #fff; margin:0; font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 1.8rem;"></h2>
+        <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+            <span class="gas-icon"></span>
+            <strong id="user-credits">...</strong>&nbsp;Gasolina
+        </div>
+    </header>
+
+    <div class="tool-container">
+        <div id="noticias-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:15px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); flex-wrap: wrap;"></div>
+
+        <div class="ad-slot" style="margin: 0 auto 20px auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+
+        <!-- ====== CONTEÚDO: PAINEL GERAL ====== -->
+        <div id="dashboard-categories" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;"></div>
+
+        <div id="dashboard-loading" style="display: none; text-align: center; padding: 40px;">
+            <div class="loading-text"><i class="fas fa-circle-notch fa-spin"></i> Carregando notícias...</div>
+        </div>
+
+        <div id="dashboard-error" style="display: none; background: rgba(239,68,68,0.15); border: 1px solid #ef4444; border-radius: 8px; padding: 12px; margin-bottom: 15px; color: #ef4444;">
+            <i class="fas fa-exclamation-triangle"></i> <span id="dashboard-error-text"></span>
+        </div>
+
+        <div id="dashboard-grid" class="news-grid"></div>
+
+        <!-- Elemento oculto para cross-page navigation -->
+        <textarea id="scripts-topic" style="display:none;"></textarea>
+
+        <div class="ad-slot" style="margin: 20px auto 0 auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
+
+    <script src="noticias_nav.js"></script>
+    <script src="dashboard_logic.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="i18n_loader.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_tour.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>
+
+

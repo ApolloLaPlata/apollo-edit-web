@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding-bottom: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+    <h2 style="color: var(--accent);">🔧 Ferramentas de Edição Rápida</h2>
+</div>
+
+<div style="display: flex; gap: 20px;">
+
+    <!-- LEFT: Arquivo de Entrada -->
+    <div class="group-box" style="flex: 1; max-width: 320px;">
+        <div class="group-title">📁 Arquivo de Entrada</div>
+        
+        <label style="color: #aaa; font-size: 12px; display: block; margin-bottom: 8px;">🎬 Vídeo de Entrada:</label>
+        <button class="btn primary" style="width: 100%; margin-bottom: 8px;" onclick="browseVideo()">📂 Selecionar Vídeo</button>
+        <input type="text" id="ferr_video_path" readonly style="width: 100%; font-size: 11px; margin-bottom: 15px;" placeholder="Nenhum vídeo selecionado">
+        
+        <div id="video-info" style="color: #666; font-size: 12px; line-height: 1.8; background: #111; border: 1px solid #333; border-radius: 4px; padding: 10px; min-height: 100px;">
+            Informações do vídeo aparecerão aqui...
+        </div>
+
+        <div id="ferr-status" style="margin-top: 15px; color: #888; font-size: 12px; text-align: center; background: #111; padding: 8px; border-radius: 4px;">
+            Status: Aguardando seleção de vídeo...
+        </div>
+    </div>
+
+    <!-- RIGHT: Ferramentas Disponíveis -->
+    <div class="group-box" style="flex: 2;">
+        <div class="group-title">🔧 Ferramentas Disponíveis</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            {% set ferramentas = [
+                ("🖼️ Adicionar Capa", "Adiciona uma capa de 1 segundo no início do vídeo"),
+                ("🔄 Inverter Vídeo", "Inverte a ordem dos frames do vídeo"),
+                ("✂️ Remover Último Frame", "Remove o último frame do vídeo"),
+                ("🎵 Extrair Áudio", "Extrai apenas o áudio do vídeo"),
+                ("📐 Redimensionar", "Redimensiona o vídeo para novas dimensões"),
+                ("⚡ Acelerar/Desacelerar", "Altera a velocidade do vídeo"),
+                ("🎨 Ajustar Brilho/Contraste", "Ajusta parâmetros visuais"),
+                ("🔇 Remover Áudio", "Remove o áudio do vídeo"),
+                ("🔄 Rotacionar", "Rotaciona o vídeo em 90°, 180° ou 270°"),
+                ("📱 Criador de Stories (30s)", "Corta automaticamente os primeiros 30 segundos do vídeo"),
+                ("🗜️ Compressor de Vídeo", "Reduz o tamanho do vídeo (h264 / CRF-28)")
+            ] %}
+            
+            {% for nome, descricao in ferramentas %}
+            <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-weight: bold; font-size: 13px; color: #fff;">{{ nome }}</div>
+                <div style="font-size: 11px; color: #888; flex: 1;">{{ descricao }}</div>
+                <button class="btn outline" style="width: 100%; padding: 6px;" onclick="aplicarFerramenta('{{ nome }}')">
+                    Aplicar
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    async function browseVideo() {
+        try {
+            const response = await fetch('/api/browse_file?type=video');
+            const data = await response.json();
+            if (data.path) {
+                document.getElementById('ferr_video_path').value = data.path;
+                const nome = data.path.split('\\').pop();
+                document.getElementById('video-info').innerHTML = `
+                    <span style="color:#0af;">📁 ${nome}</span><br>
+                    <span style="color:#666;">Caminho completo:</span><br>
+                    <span style="font-size:10px;">${data.path}</span>
+                `;
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    function aplicarFerramenta(nome) {
+        const path = document.getElementById('ferr_video_path').value;
+        if (!path) {
+            alert('⚠️ Selecione um vídeo primeiro!');
+            return;
+        }
+        document.getElementById('ferr-status').textContent = `Status: Aplicando ${nome}...`;
+        document.getElementById('ferr-status').style.color = '#f59e0b';
+        // TODO: Conectar ao backend Flask
+        setTimeout(() => {
+            document.getElementById('ferr-status').textContent = `Status: "${nome}" enviado para processamento ✅`;
+            document.getElementById('ferr-status').style.color = '#22c55e';
+        }, 800);
+    }
+</script>
+{% endblock %}

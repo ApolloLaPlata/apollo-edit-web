@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Notícias — Roteiros — Apollo Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <link rel="stylesheet" href="noticias.css">
+    <style>
+        .noticias-nav-pill { padding: 8px 16px; border-radius: 20px; font-weight: bold; white-space: nowrap; cursor: pointer; transition: 0.2s; font-family: 'Nunito', sans-serif; text-decoration: none; font-size: 13px; border: 1px solid; display: inline-flex; align-items: center; gap: 6px; }
+        .noticias-nav-pill:hover { transform: translateY(-2px); filter: brightness(1.15); }
+        .apollo-toast { padding: 12px 20px; border-radius: 8px; color: #fff; font-weight: 600; font-family: 'Nunito', sans-serif; transition: opacity 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .apollo-toast.success { background: #2ECC71; }
+        .apollo-toast.error { background: #E74C3C; }
+        .apollo-toast.info { background: #3498DB; }
+        .scripts-section { background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .scripts-section h3 { font-family: 'Bangers', cursive; font-size: 1.4rem; color: var(--btn-yellow); margin: 0 0 15px 0; }
+    </style>
+<script src="laplata_ai.js"></script>
+
+<!-- APOLLO OS IFRAME CSS CLEANUP -->
+<script>
+    if (window.self !== window.top) {
+        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
+    }
+</script>
+
+</head>
+<body>
+    <div id="global-3d-bg"></div>
+
+    <header class="top-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(30, 30, 30, 0.9); border-bottom: 1px solid #333; backdrop-filter: blur(10px);">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="hub.html" style="text-decoration: none;"><div class="main-logo"><span>APOLLO</span> EDIT</div></a>
+            <span style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-family: 'Nunito', sans-serif;">📰 Central de Notícias</span>
+        </div>
+        <h2 id="tool-title" style="color: #fff; margin:0; font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 1.8rem;"></h2>
+        <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+            <span class="gas-icon"></span>
+            <strong id="user-credits">...</strong>&nbsp;Gasolina
+        </div>
+    </header>
+
+    <div class="tool-container">
+        <div id="noticias-nav" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:15px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); flex-wrap: wrap;"></div>
+
+        <div id="dynamic-ad-campaign" style="margin: 0 auto 20px auto; width: 100%;"></div>
+
+        <!-- ====== CONTEÚDO: ROTEIROS ====== -->
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- Coluna Esquerda: Perfis -->
+            <div style="flex: 0 0 320px;">
+                <div class="scripts-section">
+                    <h3>👤 Perfil do Canal</h3>
+                    <select id="scripts-profile-select" class="news-input" style="width: 100%; margin-bottom: 12px;"></select>
+                    <button class="btn primary" style="width: 100%; margin-bottom: 10px;" onclick="toggleScriptsProfileForm(true)">
+                        <i class="fas fa-plus"></i> Novo Perfil
+                    </button>
+
+                    <!-- Form de criação de perfil (oculto) -->
+                    <div id="scripts-profile-form" style="display: none; flex-direction: column; gap: 10px; background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                        <input type="text" id="scripts-profile-name" class="news-input" placeholder="Nome do canal...">
+                        <textarea id="scripts-profile-desc" class="news-input" rows="3" placeholder="Descreva o nicho, público, tom de voz..."></textarea>
+                        <div>
+                            <label style="font-size: 12px; color: #94a3b8; margin-bottom: 5px; display: block;">📄 Arquivos de referência (roteiros anteriores, etc.)</label>
+                            <input type="file" id="scripts-profile-files" multiple onchange="handleScriptsProfileFiles(event)" style="color: #fff; font-size: 12px;">
+                            <ul id="scripts-profile-files-list" style="list-style: none; padding: 0; margin: 8px 0 0 0; display: flex; flex-direction: column; gap: 4px;"></ul>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn green" onclick="saveScriptsProfile()" style="flex:1;"><i class="fas fa-save"></i> Salvar</button>
+                            <button class="btn red" onclick="toggleScriptsProfileForm(false)" style="flex:1;"><i class="fas fa-times"></i> Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="scripts-profiles-list"></div>
+            </div>
+
+            <!-- Coluna Direita: Geração -->
+            <div style="flex: 1; min-width: 400px;">
+                <div class="scripts-section">
+                    <h3>✍️ Gerar Roteiro</h3>
+
+                    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <label class="form-group label" style="font-size: 12px; color: #94a3b8;"><i class="fas fa-video"></i> Modalidade</label>
+                            <select id="scripts-modality" class="news-input">
+                                <option value="longo">📺 Vídeo Longo (8-12 min)</option>
+                                <option value="curto">⚡ Vídeo Curto (3-5 min)</option>
+                                <option value="shorts">📱 Shorts/TikTok (60s)</option>
+                                <option value="corte">✂️ Corte Podcast (1-3 min)</option>
+                                <option value="documentario">🎬 Documentário</option>
+                                <option value="noticias" selected>📰 Notícias</option>
+                                <option value="review">⭐ Review</option>
+                                <option value="tutorial">📚 Tutorial</option>
+                                <option value="storytelling">📖 Storytelling</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label class="form-group label" style="font-size: 12px; color: #94a3b8;"><i class="fas fa-theater-masks"></i> Tom de Voz</label>
+                            <select id="scripts-tone" class="news-input">
+                                <option value="perfil">🎯 Do Perfil</option>
+                                <option value="sarcastico">😏 Sarcástico</option>
+                                <option value="comedia">😂 Comédia</option>
+                                <option value="agressivo">🔥 Agressivo</option>
+                                <option value="serio" selected>📋 Sério</option>
+                                <option value="descontraido">😎 Descontraído</option>
+                                <option value="inspirador">🌟 Inspirador</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-group label" style="font-size: 12px; color: #94a3b8;"><i class="fas fa-brain"></i> Inteligência Artificial (Motor)</label>
+                        <select id="scripts-ai-engine" class="news-input" style="width: 100%;">
+                            <option value="auto" selected>⚡ Automático / Gratuito (Otimizado via Meta-Agente)</option>
+                            <!-- JS vai popular as premium options aqui (ex: Gemini 1.5 Pro - Custo: ~5 Gas) -->
+                        </select>
+                        <p class="text-[10px] text-slate-500 mt-1" id="scripts-ai-engine-hint">Modelos premium consomem combustível (Gas) baseado no custo real da API + Margem Apollo.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size: 12px; color: #94a3b8;"><i class="fas fa-pen"></i> Tema / URL / Informações</label>
+                        <textarea id="scripts-topic" class="news-input" rows="5" placeholder="Cole aqui o tema, URL de referência, notícias ou informações para o roteiro..." oninput="updateScriptsGenerateBtn()"></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button id="scripts-generate-btn" class="btn yellow" style="flex: 1;" onclick="handleGenerateScriptCustom()" disabled>
+                            <i class="fas fa-magic"></i> Gerar Roteiro Completo
+                        </button>
+                        <button id="scripts-generate-shorts-btn" class="btn primary" onclick="handleGenerateShortsScript()" disabled>
+                            <i class="fas fa-mobile-alt"></i> Shorts
+                        </button>
+                        <button id="scripts-generate-thumb-btn" class="btn green" onclick="handleGenerateThumbnails()" disabled>
+                            <i class="fas fa-image"></i> Thumbnails
+                        </button>
+                        <button id="scripts-clear-topic-btn" class="btn red" style="display:none;" onclick="document.getElementById('scripts-topic').value=''; updateScriptsGenerateBtn();">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resultado -->
+                <div id="scripts-result-container" style="display: none; background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="font-family: 'Bangers', cursive; font-size: 1.3rem; color: #2ECC71; margin: 0;"><i class="fas fa-scroll"></i> Roteiro Gerado</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="scripts-copy-btn" class="btn" style="font-size: 12px; padding: 6px 12px;" onclick="copyCustomScript()">
+                                <i class="fas fa-copy"></i> Copiar
+                            </button>
+                            <button class="btn" style="font-size: 12px; padding: 6px 12px;" onclick="downloadCustomScriptTXT()">
+                                <i class="fas fa-download"></i> TXT
+                            </button>
+                        </div>
+                    </div>
+                    <div id="scripts-output" style="color: #e2e8f0; line-height: 1.7; font-family: 'Nunito', sans-serif;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad-slot" style="margin: 20px auto 0 auto; max-width: 728px;">
+            <span>[ESPAÇO PUBLICITÁRIO - 728x90]</span>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="noticias_nav.js"></script>
+    <script src="scripts_logic.js"></script>
+    <script src="bg_parallax.js"></script>
+    <script src="i18n_loader.js"></script>
+    <script src="apollo_quests.js"></script>
+    <script src="apollo_tour.js"></script>
+<script src="laplata_inventory.js"></script>
+<script src="copilot_knowledge_base.js"></script>
+<script src="apollo_copilot.js"></script>
+<script src="apollo_quests.js"></script>
+
+    <!-- APOLLO OS CORE (Auto-Injected) -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+    
+    <script>
+        // Load Dynamic Ad Campaign with Rotation
+        let currentCampaigns = [];
+        let currentCampaignIndex = 0;
+        
+        async function fetchCampaigns() {
+            try {
+                const res = await fetch('https://api.apolloedit.com/api/public/campaigns');
+                const data = await res.json();
+                if(data.success && data.campaigns && data.campaigns.length > 0) {
+                    currentCampaigns = data.campaigns;
+                    renderCurrentCampaign();
+                    // Rotate every 30 seconds
+                    setInterval(rotateCampaign, 30000);
+                }
+            } catch(e) { console.error('Erro ao carregar Ads:', e); }
+        }
+
+        async function renderCurrentCampaign() {
+            if(currentCampaigns.length === 0) return;
+            const campaign = currentCampaigns[currentCampaignIndex];
+            const adContainer = document.getElementById('dynamic-ad-campaign');
+            if(adContainer) {
+                // Add click tracker wrapper
+                adContainer.innerHTML = `<div onclick="trackAdClick(${campaign.id})" style="cursor:pointer; transition: opacity 0.5s;">${campaign.image_url}</div>`;
+                // Register View
+                fetch(`/api/public/campaigns/${campaign.id}/view`, { method: 'POST' }).catch(e=>console.error(e));
+            }
+        }
+
+        function rotateCampaign() {
+            const adContainer = document.getElementById('dynamic-ad-campaign');
+            if(adContainer) adContainer.firstChild.style.opacity = 0;
+            
+            setTimeout(() => {
+                currentCampaignIndex = (currentCampaignIndex + 1) % currentCampaigns.length;
+                renderCurrentCampaign();
+            }, 500); // Wait for fade out
+        }
+        
+        function trackAdClick(campaignId) {
+            fetch(`/api/public/campaigns/${campaignId}/click`, { method: 'POST' }).catch(e=>console.error(e));
+            // Optional: Redirect if campaign has link_url
+            const campaign = currentCampaigns.find(c => c.id === campaignId);
+            if(campaign && campaign.link_url && campaign.link_url !== '#') {
+                window.open(campaign.link_url, '_blank');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchCampaigns);
+    </script>
+</body>
+</html>
+
+

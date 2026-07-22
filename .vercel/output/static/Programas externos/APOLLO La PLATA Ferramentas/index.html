@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APOLLO La PLATA - Ferramentas de IA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-rocket"></i>
+                <span>APOLLO La PLATA</span>
+            </div>
+            <div class="header-subtitle">
+                <span>Ferramentas de IA para Criação de Conteúdo</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <div class="page-header">
+                <h1>Ferramentas de IA</h1>
+                <p>Suas ferramentas profissionais para criação de conteúdo viral</p>
+                
+                <!-- Seletor de API -->
+                <div class="api-selector">
+                    <div class="api-selector-header">
+                        <h3><i class="fas fa-brain"></i> Motor de IA Ativo</h3>
+                        <div class="api-status" id="apiStatus">
+                            <span class="api-indicator active"></span>
+                            <span class="api-name">ChatGPT</span>
+                        </div>
+                    </div>
+                    
+                    <div class="api-options">
+                        <button class="api-option active" data-api="chatgpt" onclick="selectApi('chatgpt')">
+                            <div class="api-icon">🤖</div>
+                            <div class="api-info">
+                                <div class="api-title">ChatGPT</div>
+                                <div class="api-desc">Precisão e criatividade</div>
+                            </div>
+                            <div class="api-badge premium">Premium</div>
+                        </button>
+                        
+                        <button class="api-option" data-api="grok" onclick="selectApi('grok')">
+                            <div class="api-icon">⚡</div>
+                            <div class="api-info">
+                                <div class="api-title">Grok</div>
+                                <div class="api-desc">Velocidade e humor</div>
+                            </div>
+                            <div class="api-badge new">Novo</div>
+                        </button>
+                        
+                        <button class="api-option" data-api="gemini" onclick="selectApi('gemini')">
+                            <div class="api-icon">💎</div>
+                            <div class="api-info">
+                                <div class="api-title">Gemini</div>
+                                <div class="api-desc">Análise e insights</div>
+                            </div>
+                            <div class="api-badge free">Gratuito</div>
+                        </button>
+                        
+                        <button class="api-option" data-api="openrouter" onclick="selectApi('openrouter')">
+                            <div class="api-icon">🔄</div>
+                            <div class="api-info">
+                                <div class="api-title">OpenRouter</div>
+                                <div class="api-desc">Múltiplos modelos</div>
+                            </div>
+                            <div class="api-badge free">Gratuito</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tools-grid">
+                <!-- Gerador de Prompt -->
+                <div class="tool-card" data-tool="prompt">
+                    <div class="tool-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Gerador de Prompt</h3>
+                    <p>Prompts profissionais para IA</p>
+                    <span class="tool-badge popular">Mais Usado</span>
+                </div>
+                
+                <!-- Gerador de Hashtag -->
+                <div class="tool-card" data-tool="hashtag">
+                    <div class="tool-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <h3>Gerador de Hashtag</h3>
+                    <p>Hashtags virais estratégicas</p>
+                    <span class="tool-badge popular">Mais Usado</span>
+                </div>
+                
+                <!-- Descrever Imagem -->
+                <div class="tool-card" data-tool="imagem">
+                    <div class="tool-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3>Descrever Imagem</h3>
+                    <p>Análise detalhada com IA</p>
+                </div>
+                
+                <!-- Mineração Viral -->
+                <div class="tool-card" data-tool="mineracao">
+                    <div class="tool-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Mineração Viral</h3>
+                    <p>Descobrir vídeos virais</p>
+                    <span class="tool-badge popular">Mais Usado</span>
+                </div>
+                
+                <!-- Gerador de Títulos -->
+                <div class="tool-card" data-tool="titulos">
+                    <div class="tool-icon">
+                        <i class="fas fa-heading"></i>
+                    </div>
+                    <h3>Gerador de Títulos</h3>
+                    <p>Títulos virais para YouTube</p>
+                </div>
+                
+                <!-- Gerador de Descrições -->
+                <div class="tool-card" data-tool="descricoes">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Gerador de Descrições</h3>
+                    <p>Descrições envolventes</p>
+                </div>
+                
+                <!-- Gerador de Imagens -->
+                <div class="tool-card" data-tool="gerar-imagem">
+                    <div class="tool-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>Gerador de Imagens</h3>
+                    <p>Nano Banana - Geração de imagens com IA</p>
+                    <span class="tool-badge ai">Nano Banana</span>
+                </div>
+                
+                <!-- Analisador de Tendências -->
+                <div class="tool-card" data-tool="tendencias">
+                    <div class="tool-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Analisador de Tendências</h3>
+                    <p>Análise de tendências virais</p>
+                </div>
+                
+                <!-- Gerador VEO3/FLOW -->
+                <div class="tool-card" data-tool="veo3-generator">
+                    <div class="tool-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Gerador VEO3/FLOW</h3>
+                    <p>Gera prompts JSON para VEO3 e FLOW com especificações técnicas</p>
+                </div>
+                
+                <!-- Gerador de Roteiros -->
+                <div class="tool-card" data-tool="roteiro-generator">
+                    <div class="tool-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Gerador de Roteiros</h3>
+                    <p>Sistema completo de roteiros multi-formato com cálculo de duração</p>
+                    <span class="tool-badge new">NOVO</span>
+                </div>
+
+                <!-- Otimizador de Conteúdo -->
+                <div class="tool-card" data-tool="content-optimizer">
+                    <div class="tool-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Otimizador de Conteúdo</h3>
+                    <p>Gera títulos, descrições e hashtags otimizados para todas as redes sociais</p>
+                    <span class="tool-badge new">NOVO</span>
+                </div>
+
+                <!-- Gerador de Roteiro Visual -->
+                <div class="tool-card" data-tool="visual-script">
+                    <div class="tool-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Gerador de Roteiro Visual</h3>
+                    <p>Converte roteiros em prompts de imagem e animação para VEO3/VEO2</p>
+                    <span class="tool-badge new">NOVO</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gerador de Prompt -->
+        <div id="prompt" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-magic"></i> Gerador de Prompt</h1>
+                <p>Crie prompts profissionais para gerar imagens incríveis com inteligência artificial</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-star"></i> Configuração do Prompt</h3>
+                        <p>Preencha os campos abaixo para criar seu prompt personalizado</p>
+                    </div>
+                    
+                    <form id="promptForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="mainDescription">Descrição Principal *</label>
+                            <textarea id="mainDescription" placeholder="Descreva a imagem que você quer gerar..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="visualStyle"><i class="fas fa-palette"></i> Estilo Visual</label>
+                            <select id="visualStyle">
+                                <option value="realista">Realista - Fotografia realista e detalhada</option>
+                                <option value="cartoon">Cartoon - Estilo animado e divertido</option>
+                                <option value="artistico">Artístico - Pintura digital artística</option>
+                                <option value="cinematografico">Cinematográfico - Como uma cena de filme</option>
+                                <option value="fantasy">Fantasy - Mundo fantástico e mágico</option>
+                                <option value="minimalista">Minimalista - Design limpo e simples</option>
+                                <option value="anime">Anime - Estilo japonês animado</option>
+                                <option value="fotografico">Fotográfico - Qualidade profissional</option>
+                                <option value="digital">Digital Art - Arte digital moderna</option>
+                                <option value="pintura">Pintura - Estilo clássico de pintura</option>
+                                <option value="sketch">Sketch - Desenho a lápis</option>
+                                <option value="3d">3D Render - Renderização 3D</option>
+                                <option value="vintage">Vintage - Estilo retrô</option>
+                                <option value="cyberpunk">Cyberpunk - Futuro distópico</option>
+                                <option value="steampunk">Steampunk - Era vitoriana futurista</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quality">Qualidade</label>
+                                <select id="quality">
+                                    <option value="alta">Alta Definição</option>
+                                    <option value="4k">4K Ultra HD</option>
+                                    <option value="8k">8K Ultra HD</option>
+                                    <option value="profissional">Qualidade Profissional</option>
+                                    <option value="masterpiece">Masterpiece</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lighting">Iluminação</label>
+                                <select id="lighting">
+                                    <option value="natural">Luz Natural</option>
+                                    <option value="hora-dourada">Hora Dourada</option>
+                                    <option value="dramatica">Iluminação Dramática</option>
+                                    <option value="suave">Luz Suave</option>
+                                    <option value="neon">Luz Neon</option>
+                                    <option value="estudio">Iluminação de Estúdio</option>
+                                    <option value="noturna">Iluminação Noturna</option>
+                                    <option value="backlight">Contraluz</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="composition"><i class="fas fa-camera"></i> Composição</label>
+                                <select id="composition">
+                                    <option value="paisagem">Paisagem</option>
+                                    <option value="retrato">Retrato</option>
+                                    <option value="close-up">Close-up</option>
+                                    <option value="wide">Wide Shot</option>
+                                    <option value="bird-eye">Vista Aérea</option>
+                                    <option value="macro">Macro</option>
+                                    <option value="panoramica">Panorâmica</option>
+                                    <option value="dutch-angle">Ângulo Holandês</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="language"><i class="fas fa-globe"></i> Idioma do Prompt</label>
+                                <select id="language">
+                                    <option value="pt">BR Português</option>
+                                    <option value="en">US Inglês</option>
+                                    <option value="es">ES Espanhol</option>
+                                    <option value="fr">FR Francês</option>
+                                    <option value="de">DE Alemão</option>
+                                    <option value="it">IT Italiano</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Elementos Adicionais</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="ultra-detalhado" checked>
+                                    <span>Ultra detalhado</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="efeitos-luz">
+                                    <span>Efeitos de luz</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="profundidade">
+                                    <span>Profundidade de campo</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="reflexos">
+                                    <span>Reflexos perfeitos</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="cores-vibrantes">
+                                    <span>Cores vibrantes</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="texturas">
+                                    <span>Texturas realistas</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="atmosfera-epica">
+                                    <span>Atmosfera épica</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="sombras">
+                                    <span>Sombras dinâmicas</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="hdr">
+                                    <span>HDR</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="bokeh">
+                                    <span>Efeito Bokeh</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-star"></i>
+                                Gerar Prompt
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearPromptForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar Formulário
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-star"></i> Seu Prompt Gerado</h3>
+                        <p>Copie e use em qualquer ferramenta de IA para gerar imagens</p>
+                    </div>
+                    
+                    <div class="result-area" id="promptResult">
+                        <div class="placeholder">
+                            <i class="fas fa-magic"></i>
+                            <p>Preencha o formulário e clique em 'Gerar Prompt' para ver o resultado aqui</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Dicas para Prompts Melhores</h3>
+                <div class="tips-grid">
+                    <div class="tip-category">
+                        <h4>Descrição</h4>
+                        <ul>
+                            <li>Seja específico sobre o que você quer</li>
+                            <li>Inclua detalhes sobre poses e expressões</li>
+                            <li>Mencione cores e atmosfera desejada</li>
+                        </ul>
+                    </div>
+                    <div class="tip-category">
+                        <h4>Estilo e Qualidade</h4>
+                        <ul>
+                            <li>Escolha o estilo que combina com sua visão</li>
+                            <li>Qualidades maiores geram imagens melhores</li>
+                            <li>Combine elementos para resultados únicos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gerador de Hashtag -->
+        <div id="hashtag" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-hashtag"></i> Gerador de Hashtags Virais</h1>
+                <p>Crie hashtags estratégicas que aumentam o alcance e engajamento do seu conteúdo</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-sparkles"></i> Configuração das Hashtags</h3>
+                        <p>Preencha os campos abaixo para gerar hashtags personalizadas</p>
+                    </div>
+                    
+                    <form id="hashtagForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="niche"><i class="fas fa-arrow-up"></i> Nicho/Categoria *</label>
+                            <select id="niche" required>
+                                <option value="religioso">Religioso - Fé, espiritualidade, mensagens bíblicas</option>
+                                <option value="anime">Anime - Animações japonesas, mangás</option>
+                                <option value="fitness">Fitness e Saúde - Academia, treinos, dieta, bem-estar</option>
+                                <option value="moda">Moda e Estilo - Roupas, tendências, looks</option>
+                                <option value="culinaria">Gastronomia - Receitas, restaurantes, culinária</option>
+                                <option value="viagem">Viagens - Destinos, dicas de viagem, turismo</option>
+                                <option value="tecnologia">Tecnologia - Gadgets, apps, inovações</option>
+                                <option value="negocios">Negócios - Empreendedorismo, marketing, vendas</option>
+                                <option value="beleza">Beleza - Makeup, skincare, produtos</option>
+                                <option value="educacao">Educação - Ensino, cursos, aprendizado</option>
+                                <option value="entretenimento">Entretenimento - Filmes, séries, games, música</option>
+                                <option value="lifestyle">Lifestyle - Estilo de vida, rotina, motivação</option>
+                                <option value="automoveis">Automóveis - Carros, motos, tuning</option>
+                                <option value="pets">Pets - Animais de estimação, cuidados</option>
+                                <option value="esportes">Esportes - Futebol, basquete, MMA, etc</option>
+                                <option value="politica">Política - Notícias, debates, eleições</option>
+                                <option value="humor">Humor - Memes, piadas, comédia</option>
+                                <option value="investimentos">Investimentos - Bolsa, cripto, finanças</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="market"><i class="fas fa-globe"></i> Mercado/Idioma</label>
+                            <select id="market">
+                                <option value="global">Global - Hashtags em inglês para alcance mundial</option>
+                                <option value="brasileiro">Brasileiro - Hashtags em português para público brasileiro</option>
+                                <option value="americano">Americano - Hashtags focadas no mercado americano</option>
+                                <option value="espanhol">Espanhol - Hashtags em espanhol para mercado latino</option>
+                                <option value="frances">Francês - Hashtags em francês para mercado francófono</option>
+                                <option value="misto">Misto - Combinação de português e inglês</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="includeTitle">
+                                <span>Adicionar um título sobre o assunto antes das hashtags</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="includeDescription">
+                                <span>Adicionar uma descrição envolvente sobre o assunto</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="includeEmojis">
+                                <span>Adicionar emojis relevantes nas hashtags para maior engajamento</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quantity">Quantidade</label>
+                                <select id="quantity">
+                                    <option value="5">5 hashtags</option>
+                                    <option value="10" selected>10 hashtags</option>
+                                    <option value="15">15 hashtags</option>
+                                    <option value="20">20 hashtags</option>
+                                    <option value="30">30 hashtags</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contentType">Tipo de Conteúdo</label>
+                                <select id="contentType">
+                                    <option value="reels">Reels/Vídeos</option>
+                                    <option value="posts">Post no Feed</option>
+                                    <option value="stories">Stories</option>
+                                    <option value="carrossel">Carrossel</option>
+                                    <option value="live">Live/Transmissão</option>
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="youtube">YouTube</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Objetivos da Publicação</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="alcance">
+                                    <span>Aumentar alcance</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="engajamento">
+                                    <span>Engajamento</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="vendas">
+                                    <span>Vendas</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="seguidores">
+                                    <span>Seguidores</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="conscientizacao">
+                                    <span>Conscientização</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="comunidade">
+                                    <span>Comunidade</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="viral" checked>
+                                    <span>Viral</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="trending">
+                                    <span>Trending</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-hashtag"></i>
+                                Gerar Hashtags
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearHashtagForm()">
+                                <i class="fas fa-refresh"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-sparkles"></i> Hashtags Geradas</h3>
+                        <p>Suas hashtags personalizadas aparecerão aqui</p>
+                    </div>
+                    
+                    <div class="result-area" id="hashtagResult">
+                        <div class="placeholder">
+                            <i class="fas fa-hashtag"></i>
+                            <p>Preencha os campos e clique em "Gerar Hashtags"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Dicas para hashtags mais eficazes:</h3>
+                <ul class="tips-list">
+                    <li>Use uma mistura de hashtags populares e de nicho</li>
+                    <li>Evite hashtags muito genéricas que tenham milhões de posts</li>
+                    <li>Adapte as hashtags para cada tipo de conteúdo</li>
+                    <li>Monitore quais hashtags geram mais engajamento</li>
+                    <li>Atualize sua estratégia de hashtags regularmente</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Descrever Imagem -->
+        <div id="imagem" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-image"></i> Descrever Imagem IA</h1>
+                <p>Faça upload de uma imagem e nossa IA criará uma descrição detalhada para recriar a imagem</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-upload"></i> Upload da Imagem</h3>
+                        <p>Selecione uma imagem para análise (máx. 50MB)</p>
+                    </div>
+                    
+                    <form id="imageForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="imageFile">Selecionar Imagem *</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="imageFile" accept="image/*" required>
+                                <label for="imageFile" class="file-input-label">
+                                    <i class="fas fa-folder-open"></i>
+                                    Escolher arquivo
+                                </label>
+                                <span class="file-name" id="fileName">Nenhum arquivo escolhido</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ou colar imagem</label>
+                            <button type="button" class="btn-secondary" onclick="pasteFromClipboard()">
+                                <i class="fas fa-clipboard"></i>
+                                Colar Imagem da Área de Transferência
+                            </button>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-sparkles"></i>
+                                Analisar Imagem
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearImageForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar
+                            </button>
+                        </div>
+                        
+                        <div class="tutorial-section">
+                            <button type="button" class="btn-tutorial">
+                                <i class="fas fa-play"></i>
+                                Tutorial da ferramenta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-sparkles"></i> Descrição Gerada</h3>
+                        <p>Descrição detalhada da sua imagem para recriar com IA</p>
+                    </div>
+                    
+                    <div class="result-area" id="imageResult">
+                        <div class="placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>A descrição aparecerá aqui após a análise...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tips-section">
+                <h3><i class="fas fa-image"></i> Dica para melhores resultados:</h3>
+                <ul class="tips-list">
+                    <li>Use imagens com boa qualidade e iluminação</li>
+                    <li>Evite imagens muito escuras ou borradas</li>
+                    <li>A IA descreverá elementos visuais, cores, composição e estilo</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mineração Viral -->
+        <div id="mineracao" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-gem"></i> Mineração Viral</h1>
+                <p>Descubra vídeos virais e analise tendências</p>
+            </div>
+            <iframe src="../Minerador de Videos/Minerador_de_videos_virais.html" frameborder="0" style="width: 100%; height: calc(100vh - 200px); border: none; border-radius: 15px;"></iframe>
+        </div>
+
+        <!-- Gerador de Títulos -->
+        <div id="titulos" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-heading"></i> Gerador de Títulos Virais</h1>
+                <p>Crie títulos irresistíveis que geram cliques e engajamento</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-bullseye"></i> Configuração do Título</h3>
+                        <p>Configure os parâmetros para gerar títulos virais</p>
+                    </div>
+                    
+                    <form id="titulosForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="tituloTema">Tema/Assunto *</label>
+                            <textarea id="tituloTema" placeholder="Descreva o tema do seu vídeo ou conteúdo..." required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tituloPlataforma">Plataforma</label>
+                                <select id="tituloPlataforma">
+                                    <option value="youtube">YouTube</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="twitter">Twitter</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tituloEstilo">Gatilho Mental / Estilo</label>
+                                <select id="tituloEstilo">
+                                    <option value="curiosidade">Curiosidade - "O que acontece quando..."</option>
+                                    <option value="controversia">Controvérsia - "Por que X está errado"</option>
+                                    <option value="mistério">Mistério - "O segredo que ninguém conta"</option>
+                                    <option value="urgência">Urgência - "Última chance de..."</option>
+                                    <option value="medo">Medo - "Cuidado com..."</option>
+                                    <option value="ganancia">Ganância - "Como ganhar R$ X"</option>
+                                    <option value="autoridade">Autoridade - "Especialista revela..."</option>
+                                    <option value="prova-social">Prova Social - "Milhões já fizeram..."</option>
+                                    <option value="escassez">Escassez - "Apenas X vagas restantes"</option>
+                                    <option value="reciprocidade">Reciprocidade - "Presente grátis para você"</option>
+                                    <option value="tutorial">Tutorial - "Como fazer X em 5 passos"</option>
+                                    <option value="reacao">Reação - "Minha reação quando..."</option>
+                                    <option value="comparacao">Comparação - "X vs Y: Qual é melhor?"</option>
+                                    <option value="lista">Lista - "10 coisas que..."</option>
+                                    <option value="pergunta">Pergunta - "Você sabia que...?"</option>
+                                    <option value="shock">Choque - "Isso vai te chocar"</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tituloQuantidade">Quantidade de Títulos</label>
+                            <select id="tituloQuantidade">
+                                <option value="5">5 títulos</option>
+                                <option value="10" selected>10 títulos</option>
+                                <option value="15">15 títulos</option>
+                                <option value="20">20 títulos</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-heading"></i>
+                                Gerar Títulos
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearTitulosForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-list"></i> Títulos Gerados</h3>
+                        <p>Seus títulos virais aparecerão aqui</p>
+                    </div>
+                    
+                    <div class="result-area" id="titulosResult">
+                        <div class="placeholder">
+                            <i class="fas fa-heading"></i>
+                            <p>Preencha o formulário e clique em "Gerar Títulos"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gerador de Descrições -->
+        <div id="descricoes" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-file-alt"></i> Gerador de Descrições</h1>
+                <p>Crie descrições envolventes para seus conteúdos</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-edit"></i> Configuração da Descrição</h3>
+                        <p>Configure os parâmetros para gerar descrições envolventes</p>
+                    </div>
+                    
+                    <form id="descricoesForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="descricaoTema">Tema/Conteúdo *</label>
+                            <textarea id="descricaoTema" placeholder="Descreva o conteúdo do seu vídeo ou post..." required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="descricaoTipo">Tipo de Conteúdo</label>
+                                <select id="descricaoTipo">
+                                    <option value="youtube">YouTube</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="blog">Blog</option>
+                                    <option value="email">Email Marketing</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="descricaoTom">Tom da Descrição</label>
+                                <select id="descricaoTom">
+                                    <option value="formal">Formal - Profissional e sério</option>
+                                    <option value="casual">Casual - Descontraído e amigável</option>
+                                    <option value="divertido">Divertido - Humor e entretenimento</option>
+                                    <option value="inspirador">Inspirador - Motivacional e emocional</option>
+                                    <option value="urgente">Urgente - Senso de urgência</option>
+                                    <option value="autoridade">Autoridade - Especialista e confiável</option>
+                                    <option value="intimo">Íntimo - Pessoal e próximo</option>
+                                    <option value="dramatico">Dramático - Impactante e emocionante</option>
+                                    <option value="educativo">Educativo - Informativo e didático</option>
+                                    <option value="persuasivo">Persuasivo - Convencimento e vendas</option>
+                                    <option value="conversacional">Conversacional - Como uma conversa</option>
+                                    <option value="misterioso">Misterioso - Intrigante e curioso</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="descricaoTamanho">Tamanho da Descrição</label>
+                            <select id="descricaoTamanho">
+                                <option value="curta">Curta (1-2 parágrafos)</option>
+                                <option value="media" selected>Média (3-4 parágrafos)</option>
+                                <option value="longa">Longa (5+ parágrafos)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-file-alt"></i>
+                                Gerar Descrição
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearDescricoesForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-file-text"></i> Descrição Gerada</h3>
+                        <p>Sua descrição envolvente aparecerá aqui</p>
+                    </div>
+                    
+                    <div class="result-area" id="descricoesResult">
+                        <div class="placeholder">
+                            <i class="fas fa-file-alt"></i>
+                            <p>Preencha o formulário e clique em "Gerar Descrição"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gerador de Imagens -->
+        <div id="gerar-imagem" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-paint-brush"></i> Gerador de Imagens</h1>
+                <p>Nano Banana - Crie imagens incríveis usando inteligência artificial</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-cog"></i> Configuração da Imagem</h3>
+                        <p>Configure os parâmetros para gerar sua imagem</p>
+                    </div>
+                    
+                    <form id="gerarImagemForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="imagemPrompt">Prompt da Imagem *</label>
+                            <textarea id="imagemPrompt" placeholder="Descreva a imagem que você quer gerar..." required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="imagemEstilo">Estilo</label>
+                                <select id="imagemEstilo">
+                                    <option value="realista">Realista</option>
+                                    <option value="artistico">Artístico</option>
+                                    <option value="anime">Anime</option>
+                                    <option value="digital">Digital Art</option>
+                                    <option value="fotografico">Fotográfico</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="imagemQualidade">Qualidade</label>
+                                <select id="imagemQualidade">
+                                    <option value="standard">Padrão</option>
+                                    <option value="hd">HD</option>
+                                    <option value="4k">4K</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-paint-brush"></i>
+                                Gerar Imagem
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearGerarImagemForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-image"></i> Imagem Gerada</h3>
+                        <p>Sua imagem aparecerá aqui</p>
+                    </div>
+                    
+                    <div class="result-area" id="gerarImagemResult">
+                        <div class="placeholder">
+                            <i class="fas fa-paint-brush"></i>
+                            <p>Preencha o formulário e clique em "Gerar Imagem"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analisador de Tendências -->
+        <div id="tendencias" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-chart-line"></i> Analisador de Tendências</h1>
+                <p>Analise tendências virais e descubra oportunidades</p>
+            </div>
+            
+            <div class="tool-container">
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-search"></i> Análise de Tendências</h3>
+                        <p>Configure os parâmetros para analisar tendências</p>
+                    </div>
+                    
+                    <form id="tendenciasForm" class="tool-form">
+                        <div class="form-group">
+                            <label for="tendenciasTema">Tema/Área de Interesse *</label>
+                            <textarea id="tendenciasTema" placeholder="Digite o tema ou área que você quer analisar..." required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tendenciasPlataforma">Plataforma</label>
+                                <select id="tendenciasPlataforma">
+                                    <option value="youtube">YouTube</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="twitter">Twitter</option>
+                                    <option value="geral">Geral</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tendenciasPeriodo">Período</label>
+                                <select id="tendenciasPeriodo">
+                                    <option value="7dias">Últimos 7 dias</option>
+                                    <option value="30dias" selected>Últimos 30 dias</option>
+                                    <option value="90dias">Últimos 90 dias</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-chart-line"></i>
+                                Analisar Tendências
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="clearTendenciasForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="tool-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-chart-bar"></i> Análise de Tendências</h3>
+                        <p>Resultado da análise aparecerá aqui</p>
+                    </div>
+                    
+                    <div class="result-area" id="tendenciasResult">
+                        <div class="placeholder">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Preencha o formulário e clique em "Analisar Tendências"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gerador VEO3/FLOW -->
+        <div id="veo3-generator" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-video"></i> Gerador VEO3/FLOW</h1>
+                <p>Gera prompts JSON profissionais para VEO3 e FLOW com especificações técnicas completas</p>
+            </div>
+            
+            <div class="tool-container">
+                <!-- Painel de Configurações Avançadas -->
+                <div class="veo3-settings-panel" id="veo3SettingsPanel">
+                    <div class="settings-header">
+                        <h3><i class="fas fa-cog"></i> Configurações Avançadas</h3>
+                        <button class="toggle-settings" onclick="toggleVeo3Settings()">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="settings-content" id="veo3SettingsContent">
+                        <div class="settings-grid">
+                            <div class="setting-group">
+                                <label for="veo3Format">Formato de Vídeo</label>
+                                <select id="veo3Format">
+                                    <option value="vertical">Vertical (9:16) - Stories/Reels</option>
+                                    <option value="horizontal">Horizontal (16:9) - YouTube</option>
+                                    <option value="square">Quadrado (1:1) - Instagram</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="veo3Duration">Duração</label>
+                                <select id="veo3Duration">
+                                    <option value="short">Curto (15-30s)</option>
+                                    <option value="medium" selected>Médio (30-60s)</option>
+                                    <option value="long">Longo (60-120s)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="veo3Style">Estilo Visual</label>
+                                <select id="veo3Style">
+                                    <option value="realistic">Ultra-realista</option>
+                                    <option value="cinematic">Cinematográfico</option>
+                                    <option value="artistic">Artístico</option>
+                                    <option value="stylized">Estilizado</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="veo3Quality">Qualidade</label>
+                                <select id="veo3Quality">
+                                    <option value="4k">4K (3840x2160)</option>
+                                    <option value="8k" selected>8K (7680x4320)</option>
+                                    <option value="custom">Personalizada</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="veo3Music">Música</label>
+                                <select id="veo3Music">
+                                    <option value="ambient">Ambient</option>
+                                    <option value="cinematic">Cinematográfica</option>
+                                    <option value="electronic">Eletrônica</option>
+                                    <option value="none">Sem música</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="veo3Language">Idioma do Diálogo</label>
+                                <select id="veo3Language">
+                                    <option value="pt-br" selected>Português (Brasil)</option>
+                                    <option value="en">Inglês</option>
+                                    <option value="es">Espanhol</option>
+                                    <option value="none">Sem diálogo</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="template-section">
+                            <h4><i class="fas fa-magic"></i> Templates Rápidos</h4>
+                            <div class="template-buttons">
+                                <button class="template-btn" onclick="applyTemplate('action')">🎬 Ação</button>
+                                <button class="template-btn" onclick="applyTemplate('romance')">💕 Romance</button>
+                                <button class="template-btn" onclick="applyTemplate('horror')">👻 Terror</button>
+                                <button class="template-btn" onclick="applyTemplate('comedy')">😂 Comédia</button>
+                                <button class="template-btn" onclick="applyTemplate('drama')">🎭 Drama</button>
+                                <button class="template-btn" onclick="applyTemplate('sci-fi')">🚀 Ficção Científica</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="veo3-conversation-area" id="veo3ConversationArea">
+                    <div class="veo3-welcome">
+                        <div class="welcome-icon">🎬</div>
+                        <h3>Bem-vindo ao Gerador VEO3/FLOW</h3>
+                        <p>Descreva sua cena com detalhes e receba um prompt JSON completo com especificações técnicas para VEO3 e FLOW</p>
+                        <div class="welcome-tips">
+                            <div class="tip">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Use descrições detalhadas para melhores resultados</span>
+                            </div>
+                            <div class="tip">
+                                <i class="fas fa-cog"></i>
+                                <span>Configure as opções avançadas acima</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="veo3-input-container">
+                    <div class="input-actions">
+                        <button class="action-btn" onclick="clearVeo3History()" title="Limpar Histórico">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="action-btn" onclick="exportVeo3History()" title="Exportar Histórico">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    <textarea class="veo3-input-field" id="veo3MessageInput" placeholder="Descreva sua cena com detalhes... (ex: Uma mulher caminhando pela rua à noite, com luzes neon refletindo na chuva)"></textarea>
+                    <button class="veo3-send-btn" onclick="sendVeo3Message()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gerador de Roteiros -->
+        <div id="roteiro-generator" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-file-alt"></i> Gerador de Roteiros</h1>
+                <p>Sistema completo de roteiros multi-formato com cálculo preciso de duração baseado em caracteres</p>
+            </div>
+            
+            <div class="tool-container">
+                <!-- Painel de Configurações -->
+                <div class="roteiro-settings-panel">
+                    <div class="settings-header">
+                        <h3><i class="fas fa-cog"></i> Configurações do Roteiro</h3>
+                        <button class="toggle-settings" onclick="toggleRoteiroSettings()">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="settings-content" id="roteiroSettingsContent">
+                        <div class="settings-grid">
+                            <div class="setting-group">
+                                <label for="roteiroDuracao">Duração do Vídeo</label>
+                                <select id="roteiroDuracao" onchange="updateCharacterTarget()">
+                                    <option value="5s">5 segundos</option>
+                                    <option value="10s">10 segundos</option>
+                                    <option value="15s">15 segundos</option>
+                                    <option value="30s">30 segundos</option>
+                                    <option value="1m">1 minuto</option>
+                                    <option value="2m">2 minutos</option>
+                                    <option value="5m">5 minutos</option>
+                                    <option value="10m">10 minutos</option>
+                                    <option value="15m">15 minutos</option>
+                                    <option value="20m">20 minutos</option>
+                                    <option value="30m">30 minutos</option>
+                                    <option value="45m">45 minutos</option>
+                                    <option value="1h">1 hora</option>
+                                    <option value="1.5h">1.5 horas</option>
+                                    <option value="2h">2 horas</option>
+                                    <option value="custom">Personalizada</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="roteiroGenero">Gênero do Canal</label>
+                                <select id="roteiroGenero">
+                                    <option value="educativo">Educativo</option>
+                                    <option value="entretenimento">Entretenimento</option>
+                                    <option value="noticias">Notícias</option>
+                                    <option value="tecnologia">Tecnologia</option>
+                                    <option value="lifestyle">Lifestyle</option>
+                                    <option value="gaming">Gaming</option>
+                                    <option value="culinaria">Culinária</option>
+                                    <option value="viagem">Viagem</option>
+                                    <option value="fitness">Fitness</option>
+                                    <option value="negocios">Negócios</option>
+                                    <option value="comedia">Comédia</option>
+                                    <option value="drama">Drama</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="roteiroPegada">Pegada/Tom</label>
+                                <select id="roteiroPegada">
+                                    <option value="formal">Formal</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="divertido">Divertido</option>
+                                    <option value="serio">Sério</option>
+                                    <option value="inspirador">Inspirador</option>
+                                    <option value="dramatico">Dramático</option>
+                                    <option value="relaxado">Relaxado</option>
+                                    <option value="energico">Energético</option>
+                                    <option value="intimo">Íntimo</option>
+                                    <option value="profissional">Profissional</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="roteiroEstrutura">Estrutura do Roteiro</label>
+                                <select id="roteiroEstrutura">
+                                    <option value="simples">Simples (Introdução + Conteúdo + Conclusão)</option>
+                                    <option value="detalhada">Detalhada (Hook + Introdução + Desenvolvimento + Conclusão + CTA)</option>
+                                    <option value="narrativa">Narrativa (Início + Meio + Fim)</option>
+                                    <option value="tutorial">Tutorial (Problema + Solução + Demonstração)</option>
+                                    <option value="storytelling">Storytelling (Contexto + Conflito + Resolução)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="roteiroVelocidade">Velocidade de Fala</label>
+                                <select id="roteiroVelocidade" onchange="updateCharacterTarget()">
+                                    <option value="lenta">Lenta (120-140 palavras/min)</option>
+                                    <option value="normal" selected>Normal (150-160 palavras/min)</option>
+                                    <option value="rapida">Rápida (170-190 palavras/min)</option>
+                                    <option value="muito-rapida">Muito Rápida (200+ palavras/min)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label for="roteiroPublico">Público-Alvo</label>
+                                <select id="roteiroPublico">
+                                    <option value="geral">Geral</option>
+                                    <option value="jovens">Jovens (13-25 anos)</option>
+                                    <option value="adultos">Adultos (25-45 anos)</option>
+                                    <option value="maiores">Maiores (45+ anos)</option>
+                                    <option value="criancas">Crianças (5-12 anos)</option>
+                                    <option value="profissionais">Profissionais</option>
+                                    <option value="iniciantes">Iniciantes</option>
+                                    <option value="avancados">Avançados</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="character-target">
+                            <div class="target-info">
+                                <h4><i class="fas fa-calculator"></i> Meta de Caracteres</h4>
+                                <div class="target-display">
+                                    <span id="characterTarget">~150</span>
+                                    <span class="target-label">caracteres</span>
+                                </div>
+                                <div class="target-duration">
+                                    <span id="durationTarget">1 minuto</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="template-section">
+                            <h4><i class="fas fa-magic"></i> Templates Rápidos</h4>
+                            <div class="template-buttons">
+                                <button class="template-btn" onclick="applyRoteiroTemplate('short')">⚡ Vídeo Curto (5-15s)</button>
+                                <button class="template-btn" onclick="applyRoteiroTemplate('medium')">📱 Vídeo Médio (1-5min)</button>
+                                <button class="template-btn" onclick="applyRoteiroTemplate('long')">🎬 Vídeo Longo (10-30min)</button>
+                                <button class="template-btn" onclick="applyRoteiroTemplate('podcast')">🎙️ Podcast (1-2h)</button>
+                                <button class="template-btn" onclick="applyRoteiroTemplate('tutorial')">📚 Tutorial</button>
+                                <button class="template-btn" onclick="applyRoteiroTemplate('story')">📖 Storytelling</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Área de Geração -->
+                <div class="roteiro-generator-area">
+                    <div class="generator-header">
+                        <h3><i class="fas fa-pen-fancy"></i> Gerador de Roteiro</h3>
+                        <div class="generator-stats">
+                            <div class="stat">
+                                <span class="stat-label">Caracteres:</span>
+                                <span id="characterCount">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Duração:</span>
+                                <span id="estimatedDuration">0s</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Palavras:</span>
+                                <span id="wordCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="roteiro-input-section">
+                        <div class="input-group">
+                            <label for="roteiroTema">Tema/Assunto do Roteiro *</label>
+                            <textarea id="roteiroTema" placeholder="Descreva o tema ou assunto do seu vídeo... (ex: Como fazer um bolo de chocolate, Dicas de investimento, História do Brasil)"></textarea>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="roteiroObjetivo">Objetivo do Vídeo</label>
+                            <textarea id="roteiroObjetivo" placeholder="Qual o objetivo do seu vídeo? (ex: Ensinar, Entreter, Vender, Informar)"></textarea>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="roteiroPontos">Pontos Principais (opcional)</label>
+                            <textarea id="roteiroPontos" placeholder="Liste os pontos principais que devem ser abordados..."></textarea>
+                        </div>
+                        
+                        <div class="generator-actions">
+                            <button class="btn-primary" onclick="generateRoteiro()">
+                                <i class="fas fa-magic"></i>
+                                Gerar Roteiro
+                            </button>
+                            <button class="btn-secondary" onclick="clearRoteiroForm()">
+                                <i class="fas fa-refresh"></i>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="roteiro-result-area" id="roteiroResult">
+                        <div class="placeholder">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>Roteiro Gerado</h3>
+                            <p>Preencha os campos acima e clique em "Gerar Roteiro"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Otimizador de Conteúdo -->
+        <div id="content-optimizer" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-magic"></i> Otimizador de Conteúdo</h1>
+                <p>Gera títulos, descrições e hashtags otimizados para todas as redes sociais</p>
+            </div>
+            
+            <div class="tool-container">
+                <!-- Painel de Configurações -->
+                <div class="content-optimizer-settings">
+                    <div class="settings-header">
+                        <h3><i class="fas fa-cog"></i> Configurações de Otimização</h3>
+                        <button class="toggle-settings" onclick="toggleContentOptimizerSettings()">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="settings-content" id="contentOptimizerSettings">
+                        <div class="settings-grid">
+                            <div class="form-group">
+                                <label for="contentType">Tipo de Conteúdo</label>
+                                <select id="contentType">
+                                    <option value="video">Vídeo</option>
+                                    <option value="post">Post</option>
+                                    <option value="story">Story</option>
+                                    <option value="reel">Reel/Short</option>
+                                    <option value="article">Artigo</option>
+                                    <option value="tutorial">Tutorial</option>
+                                    <option value="review">Review</option>
+                                    <option value="news">Notícia</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contentTone">Tom do Conteúdo</label>
+                                <select id="contentTone">
+                                    <option value="professional">Profissional</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="funny">Divertido</option>
+                                    <option value="inspiring">Inspirador</option>
+                                    <option value="educational">Educativo</option>
+                                    <option value="dramatic">Dramático</option>
+                                    <option value="mysterious">Misterioso</option>
+                                    <option value="urgent">Urgente</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="targetAudience">Público-Alvo</label>
+                                <select id="targetAudience">
+                                    <option value="general">Geral</option>
+                                    <option value="teens">Adolescentes</option>
+                                    <option value="adults">Adultos</option>
+                                    <option value="professionals">Profissionais</option>
+                                    <option value="entrepreneurs">Empreendedores</option>
+                                    <option value="students">Estudantes</option>
+                                    <option value="parents">Pais</option>
+                                    <option value="seniors">Idosos</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contentGoal">Objetivo do Conteúdo</label>
+                                <select id="contentGoal">
+                                    <option value="engagement">Engajamento</option>
+                                    <option value="sales">Vendas</option>
+                                    <option value="awareness">Conscientização</option>
+                                    <option value="education">Educação</option>
+                                    <option value="entertainment">Entretenimento</option>
+                                    <option value="information">Informação</option>
+                                    <option value="promotion">Promoção</option>
+                                    <option value="community">Comunidade</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Seleção de Redes Sociais -->
+                        <div class="social-platforms">
+                            <h4><i class="fas fa-share-alt"></i> Redes Sociais</h4>
+                            <div class="platforms-grid">
+                                <label class="platform-option">
+                                    <input type="checkbox" value="instagram" checked>
+                                    <div class="platform-card">
+                                        <i class="fab fa-instagram"></i>
+                                        <span>Instagram</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="tiktok" checked>
+                                    <div class="platform-card">
+                                        <i class="fab fa-tiktok"></i>
+                                        <span>TikTok</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="youtube" checked>
+                                    <div class="platform-card">
+                                        <i class="fab fa-youtube"></i>
+                                        <span>YouTube</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="youtube-shorts" checked>
+                                    <div class="platform-card">
+                                        <i class="fab fa-youtube"></i>
+                                        <span>YouTube Shorts</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="twitter" checked>
+                                    <div class="platform-card">
+                                        <i class="fab fa-twitter"></i>
+                                        <span>Twitter</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="threads" checked>
+                                    <div class="platform-card">
+                                        <i class="fas fa-comments"></i>
+                                        <span>Threads</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="facebook" checked>
+                                    <div class="platform-card">
+                                        <i class="fab fa-facebook"></i>
+                                        <span>Facebook</span>
+                                    </div>
+                                </label>
+                                
+                                <label class="platform-option">
+                                    <input type="checkbox" value="linkedin">
+                                    <div class="platform-card">
+                                        <i class="fab fa-linkedin"></i>
+                                        <span>LinkedIn</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Área de Entrada -->
+                <div class="content-input-area">
+                    <div class="input-header">
+                        <h3><i class="fas fa-edit"></i> Conteúdo para Otimizar</h3>
+                        <div class="input-stats">
+                            <span id="contentStats">0 caracteres</span>
+                        </div>
+                    </div>
+                    
+                    <div class="content-input-section">
+                        <textarea 
+                            id="contentInput" 
+                            placeholder="Cole aqui seu roteiro, texto, descrição ou qualquer conteúdo que deseja otimizar..."
+                            rows="8"
+                        ></textarea>
+                        
+                        <div class="input-actions">
+                            <button class="btn-secondary" onclick="clearContentInput()">
+                                <i class="fas fa-trash"></i> Limpar
+                            </button>
+                            <button class="btn-primary" onclick="optimizeContent()">
+                                <i class="fas fa-magic"></i> Otimizar Conteúdo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resultados -->
+                <div class="optimization-results" id="optimizationResults">
+                    <div class="results-placeholder">
+                        <div class="placeholder-icon">🎯</div>
+                        <h3>Conteúdo Otimizado</h3>
+                        <p>Cole seu conteúdo acima e clique em "Otimizar Conteúdo" para gerar títulos, descrições e hashtags para todas as redes sociais</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gerador de Roteiro Visual -->
+        <div id="visual-script" class="tool-page">
+            <div class="page-header">
+                <button class="back-btn" onclick="showDashboard()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h1><i class="fas fa-video"></i> Gerador de Roteiro Visual</h1>
+                <p>Converte roteiros em prompts de imagem e animação para VEO3/VEO2</p>
+            </div>
+
+            <div class="tool-container">
+                <!-- Configurações -->
+                <div class="visual-script-settings">
+                    <div class="settings-header">
+                        <h3><i class="fas fa-cog"></i> Configurações de Geração</h3>
+                        <button class="toggle-settings" onclick="toggleVisualScriptSettings()">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="settings-content">
+                        <div class="settings-grid">
+                            <!-- Tipo de Geração -->
+                            <div class="setting-group">
+                                <label>Tipo de Geração:</label>
+                                <select id="generationType">
+                                    <option value="image-only">Somente Imagens</option>
+                                    <option value="video-only">Somente Vídeos</option>
+                                    <option value="both">Imagens + Vídeos</option>
+                                </select>
+                            </div>
+
+                            <!-- Duração por Segmento -->
+                            <div class="setting-group">
+                                <label>Duração por Segmento:</label>
+                                <select id="segmentDuration">
+                                    <option value="5">5 segundos</option>
+                                    <option value="6">6 segundos</option>
+                                    <option value="8" selected>8 segundos</option>
+                                    <option value="10">10 segundos</option>
+                                    <option value="12">12 segundos</option>
+                                </select>
+                            </div>
+
+                            <!-- Formato -->
+                            <div class="setting-group">
+                                <label>Formato:</label>
+                                <select id="videoFormat">
+                                    <option value="vertical">Vertical (9:16)</option>
+                                    <option value="horizontal">Horizontal (16:9)</option>
+                                    <option value="square">Quadrado (1:1)</option>
+                                </select>
+                            </div>
+
+                            <!-- Modelo de Animação -->
+                            <div class="setting-group">
+                                <label>Modelo de Animação:</label>
+                                <select id="animationModel">
+                                    <option value="veo3">VEO3</option>
+                                    <option value="veo2">VEO2</option>
+                                </select>
+                            </div>
+
+                            <!-- Incluir Áudio -->
+                            <div class="setting-group">
+                                <label>Incluir Áudio:</label>
+                                <select id="includeAudio">
+                                    <option value="with-audio">Com Áudio</option>
+                                    <option value="without-audio">Sem Áudio</option>
+                                </select>
+                            </div>
+
+                            <!-- Estilo Visual -->
+                            <div class="setting-group">
+                                <label>Estilo Visual:</label>
+                                <select id="visualStyle">
+                                    <option value="realistic">Realista</option>
+                                    <option value="cinematic">Cinematográfico</option>
+                                    <option value="animated">Animado</option>
+                                    <option value="documentary">Documentário</option>
+                                    <option value="commercial">Comercial</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área de Input -->
+                <div class="visual-script-input">
+                    <div class="input-header">
+                        <h3><i class="fas fa-file-text"></i> Roteiro para Processar</h3>
+                        <div class="input-stats" id="scriptStats">
+                            <span>0 caracteres • 0 palavras • 0 segmentos estimados</span>
+                        </div>
+                    </div>
+                    
+                    <div class="script-input-section">
+                        <textarea 
+                            id="scriptInput" 
+                            placeholder="Cole aqui seu roteiro completo, texto narrativo ou descrição que deseja converter em prompts visuais..."
+                            rows="12"
+                        ></textarea>
+                        
+                        <div class="input-actions">
+                            <button class="btn-secondary" onclick="clearScriptInput()">
+                                <i class="fas fa-trash"></i> Limpar
+                            </button>
+                            <button class="btn-primary" onclick="generateVisualScript()">
+                                <i class="fas fa-magic"></i> Gerar Prompts Visuais
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div class="visual-script-results" id="visualScriptResults">
+                    <div class="results-placeholder">
+                        <div class="placeholder-icon">🎬</div>
+                        <h3>Prompts Visuais Gerados</h3>
+                        <p>Cole seu roteiro acima e clique em "Gerar Prompts Visuais" para converter em prompts de imagem e animação</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/web_ui/(.*)",
+      "destination": "/$1",
+      "permanent": false
+    }
+  ]
+}

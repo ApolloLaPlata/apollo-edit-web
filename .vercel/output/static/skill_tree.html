@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo | Skill Tree Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@400;700;900&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-avatar: #10b981; /* emerald */
+            --color-editor: #8b5cf6; /* violet */
+            --color-car: #f59e0b; /* amber */
+            --bg-node: #1e293b;
+        }
+        
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden; /* Hide scroll to make it feel like a game map */
+            user-select: none;
+        }
+
+        .bangers { font-family: 'Bangers', cursive; letter-spacing: 2px; }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* Game Map Area */
+        #map-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            cursor: grab;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #map-container:active { cursor: grabbing; }
+
+        /* Grid Background */
+        .cyber-grid {
+            position: absolute;
+            width: 300%; height: 300%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        #tree-content {
+            position: relative;
+            width: 1200px;
+            height: 800px;
+            z-index: 10;
+            transform-origin: center;
+            transition: transform 0.1s;
+        }
+
+        /* SVG Lines */
+        svg.connections {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .skill-line {
+            stroke: #334155;
+            stroke-width: 4;
+            transition: stroke 0.5s ease;
+        }
+        .skill-line.active-avatar { stroke: var(--color-avatar); filter: drop-shadow(0 0 5px var(--color-avatar)); }
+        .skill-line.active-editor { stroke: var(--color-editor); filter: drop-shadow(0 0 5px var(--color-editor)); }
+        .skill-line.active-car { stroke: var(--color-car); filter: drop-shadow(0 0 5px var(--color-car)); }
+
+        /* Skill Nodes */
+        .node {
+            position: absolute;
+            width: 60px; height: 60px;
+            background: var(--bg-node);
+            border: 3px solid #475569;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: #64748b;
+            cursor: pointer;
+            z-index: 2;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
+            transform: translate(-50%, -50%);
+        }
+
+        .node:hover { transform: translate(-50%, -50%) scale(1.15); border-color: #cbd5e1; color: #cbd5e1; }
+        
+        .node.locked { filter: grayscale(100%) opacity(0.7); }
+        .node.purchasable { border-style: dashed; animation: pulsePurchasable 2s infinite; }
+        
+        @keyframes pulsePurchasable {
+            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+
+        /* Active States */
+        .node.active.branch-avatar { background: #064e3b; border-color: var(--color-avatar); color: #fff; box-shadow: 0 0 20px var(--color-avatar); }
+        .node.active.branch-editor { background: #4c1d95; border-color: var(--color-editor); color: #fff; box-shadow: 0 0 20px var(--color-editor); }
+        .node.active.branch-car { background: #78350f; border-color: var(--color-car); color: #fff; box-shadow: 0 0 20px var(--color-car); }
+
+        /* Root Node */
+        .node.root {
+            width: 90px; height: 90px;
+            font-size: 36px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-color: #f8fafc;
+            color: #f8fafc;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+        }
+
+        /* Tooltip Panel */
+        #tooltip {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            width: 300px;
+            z-index: 100;
+            transition: opacity 0.2s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            transform: translateY(10px);
+        }
+        #tooltip.visible { opacity: 1; transform: translateY(0); }
+
+        /* UI Overlays */
+        .hud-overlay {
+            position: fixed; z-index: 50;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px 24px;
+        }
+        .top-left { top: 20px; left: 20px; }
+        .bottom-right { bottom: 20px; right: 20px; }
+        
+        .points-badge {
+            background: linear-gradient(90deg, #ff0055, #990033);
+            color: white; font-weight: bold;
+            padding: 8px 16px; border-radius: 999px;
+            font-size: 1.2rem;
+            animation: glowPoints 2s infinite alternate;
+        }
+        @keyframes glowPoints {
+            from { box-shadow: 0 0 5px #ff0055; }
+            to { box-shadow: 0 0 20px #ff0055; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- UI Overlay: Player Stats -->
+    <div class="hud-overlay top-left flex items-center gap-6">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center overflow-hidden">
+                <img src="assets/ruby_mascot.png" alt="Avatar" class="w-full h-full object-cover">
+            </div>
+            <div>
+                <h1 class="orbitron text-2xl font-bold text-white tracking-wide">LEVEL GLOBAL: <span class="text-blue-400">12</span></h1>
+                <p class="text-slate-400 text-sm font-semibold mt-1">Soma de Edição + Carro + Avatar</p>
+            </div>
+        </div>
+        <div class="h-10 w-px bg-slate-700"></div>
+        <div>
+            <div class="points-badge orbitron" id="skillPointsDisplay">
+                3 SKILL POINTS
+            </div>
+            <p class="text-xs text-slate-400 mt-2 text-center">Disponíveis para alocar</p>
+        </div>
+    </div>
+
+    <!-- UI Overlay: Legend -->
+    <div class="hud-overlay bottom-right">
+        <h3 class="bangers text-xl mb-3 text-white">RAMIFICAÇÕES DO SISTEMA</h3>
+        <ul class="space-y-2 text-sm font-semibold">
+            <li class="flex items-center gap-2 text-emerald-400"><i class="fas fa-user-ninja w-5"></i> O Avatar (RPG)</li>
+            <li class="flex items-center gap-2 text-violet-400"><i class="fas fa-film w-5"></i> O Produtor (SaaS)</li>
+            <li class="flex items-center gap-2 text-amber-400"><i class="fas fa-car-side w-5"></i> O Piloto (Corrida)</li>
+        </ul>
+    </div>
+
+    <!-- Map Area -->
+    <div id="map-container">
+        <div class="cyber-grid"></div>
+        <div id="tree-content">
+            <!-- SVG Lines -->
+            <svg class="connections" id="lines-svg"></svg>
+            
+            <!-- Nodes will be injected here by JS -->
+            <div id="nodes-container"></div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl text-white" id="tt-icon" style="background: #334;"></div>
+            <div>
+                <h3 class="font-bold text-lg leading-tight" id="tt-title">Nome da Skill</h3>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full" id="tt-branch">Branch</span>
+            </div>
+        </div>
+        <p class="text-slate-300 text-sm mb-3" id="tt-desc">Descrição do que essa skill maravilhosa faz.</p>
+        <div class="bg-slate-900 rounded p-2 text-xs font-mono text-slate-400 border border-slate-700">
+            <span class="text-slate-200">Custo:</span> <span id="tt-cost">1</span> Skill Point<br>
+            <span class="text-slate-200">Status:</span> <span id="tt-status" class="font-bold">Bloqueado</span>
+        </div>
+    </div>
+
+    <script>
+        // Zoom and Pan Logic
+        const container = document.getElementById('map-container');
+        const content = document.getElementById('tree-content');
+        let scale = 1, isDragging = false, startX, startY, translateX = 0, translateY = 0;
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            scale += e.deltaY * -0.001;
+            scale = Math.min(Math.max(0.5, scale), 2);
+            content.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        });
+
+        container.addEventListener('mousedown', (e) => {
+            if(e.target.closest('.node')) return; // Don't pan if clicking a node
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+        });
+
+        window.addEventListener('mouseup', () => isDragging = false);
+        window.addEventListener('mousemove', (e) => {
+            if(!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            content.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        });
+
+        // Economy State
+        let skillPoints = 3;
+
+        // Tree Data Structure
+        const treeData = [
+            { id: 'root', x: 600, y: 700, icon: 'fa-brain', title: 'O Mente Mestra', desc: 'Sua base na Apollo. Você controla o ecossistema.', branch: 'root', cost: 0, status: 'active', req: [] },
+            
+            // Branch: O PRODUTOR (Editor / Middle / Violet)
+            { id: 'prod_1', x: 600, y: 550, icon: 'fa-bolt', title: 'Mecânica Fluida', desc: 'Reduz o consumo de Gasolina em renders em 5%.', branch: 'editor', cost: 1, status: 'locked', req: ['root'] },
+            { id: 'prod_2', x: 600, y: 400, icon: 'fa-server', title: 'Acesso Direto H100', desc: 'Pula a fila de processamento na nuvem para GPUs premium.', branch: 'editor', cost: 1, status: 'locked', req: ['prod_1'] },
+            { id: 'prod_3a', x: 500, y: 250, icon: 'fa-gem', title: 'Mineração Oculta', desc: 'Ganha 15 Cristais automaticamente a cada renovação mensal.', branch: 'editor', cost: 1, status: 'locked', req: ['prod_2'] },
+            { id: 'prod_3b', x: 700, y: 250, icon: 'fa-microchip', title: 'Bypass Corporativo', desc: '1 geração NanoBanana v2 grátis por dia.', branch: 'editor', cost: 2, status: 'locked', req: ['prod_2'] },
+
+            // Branch: O AVATAR (RPG / Left / Emerald)
+            { id: 'ava_1', x: 400, y: 600, icon: 'fa-eye', title: 'Olho Biônico', desc: '20% mais chance de encontrar Baús de Dados no RPG.', branch: 'avatar', cost: 1, status: 'locked', req: ['root'] },
+            { id: 'ava_2', x: 250, y: 500, icon: 'fa-fist-raised', title: 'Força Bruta Cripto', desc: 'Dano dobrado contra os chefões "Algoritmos Censores".', branch: 'avatar', cost: 1, status: 'locked', req: ['ava_1'] },
+            { id: 'ava_3', x: 150, y: 350, icon: 'fa-mask', title: 'Camuflagem Digital', desc: 'Ignora debuffs de lentidão nas dungeons profundas.', branch: 'avatar', cost: 1, status: 'locked', req: ['ava_2'] },
+            { id: 'ava_4', x: 250, y: 200, icon: 'fa-crown', title: 'Mercenário VIP', desc: 'Seu Avatar pode ser alugado por outros. Rende % offline.', branch: 'avatar', cost: 2, status: 'locked', req: ['ava_2', 'ava_3'] },
+
+            // Branch: O PILOTO (Corrida / Right / Amber)
+            { id: 'car_1', x: 800, y: 600, icon: 'fa-tachometer-alt', title: 'Overclock de Motor', desc: 'Aumenta a velocidade final (Top Speed) nas retas em 10%.', branch: 'car', cost: 1, status: 'locked', req: ['root'] },
+            { id: 'car_2', x: 950, y: 500, icon: 'fa-magnet', title: 'Chassi Eletromagnético', desc: 'Aumenta o raio de coleta de Apollo Coins na pista em 50%.', branch: 'car', cost: 1, status: 'locked', req: ['car_1'] },
+            { id: 'car_3', x: 1050, y: 350, icon: 'fa-virus', title: 'Míssil DDoS', desc: 'Desbloqueia a arma DDoS nas corridas, cegando oponentes.', branch: 'car', cost: 1, status: 'locked', req: ['car_2'] },
+            { id: 'car_4', x: 950, y: 200, icon: 'fa-trophy', title: 'Liga dos Campeões', desc: 'Desbloqueia os Torneios Semanais valendo NFTs de Peças Reais.', branch: 'car', cost: 2, status: 'locked', req: ['car_2', 'car_3'] },
+        ];
+
+        const svg = document.getElementById('lines-svg');
+        const nodesContainer = document.getElementById('nodes-container');
+        const tooltip = document.getElementById('tooltip');
+        
+        // Colors for JS
+        const colors = {
+            avatar: '#10b981', editor: '#8b5cf6', car: '#f59e0b', root: '#f8fafc'
+        };
+
+        function initTree() {
+            updateNodeStates();
+            drawLines();
+            drawNodes();
+            updateUI();
+        }
+
+        function updateNodeStates() {
+            treeData.forEach(node => {
+                if(node.status === 'active' || node.id === 'root') return;
+                
+                // Check if requirements are met
+                const reqMet = node.req.some(reqId => {
+                    const reqNode = treeData.find(n => n.id === reqId);
+                    return reqNode && reqNode.status === 'active';
+                });
+
+                if(reqMet && skillPoints >= node.cost) {
+                    node.status = 'purchasable';
+                } else {
+                    node.status = 'locked';
+                }
+            });
+        }
+
+        function drawLines() {
+            svg.innerHTML = '';
+            treeData.forEach(node => {
+                node.req.forEach(reqId => {
+                    const reqNode = treeData.find(n => n.id === reqId);
+                    if(reqNode) {
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', reqNode.x);
+                        line.setAttribute('y1', reqNode.y);
+                        line.setAttribute('x2', node.x);
+                        line.setAttribute('y2', node.y);
+                        line.setAttribute('class', 'skill-line');
+                        
+                        if(node.status === 'active' && reqNode.status === 'active') {
+                            line.classList.add(`active-${node.branch}`);
+                        }
+                        
+                        svg.appendChild(line);
+                    }
+                });
+            });
+        }
+
+        function drawNodes() {
+            nodesContainer.innerHTML = '';
+            treeData.forEach(node => {
+                const el = document.createElement('div');
+                
+                let classes = `node ${node.status}`;
+                if(node.id === 'root') classes += ' root active';
+                else if(node.status === 'active') classes += ` branch-${node.branch}`;
+
+                el.className = classes;
+                el.style.left = node.x + 'px';
+                el.style.top = node.y + 'px';
+                el.innerHTML = `<i class="fas ${node.icon}"></i>`;
+                
+                // Interaction
+                el.addEventListener('mouseenter', (e) => showTooltip(e, node));
+                el.addEventListener('mouseleave', hideTooltip);
+                el.addEventListener('click', () => buySkill(node));
+
+                nodesContainer.appendChild(el);
+            });
+        }
+
+        function showTooltip(e, node) {
+            const rect = e.target.getBoundingClientRect();
+            tooltip.style.left = (rect.left + rect.width/2 - 150) + 'px'; // center horizontally relative to node
+            tooltip.style.top = (rect.top - 180) + 'px'; // above node
+
+            document.getElementById('tt-title').innerText = node.title;
+            document.getElementById('tt-desc').innerText = node.desc;
+            document.getElementById('tt-cost').innerText = node.cost;
+            
+            const iconBg = document.getElementById('tt-icon');
+            iconBg.innerHTML = `<i class="fas ${node.icon}"></i>`;
+            iconBg.style.background = colors[node.branch] || '#334';
+            
+            const branchTag = document.getElementById('tt-branch');
+            branchTag.innerText = node.branch.toUpperCase();
+            branchTag.style.background = (colors[node.branch] || '#334') + '40'; // 25% opacity
+            branchTag.style.color = colors[node.branch] || '#fff';
+
+            const statusEl = document.getElementById('tt-status');
+            if(node.status === 'active') { statusEl.innerText = 'Ativado'; statusEl.style.color = '#10b981'; }
+            else if(node.status === 'purchasable') { statusEl.innerText = 'Desbloqueável (Clique para comprar)'; statusEl.style.color = '#f59e0b'; }
+            else { statusEl.innerText = 'Bloqueado (Falta requisito ou pontos)'; statusEl.style.color = '#ef4444'; }
+
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+        }
+
+        function buySkill(node) {
+            if(node.status === 'purchasable' && skillPoints >= node.cost) {
+                skillPoints -= node.cost;
+                node.status = 'active';
+                updateUI();
+                updateNodeStates();
+                drawLines();
+                drawNodes(); // Re-render to apply classes
+                hideTooltip(); // Hide tooltip to avoid floating detached states
+                
+                // Visual feedback
+                const effect = document.createElement('div');
+                effect.style.position = 'absolute';
+                effect.style.left = node.x + 'px';
+                effect.style.top = node.y + 'px';
+                effect.style.width = '10px';
+                effect.style.height = '10px';
+                effect.style.background = colors[node.branch];
+                effect.style.borderRadius = '50%';
+                effect.style.transform = 'translate(-50%, -50%)';
+                effect.style.boxShadow = `0 0 50px 20px ${colors[node.branch]}`;
+                effect.style.zIndex = '0';
+                effect.style.transition = 'all 0.5s ease-out';
+                nodesContainer.appendChild(effect);
+                
+                requestAnimationFrame(() => {
+                    effect.style.transform = 'translate(-50%, -50%) scale(20)';
+                    effect.style.opacity = '0';
+                });
+                setTimeout(() => effect.remove(), 500);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('skillPointsDisplay').innerText = `${skillPoints} SKILL POINTS`;
+            if(skillPoints === 0) {
+                document.getElementById('skillPointsDisplay').style.animation = 'none';
+                document.getElementById('skillPointsDisplay').style.background = '#475569';
+            }
+        }
+
+        // Initialize
+        initTree();
+
+    </script>
+</body>
+</html>
