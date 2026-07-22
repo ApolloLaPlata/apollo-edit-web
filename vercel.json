@@ -1,6 +1,0 @@
-{
-  "redirects": [
-    { "source": "/web_ui/(.*)", "destination": "/$1", "permanent": false },
-    { "source": "/", "destination": "/hub.html", "permanent": false }
-  ]
-}

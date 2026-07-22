@@ -1,66 +1,37 @@
-import os
+﻿import os
 import glob
-import re
 
-for filename in glob.glob('*.py'):
-    with open(filename, 'r', encoding='utf-8') as f:
-        content = f.read()
+def reverse_dotnet_ansi(text):
+    b = bytearray()
+    for c in text:
+        try:
+            b.append(c.encode('cp1252')[0])
+        except UnicodeEncodeError:
+            if ord(c) < 256:
+                b.append(ord(c))
+            else:
+                # If it's a real unicode character that got appended later (like emojis in new code), 
+                # we just encode it directly as utf-8 bytes
+                b.extend(c.encode('utf-8'))
     
-    original = content
+    try:
+        return b.decode('utf-8')
+    except UnicodeDecodeError:
+        # If it fails to decode as utf-8, it means our assumption is wrong, return original
+        return text
 
-    # 1. Strip style=... from CTk widgets ONLY. 
-    # Actually, let's just strip style= from everywhere to be safe, because ttk styles will just be ignored if removed.
-    content = re.sub(r',\s*style=[\'\"].*?[\'\"]', '', content)
-    content = re.sub(r'\.configure\(style=[\'\"].*?[\'\"]\)', '.configure()', content)
-    
-    # 2. Fix text_color= back to foreground= if it's tk or ttk
-    # This is tricky using regex. It's better to just migrate the remaining tk/ttk to ctk!
-    # Let's convert all basic tk/ttk widgets to ctk to enforce the new UI.
-    content = content.replace('ctk.CTkFrame', 'ctk.CTkFrame')
-    content = content.replace('ctk.CTkFrame', 'ctk.CTkFrame')
-    content = content.replace('ctk.CTkLabelFrame', 'ctk.CTkLabelFrame')
-    content = content.replace('ctk.CTkLabelFrame', 'ctk.CTkLabelFrame')
-    content = content.replace('ctk.CTkLabel', 'ctk.CTkLabel')
-    content = content.replace('ctk.CTkLabel', 'ctk.CTkLabel')
-    content = content.replace('ctk.CTkButton', 'ctk.CTkButton')
-    content = content.replace('ctk.CTkButton', 'ctk.CTkButton')
-    content = content.replace('ctk.CTkEntry', 'ctk.CTkEntry')
-    content = content.replace('ctk.CTkEntry', 'ctk.CTkEntry')
-    content = content.replace('ctk.CTkSwitch', 'ctk.CTkSwitch')
-    content = content.replace('ctk.CTkSwitch', 'ctk.CTkSwitch')
-    content = content.replace('ctk.CTkOptionMenu', 'ctk.CTkOptionMenu')
-    
-    # 3. Fix current() to set() for CTkOptionMenu
-    # It usually looks like `# combo.current(0)`. We can't know it's a combo, but .current(0) is only used for comboboxes.
-    # Actually, we should replace `.current(` with `.set( ` wait, .set() takes a value, not an index!
-    # If they did `# combo.current(0)`, we can't easily translate to `.set(values[0])` via regex.
-    # Let's manually comment out .current() calls.
-    content = re.sub(r'(\w+\.current\(\d+\))', r'# \1', content)
+def fix_all():
+    files = glob.glob('E:\\MEUS PROGRAMAS\\APOLLO_EDIT_WEB\\web_ui\\*.html')
+    for f in files:
+        with open(f, 'r', encoding='utf-8') as file:
+            text = file.read()
+        
+        # Only fix if we detect typical mojibake patterns (like Ã£ for ã)
+        if 'Ã' in text or '' in text or 'DŸ' in text or 'Â' in text:
+            fixed = reverse_dotnet_ansi(text)
+            if fixed != text:
+                with open(f, 'w', encoding='utf-8-sig') as file:
+                    file.write(fixed)
+                print(f"Fixed: {os.path.basename(f)}")
 
-    # 4. Remove unsupported kwargs from all files now that everything is CTk
-    kwargs_to_strip = [
-        r',\s*bd=\d+',
-        r',\s*borderwidth=\d+',
-        r',\s*relief=[\'"]\w+[\'"]',
-        r',\s*highlightthickness=\d+',
-        r',\s*wraplength=\d+',
-        r',\s*bg=[\'"]#?[a-zA-Z0-9]+[\'"]',
-        r',\s*fg=[\'"]#?[a-zA-Z0-9]+[\'"]',
-        r',\s*background=[\'"]#?[a-zA-Z0-9]+[\'"]',
-        r',\s*state=[\'"]readonly[\'"]',  # readonly is not supported in some ctk widgets in the same way
-    ]
-    for pattern in kwargs_to_strip:
-        content = re.sub(pattern, '', content)
-
-    # 5. Fix textvariable -> variable for OptionMenu and Switch
-    content = re.sub(r'(CTkOptionMenu[^>]*?)textvariable=', r'\1variable=', content)
-    content = re.sub(r'(CTkSwitch[^>]*?)textvariable=', r'\1variable=', content)
-    
-    # 6. Ensure 'import customtkinter as ctk' is present if ctk is used
-    if 'ctk.' in content and 'import customtkinter as ctk' not in content:
-        content = 'import customtkinter as ctk\n' + content
-
-    if content != original:
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"Migrated {filename}")
+fix_all()
