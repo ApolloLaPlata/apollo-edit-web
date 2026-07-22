@@ -2,6 +2,6 @@
   "name": "apollo-edit-web",
   "version": "1.0.0",
   "scripts": {
-    "build": "bash build_vercel.sh"
+    "build": "node build_vercel.js"
   }
 }
