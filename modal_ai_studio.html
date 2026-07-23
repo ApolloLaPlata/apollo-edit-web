@@ -896,11 +896,28 @@ async function generateImage() {
                 const statusData = await statusRes.json();
                 
                 if (statusData.status === "success") {
-                    jobSuccess = true;
-                    jobData = statusData.content;
-                } else if (statusData.status === "error") {
-                    throw new Error(`Erro gerando na Modal: ${JSON.stringify(statusData.content)}`);
-                }
+                      jobSuccess = true;
+                      if (typeof statusData.content === 'string') {
+                          const lines = statusData.content.trim().split('\n');
+                          for (let i = lines.length - 1; i >= 0; i--) {
+                              if (lines[i].trim() === "") continue;
+                              try {
+                                  const parsed = JSON.parse(lines[i]);
+                                  if (parsed.image_base64) {
+                                      jobData = parsed;
+                                      break; // Pega a última que tenha imagem (que será o upscale)
+                                  } else if (!jobData) {
+                                      jobData = parsed;
+                                  }
+                              } catch(e) {}
+                          }
+                          if (!jobData) jobData = statusData.content;
+                      } else {
+                          jobData = statusData.content;
+                      }
+                  } else if (statusData.status === "error") {
+                      throw new Error(`Erro gerando na Modal: ${JSON.stringify(statusData.content)}`);
+                  }
             }
             
             const data = jobData;
