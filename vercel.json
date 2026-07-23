@@ -3,5 +3,11 @@
   "framework": null,
   "buildCommand": "",
   "installCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.apolloedit.com/api/:path*"
+    }
+  ]
 }
