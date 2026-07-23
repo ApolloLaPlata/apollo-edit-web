@@ -875,69 +875,57 @@ async function generateImage() {
             throw new Error(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
         }
 
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let doneReadingStream = false;
-        let lastProgressLog = Date.now();
-        let payloadBuffer = "";
-
-        while (!doneReadingStream) {
-            const { done, value } = await reader.read();
-            doneReadingStream = done;
-            if (value) {
-                const chunkStr = decoder.decode(value, { stream: true });
-                payloadBuffer += chunkStr;
+        const initialData = await res.json();
+        if (initialData.status === "processing" && initialData.job_id) {
+            const jobId = initialData.job_id;
+            log(`📦 Job enfileirado no backend (ID: ${jobId.substring(0,6)}...). Iniciando polling...`, 'info');
+            
+            let jobSuccess = false;
+            let jobData = null;
+            while (!jobSuccess) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
                 
-                // Atualiza o timer visual sempre que recebemos dados/heartbeats
-                const now = Date.now();
-                if (now - lastProgressLog > 5000) {
-                    const elapsed = Math.floor((Date.now() - startTime)/1000);
-                    log(`💓 GPU processando... (${elapsed}s) — heartbeats ativos`, 'info');
-                    document.getElementById('spinnerLabel').textContent = `Gerando na Modal Cloud... ${elapsed}s`;
-                    lastProgressLog = now;
+                const now = Math.floor((Date.now() - startTime)/1000);
+                log(`💓 Consultando status... (${now}s)`, 'info');
+                document.getElementById('spinnerLabel').textContent = `Gerando na Nuvem... ${now}s`;
+                
+                const statusRes = await fetch(`/api/studio/modal/status/${jobId}`);
+                if (!statusRes.ok) {
+                    throw new Error(`Erro ao consultar status: HTTP ${statusRes.status}`);
+                }
+                const statusData = await statusRes.json();
+                
+                if (statusData.status === "success") {
+                    jobSuccess = true;
+                    jobData = statusData.content;
+                } else if (statusData.status === "error") {
+                    throw new Error(`Erro gerando na Modal: ${JSON.stringify(statusData.content)}`);
                 }
             }
-        }
-        
-        // Fim da Stream. Agora vamos pegar todo o payload acumulado
-        const trimmedPayload = payloadBuffer.trim();
-        if (trimmedPayload) {
-            try {
-                // Tenta parsear TUDO de uma vez, garantindo que o base64 (2MB) no foi quebrado!
-                const data = JSON.parse(trimmedPayload);
+            
+            const data = jobData;
+            if (data.type === "result" || data.status === "success" || data.image_base64) {
+                log(`📦 Recebimento de imagem concluído.`, 'ok');
+                const elapsedSec = stopTimer();
+                animateProgress('imgProgressFill','imgProgressText', 30, 100, 500, 'Concluído');
+                hideSpinner();
                 
-                if (data.type === "progress") {
-                    log(`[Progresso ComfyUI] Node: ${data.node} | Max: ${data.max || '?'}`, 'warn');
-                } else if (data.type === "result" || data.status === "success") {
-                            // Sucesso Final!
-                            log(`📦 Recebendo dados da imagem concluído.`, 'ok');
-                            const elapsedSec = stopTimer();
-                            animateProgress('imgProgressFill','imgProgressText', 30, 100, 500, 'Concluído');
-                            hideSpinner();
-                            
-                            currentImageData = data.image_base64 || data.audio_base64 || data.video_url || "";
-                            document.getElementById('imgSavePath').textContent = data.file_saved || "Base64 recebido";
-                            
-                            const imgNode = document.getElementById('previewImage');
-                            imgNode.src = 'data:image/png;base64,' + currentImageData;
-                            imgNode.style.display = 'block';
-                            document.getElementById('imgDownloadBar').classList.add('visible');
-                            document.getElementById('btnDownloadPreview').style.display = 'block';
-                            
-                            status.textContent = `✅ Imagem gerada em ${elapsedSec}s!`;
-                            log(`✨ IMAGEM GERADA COM SUCESSO! (${elapsedSec}s)`, 'ok');
-                        } else if (data.type === "log") {
-                            log(`☁️ [Servidor]: ${data.message}`, 'info');
-                            document.getElementById('spinnerLabel').textContent = data.message;
-                        } else if (data.type === "error" || data.status === "error") {
-                            const errMsg = data.message || data.error || JSON.stringify(data);
-                            log(`⚠️ Erro do servidor: ${errMsg}`, 'error');
-                            throw new Error(errMsg);
-                        }
-                    } catch (e) {
-                        if (e.message.includes('Erro do servidor')) throw e;
-                        console.error("Falha ao parsear chunk:", trimmedPayload, e);
-                    }
+                currentImageData = data.image_base64 || data.audio_base64 || data.video_url || "";
+                document.getElementById('imgSavePath').textContent = data.file_saved || "Base64 recebido";
+                
+                const imgNode = document.getElementById('previewImage');
+                imgNode.src = 'data:image/png;base64,' + currentImageData;
+                imgNode.style.display = 'block';
+                document.getElementById('imgDownloadBar').classList.add('visible');
+                document.getElementById('btnDownloadPreview').style.display = 'block';
+                
+                status.textContent = `✅ Imagem gerada em ${elapsedSec}s!`;
+                log(`✨ IMAGEM GERADA COM SUCESSO! (${elapsedSec}s)`, 'ok');
+            } else {
+                throw new Error("Formato de resposta inesperado: " + JSON.stringify(data).slice(0, 100));
+            }
+        } else {
+            throw new Error("O servidor não retornou um Job ID: " + JSON.stringify(initialData).slice(0, 100));
         }
 
     } catch(e) {
