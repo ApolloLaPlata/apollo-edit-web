@@ -107,6 +107,14 @@ class Flux2ComfyEngine_V2:
         with open("/comfyui/extra_model_paths.yaml", "w") as f:
             f.write(yaml_content)
 
+        # Create dummy Lora file to pass ComfyUI validation
+        os.makedirs("/comfyui_models/loras", exist_ok=True)
+        with open("/comfyui_models/loras/zimage-grainscape_ultrareal.safetensors", "w") as f:
+            f.write("dummy")
+            
+        with open("/comfyui_models/loras/sdxl-skin_realism_acne_skin_details_imperfections.safetensors", "w") as f:
+            f.write("dummy")
+
         # MESMO PADRAO DO Flux2Txt2ImgEngine: subprocesso separado + HTTP API
         # O ExperimentalComfyServer in-process corrompe o VAEEncode do img2img
         with force_cpu_during_snapshot():
@@ -168,9 +176,26 @@ class Flux2ComfyEngine_V2:
                 workflow = json.load(f)
             print(f"[Flux2ComfyEngine_V2] Workflow carregado: {len(workflow)} nos")
 
+            # --- FIX: OVERRIDE MODEL NAMES TO MATCH WHAT IS ON MODAL VOLUME ---
+            if "68:12" in workflow and "unet_name" in workflow["68:12"].get("inputs", {}):
+                workflow["68:12"]["inputs"]["unet_name"] = "flux1-dev.safetensors"
+            if "68:38" in workflow and "clip_name" in workflow["68:38"].get("inputs", {}):
+                workflow["68:38"]["inputs"]["clip_name"] = "t5xxl_fp16.safetensors"
+            if "68:10" in workflow and "vae_name" in workflow["68:10"].get("inputs", {}):
+                workflow["68:10"]["inputs"]["vae_name"] = "ae.safetensors"
+                
+            # Bypass Turbo LORA (node 68:89) and PU-Lid since we don't have the weights
+            if "68:89" in workflow:
+                del workflow["68:89"]
+            
             nodes_updated = []
-            for node_id, node in workflow.items():
-                ct = node.get("class_type", "")
+            for node_id, node_data in workflow.items():
+                inputs = node_data.get("inputs", {})
+                for k, v in inputs.items():
+                    if isinstance(v, list) and len(v) > 0 and v[0] == "68:89":
+                        inputs[k] = ["68:12", v[1]]
+                ct = node_data.get("class_type", "")
+                node = node_data
                 if ct == "CLIPTextEncode" and "text" in node["inputs"]:
                     node["inputs"]["text"] = prompt
                     nodes_updated.append(f"CLIPTextEncode({node_id})")

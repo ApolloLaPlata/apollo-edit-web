@@ -95,14 +95,15 @@ def force_cpu_during_snapshot():
     enable_memory_snapshot=True
 )
 class UniversalComfyEngine:
-    FORCE_REBUILD = 3
+    FORCE_REBUILD = 5
 
-    @modal.enter()
+    @modal.enter(snap=True)
     def load_model(self):
         import subprocess
         import urllib.request
         import time
         import sys
+        import os
 
         yaml_content = (
             "modal:\n"
@@ -142,6 +143,22 @@ class UniversalComfyEngine:
             urllib.request.urlretrieve("https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth", model_path)
             print("[UniversalComfyEngine] Download concluído.")
             
+        print("[UniversalComfyEngine] Caching models into RAM for ultra-fast cold starts...")
+        cache_files = [
+            "/comfyui_models/upscale_models/4x-UltraSharp.pth",
+            "/comfyui_models/unet/flux1-dev.safetensors",
+            "/comfyui_models/clip/t5xxl_fp16.safetensors",
+            "/comfyui_models/vae/ae.safetensors",
+            "/comfyui_models/clip/clip_l.safetensors",
+            "/comfyui_models/pulid/pulid_flux_v0.9.1.safetensors",
+            "/comfyui_models/clip_vision/sigclip_vision_patch14_384.safetensors"
+        ]
+        for fpath in cache_files:
+            if os.path.exists(fpath):
+                print(f"[UniversalComfyEngine] Reading {fpath} into memory cache...")
+                subprocess.run(f"cat {fpath} > /dev/null", shell=True)
+        print("[UniversalComfyEngine] Caching finished!")
+        
         print("[UniversalComfyEngine] Lancando ComfyUI como subprocesso (porta 8189)...")
         t_boot_start = time.perf_counter()
         
@@ -173,28 +190,29 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
         except Exception as e:
             print(f"[UniversalComfyEngine] Erro ao gravar patch: {e}")
             
-        self.comfy_process = subprocess.Popen(
-            ["comfy", "--workspace", "/comfyui", "launch", "--",
-             "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            text=True
-        )
-
-        server_up = False
-        for _ in range(180):
-            try:
-                with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
-                    server_up = True
-                    break
-            except Exception:
-                time.sleep(1)
-
-        if server_up:
-            t2_boot_time = time.perf_counter() - t_boot_start
-            print(f"[UniversalComfyEngine] SNAPSHOT V_HTTP OK! ComfyUI porta 8189 pronto em {t2_boot_time:.2f}s.")
-        else:
-            raise RuntimeError("[UniversalComfyEngine] Timeout no boot do ComfyUI para snapshot.")
+        with force_cpu_during_snapshot():
+            self.comfy_process = subprocess.Popen(
+                ["comfy", "--workspace", "/comfyui", "launch", "--",
+                 "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True
+            )
+    
+            server_up = False
+            for _ in range(180):
+                try:
+                    with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
+                        server_up = True
+                        break
+                except Exception:
+                    time.sleep(1)
+    
+            if server_up:
+                t2_boot_time = time.perf_counter() - t_boot_start
+                print(f"[UniversalComfyEngine] SNAPSHOT V_HTTP OK! ComfyUI porta 8189 pronto em {t2_boot_time:.2f}s.")
+            else:
+                raise RuntimeError("[UniversalComfyEngine] Timeout no boot do ComfyUI para snapshot.")
 
     @modal.method()
     def fetch_file(self, path):
@@ -668,5 +686,5 @@ async def handle_request(endpoint_path: str, request: Request):
 
 @app.function(image=modal.Image.debian_slim(python_version="3.10").pip_install("fastapi"), timeout=1200)
 @modal.asgi_app()
-def apollo_api():
+def universal_web_api():
     return web_app

@@ -457,7 +457,19 @@
                     <div class="progress-bar"><div class="progress-fill" id="imgProgressFill"></div></div>
                     <div class="progress-text" id="imgProgressText">Iniciando...</div>
                 </div>
-                <button class="btn btn-primary" id="btnGenImg" onclick="generateImage()" style="margin-top:12px; width:100%;">
+                <!-- TOGGLE UPSCALE -->
+                <div style="display:flex; align-items:center; gap:10px; margin-top:12px; background:var(--bg-card2); border:1px solid var(--border); border-radius:8px; padding:10px 14px;">
+                    <label class="toggle-switch" style="position:relative; display:inline-block; width:40px; height:22px;">
+                        <input type="checkbox" id="toggleUpscale" checked style="opacity:0; width:0; height:0;">
+                        <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#333; border-radius:22px; transition:0.3s;" id="toggleUpscaleSlider"></span>
+                    </label>
+                    <div>
+                        <div style="font-size:0.82rem; font-weight:600; color:var(--text);">🔍 Upscale 4x-UltraSharp</div>
+                        <div style="font-size:0.7rem; color:var(--text-dim);">Duplica resolução com refinamento Flux (+~30s)</div>
+                    </div>
+                    <span id="upscaleBadge" style="margin-left:auto; font-size:0.65rem; font-weight:700; padding:3px 8px; border-radius:6px; background:var(--green); color:#000;">ON</span>
+                </div>
+                <button class="btn btn-primary" id="btnGenImg" onclick="generateImage()" style="margin-top:10px; width:100%;">
                     ✨ Gerar Imagem
                 </button>
                 <div class="log-box" id="imgStatus">Aguardando comando...</div>
@@ -824,11 +836,12 @@ async function generateImage() {
     const steps  = parseInt(document.getElementById('imgSteps').value) || 28;
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
+    const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
     const url    = "/api/studio/modal/generate_image";
     const status = document.getElementById('imgStatus');
 
     log(`✨ GERAR IMAGEM — Iniciando`, 'info');
-    log(`→ Modelo: ${model} | Formato: ${aspect_ratio} | Steps: ${steps}`, 'info');
+    log(`→ Modelo: ${model} | Formato: ${aspect_ratio} | Upscale: ${use_upscale ? 'ON' : 'OFF'}`, 'info');
     log(`→ Enviando para proxy local: ${url}`, 'info');
 
     document.getElementById('btnGenImg').disabled = true;
@@ -867,7 +880,7 @@ async function generateImage() {
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, steps, aspect_ratio, model, reference_images_base64 })
+            body: JSON.stringify({ prompt, steps, aspect_ratio, model, reference_images_base64, use_upscale })
         });
 
         if (!res.ok) {
@@ -1130,6 +1143,33 @@ document.addEventListener('DOMContentLoaded', () => {
     log('→ Dica: cole os logs abaixo no chat se algo falhar!', 'warn');
     // Auto-ping ao carregar
     setTimeout(pingModal, 1500);
+
+    // ─── Toggle Upscale Visual ─────────────────────────────────────
+    const toggleUpscale = document.getElementById('toggleUpscale');
+    const toggleSlider  = document.getElementById('toggleUpscaleSlider');
+    const upscaleBadge  = document.getElementById('upscaleBadge');
+
+    function applyUpscaleStyle(checked) {
+        toggleSlider.style.background = checked ? 'var(--green)' : '#444';
+        toggleSlider.style.setProperty('--slider-x', checked ? '18px' : '0px');
+        upscaleBadge.textContent = checked ? 'ON' : 'OFF';
+        upscaleBadge.style.background = checked ? 'var(--green)' : '#555';
+        upscaleBadge.style.color = checked ? '#000' : '#ccc';
+    }
+
+    // Pseudo-element não funciona inline, então usamos um pseudo-span interno
+    toggleSlider.innerHTML = '<span id="sliderThumb" style="position:absolute; top:2px; left:2px; width:18px; height:18px; background:#fff; border-radius:50%; transition:0.3s;"></span>';
+
+    function applyUpscaleStyleFull(checked) {
+        toggleSlider.style.background = checked ? '#00ff88' : '#444';
+        document.getElementById('sliderThumb').style.transform = checked ? 'translateX(18px)' : 'translateX(0)';
+        upscaleBadge.textContent = checked ? 'ON' : 'OFF';
+        upscaleBadge.style.background = checked ? 'var(--green)' : '#555';
+        upscaleBadge.style.color = checked ? '#000' : '#ccc';
+    }
+
+    applyUpscaleStyleFull(toggleUpscale.checked);
+    toggleUpscale.addEventListener('change', () => applyUpscaleStyleFull(toggleUpscale.checked));
 });
 </script>
 

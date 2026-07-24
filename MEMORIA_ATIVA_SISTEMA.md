@@ -2832,3 +2832,31 @@ O pr√≥ximo grande passo estrat√©gico ser√° plugar o **Supabase** (Banco de Dados
 
 **Mentalidade de Execu√ß√£o (O Acordo):**
 Sabemos que essa √© a vis√£o de longo prazo. Por enquanto, come√ßamos pequenos. Um site "feinho, mas que funciona" (MVP). A prioridade agora √© devolver o site 100% online para o CEO, validar o gerador de imagem, e ir dando corpo ao ecossistema dia ap√≥s dia.
+
+- **2026-07-21 [VIT√ìRIA VERCEL]**: A Vercel insistia em falhar o build por lixo hist√≥rico (tentativas de compila√ß√£o Next.js) e limites de tamanho ao escanear o reposit√≥rio. O CEO acionou o Perplexity e escalamos para o **Plano C (N√≠vel Nuclear)**. Desativamos a auto-detec√ß√£o da Vercel migrando todos os arquivos est√°ticos para a pasta .vercel/output/static (Build Output API) e atualizamos o ercel.json para apontar para l√°. O site subiu com 100% de sucesso. **REGRA DE OURO:** NUNCA altere essa estrutura. A Vercel agora ignora o build e serve a pasta output.
+
+- **2026-07-21 [VERCEL CORRE«√O DEFINITIVA E DEPLOY ORACLE]**: A tentativa anterior de forÁar o build na pasta .vercel/output/static gerou problemas 404 em assets como o \g_timeline.png\. A soluÁ„o final foi executar \git rm -r .vercel\ para remover a pasta do versionamento e deixar a Vercel compilar na raiz (Root Directory) naturalmente, utilizando o \ercel.json\ simples. Funcionou! O Frontend est· online. 
+- **Nova Etapa**: Agora solicitamos o IP da VPS Oracle para rodar um script \deploy_oracle.ps1\ e subir a pasta \ackend/\ via SSH para a infraestrutura, revivendo as funÁıes dos botıes do frontend.
+
+- **2026-07-21 [DEPLOY DA API NO ORACLE VPS]**: 
+  - **Problema de SSH no Windows**: Ao tentar conectar na Oracle VPS usando a chave \ssh-key-2026-07-20.key\, o SSH do Windows bloqueou por 'Bad permissions' (permissıes muito abertas). A tentativa de usar o \icacls\ falhou repetidas vezes por causa de SIDs desconhecidos e falta de privilÈgio \SeSecurityPrivilege\.
+  - **SoluÁ„o (A Grande Sacada)**: O OpenSSH do Windows gerencia perfeitamente as chaves que est„o dentro da pasta padr„o \.ssh\. Resolvemos copiando a chave para \$env:USERPROFILE\.ssh\oracle_key\. A conex„o funcionou instantaneamente sem precisar lutar contra o ACL do Windows.
+  - **TransferÍncia**: O Backend continha pastas pesadas (\__pycache__\, \env\, etc). Para transferir r·pido para a nuvem (35MB), compactamos localmente usando \Compress-Archive\ e enviamos o \ackend.zip\ via SCP.
+  - **Setup Remoto**: Executamos via t˙nel SSH a atualizaÁ„o do Linux (Ubuntu 24.04), descompactaÁ„o, criaÁ„o do \env\ e instalaÁ„o do \equirements.txt\. A API est· sendo configurada para responder ‡s requisiÁıes do frontend Vercel.
+
+- **2026-07-22 [CONEX√ÉO DEFINITIVA VERCEL -> ORACLE (PM2 vs SYSTEMD)]**:
+  - **O Problema da API Offline**: O frontend Vercel estava apontando perfeitamente para a VPS atrav√©s do arquivo `vercel.json` (Rewrite API). Por√©m, ao tentar consumir a rota `/api/search-youtube`, o servidor respondia `{"detail":"Not Found"}`.
+  - **A Descoberta do Conflito**: Descobrimos que a API que estava escutando a porta 8000 N√ÉO era a vers√£o atualizada que subimos via SCP. Havia um processo antigo do `PM2 (God Daemon)` rodando o `apollo_api` antigo usando um ambiente virtual defasado (`/home/ubuntu/venv/`).
+  - **A Solu√ß√£o**: O `PM2` estava em conflito direto com o servi√ßo oficial `apollo_api.service` do Systemd. Toda vez que mat√°vamos a API ou o Systemd tentava subir, a porta `8000` acusava "address already in use" (Erro 98). Executamos `pm2 delete apollo_api && pm2 save` para aniquilar o processo zumbi. Depois reiniciamos o `apollo_api.service` oficial.
+  - **A Vit√≥ria**: Com o caminho livre, a vers√£o atualizada do Backend finalmente assumiu a porta 8000. A pesquisa do YouTube conectou-se com sucesso. A "ponte" entre Vercel e Oracle est√° oficialmente viva e 100% operacional sem interrup√ß√µes!
+
+### üéì COMO A CONEX√ÉO FUNCIONOU (APRENDIZADO T√âCNICO REGISTRADO):
+Para ligar o Vercel (Front) no Oracle (Back) de forma invis√≠vel para o usu√°rio e sem bloqueios de CORS:
+1. **Frontend (Vercel)**: Usamos um arquivo simples chamado `vercel.json` com um `rewrite`. Toda requisi√ß√£o que o site faz para `/api/...`, a Vercel redireciona diretamente para o IP da Oracle (`http://163.176.135.59:8000/api/...`). Isso faz o navegador achar que tudo est√° no mesmo servidor.
+2. **Oracle VPS**: A Oracle usa a chave SSH alocada na pasta `.ssh` do Windows (`oracle_key`) garantindo seguran√ßa e conex√£o r√°pida. O servidor roda o `FastAPI` 24 horas por dia atrav√©s de um servi√ßo nativo do Linux chamado `Systemd` (`apollo_api.service`). Se o servidor reiniciar, a API liga sozinha.
+3. **A Quest√£o do SSH (Porque eu n√£o sabia e agora sei)**: Antes, eu tentava usar o ICACLS do Windows para for√ßar permiss√µes na chave solta no HD, o que gerava um inferno de acessos negados. O pulo do gato foi usar o padr√£o de seguran√ßa natural do Windows movendo a chave para `C:\Users\v5est\.ssh\oracle_key`. Isso faz a porta abrir instantaneamente e com seguran√ßa validada.
+## [Maestro - 22/07/2026] Vercel <> Oracle <> Modal Connection
+- Criado rotas de proxy em backend/api/routes_studio.py
+- Vercel (/api/studio/modal/generate_image) -> Oracle -> Modal App (apollo-render-router)
+- O Oracle roteia a requisicao para a conta modal que esta 'is_active: true' no banco local.
+- Deploy da engine no modal executado com sucesso.

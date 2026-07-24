@@ -3,7 +3,7 @@ import subprocess
 import random
 import time
 import json
-from config_manager import ConfigManager
+from backend.services.settings_manager import ConfigManager
 
 class MusicVideoEngine:
     def __init__(self, workspace_dir=None):

@@ -3,7 +3,7 @@ import json
 import os
 import subprocess
 from typing import Optional, Dict, Any
-from config_manager import ConfigManager
+from backend.services.settings_manager import ConfigManager
 
 class VoiceMakerAPI:
     """Cliente para API oficial do VoiceMaker"""

@@ -47,48 +47,85 @@ FORMATS = {
 
 from contextlib import contextmanager
 
+@contextmanager
+def force_cpu_during_snapshot():
+    import torch
+    orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
+    orig_current_device = getattr(torch.cuda, "current_device", lambda: torch.device("cpu"))
+
+    torch.cuda.is_available = lambda: False
+    torch.cuda.current_device = lambda: torch.device("cpu")
+    try:
+        yield
+    finally:
+        torch.cuda.is_available = orig_is_available
+        torch.cuda.current_device = orig_current_device
+
 @app.cls(
     gpu="H100", 
     image=flux2_txt2img_image,
     volumes={"/comfyui_models": comfy_volume},
     scaledown_window=60, 
     timeout=600,
-    max_containers=5
+    max_containers=5,
+    enable_memory_snapshot=True
 )
 class Flux2Txt2ImgEngine:
-    @modal.enter()
+    FORCE_REBUILD = 2
+    
+    @modal.enter(snap=True)
     def load_model(self):
         import urllib.request
         import urllib.error
         import subprocess
         import time
         import sys
+        import os
         
         yaml_content = "modal:\n  base_path: /comfyui_models\n  checkpoints: checkpoints\n  loras: loras\n  vae: vae\n  clip: clip\n  unet: unet\n  controlnet: controlnet\n"
         with open("/comfyui/extra_model_paths.yaml", "w") as f:
             f.write(yaml_content)
         
+        # Create dummy Lora file to pass ComfyUI validation since the node is disabled but still validated
+        os.makedirs("/comfyui_models/loras", exist_ok=True)
+        with open("/comfyui_models/loras/zimage-grainscape_ultrareal.safetensors", "w") as f:
+            f.write("dummy")
+
+        print("[Flux2Txt2ImgEngine] Caching models into RAM for ultra-fast cold starts...")
+        cache_files = [
+            "/comfyui_models/unet/flux1-dev.safetensors",
+            "/comfyui_models/clip/t5xxl_fp16.safetensors",
+            "/comfyui_models/vae/ae.safetensors",
+            "/comfyui_models/clip/clip_l.safetensors"
+        ]
+        for fpath in cache_files:
+            if os.path.exists(fpath):
+                print(f"[Flux2Txt2ImgEngine] Reading {fpath} into memory cache...")
+                subprocess.run(f"cat {fpath} > /dev/null", shell=True)
+        print("[Flux2Txt2ImgEngine] Caching finished!")
+        
         print("[Flux2Txt2ImgEngine] Iniciando servidor ComfyUI headless...")
-        self.comfy_process = subprocess.Popen(
-            ["comfy", "--workspace", "/comfyui", "launch", "--", "--listen", "127.0.0.1", "--port", "8188"],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            text=True
-        )
-        
-        server_up = False
-        for _ in range(180):
-            try:
-                with urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2):
-                    server_up = True
-                    break
-            except Exception:
-                time.sleep(1)
-        
-        if server_up:
-            print("[Flux2Txt2ImgEngine] Servidor aguardando requisições.")
-        else:
-            raise RuntimeError("Falha no boot do ComfyUI no tempo limite.")
+        with force_cpu_during_snapshot():
+            self.comfy_process = subprocess.Popen(
+                ["comfy", "--workspace", "/comfyui", "launch", "--", "--listen", "127.0.0.1", "--port", "8188"],
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True
+            )
+            
+            server_up = False
+            for _ in range(180):
+                try:
+                    with urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2):
+                        server_up = True
+                        break
+                except Exception:
+                    time.sleep(1)
+            
+            if server_up:
+                print("[Flux2Txt2ImgEngine] Servidor aguardando requisições.")
+            else:
+                raise RuntimeError("Falha no boot do ComfyUI no tempo limite.")
 
     @modal.method()
     def generate(self, prompt: str, aspect_ratio: str = "horizontal", **kwargs) -> dict:
@@ -132,16 +169,15 @@ class Flux2Txt2ImgEngine:
             if "98:10" in workflow and "vae_name" in workflow["98:10"].get("inputs", {}):
                 workflow["98:10"]["inputs"]["vae_name"] = "ae.safetensors"
             
-            # Since we don't have the Turbo LORA in Modal yet, we should disable the LORA node or ignore it.
-            # The workflow uses a Switch(steps) "98:104" (Enable Turbo LoRA = false).
-            # If "98:104" is false, the LORA node "98:101" might not execute, but ComfyUI STILL validates its inputs!
-            # So we must replace the lora_name with a valid one if it exists, or just delete the node and bypass it.
-            # Let's bypass it by deleting it from workflow if we don't have it, or give a dummy lora.
-            # But the errors show that ComfyUI is validating "98:101" even if bypassed.
-            # What LORAs do we have? ['sdxl-skin_realism_acne_skin_details_imperfections.safetensors', 'zimage-grainscape_ultrareal.safetensors']
-            # We'll just set it to one of them so it passes validation (it won't be used anyway because switch is false).
-            if "98:101" in workflow and "lora_name" in workflow["98:101"].get("inputs", {}):
-                workflow["98:101"]["inputs"]["lora_name"] = "zimage-grainscape_ultrareal.safetensors"
+            # Since we don't have the Turbo LORA in Modal yet, we bypass it completely by removing the node
+            if "98:101" in workflow:
+                del workflow["98:101"]
+                
+            for node_id, node_data in workflow.items():
+                inputs = node_data.get("inputs", {})
+                for k, v in inputs.items():
+                    if isinstance(v, list) and len(v) > 0 and v[0] == "98:101":
+                        inputs[k] = ["98:12", v[1]]
                     
             print("[Flux2Txt2ImgEngine] Enviando job para API do ComfyUI...")
             req = urllib.request.Request("http://127.0.0.1:8188/prompt", data=json.dumps({"prompt": workflow}).encode("utf-8"), headers={"Content-Type": "application/json"})

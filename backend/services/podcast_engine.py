@@ -13,13 +13,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.append(current_dir)
 
-from config_manager import ConfigManager
+from backend.services.settings_manager import ConfigManager
 # VoiceMakerAPI opcional - nao utilizado neste software
 try:
     from voicemaker_api import VoiceMakerAPI
 except ImportError:
     VoiceMakerAPI = None
-from tts_manager import TTSManager
+from backend.services.tts_manager import TTSManager
 
 class PodcastGenerator:
     """

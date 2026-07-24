@@ -69,8 +69,10 @@ class ImageRequest(BaseModel):
     prompt: str
     model: str = "flux-schnell" # "flux-schnell", "flux-dev"
     format: str = "horizontal" # "horizontal", "vertical", "square"
+    aspect_ratio: str = "horizontal" # alias aceito pelo frontend
     seed: int = 42
     reference_images_base64: Optional[list[str]] = None
+    use_upscale: bool = True  # Se False, retorna a imagem base sem upscale
 
 class TTSRequest(BaseModel):
     text: str
@@ -88,6 +90,7 @@ class MultiPassRequest(BaseModel):
     regional_prompts: list[str]
     input_images_b64: list[str]
     seed: int = 42
+    use_upscale: bool = True  # Se False, retorna a imagem base sem upscale
 
 @web_app.post("/generate/image")
 def api_generate_image(req: ImageRequest):
@@ -107,9 +110,11 @@ def api_generate_image(req: ImageRequest):
             engine = Flux2Txt2ImgEngine()
             print(f"[Router] Spawning Flux2Txt2ImgEngine (Txt2Img) -> format: {req.format}")
         
+        # Resolve formato: usa req.format, com fallback para req.aspect_ratio
+        resolved_format = req.format if req.format != "horizontal" else req.aspect_ratio
         job = engine.generate.spawn(
             prompt=req.prompt,
-            aspect_ratio=req.format,
+            aspect_ratio=resolved_format,
             seed=req.seed,
             reference_images_base64=req.reference_images_base64,
             input_image_b64=req.reference_images_base64[0] if req.reference_images_base64 else None
@@ -130,36 +135,42 @@ def api_generate_image(req: ImageRequest):
                     return
             
             if final_res and final_res.get("status") == "success":
-                # FASE 2: UPSCALE OBRIGATÓRIO (Para todas as gerações)
-                try:
-                    # Envia um heartbeat especial caso precise
-                    yield " \n"
-                    from backend.cloud_tools.engines.universal_engine import UniversalComfyEngine
-                    upscale_engine = UniversalComfyEngine()
-                    
-                    with open("/workflows/flux_upscale_ultrasharp.json", "r", encoding="utf-8") as f:
-                        upscale_json = f.read()
-                    
-                    upscale_job = upscale_engine.generate.spawn(
-                        workflow_json_string=upscale_json,
-                        prompt=req.prompt,
-                        input_image_b64=final_res["image_base64"],
-                        is_upscale=True,
-                        denoise=0.25
-                    )
-                    upscale_fc = FunctionCall.from_id(upscale_job.object_id)
-                    while True:
-                        try:
-                            up_res = await upscale_fc.get.aio(timeout=5.0)
-                            yield json.dumps(up_res) + "\n"
-                            break
-                        except TimeoutError:
-                            yield " \n"
-                        except Exception as e:
-                            yield json.dumps({"status": "error", "message": f"Erro na Modal (Upscale): {str(e)}"}) + "\n"
-                            break
-                except Exception as e:
-                    yield json.dumps({"status": "error", "message": f"Erro no Roteamento Upscale: {str(e)}"}) + "\n"
+                if not req.use_upscale:
+                    # Sem upscale: retorna a imagem base diretamente
+                    print("[Router] use_upscale=False — retornando imagem base sem upscale.")
+                    yield json.dumps(final_res) + "\n"
+                else:
+                    # FASE 2: UPSCALE (quando use_upscale=True)
+                    try:
+                        yield " \n"
+                        from backend.cloud_tools.engines.universal_engine import UniversalComfyEngine
+                        upscale_engine = UniversalComfyEngine()
+                        
+                        import os
+                        workflow_path = os.path.join(os.path.dirname(__file__), "..", "..", "Comfyui Workflow API", "flux_upscale_ultrasharp.json")
+                        with open(workflow_path, "r", encoding="utf-8") as f:
+                            upscale_json = f.read()
+                        
+                        upscale_job = upscale_engine.generate.spawn(
+                            workflow_json_string=upscale_json,
+                            prompt=req.prompt,
+                            input_image_b64=final_res["image_base64"],
+                            is_upscale=True,
+                            denoise=0.25
+                        )
+                        upscale_fc = FunctionCall.from_id(upscale_job.object_id)
+                        while True:
+                            try:
+                                up_res = await upscale_fc.get.aio(timeout=5.0)
+                                yield json.dumps(up_res) + "\n"
+                                break
+                            except TimeoutError:
+                                yield " \n"
+                            except Exception as e:
+                                yield json.dumps({"status": "error", "message": f"Erro na Modal (Upscale): {str(e)}"}) + "\n"
+                                break
+                    except Exception as e:
+                        yield json.dumps({"status": "error", "message": f"Erro no Roteamento Upscale: {str(e)}"}) + "\n"
             else:
                 # Falhou na geração base, apenas retorna o erro
                 if final_res:
@@ -329,33 +340,37 @@ def api_generate_multipass(req: MultiPassRequest):
                 res = task.result()
                 
                 if res and res.get("status") == "success":
-                    try:
-                        yield " \n"
-                        upscale_engine = UniversalComfyEngine()
-                        
-                        with open("/workflows/flux_upscale_ultrasharp.json", "r", encoding="utf-8") as f:
-                            upscale_json = f.read()
-                        
-                        upscale_job = upscale_engine.generate.spawn(
-                            workflow_json_string=upscale_json,
-                            prompt=req.base_prompt,
-                            input_image_b64=res["image_base64"],
-                            is_upscale=True,
-                            denoise=0.25
-                        )
-                        upscale_fc = FunctionCall.from_id(upscale_job.object_id)
-                        while True:
-                            try:
-                                up_res = await upscale_fc.get.aio(timeout=5.0)
-                                yield json.dumps(up_res) + "\n"
-                                break
-                            except TimeoutError:
-                                yield " \n"
-                            except Exception as e:
-                                yield json.dumps({"status": "error", "message": f"Erro na Modal (Upscale Multipass): {str(e)}"}) + "\n"
-                                break
-                    except Exception as e:
-                        yield json.dumps({"status": "error", "message": f"Erro no Roteamento Upscale Multipass: {str(e)}"}) + "\n"
+                    if not req.use_upscale:
+                        print("[Router Multipass] use_upscale=False — retornando imagem base sem upscale.")
+                        yield json.dumps(res) + "\n"
+                    else:
+                        try:
+                            yield " \n"
+                            upscale_engine = UniversalComfyEngine()
+                            
+                            with open(r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow API\flux_upscale_ultrasharp.json", "r", encoding="utf-8") as f:
+                                upscale_json = f.read()
+                            
+                            upscale_job = upscale_engine.generate.spawn(
+                                workflow_json_string=upscale_json,
+                                prompt=req.base_prompt,
+                                input_image_b64=res["image_base64"],
+                                is_upscale=True,
+                                denoise=0.25
+                            )
+                            upscale_fc = FunctionCall.from_id(upscale_job.object_id)
+                            while True:
+                                try:
+                                    up_res = await upscale_fc.get.aio(timeout=5.0)
+                                    yield json.dumps(up_res) + "\n"
+                                    break
+                                except TimeoutError:
+                                    yield " \n"
+                                except Exception as e:
+                                    yield json.dumps({"status": "error", "message": f"Erro na Modal (Upscale Multipass): {str(e)}"}) + "\n"
+                                    break
+                        except Exception as e:
+                            yield json.dumps({"status": "error", "message": f"Erro no Roteamento Upscale Multipass: {str(e)}"}) + "\n"
                 else:
                     yield json.dumps(res) + "\n"
             except Exception as e:
