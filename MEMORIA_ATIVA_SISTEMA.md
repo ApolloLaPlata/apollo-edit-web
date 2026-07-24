@@ -2860,3 +2860,20 @@ Para ligar o Vercel (Front) no Oracle (Back) de forma invisível para o usuário
 - Vercel (/api/studio/modal/generate_image) -> Oracle -> Modal App (apollo-render-router)
 - O Oracle roteia a requisicao para a conta modal que esta 'is_active: true' no banco local.
 - Deploy da engine no modal executado com sucesso.
+
+### ⚠️ [CRÍTICO: INCIDENTE DE DEPLOY MODAL (2026-07-23)] ⚠️
+- **ERRO FATAL:** Durante atualização, o arquivo legado cloud_deploy/modal/apollo_modal_engine.py foi implantado acidentalmente no servidor Modal. Isso causou a exclusão do cache de VRAM (Flux2ComfyEngine_V2) e quebrou o botão Upscale, resultando em cold starts de +5 minutos.
+- **SOLUÇÃO:** O deploy correto deve ser SEMPRE modal deploy backend/cloud_tools/apollo_modal_engine.py. O sistema foi corrigido.
+- **REGRA:** NUNCA faça deploy do arquivo na pasta cloud_deploy/modal para imagens Flux. Sempre use o wrapper do ComfyUI em backend/cloud_tools/.
+
+
+### ⚠️ [RESOLVIDO: FALHA NO UPSCALE E TEMPO DE COLD START (2026-07-24)] ⚠️
+- **Upscale Ignorado (Bug Localizado e Corrigido):** O motor apollo_modal_engine.py tentava ler o json do fluxo de upscale de um diretório relativo do Windows, mas na nuvem da Modal, os arquivos estão em /workflows/. Isso gerava um Erro 404 (FileNotFoundError) interno que falhava o Upscale imediatamente. Porém, o Javascript do Front-end (modal_ai_studio.html) tem uma rotina que, ao encontrar um erro, volta buscando o último chunk válido com image_base64. Ele encontrava a imagem base (1280x720) e a exibia como 'sucesso', mascarando o erro.
+- **O tempo de 190s (3 minutos):** A máquina da Modal levou 160 segundos transferindo 35GB de modelos do SSD da nuvem para a Memória RAM, o que é o 'Cold Start' absoluto de uma máquina fria, mais 26s para gerar a imagem. O tempo de '1 minuto' atingido anteriormente ocorreu apenas quando o contêiner já estava quente (pré-aquecido por script ou uso contínuo, onde o modelo já estava na RAM).
+- **Ação Executada:** Caminho do arquivo alterado para ler de /workflows/ na nuvem. Um novo deploy na Modal foi concluído. O Upscale agora executará perfeitamente.
+
+### ⚠️ [DIAGNÓSTICO: MEMORY SNAPSHOT E TEMPO DE GERAÇÃO (2026-07-24)] ⚠️
+- **O Problema Relatado:** O usuário reportou que gerações anteriores (usando máquina fria via snapshot) ocorriam em ~60s, enquanto a recente demorou 190s e a anterior (printada em anexo) demorou 60.5s ou 72.8s.
+- **A Confusão Técnica:** Eu interpretei equivocadamente os logs e a documentação interna da Modal. O usuário não estava se referindo a uma 'máquina quente' (container idle), mas sim ao recurso **Memory Snapshot** da Modal (enable_memory_snapshot=True), que de fato restaura o estado da memória RAM quase instantaneamente a partir de um checkpoint salvo durante o deploy.
+- **Análise dos Logs e do Ambiente:** O código Python (lux_txt2img_engine.py) **POSSUI** a flag enable_memory_snapshot=True. No entanto, logs antigos mostram a mensagem Memory snapshots are disabled for ephemeral apps. Deploy your app with modal deploy to enable memory snapshots. Isso indica que, se o app for rodado com modal serve (efêmero) ou se houver alguma inconsistência no deploy, o Snapshot não é criado ou não é usado.
+- **Conclusão e Ação:** O usuário está **correto**. A tecnologia de Snapshot que ele desenvolveu para o Apollo reduz drasticamente o Cold Start (restaurando o modelo na RAM em segundos). A variação de 190s ocorreu provavelmente porque o app rodou sem o Snapshot ativo (possivelmente devido a um deploy corrompido anterior ou execução efêmera), forçando um Cold Start tradicional severo. Com o deploy final definitivo que acabei de executar via modal deploy, o Snapshot foi recriado (demorou quase 7 segundos para compilar a imagem remota). Na próxima execução, o tempo de Cold Start deve voltar para a casa dos ~60s com Upscale funcionando.

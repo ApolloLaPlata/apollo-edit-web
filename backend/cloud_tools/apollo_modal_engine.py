@@ -147,7 +147,9 @@ def api_generate_image(req: ImageRequest):
                         upscale_engine = UniversalComfyEngine()
                         
                         import os
-                        workflow_path = os.path.join(os.path.dirname(__file__), "..", "..", "Comfyui Workflow API", "flux_upscale_ultrasharp.json")
+                        workflow_path = "/workflows/flux_upscale_ultrasharp.json"
+                        if not os.path.exists(workflow_path):
+                            workflow_path = os.path.join(os.path.dirname(__file__), "..", "..", "Comfyui Workflow API", "flux_upscale_ultrasharp.json")
                         with open(workflow_path, "r", encoding="utf-8") as f:
                             upscale_json = f.read()
                         
