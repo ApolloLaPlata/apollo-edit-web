@@ -136,7 +136,7 @@ def download_comfy_models():
     scaledown_window=60,
     timeout=600,
     max_containers=5,
-    enable_memory_snapshot=True
+    enable_memory_snapshot=False
 )
 class Flux2ComfyEngine_V2:
     FORCE_REBUILD = 14  # bump para invalidar snapshot antigo com ExperimentalComfyServer

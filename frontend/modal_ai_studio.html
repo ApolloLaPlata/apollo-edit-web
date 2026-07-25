@@ -885,7 +885,7 @@ async function generateImage() {
 
         if (!res.ok) {
             const errText = await res.text();
-            throw new Error(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
+            throw new Error(`HTTP ${res.status}: ${errText}`);
         }
 
         const initialData = await res.json();
@@ -951,11 +951,13 @@ async function generateImage() {
                 
                 status.textContent = `✅ Imagem gerada em ${elapsedSec}s!`;
                 log(`✨ IMAGEM GERADA COM SUCESSO! (${elapsedSec}s)`, 'ok');
+            } else if (data && (data.status === "error" || data.error || data.message)) {
+                throw new Error("Erro da Modal: " + (data.message || data.error || JSON.stringify(data, null, 2)));
             } else {
-                throw new Error("Formato de resposta inesperado: " + JSON.stringify(data).slice(0, 100));
+                throw new Error("Formato de resposta inesperado: " + JSON.stringify(data, null, 2));
             }
         } else {
-            throw new Error("O servidor não retornou um Job ID: " + JSON.stringify(initialData).slice(0, 100));
+            throw new Error("O servidor não retornou um Job ID: " + JSON.stringify(initialData, null, 2));
         }
 
     } catch(e) {

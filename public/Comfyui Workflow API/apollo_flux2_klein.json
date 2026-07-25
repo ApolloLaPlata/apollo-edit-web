@@ -130,8 +130,8 @@
   },
   "98:47": {
     "inputs": {
-      "width": 512,
-      "height": 288,
+      "width": 2048,
+      "height": 1152,
       "batch_size": 1
     },
     "class_type": "EmptyFlux2LatentImage",

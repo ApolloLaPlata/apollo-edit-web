@@ -122,7 +122,7 @@ print("[sitecustomize] Smart CUDA fallback active for ComfyUI boot!")
     scaledown_window=60, 
     timeout=600,
     max_containers=5,
-    enable_memory_snapshot=True
+    enable_memory_snapshot=False
 )
 class Flux2Txt2ImgEngine:
     FORCE_REBUILD = 2

@@ -1,13 +1,12 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "",
-  "installCommand": "",
-  "outputDirectory": ".",
-  "rewrites": [
+  "buildCommand": null,
+  "outputDirectory": "public",
+  "redirects": [
     {
-      "source": "/api/:path*",
-      "destination": "https://api.apolloedit.com/api/:path*"
+      "source": "/web_ui/(.*)",
+      "destination": "/$1",
+      "permanent": false
     }
   ]
 }

@@ -146,7 +146,7 @@ print("[sitecustomize] Smart CUDA fallback active for ComfyUI boot!")
     scaledown_window=60,
     timeout=1200,
     max_containers=5,
-    enable_memory_snapshot=True
+    enable_memory_snapshot=False
 )
 class UniversalComfyEngine:
     FORCE_REBUILD = 5
