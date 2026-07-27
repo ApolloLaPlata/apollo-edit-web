@@ -837,7 +837,7 @@ async function generateImage() {
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
     const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
-    const url    = "/api/studio/modal/generate_image";
+    const url    = "https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run/generate/image";
     const status = document.getElementById('imgStatus');
 
     log(`✨ GERAR IMAGEM — Iniciando`, 'info');
@@ -888,52 +888,31 @@ async function generateImage() {
             throw new Error(`HTTP ${res.status}: ${errText}`);
         }
 
-        const initialData = await res.json();
-        if (initialData.status === "processing" && initialData.job_id) {
-            const jobId = initialData.job_id;
-            log(`📦 Job enfileirado no backend (ID: ${jobId.substring(0,6)}...). Iniciando polling...`, 'info');
-            
-            let jobSuccess = false;
-            let jobData = null;
-            while (!jobSuccess) {
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                
-                const now = Math.floor((Date.now() - startTime)/1000);
-                log(`💓 Consultando status... (${now}s)`, 'info');
-                document.getElementById('spinnerLabel').textContent = `Gerando na Nuvem... ${now}s`;
-                
-                const statusRes = await fetch(`/api/studio/modal/status/${jobId}`);
-                if (!statusRes.ok) {
-                    throw new Error(`Erro ao consultar status: HTTP ${statusRes.status}`);
+        const resText = await res.text();
+        let jobData = null;
+        
+        const lines = resText.trim().split('\n');
+        for (let i = lines.length - 1; i >= 0; i--) {
+            if (lines[i].trim() === "") continue;
+            try {
+                const parsed = JSON.parse(lines[i]);
+                if (parsed.image_base64) {
+                    jobData = parsed;
+                    break; // Pega a última que tenha imagem (que será o upscale)
+                } else if (!jobData) {
+                    jobData = parsed;
                 }
-                const statusData = await statusRes.json();
-                
-                if (statusData.status === "success") {
-                      jobSuccess = true;
-                      if (typeof statusData.content === 'string') {
-                          const lines = statusData.content.trim().split('\n');
-                          for (let i = lines.length - 1; i >= 0; i--) {
-                              if (lines[i].trim() === "") continue;
-                              try {
-                                  const parsed = JSON.parse(lines[i]);
-                                  if (parsed.image_base64) {
-                                      jobData = parsed;
-                                      break; // Pega a última que tenha imagem (que será o upscale)
-                                  } else if (!jobData) {
-                                      jobData = parsed;
-                                  }
-                              } catch(e) {}
-                          }
-                          if (!jobData) jobData = statusData.content;
-                      } else {
-                          jobData = statusData.content;
-                      }
-                  } else if (statusData.status === "error") {
-                      throw new Error(`Erro gerando na Modal: ${JSON.stringify(statusData.content)}`);
-                  }
-            }
+            } catch(e) {}
+        }
+        
+        if(!jobData) {
+            throw new Error(`Nenhum dado valido retornado pela Modal: ${resText}`);
+        }
+        if(jobData.status === "error") {
+            throw new Error(`Erro gerando na Modal: ${jobData.message || JSON.stringify(jobData)}`);
+        }
             
-            const data = jobData;
+        const data = jobData;
             if (data.type === "result" || data.status === "success" || data.image_base64) {
                 log(`📦 Recebimento de imagem concluído.`, 'ok');
                 const elapsedSec = stopTimer();
