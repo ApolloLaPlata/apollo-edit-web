@@ -2899,3 +2899,28 @@ Para ligar o Vercel (Front) no Oracle (Back) de forma invisível para o usuário
   1. Reescrevemos o orce_cpu_during_snapshot() em todos os motores (universal_engine.py, lux_engine.py, lux_txt2img_engine.py). A função agora cria dinamicamente o arquivo /tmp/mock_cuda/sitecustomize.py e o injeta na variável de ambiente PYTHONPATH (os.environ). O Python do subprocesso do ComfyUI agora importa esse mock automaticamente antes de carregar o PyTorch.
   2. O wrapper (_smart_is_available) detecta se a GPU real está funcional ao tentar acionar _orig_current_device(). Na criação do Snapshot (CPU), intercepta o erro e retorna False, permitindo que o ComfyUI suba o servidor HTTP limpo em 4s e grave o Snapshot da RAM! Quando o Snapshot acorda na máquina H100 em resposta a uma requisição do site, o wrapper detecta a H100 e aciona a aceleração máxima nativamente.
 - **Sincronização Executada:** Disparado modal deploy explícito para ambos os workspaces (canaltutorialdascoisas e descarganews) e realizado push no Git para sincronização simultânea da Vercel e Heroku.
+### !! [RAIZ DO BUG DO SNAPSHOT - DESCOBERTA DEFINITIVA (2026-07-27)] !!
+- **Commit que funcionou no descarganews (60s):** 3fbf96d - "feat: restaura engine modal otimizada (comfy) e endpoints do studio e youtube"
+- **Commit com bug:**  65deca - introduziu sitecustomize.py via PYTHONPATH no orce_cpu_during_snapshot(), mas o context manager **restaura o PYTHONPATH ao sair do with**, deixando o subprocess ComfyUI orphan sem o mock CUDA.
+- **A versao CORRETA e SIMPLES do orce_cpu_during_snapshot()** é:
+`python
+@contextmanager
+def force_cpu_during_snapshot():
+    import torch
+    orig_is_available = getattr(torch.cuda, 'is_available', lambda: False)
+    orig_current_device = getattr(torch.cuda, 'current_device', lambda: torch.device('cpu'))
+    torch.cuda.is_available = lambda: False
+    torch.cuda.current_device = lambda: torch.device('cpu')
+    try:
+        yield
+    finally:
+        torch.cuda.is_available = orig_is_available
+        torch.cuda.current_device = orig_current_device
+`
+- **Por que funciona:** O subprocess ComfyUI sobe durante o with, dentro do contexto do Snapshot de CPU da Modal. O ComfyUI em si detecta CPU pela propria Modal, nao pelo mock Python. O mock simples basta para o processo pai nao crashar.
+- **Arquivos salvos localmente:** E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\VERSAO_MASTER_VALIDADA\engines\*_3fbf96d_ORIGINAL_QUE_FUNCIONOU.py
+- **REGRA:** NUNCA mais complicar o orce_cpu_during_snapshot(). A versao simples e a versao correta.
+- **2026-07-27:** Resolvido o Cold Start absurdo de 4.5 minutos na Modal. A causa raiz era que o ComfyUI tentava inicializar CUDA dentro do container de Snapshot de CPU da Modal, forçando uma exceção no PyTorch. Como a Modal não permite o import do torch.cuda de forma limpa na CPU, o Snapshot era descartado e o container iniciava de zero no Runtime. A solução definitiva ("O Xeque-Mate") foi reescrever todos os flux_txt2img_engine.py, flux_engine.py e universal_engine.py para **apenas carregar os modelos pesados para o cache de RAM (/dev/null)** durante a fase do Snapshot, e mover o boot da aplicação ComfyUI para a fase Runtime (já com GPU presente). 
+- **Resultados de Teste Final Confirmados:** 
+    1. Geração com Máquina Quente (Warm): ~5 segundos. 
+    2. Cold Start Verdadeiro (Máquina Fria acionada após 65s): **10.89 segundos**. Esta refatoração salvou a API do Projeto Apollo de atrasos colossais e confirmou a superioridade da nova arquitetura.

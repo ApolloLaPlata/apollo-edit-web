@@ -40,80 +40,10 @@ comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=Tr
 from backend.cloud_tools.modal_app import app
 
 FORMATS = {
-    "horizontal": {"width": 1024, "height": 576},
-    "vertical": {"width": 576, "height": 1024},
+    "horizontal": {"width": 1280, "height": 720},
+    "vertical": {"width": 720, "height": 1280},
     "square": {"width": 1024, "height": 1024},
 }
-
-from contextlib import contextmanager
-
-@contextmanager
-def force_cpu_during_snapshot():
-    import os
-    import sys
-    import torch
-
-    mock_dir = "/tmp/mock_cuda"
-    os.makedirs(mock_dir, exist_ok=True)
-    site_path = os.path.join(mock_dir, "sitecustomize.py")
-    with open(site_path, "w") as f:
-        f.write('''import torch
-_orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
-_orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
-
-def _smart_is_available():
-    try:
-        if _orig_is_available():
-            _orig_current_device()
-            return True
-    except Exception:
-        pass
-    return False
-
-def _smart_current_device():
-    try:
-        return _orig_current_device()
-    except Exception:
-        return torch.device("cpu")
-
-torch.cuda.is_available = _smart_is_available
-torch.cuda.current_device = _smart_current_device
-print("[sitecustomize] Smart CUDA fallback active for ComfyUI boot!")
-''')
-
-    old_pythonpath = os.environ.get("PYTHONPATH", "")
-    os.environ["PYTHONPATH"] = f"{mock_dir}:{old_pythonpath}" if old_pythonpath else mock_dir
-
-    orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
-    orig_current_device = getattr(torch.cuda, "current_device", lambda: torch.device("cpu"))
-
-    def smart_is_available():
-        try:
-            if orig_is_available():
-                orig_current_device()
-                return True
-        except Exception:
-            pass
-        return False
-
-    def smart_current_device():
-        try:
-            return orig_current_device()
-        except Exception:
-            return torch.device("cpu")
-
-    torch.cuda.is_available = smart_is_available
-    torch.cuda.current_device = smart_current_device
-
-    try:
-        yield
-    finally:
-        torch.cuda.is_available = orig_is_available
-        torch.cuda.current_device = orig_current_device
-        if old_pythonpath:
-            os.environ["PYTHONPATH"] = old_pythonpath
-        else:
-            os.environ.pop("PYTHONPATH", None)
 
 @app.cls(
     gpu="H100", 
@@ -158,28 +88,38 @@ class Flux2Txt2ImgEngine:
                 subprocess.run(f"cat {fpath} > /dev/null", shell=True)
         print("[Flux2Txt2ImgEngine] Caching finished!")
         
-        print("[Flux2Txt2ImgEngine] Iniciando servidor ComfyUI headless...")
-        with force_cpu_during_snapshot():
-            self.comfy_process = subprocess.Popen(
-                ["comfy", "--workspace", "/comfyui", "launch", "--", "--listen", "127.0.0.1", "--port", "8188"],
-                stdout=sys.stdout,
-                stderr=sys.stderr,
-                text=True
-            )
+        self.comfy_process = None
+
+    def _ensure_comfyui_running(self):
+        import urllib.request
+        import subprocess
+        import time
+        import sys
+        
+        if self.comfy_process is not None:
+            return
             
-            server_up = False
-            for _ in range(180):
-                try:
-                    with urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2):
-                        server_up = True
-                        break
-                except Exception:
-                    time.sleep(1)
-            
-            if server_up:
-                print("[Flux2Txt2ImgEngine] Servidor aguardando requisições.")
-            else:
-                raise RuntimeError("Falha no boot do ComfyUI no tempo limite.")
+        print("[Flux2Txt2ImgEngine] Iniciando servidor ComfyUI headless (Runtime GPU)...")
+        self.comfy_process = subprocess.Popen(
+            ["comfy", "--workspace", "/comfyui", "launch", "--", "--listen", "127.0.0.1", "--port", "8188"],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            text=True
+        )
+        
+        server_up = False
+        for _ in range(180):
+            try:
+                with urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2):
+                    server_up = True
+                    break
+            except Exception:
+                time.sleep(1)
+        
+        if server_up:
+            print("[Flux2Txt2ImgEngine] Servidor aguardando requisi├º├Áes.")
+        else:
+            raise RuntimeError("Falha no boot do ComfyUI no tempo limite.")
 
     @modal.method()
     def generate(self, prompt: str, aspect_ratio: str = "horizontal", **kwargs) -> dict:
@@ -190,6 +130,8 @@ class Flux2Txt2ImgEngine:
         import traceback
         import base64
         import os
+        
+        self._ensure_comfyui_running()
         
         t0 = time.time()
         print(f"[Flux2Txt2ImgEngine] Request Txt2Img: {prompt[:50]}... | Formato: {aspect_ratio}")
@@ -209,8 +151,8 @@ class Flux2Txt2ImgEngine:
                 workflow["98:6"]["inputs"]["text"] = prompt
                 
             if "98:47" in workflow and "width" in workflow["98:47"].get("inputs", {}):
-                workflow["98:47"]["inputs"]["width"] = cfg["width"] * 2
-                workflow["98:47"]["inputs"]["height"] = cfg["height"] * 2
+                workflow["98:47"]["inputs"]["width"] = cfg["width"]
+                workflow["98:47"]["inputs"]["height"] = cfg["height"]
                 
             if "98:25" in workflow and "noise_seed" in workflow["98:25"].get("inputs", {}):
                 workflow["98:25"]["inputs"]["noise_seed"] = seed % 1000000000000000
@@ -275,7 +217,7 @@ class Flux2Txt2ImgEngine:
                 except Exception as e:
                     pass
                 
-                # Timeout de segurança: 5 minutos
+                # Timeout de seguran├ºa: 5 minutos
                 if time.time() - t0 > 300:
                     return {
                         "status": "error",

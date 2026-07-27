@@ -32,7 +32,7 @@ flux2_comfy_image = (
         "HF_HUB_OFFLINE": "0",
         "TRANSFORMERS_OFFLINE": "0",
         "HF_HUB_ENABLE_HF_TRANSFER": "1",
-        "MODAL_CACHE_BUSTER": "2"   # nao alterar — evita rebuild Docker desnecessario
+        "MODAL_CACHE_BUSTER": "2"   # nao alterar ÔÇö evita rebuild Docker desnecessario
     })
 )
 
@@ -44,71 +44,17 @@ from contextlib import contextmanager
 
 @contextmanager
 def force_cpu_during_snapshot():
-    import os
-    import sys
     import torch
-
-    mock_dir = "/tmp/mock_cuda"
-    os.makedirs(mock_dir, exist_ok=True)
-    site_path = os.path.join(mock_dir, "sitecustomize.py")
-    with open(site_path, "w") as f:
-        f.write('''import torch
-_orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
-_orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
-
-def _smart_is_available():
-    try:
-        if _orig_is_available():
-            _orig_current_device()
-            return True
-    except Exception:
-        pass
-    return False
-
-def _smart_current_device():
-    try:
-        return _orig_current_device()
-    except Exception:
-        return torch.device("cpu")
-
-torch.cuda.is_available = _smart_is_available
-torch.cuda.current_device = _smart_current_device
-print("[sitecustomize] Smart CUDA fallback active for ComfyUI boot!")
-''')
-
-    old_pythonpath = os.environ.get("PYTHONPATH", "")
-    os.environ["PYTHONPATH"] = f"{mock_dir}:{old_pythonpath}" if old_pythonpath else mock_dir
-
     orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
     orig_current_device = getattr(torch.cuda, "current_device", lambda: torch.device("cpu"))
 
-    def smart_is_available():
-        try:
-            if orig_is_available():
-                orig_current_device()
-                return True
-        except Exception:
-            pass
-        return False
-
-    def smart_current_device():
-        try:
-            return orig_current_device()
-        except Exception:
-            return torch.device("cpu")
-
-    torch.cuda.is_available = smart_is_available
-    torch.cuda.current_device = smart_current_device
-
+    torch.cuda.is_available = lambda: False
+    torch.cuda.current_device = lambda: torch.device("cpu")
     try:
         yield
     finally:
         torch.cuda.is_available = orig_is_available
         torch.cuda.current_device = orig_current_device
-        if old_pythonpath:
-            os.environ["PYTHONPATH"] = old_pythonpath
-        else:
-            os.environ.pop("PYTHONPATH", None)
 
 
 @app.function(
@@ -125,9 +71,9 @@ def download_comfy_models():
 
 
 # ============================================================
-# Flux2ComfyEngine_V2 — IMG2IMG via ComfyUI HTTP subprocess
+# Flux2ComfyEngine_V2 ÔÇö IMG2IMG via ComfyUI HTTP subprocess
 # PADRAO IDENTICO ao Flux2Txt2ImgEngine (que funciona)
-# O ExperimentalComfyServer in-process corrompía o VAEEncode
+# O ExperimentalComfyServer in-process corromp├¡a o VAEEncode
 # ============================================================
 @app.cls(
     gpu="H100",
@@ -169,32 +115,39 @@ class Flux2ComfyEngine_V2:
         with open("/comfyui_models/loras/sdxl-skin_realism_acne_skin_details_imperfections.safetensors", "w") as f:
             f.write("dummy")
 
-        # MESMO PADRAO DO Flux2Txt2ImgEngine: subprocesso separado + HTTP API
-        # O ExperimentalComfyServer in-process corrompe o VAEEncode do img2img
-        with force_cpu_during_snapshot():
-            print("[Flux2ComfyEngine_V2] Lancando ComfyUI como subprocesso (porta 8189)...")
-            self.comfy_process = subprocess.Popen(
-                ["comfy", "--workspace", "/comfyui", "launch", "--",
-                 "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
-                stdout=sys.stdout,
-                stderr=sys.stderr,
-                text=True
-            )
+        self.comfy_process = None
 
-            # Aguardar servidor pronto (snapshot captura estado estavel)
-            server_up = False
-            for _ in range(180):
-                try:
-                    with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
-                        server_up = True
-                        break
-                except Exception:
-                    time.sleep(1)
+    def _ensure_comfyui_running(self):
+        import urllib.request
+        import subprocess
+        import time
+        import sys
+        
+        if self.comfy_process is not None:
+            return
+            
+        print("[Flux2ComfyEngine_V2] Lancando ComfyUI como subprocesso (porta 8189)...")
+        self.comfy_process = subprocess.Popen(
+            ["comfy", "--workspace", "/comfyui", "launch", "--",
+             "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            text=True
+        )
 
-            if server_up:
-                print("[Flux2ComfyEngine_V2] SNAPSHOT V_HTTP OK! ComfyUI porta 8189 pronto.")
-            else:
-                raise RuntimeError("[Flux2ComfyEngine_V2] Timeout no boot do ComfyUI para snapshot.")
+        server_up = False
+        for _ in range(180):
+            try:
+                with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
+                    server_up = True
+                    break
+            except Exception:
+                time.sleep(1)
+
+        if server_up:
+            print("[Flux2ComfyEngine_V2] ComfyUI porta 8189 pronto.")
+        else:
+            raise RuntimeError("[Flux2ComfyEngine_V2] Timeout no boot do ComfyUI.")
 
     @modal.method()
     def generate(self, prompt: str, aspect_ratio: str = "horizontal", style: str = None, **kwargs) -> dict:
@@ -206,6 +159,8 @@ class Flux2ComfyEngine_V2:
         import os
         import io
         from PIL import Image as PILImage
+        
+        self._ensure_comfyui_running()
 
         t0 = time.time()
         print(f"[Flux2ComfyEngine_V2] Request: {prompt[:60]}... | Formato: {aspect_ratio} | Estilo: {style}")
@@ -225,7 +180,7 @@ class Flux2ComfyEngine_V2:
             else:
                 print("[Flux2ComfyEngine_V2] AVISO: sem input_image_b64")
 
-            # 2. Carregar workflow e atualizar nos (por class_type — robusto a mudancas de IDs)
+            # 2. Carregar workflow e atualizar nos (por class_type ÔÇö robusto a mudancas de IDs)
             with open("/tmp/workflow.json", "r", encoding="utf-8") as f:
                 workflow = json.load(f)
             print(f"[Flux2ComfyEngine_V2] Workflow carregado: {len(workflow)} nos")
@@ -258,7 +213,7 @@ class Flux2ComfyEngine_V2:
                     nodes_updated.append(f"RandomNoise({node_id})=seed:{seed}")
             
             if style:
-                print(f"[Flux2ComfyEngine_V2] ✨ Estilo Lora selecionado: '{style}'. (A Injeção do LoraLoader no Grafo JSON será ativada após download dos pesos .safetensors no volume)")
+                print(f"[Flux2ComfyEngine_V2] Ô£¿ Estilo Lora selecionado: '{style}'. (A Inje├º├úo do LoraLoader no Grafo JSON ser├í ativada ap├│s download dos pesos .safetensors no volume)")
                 
             print(f"[Flux2ComfyEngine_V2] Nos atualizados: {nodes_updated}")
 

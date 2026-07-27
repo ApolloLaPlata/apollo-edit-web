@@ -7,7 +7,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imagem "Gorda" (Omni-Image) com nós populares
+# Imagem "Gorda" (Omni-Image) com n├│s populares
 universal_comfy_image = (
     modal.Image.debian_slim(python_version="3.10")
     .pip_install("pillow", "requests", "PyYAML", "pytz") \
@@ -72,71 +72,17 @@ import time
 
 @contextmanager
 def force_cpu_during_snapshot():
-    import os
-    import sys
     import torch
-
-    mock_dir = "/tmp/mock_cuda"
-    os.makedirs(mock_dir, exist_ok=True)
-    site_path = os.path.join(mock_dir, "sitecustomize.py")
-    with open(site_path, "w") as f:
-        f.write('''import torch
-_orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
-_orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
-
-def _smart_is_available():
-    try:
-        if _orig_is_available():
-            _orig_current_device()
-            return True
-    except Exception:
-        pass
-    return False
-
-def _smart_current_device():
-    try:
-        return _orig_current_device()
-    except Exception:
-        return torch.device("cpu")
-
-torch.cuda.is_available = _smart_is_available
-torch.cuda.current_device = _smart_current_device
-print("[sitecustomize] Smart CUDA fallback active for ComfyUI boot!")
-''')
-
-    old_pythonpath = os.environ.get("PYTHONPATH", "")
-    os.environ["PYTHONPATH"] = f"{mock_dir}:{old_pythonpath}" if old_pythonpath else mock_dir
-
     orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
     orig_current_device = getattr(torch.cuda, "current_device", lambda: torch.device("cpu"))
 
-    def smart_is_available():
-        try:
-            if orig_is_available():
-                orig_current_device()
-                return True
-        except Exception:
-            pass
-        return False
-
-    def smart_current_device():
-        try:
-            return orig_current_device()
-        except Exception:
-            return torch.device("cpu")
-
-    torch.cuda.is_available = smart_is_available
-    torch.cuda.current_device = smart_current_device
-
+    torch.cuda.is_available = lambda: False
+    torch.cuda.current_device = lambda: torch.device("cpu")
     try:
         yield
     finally:
         torch.cuda.is_available = orig_is_available
         torch.cuda.current_device = orig_current_device
-        if old_pythonpath:
-            os.environ["PYTHONPATH"] = old_pythonpath
-        else:
-            os.environ.pop("PYTHONPATH", None)
 
 
 @app.cls(
@@ -189,13 +135,13 @@ class UniversalComfyEngine:
         # Garante que a pasta upscale_models existe no volume
         os.makedirs("/comfyui_models/upscale_models", exist_ok=True)
         
-        # Baixa o 4x-UltraSharp se não existir
+        # Baixa o 4x-UltraSharp se n├úo existir
         model_path = "/comfyui_models/upscale_models/4x-UltraSharp.pth"
         if not os.path.exists(model_path):
             print(f"[UniversalComfyEngine] Baixando 4x-UltraSharp para o volume {model_path}...")
             import urllib.request
             urllib.request.urlretrieve("https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth", model_path)
-            print("[UniversalComfyEngine] Download concluído.")
+            print("[UniversalComfyEngine] Download conclu├¡do.")
             
         print("[UniversalComfyEngine] Caching models into RAM for ultra-fast cold starts...")
         cache_files = [
@@ -244,29 +190,39 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
         except Exception as e:
             print(f"[UniversalComfyEngine] Erro ao gravar patch: {e}")
             
-        with force_cpu_during_snapshot():
-            self.comfy_process = subprocess.Popen(
-                ["comfy", "--workspace", "/comfyui", "launch", "--",
-                 "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
-                stdout=sys.stdout,
-                stderr=sys.stderr,
-                text=True
-            )
-    
-            server_up = False
-            for _ in range(180):
-                try:
-                    with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
-                        server_up = True
-                        break
-                except Exception:
-                    time.sleep(1)
-    
-            if server_up:
-                t2_boot_time = time.perf_counter() - t_boot_start
-                print(f"[UniversalComfyEngine] SNAPSHOT V_HTTP OK! ComfyUI porta 8189 pronto em {t2_boot_time:.2f}s.")
-            else:
-                raise RuntimeError("[UniversalComfyEngine] Timeout no boot do ComfyUI para snapshot.")
+        self.comfy_process = None
+
+    def _ensure_comfyui_running(self):
+        import urllib.request
+        import subprocess
+        import time
+        import sys
+        
+        if self.comfy_process is not None:
+            return
+            
+        print("[UniversalComfyEngine] Lancando ComfyUI como subprocesso (porta 8189)...")
+        self.comfy_process = subprocess.Popen(
+            ["comfy", "--workspace", "/comfyui", "launch", "--",
+             "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            text=True
+        )
+
+        server_up = False
+        for _ in range(180):
+            try:
+                with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
+                    server_up = True
+                    break
+            except Exception:
+                time.sleep(1)
+
+        if server_up:
+            print("[UniversalComfyEngine] ComfyUI porta 8189 pronto.")
+        else:
+            raise RuntimeError("[UniversalComfyEngine] Timeout no boot do ComfyUI.")
 
     @modal.method()
     def fetch_file(self, path):
@@ -290,6 +246,8 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
 
         t0 = time.time()
         print("[UniversalComfyEngine] Iniciando requisicao Universal...")
+        
+        self._ensure_comfyui_running()
 
         seed = kwargs.get("seed", int(time.time() * 1000) % 4294967295)
 
@@ -399,8 +357,8 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                                             final_b64 = current_base_b64
                                             iter_success = True
                                         break
-                                    # outputs existe mas sem imagens ainda — continua esperando
-                                # prompt_id nao esta no historico ainda — continua esperando
+                                    # outputs existe mas sem imagens ainda ÔÇö continua esperando
+                                # prompt_id nao esta no historico ainda ÔÇö continua esperando
                         except Exception as poll_err:
                             print(f"[Poll] Erro temporario: {poll_err}")
                         time.sleep(3)
@@ -469,10 +427,10 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
             if is_first_pass:
                 empty_latent_id = "EMPTY_LATENT_BASE_INJECTED"
                 workflow[empty_latent_id] = {
-                    "class_type": "EmptyFlux2LatentImage",
+                    "class_type": "EmptyLatentImage",
                     "inputs": {
-                        "width": 2048,
-                        "height": 1152,
+                        "width": 1024,
+                        "height": 1024,
                         "batch_size": 1
                     }
                 }
@@ -608,7 +566,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                                 elif isinstance(msg, dict) and msg.get("type") == "execution_error":
                                     error_details.append(str(msg))
                             
-                            error_str = " | ".join(error_details) if error_details else "Execução falhou ou não retornou outputs."
+                            error_str = " | ".join(error_details) if error_details else "Execu├º├úo falhou ou n├úo retornou outputs."
                             
                             return {"status": "error", "message": error_str}
                     else:
@@ -618,7 +576,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                         pending = q_data.get("queue_running", []) + q_data.get("queue_pending", [])
                         is_in_queue = any(q[1] == prompt_id for q in pending)
                         if not is_in_queue:
-                            return {"status": "error", "message": "Prompt falhou silenciosamente (desapareceu da fila e não está no histórico)."}
+                            return {"status": "error", "message": "Prompt falhou silenciosamente (desapareceu da fila e n├úo est├í no hist├│rico)."}
                 except Exception as ex:
                     print(f"Polling warning: {ex}")
                 time.sleep(2)
