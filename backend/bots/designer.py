@@ -6,37 +6,29 @@ import uuid
 from dotenv import load_dotenv
 
 load_dotenv()
-APOLLO_MULTI_PASS_URL = "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/generate/multi_pass"
+APOLLO_MODAL_URL = "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/generate/image"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "uploads")
-WORKFLOW_PATH = r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow API\apollo_flux2_klein.json"
 
-def gerar_imagem(prompt):
-    print(f"[DESIGNER] Gerando arte via Apollo Flux2 Multi-Pass API para o prompt: {prompt}")
+def gerar_imagem(prompt, image_format="Horizontal", upscale=False):
+    print(f"[DESIGNER] Gerando arte via Modal API Serverless | Formato: {image_format} | Upscale: {upscale}")
     
     if not os.path.exists(PUBLIC_DIR):
         os.makedirs(PUBLIC_DIR)
         
     try:
-        # Carrega o JSON base do ComfyUI do diretório do Apollo Edit Web
-        with open(WORKFLOW_PATH, 'r', encoding='utf-8') as f:
-            workflow_base = f.read()
-            
+        # Envia os parmetros exatos esperados pelo ImageRequest (apollo_modal_engine.py)
         payload = {
-            "script": {
-                "workflow_json_string": workflow_base,
-                "etapas": [
-                    {
-                        "prompt": prompt,
-                        "tipo": "base_generation"
-                    }
-                ]
-            }
+            "prompt": prompt,
+            "model": "flux2-universal",
+            "format": image_format,
+            "use_upscale": upscale
         }
         
         headers = {'Content-Type': 'application/json'}
         
-        response = requests.post(APOLLO_MULTI_PASS_URL, json=payload, headers=headers, timeout=120)
+        # Timeout longo pois Upscale leva ~36s e Cold Start pode levar mais de 60s
+        response = requests.post(APOLLO_MODAL_URL, json=payload, headers=headers, timeout=120)
         response.raise_for_status()
         
         data = response.json()
