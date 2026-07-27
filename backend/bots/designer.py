@@ -17,11 +17,13 @@ def gerar_imagem(prompt, image_format="Horizontal", upscale=False):
         os.makedirs(PUBLIC_DIR)
         
     try:
+        import random
         # Envia os parmetros exatos esperados pelo ImageRequest (apollo_modal_engine.py)
         payload = {
             "prompt": prompt,
             "model": "flux2-universal",
             "format": image_format,
+            "seed": random.randint(1, 99999999),
             "use_upscale": upscale
         }
         
