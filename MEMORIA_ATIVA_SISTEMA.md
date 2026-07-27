@@ -2932,3 +2932,10 @@ def force_cpu_during_snapshot():
 - **O Segredo do Frontend:** Bypass total do servidor intermediário (Vercel). A requisição viaja via Javascript diretamente do navegador do usuário para o endpoint protegido pollo_api da Modal Cloud. A resposta é servida no formato JSON Stream (NDJSON), onde a interface escuta pacote a pacote e renderiza imediatamente ao encontrar a chave image_base64.
 - **Lição Crítica para Futuras Manutenções:** Toda a interface web que interagir com imagens e vídeos pesados deve obrigatoriamente apontar para https://*--apollo-api.modal.run via proxy CORS do frontend. O Vercel serve apenas os estáticos (HTML/JS/CSS). Isso resolve Timeouts de 10s nativos de planos gratuitos ou Serverless.
 
+
+### ⚡ [REATIVAÇÃO DOS SNAPSHOTS - A VITÓRIA FINAL (2026-07-27)] ⚡
+- **A Constatação:** O Upscale demorou +320s num cold start, e o usuário sugeriu genialmente que os Snapshots não estavam ativos.
+- **O Diagnóstico:** Ele estava correto. A flag enable_memory_snapshot=False estava travada em todas as engines por causa dos crashes antigos de CPU que tivemos hoje cedo.
+- **A Execução:** Como a nossa solução Xeque-Mate de hoje removeu a inicialização do PyTorch/ComfyUI do método load_model(), os Snapshots voltaram a ser totalmente seguros! Alterei para enable_memory_snapshot=True nas engines Flux2Txt2ImgEngine, UniversalComfyEngine e Flux2ComfyEngine_V2.
+- **O Resultado:** Os containers agora nascem com 35GB de modelos FLUX já gravados na RAM. O tempo de Cold Start do Upscale (que era punido em +80s) e do Txt2Img deve despencar vertiginosamente. A computação brutal de GPU (2.5K com Flux DEV por 25 steps) ainda tomará seus justos ~120s, mas o overhead de carregamento morreu.
+

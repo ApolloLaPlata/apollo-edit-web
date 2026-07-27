@@ -92,12 +92,12 @@ def force_cpu_during_snapshot():
     scaledown_window=60,
     timeout=1200,
     max_containers=5,
-    enable_memory_snapshot=False
+    enable_memory_snapshot=True
 )
 class UniversalComfyEngine:
     FORCE_REBUILD = 5
 
-    @modal.enter(snap=True)
+    @modal.enter()
     def load_model(self):
         import subprocess
         import urllib.request

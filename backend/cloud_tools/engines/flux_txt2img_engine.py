@@ -52,12 +52,12 @@ FORMATS = {
     scaledown_window=60, 
     timeout=600,
     max_containers=5,
-    enable_memory_snapshot=False
+    enable_memory_snapshot=True
 )
 class Flux2Txt2ImgEngine:
     FORCE_REBUILD = 2
     
-    @modal.enter(snap=True)
+    @modal.enter()
     def load_model(self):
         import urllib.request
         import urllib.error
@@ -151,8 +151,10 @@ class Flux2Txt2ImgEngine:
                 workflow["98:6"]["inputs"]["text"] = prompt
                 
             if "98:47" in workflow and "width" in workflow["98:47"].get("inputs", {}):
-                workflow["98:47"]["inputs"]["width"] = cfg["width"]
-                workflow["98:47"]["inputs"]["height"] = cfg["height"]
+                # FIX: O no EmptyFlux2LatentImage divide a resolucao por 16 e o VAE multiplica por 8. 
+                # Resultado = resolucao / 2. Para obter a resolucao original (ex: 1280), precisamos passar o dobro (2560).
+                workflow["98:47"]["inputs"]["width"] = cfg["width"] * 2
+                workflow["98:47"]["inputs"]["height"] = cfg["height"] * 2
                 
             if "98:25" in workflow and "noise_seed" in workflow["98:25"].get("inputs", {}):
                 workflow["98:25"]["inputs"]["noise_seed"] = seed % 1000000000000000

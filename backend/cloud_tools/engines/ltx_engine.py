@@ -83,7 +83,7 @@ PRESETS = {
 
 @app.cls(gpu="a10g", timeout=1200, image=ltx_image, enable_memory_snapshot=True, experimental_options={"enable_gpu_snapshot": True})
 class LTX13BEngine:
-    @modal.enter(snap=True)
+    @modal.enter()
     def load_model(self):
         import torch
         from diffusers import LTX2Pipeline, LTXVideoTransformer3DModel

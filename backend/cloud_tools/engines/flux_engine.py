@@ -82,12 +82,12 @@ def download_comfy_models():
     scaledown_window=60,
     timeout=600,
     max_containers=5,
-    enable_memory_snapshot=False
+    enable_memory_snapshot=True
 )
 class Flux2ComfyEngine_V2:
     FORCE_REBUILD = 14  # bump para invalidar snapshot antigo com ExperimentalComfyServer
 
-    @modal.enter(snap=True)
+    @modal.enter()
     def load_model(self):
         import subprocess
         import urllib.request
