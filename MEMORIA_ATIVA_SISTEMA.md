@@ -2924,3 +2924,11 @@ def force_cpu_during_snapshot():
 - **Resultados de Teste Final Confirmados:** 
     1. Geração com Máquina Quente (Warm): ~5 segundos. 
     2. Cold Start Verdadeiro (Máquina Fria acionada após 65s): **10.89 segundos**. Esta refatoração salvou a API do Projeto Apollo de atrasos colossais e confirmou a superioridade da nova arquitetura.
+
+### 🚀 [VALIDAÇÃO FINAL DA NOVA ARQUITETURA DE STREAMING E SNAPSHOT (2026-07-27)] 🚀
+- **O Triunfo Absoluto do Desempenho:** Testes executados no Apollo Modal AI Studio v2.0 confirmaram tempos de geração insanos!
+- **Cold Start Total (Deploy Fresco):** ~73.8 segundos para levantar uma H100 zerada, carregar ComfyUI e processar a imagem do zero. Redução massiva comparada aos antigos 4 minutos (e eventuais Timeouts).
+- **Geração Mágica (Máquina Quente/Warm):** Imagens de altíssima qualidade (Flux.2 8K) sendo geradas, codificadas e renderizadas na interface do usuário em **4.4s a 5.1s**.
+- **O Segredo do Frontend:** Bypass total do servidor intermediário (Vercel). A requisição viaja via Javascript diretamente do navegador do usuário para o endpoint protegido pollo_api da Modal Cloud. A resposta é servida no formato JSON Stream (NDJSON), onde a interface escuta pacote a pacote e renderiza imediatamente ao encontrar a chave image_base64.
+- **Lição Crítica para Futuras Manutenções:** Toda a interface web que interagir com imagens e vídeos pesados deve obrigatoriamente apontar para https://*--apollo-api.modal.run via proxy CORS do frontend. O Vercel serve apenas os estáticos (HTML/JS/CSS). Isso resolve Timeouts de 10s nativos de planos gratuitos ou Serverless.
+
