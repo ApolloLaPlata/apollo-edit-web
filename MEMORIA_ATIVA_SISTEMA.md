@@ -2939,3 +2939,15 @@ def force_cpu_during_snapshot():
 - **A ExecuÃ§Ã£o:** Como a nossa soluÃ§Ã£o Xeque-Mate de hoje removeu a inicializaÃ§Ã£o do PyTorch/ComfyUI do mÃ©todo load_model(), os Snapshots voltaram a ser totalmente seguros! Alterei para enable_memory_snapshot=True nas engines Flux2Txt2ImgEngine, UniversalComfyEngine e Flux2ComfyEngine_V2.
 - **O Resultado:** Os containers agora nascem com 35GB de modelos FLUX jÃ¡ gravados na RAM. O tempo de Cold Start do Upscale (que era punido em +80s) e do Txt2Img deve despencar vertiginosamente. A computaÃ§Ã£o brutal de GPU (2.5K com Flux DEV por 25 steps) ainda tomarÃ¡ seus justos ~120s, mas o overhead de carregamento morreu.
 
+
+### ?? [ATUALIZAÇÃO DE ARQUITETURA - 27/07/2026 - Iteraçao 3] ??
+- **Resolução do Gargalo do Upscale:** Identifiquei por que o Upscale (com motor quente) estava demorando 166s em vez de 100s. O roteador invoca o Flux2Txt2ImgEngine (50s de execução), mas o timeout ocioso do UniversalComfyEngine era de apenas 60s. Como o usuário demora alguns segundos para solicitar e o Flux demora 50s, o motor de Upscale (Universal) dava timeout antes de ser chamado, sofrendo um cold start intermediário de 110s (mmap lazy loading).
+- **Ação Tomada:** Aumentei o scaledown_window de 60 para 120 segundos em todos os motores. Isso garante que o motor de Upscale aguarde a geração base terminar, mantendo-se quente e reduzindo o tempo de imagem + upscale quente de 166s para cerca de 100s, cumprindo a meta de sub-2-minutos.
+
+### ? [REVOLUÇÃO DE PERFORMANCE: UPSCALE IN-NODE E RESOLUÇÃO DO ERRO 400 - 27/07/2026] ?
+- **O Gargalo:** Antes, o Upscale rodava em containers separados (Flux2Txt2ImgEngine chamava o UniversalComfyEngine), causando latências absurdas de +4 minutos por geração quente.
+- **A Ação Tomada:** O Agente mesclou o fluxo de Upscale (UltraSharp) DIRETAMENTE no workflow base de Txt2Img (apollo_flux2_klein_upscale.json).
+- **O Problema (Bug 400 Bad Request):** O node UpscaleModelLoader rejeitava a geração afirmando que a lista estava vazia Value not in list: model_name: '4x-UltraSharp.pth' not in []. Isso ocorreu pois o ComfyUI procurava na pasta fixa /comfyui/models/upscale_models e não na pasta declarada pelo volume da Modal.
+- **A Solução Definitiva:** Adicionamos um symlink explícito (ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models) no método load_model() das engines para forçar o ComfyUI a ler o arquivo do volume da Modal.
+- **RESULTADO FINAL ABSOLUTO:** Tempo de geração **COM UPSCALE (Máquina Quente) despencou de 4 minutos para incríveis 36.38 segundos**! O processo não precisa mais rotear para outro container, ocorrendo perfeitamente e aproveitando a placa quente do começo ao fim.
+

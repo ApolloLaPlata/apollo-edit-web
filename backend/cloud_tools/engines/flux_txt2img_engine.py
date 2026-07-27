@@ -20,6 +20,7 @@ flux2_txt2img_image = (
         "pillow"
     )
     .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/FLUX 2 DEV/texto_flux2/image_flux2_text_to_image.json", "/tmp/workflow.json", copy=True)
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/image_flux2_text_to_image_upscale.json", "/tmp/workflow_upscale.json", copy=True)
     .run_commands(
         [
             "comfy --workspace /comfyui install --nvidia",
@@ -49,7 +50,7 @@ FORMATS = {
     gpu="H100", 
     image=flux2_txt2img_image,
     volumes={"/comfyui_models": comfy_volume},
-    scaledown_window=60, 
+    scaledown_window=120, 
     timeout=600,
     max_containers=5,
     enable_memory_snapshot=True
@@ -66,7 +67,7 @@ class Flux2Txt2ImgEngine:
         import sys
         import os
         
-        yaml_content = "modal:\n  base_path: /comfyui_models\n  checkpoints: checkpoints\n  loras: loras\n  vae: vae\n  clip: clip\n  unet: unet\n  controlnet: controlnet\n"
+        yaml_content = "modal:\n  base_path: /comfyui_models\n  checkpoints: checkpoints\n  loras: loras\n  vae: vae\n  clip: clip\n  unet: unet\n  controlnet: controlnet\n  upscale_models: upscale_models\n"
         with open("/comfyui/extra_model_paths.yaml", "w") as f:
             f.write(yaml_content)
         
@@ -74,19 +75,18 @@ class Flux2Txt2ImgEngine:
         os.makedirs("/comfyui_models/loras", exist_ok=True)
         with open("/comfyui_models/loras/zimage-grainscape_ultrareal.safetensors", "w") as f:
             f.write("dummy")
+            
+        os.makedirs("/comfyui_models/upscale_models", exist_ok=True)
+        model_path = "/comfyui_models/upscale_models/4x-UltraSharp.pth"
+        if not os.path.exists(model_path):
+            print(f"[Flux2Txt2ImgEngine] Baixando 4x-UltraSharp para o volume {model_path}...")
+            urllib.request.urlretrieve("https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth", model_path)
+            print("[Flux2Txt2ImgEngine] Download concluído.")
+            
+        subprocess.run("rm -rf /comfyui/models/upscale_models", shell=True)
+        subprocess.run("ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models", shell=True)
 
-        print("[Flux2Txt2ImgEngine] Caching models into RAM for ultra-fast cold starts...")
-        cache_files = [
-            "/comfyui_models/unet/flux1-dev.safetensors",
-            "/comfyui_models/clip/t5xxl_fp16.safetensors",
-            "/comfyui_models/vae/ae.safetensors",
-            "/comfyui_models/clip/clip_l.safetensors"
-        ]
-        for fpath in cache_files:
-            if os.path.exists(fpath):
-                print(f"[Flux2Txt2ImgEngine] Reading {fpath} into memory cache...")
-                subprocess.run(f"cat {fpath} > /dev/null", shell=True)
-        print("[Flux2Txt2ImgEngine] Caching finished!")
+        print("[Flux2Txt2ImgEngine] Setup de paths concluído!")
         
         self.comfy_process = None
 
@@ -117,21 +117,22 @@ class Flux2Txt2ImgEngine:
                 time.sleep(1)
         
         if server_up:
-            print("[Flux2Txt2ImgEngine] Servidor aguardando requisi├º├Áes.")
+            print("[Flux2Txt2ImgEngine] Servidor aguardando requisições.")
         else:
             raise RuntimeError("Falha no boot do ComfyUI no tempo limite.")
 
     @modal.method()
-    def generate(self, prompt: str, aspect_ratio: str = "horizontal", **kwargs) -> dict:
+    def generate(self, prompt: str, aspect_ratio: str = "horizontal", seed: int = None, reference_images_base64: list = None, input_image_b64: str = None, use_upscale: bool = False, **kwargs) -> dict:
         import urllib.request
+        import urllib.error
         import urllib.parse
         import json
         import time
-        import traceback
+        import random
         import base64
         import os
-        
-        self._ensure_comfyui_running()
+        import traceback
+        from urllib.error import URLError
         
         t0 = time.time()
         print(f"[Flux2Txt2ImgEngine] Request Txt2Img: {prompt[:50]}... | Formato: {aspect_ratio}")
@@ -140,7 +141,10 @@ class Flux2Txt2ImgEngine:
         seed = kwargs.get("seed", 42)
         
         try:
-            with open("/tmp/workflow.json", "r", encoding="utf-8") as f:
+            self._ensure_comfyui_running()
+            
+            workflow_path = "/tmp/workflow_upscale.json" if use_upscale else "/tmp/workflow.json"
+            with open(workflow_path, "r", encoding="utf-8") as f:
                 workflow = json.load(f)
                 
             # Mapeamento especifico do workflow de TEXT-TO-IMAGE

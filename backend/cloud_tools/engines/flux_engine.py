@@ -79,7 +79,7 @@ def download_comfy_models():
     gpu="H100",
     image=flux2_comfy_image,
     volumes={"/comfyui_models": comfy_volume},
-    scaledown_window=60,
+    scaledown_window=120,
     timeout=600,
     max_containers=5,
     enable_memory_snapshot=True

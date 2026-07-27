@@ -54,6 +54,8 @@ universal_comfy_image = (
         remote_path="/pulid_ll_patch.py",
         copy=True,
     )
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/flux_upscale_ultrasharp.json", "/workflows/flux_upscale_ultrasharp.json", copy=True)
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/apollo_flux2_klein_upscale.json", "/workflows/apollo_flux2_klein_upscale.json", copy=True)
     .run_commands(["python /pulid_ll_patch.py"])
     .env({
         "HF_HUB_OFFLINE": "0",
@@ -89,7 +91,7 @@ def force_cpu_during_snapshot():
     gpu="H100",
     image=universal_comfy_image,
     volumes={"/comfyui_models": comfy_volume, "/apollo_volume": apollo_volume},
-    scaledown_window=60,
+    scaledown_window=120,
     timeout=1200,
     max_containers=5,
     enable_memory_snapshot=True
@@ -136,29 +138,39 @@ class UniversalComfyEngine:
         os.makedirs("/comfyui_models/upscale_models", exist_ok=True)
         
         # Baixa o 4x-UltraSharp se n├úo existir
+        # Baixa o 4x-UltraSharp se não existir
         model_path = "/comfyui_models/upscale_models/4x-UltraSharp.pth"
         if not os.path.exists(model_path):
             print(f"[UniversalComfyEngine] Baixando 4x-UltraSharp para o volume {model_path}...")
             import urllib.request
             urllib.request.urlretrieve("https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth", model_path)
-            print("[UniversalComfyEngine] Download conclu├¡do.")
+            print("[UniversalComfyEngine] Download concluído.")
             
-        print("[UniversalComfyEngine] Caching models into RAM for ultra-fast cold starts...")
-        cache_files = [
-            "/comfyui_models/upscale_models/4x-UltraSharp.pth",
-            "/comfyui_models/unet/flux1-dev.safetensors",
-            "/comfyui_models/clip/t5xxl_fp16.safetensors",
-            "/comfyui_models/vae/ae.safetensors",
-            "/comfyui_models/clip/clip_l.safetensors",
-            "/comfyui_models/pulid/pulid_flux_v0.9.1.safetensors",
-            "/comfyui_models/clip_vision/sigclip_vision_patch14_384.safetensors"
-        ]
-        for fpath in cache_files:
-            if os.path.exists(fpath):
-                print(f"[UniversalComfyEngine] Reading {fpath} into memory cache...")
-                subprocess.run(f"cat {fpath} > /dev/null", shell=True)
-        print("[UniversalComfyEngine] Caching finished!")
+        subprocess.run("rm -rf /comfyui/models/upscale_models", shell=True)
+        subprocess.run("ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models", shell=True)
         
+        print("[UniversalComfyEngine] Setup de paths concluído!")
+        
+        print("[UniversalComfyEngine] Caching models para Memoria RAM (Snapshot Preparativo)...")
+        self.comfy_process = None
+        try:
+            import subprocess
+            models_to_cache = [
+                "/comfyui_models/unet/flux1-dev.safetensors",
+                "/comfyui_models/clip/t5xxl_fp16.safetensors",
+                "/comfyui_models/clip/clip_l.safetensors",
+                "/comfyui_models/vae/ae.safetensors",
+                "/comfyui_models/upscale_models/4x-UltraSharp.pth"
+            ]
+            for m in models_to_cache:
+                if os.path.exists(m):
+                    print(f"Lendo {m} para a RAM...")
+                    subprocess.run(f"cat {m} > /dev/null", shell=True)
+            print("[UniversalComfyEngine] Caching concluído com sucesso!")
+        except Exception as e:
+            print(f"[UniversalComfyEngine] Erro no caching: {e}")
+            
+        self.comfy_process = None
         print("[UniversalComfyEngine] Lancando ComfyUI como subprocesso (porta 8189)...")
         t_boot_start = time.perf_counter()
         

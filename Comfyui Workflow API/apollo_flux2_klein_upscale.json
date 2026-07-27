@@ -1,0 +1,399 @@
+{
+  "98:22": {
+    "inputs": {
+      "model": [
+        "98:102",
+        0
+      ],
+      "conditioning": [
+        "98:26",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "Guia B\u00e1sico"
+    }
+  },
+  "98:26": {
+    "inputs": {
+      "guidance": 4,
+      "conditioning": [
+        "98:6",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "98:16": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "98:10": {
+    "inputs": {
+      "vae_name": "full_encoder_small_decoder.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Carregar VAE"
+    }
+  },
+  "98:13": {
+    "inputs": {
+      "noise": [
+        "98:25",
+        0
+      ],
+      "guider": [
+        "98:22",
+        0
+      ],
+      "sampler": [
+        "98:16",
+        0
+      ],
+      "sigmas": [
+        "98:48",
+        0
+      ],
+      "latent_image": [
+        "98:47",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "98:8": {
+    "inputs": {
+      "samples": [
+        "98:13",
+        0
+      ],
+      "vae": [
+        "98:10",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decodificar"
+    }
+  },
+  "98:38": {
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "flux2",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Carregar CLIP"
+    }
+  },
+  "98:48": {
+    "inputs": {
+      "steps": [
+        "98:103",
+        0
+      ],
+      "width": 1024,
+      "height": 1024
+    },
+    "class_type": "Flux2Scheduler",
+    "_meta": {
+      "title": "Flux2Scheduler"
+    }
+  },
+  "98:47": {
+    "inputs": {
+      "width": 2048,
+      "height": 1152,
+      "batch_size": 1
+    },
+    "class_type": "EmptyFlux2LatentImage",
+    "_meta": {
+      "title": "Empty Flux 2 Latent"
+    }
+  },
+  "98:25": {
+    "inputs": {
+      "noise_seed": 1027111520328378
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Ru\u00eddo Aleat\u00f3rio"
+    }
+  },
+  "98:6": {
+    "inputs": {
+      "text": "high fashion, vintage couture, street photography, luxury fashion shoot, neo brutalist architecture, pastel paints",
+      "clip": [
+        "98:38",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "APOLLO_PROMPT"
+    }
+  },
+  "98:102": {
+    "inputs": {
+      "switch": [
+        "98:104",
+        0
+      ],
+      "on_false": [
+        "98:12",
+        0
+      ],
+      "on_true": [
+        "98:12",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "Switch(model)"
+    }
+  },
+  "98:100": {
+    "inputs": {
+      "value": 20
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Steps"
+    }
+  },
+  "98:99": {
+    "inputs": {
+      "value": 8
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Steps"
+    }
+  },
+  "98:103": {
+    "inputs": {
+      "switch": [
+        "98:104",
+        0
+      ],
+      "on_false": [
+        "98:100",
+        0
+      ],
+      "on_true": [
+        "98:99",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "Switch(steps)"
+    }
+  },
+  "98:104": {
+    "inputs": {
+      "value": false
+    },
+    "class_type": "PrimitiveBoolean",
+    "_meta": {
+      "title": "Enable Turbo LoRA"
+    }
+  },
+  "98:12": {
+    "inputs": {
+      "unet_name": "flux-2-klein-base-4b-fp8.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Carregar Modelo de Difus\u00e3o"
+    }
+  },
+  "upscale_3": {
+    "inputs": {
+      "seed": 42,
+      "steps": 25,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.25,
+      "model": [
+        "upscale_4",
+        0
+      ],
+      "positive": [
+        "upscale_6",
+        0
+      ],
+      "negative": [
+        "upscale_7",
+        0
+      ],
+      "latent_image": [
+        "upscale_12",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "upscale_4": {
+    "inputs": {
+      "unet_name": "flux1-dev.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Carregar UNET (FLUX)"
+    }
+  },
+  "upscale_5": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Carregar VAE"
+    }
+  },
+  "upscale_6": {
+    "inputs": {
+      "text": "hyper detailed, ultra sharp focus, crisp details, extremely sharp, high resolution, 8k resolution, cinematic lighting, masterpiece",
+      "clip": [
+        "upscale_15",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Prompt Positivo"
+    }
+  },
+  "upscale_7": {
+    "inputs": {
+      "text": "blurry, low resolution, bad quality, artifacts, watermark",
+      "clip": [
+        "upscale_15",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Prompt Negativo"
+    }
+  },
+  "upscale_8": {
+    "inputs": {
+      "samples": [
+        "upscale_3",
+        0
+      ],
+      "vae": [
+        "upscale_5",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAEDecode"
+    }
+  },
+  "upscale_9": {
+    "inputs": {
+      "filename_prefix": "flux_upscaled",
+      "images": [
+        "upscale_8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "SaveImage"
+    }
+  },
+  "upscale_12": {
+    "inputs": {
+      "pixels": [
+        "upscale_22",
+        0
+      ],
+      "vae": [
+        "upscale_5",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAEEncode"
+    }
+  },
+  "upscale_15": {
+    "inputs": {
+      "clip_name1": "t5xxl_fp16.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "Carregar CLIP"
+    }
+  },
+  "upscale_20": {
+    "inputs": {
+      "model_name": "4x-UltraSharp.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load 4x-UltraSharp"
+    }
+  },
+  "upscale_21": {
+    "inputs": {
+      "upscale_model": [
+        "upscale_20",
+        0
+      ],
+      "image": [
+        "98:8",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "Upscale with 4x-UltraSharp"
+    }
+  },
+  "upscale_22": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 0.5,
+      "image": [
+        "upscale_21",
+        0
+      ]
+    },
+    "class_type": "ImageScaleBy",
+    "_meta": {
+      "title": "Scale Down (2x Net)"
+    }
+  }
+}
