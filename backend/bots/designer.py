@@ -6,7 +6,7 @@ import uuid
 from dotenv import load_dotenv
 
 load_dotenv()
-APOLLO_MODAL_URL = "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/generate/image"
+APOLLO_MODAL_URL = "https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run/generate/image"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "uploads")
 
