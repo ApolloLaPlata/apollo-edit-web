@@ -337,7 +337,7 @@
     </main>
 
     <script>
-        const API_URL = "https://roxingo--apollo-render-router";
+        const API_URL = "https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run";
 
         const btn = document.getElementById('generate-btn');
         const loader = document.getElementById('loader');
@@ -376,8 +376,8 @@
             metrics.style.opacity = '0';
 
             const isVideo = model.includes('LTX') || model.includes('Wan');
-            const endpoint = isVideo ? '/api/generate_video' : '/api/generate_image';
-            const route = `${API_URL}${endpoint.replace(/\//g, '-')}.modal.run`;
+            const endpoint = isVideo ? '/generate/video' : '/generate/image';
+            const route = `${API_URL}${endpoint}`;
 
             let seconds = 0;
             timerText.textContent = '0.0s';
