@@ -410,15 +410,31 @@
 
                 if(!response.ok) throw new Error(await response.text());
 
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
+                const text = await response.text();
+                const lines = text.split('\n').filter(l => l.trim() !== '');
+                const lastLine = lines[lines.length - 1];
+                let responseData;
+                try {
+                    responseData = JSON.parse(lastLine);
+                } catch(e) {
+                    throw new Error("Resposta invalida da API: " + lastLine);
+                }
+                
+                if (responseData.status !== "success") {
+                    throw new Error(responseData.message || "Erro na geracao");
+                }
+
+                const url = isVideo ? 
+                    "data:video/mp4;base64," + responseData.video_base64 : 
+                    "data:image/png;base64," + responseData.image_base64;
+
                 const endTime = performance.now();
                 const totalTime = ((endTime - startTime) / 1000).toFixed(1);
 
                 clearInterval(timerInterval);
                 loader.style.display = 'none';
 
-                const isWarm = responseData.data?.warm_start;
+                const isWarm = responseData.warm_start;
                 if (isWarm !== undefined) {
                     const warmEl = document.getElementById('metric-warm');
                     if (warmEl) {
