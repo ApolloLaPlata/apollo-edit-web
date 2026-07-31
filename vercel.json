@@ -8,5 +8,11 @@
       "destination": "/$1",
       "permanent": false
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "http://163.176.135.59/api/$1"
+    }
   ]
 }
