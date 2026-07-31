@@ -837,7 +837,7 @@ async function generateImage() {
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
     const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
-    const url    = "https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run/generate/image";
+    const url    = "/api/studio/modal/generate_image";
     const status = document.getElementById('imgStatus');
 
     log(`✨ GERAR IMAGEM — Iniciando`, 'info');
