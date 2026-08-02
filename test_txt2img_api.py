@@ -2,12 +2,12 @@ import requests
 import json
 import time
 
-url = "https://macacodriver--apollo-render-router-apollo-api.modal.run/generate/image"
+url = "https://filosofiadocodigo--apollo-render-router-apollo-api.modal.run/generate/image"
 
 payload = {
     "prompt": "An epic cinematic shot of a futuristic cyberpunk city with neon lights, highly detailed, 8k resolution, photorealistic",
     "model": "flux2-universal",
-    "format": "horizontal",
+    "format": "horizontal", "use_upscale": False,
     "seed": 1027111520328378
 }
 

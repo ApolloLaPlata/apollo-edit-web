@@ -1,7 +1,7 @@
 {
     "agent_id": "Concierge",
-    "status": "idle",
-    "last_action": null,
+    "status": "observing_users",
+    "last_action": "2026-07-31 08:24:49",
     "alerts": [],
     "data": {
         "active_sessions": {}

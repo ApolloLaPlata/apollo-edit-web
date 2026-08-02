@@ -39,7 +39,7 @@
         "workspace": "v5est",
         "token_id": "1b69eea9-4475-4558-b8ff-191692f0d7a3",
         "token_secret": "a26bf6c5-7c2d-4889-8645-5917a33c6ddc",
-        "is_active": true,
+        "is_active": false,
         "last_balance": 30.0,
         "last_spend": 0.0
     },
@@ -87,10 +87,23 @@
         "workspace": "canaltutorialdascoisas",
         "token_id": "ak-H7MxjPh7n9FH4ij0GYNEB2",
         "token_secret": "as-V4Y5ecuc7F8kBAQI325Oca",
-        "is_active": true,
+        "is_active": false,
         "last_balance": 30.0,
         "last_spend": 0.0,
         "proxy_key": "wk-mrTpFy5N3TqKyjvVESDAnT",
         "proxy_secret": "ws-kdsrElfoXzqOwifhCR3v4Y"
+    },
+    {
+        "id": "conta8_filosofia",
+        "provider": "modal",
+        "name": "Conta 8 - Filosofia do Codigo",
+        "workspace": "filosofiadocodigo",
+        "token_id": "ak-EIhjrc7e8UwK4GntYcSCj2",
+        "token_secret": "as-EOa1HxW6yfjnWrQKP5BwWd",
+        "is_active": true,
+        "last_balance": 30.0,
+        "last_spend": 0.0,
+        "proxy_key": "wk-KW9Ril1w4LWhZ6ZwKLOvbw",
+        "proxy_secret": "ws-uGcGHDdtF1WGYBCgDh7h9i"
     }
 ]

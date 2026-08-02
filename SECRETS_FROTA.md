@@ -20,3 +20,17 @@ Este arquivo √© estritamente confidencial e cont√©m as credenciais do Pool de Co
 
 ---
 *Nota do Sistema:* O RenderRouter consumir√° este arquivo (.env derivado) para fazer a rota√ß√£o autom√°tica quando uma conta esgotar a cota mensal.
+## ?? APOLLO STORAGE GATEWAY (Roteador de MÌdia)
+- **Conta 1 (Cloudflare R2 - Imagens < 5MB):**
+  - R2_ACCOUNT_ID: [Pendente inserÁ„o]
+  - R2_ACCESS_KEY_ID: [Pendente inserÁ„o]
+  - R2_SECRET_ACCESS_KEY: [Pendente inserÁ„o]
+  - R2_BUCKET_NAME: apollo-media
+  - R2_PUBLIC_DOMAIN: https://cdn.seu-dominio.com
+- **Conta 2 (Oracle OCI - VÌdeos 5MB-50MB):**
+  - OCI_NAMESPACE: [Pendente inserÁ„o]
+  - OCI_REGION: [Pendente inserÁ„o]
+  - OCI_ACCESS_KEY_ID: [Pendente inserÁ„o]
+  - OCI_SECRET_ACCESS_KEY: [Pendente inserÁ„o]
+  - OCI_BUCKET_NAME: apollo-videos
+

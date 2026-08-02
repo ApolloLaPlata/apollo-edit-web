@@ -119,9 +119,9 @@ class TTSManager:
                 print(f"❌ Áudio de referência do Moss TTS principal não encontrado: {audio_ref}")
                 return False
                 
-            # O Roteamento de Voz agora aponta nativamente para o nosso Proxy Local (servidor_web.py)
+            # O Roteamento de Voz agora aponta nativamente para o nosso Proxy Local (servidor_web.py/api)
             # que gerencia o balanceamento entre as 4 contas da Modal.
-            url = "http://127.0.0.1:8080/api/studio/modal/generate_tts"
+            url = "http://127.0.0.1:8000/api/studio/modal/generate_tts"
             
             print(f"🚀 Enviando requisição para Gateway Modal Apollo ({url})...")
             
@@ -134,6 +134,7 @@ class TTSManager:
                     import requests
                     import base64
                     import time
+                    import json
                     
                     with open(audio_ref, "rb") as f:
                         audio_base64 = base64.b64encode(f.read()).decode('utf-8')
@@ -146,14 +147,24 @@ class TTSManager:
                     print(f"📡 [Tentativa {attempt+1}/{max_retries}] Conectando ao Gateway Modal...")
                     start_time = time.time()
                     
-                    # Como o TTS pode demorar, deixamos um timeout alto
-                    response = requests.post(url, json=payload, timeout=600)
-                    
-                    total_time = time.time() - start_time
+                    # Como o TTS pode demorar, e a Modal pode retornar streaming de espaços, usamos stream=True
+                    response = requests.post(url, json=payload, stream=True, timeout=600)
                     
                     if response.status_code == 200:
-                        data = response.json()
-                        if data.get("success"):
+                        data = None
+                        for line in response.iter_lines():
+                            if line:
+                                text_line = line.decode('utf-8').strip()
+                                if text_line:  # Ignora linhas em branco do keep-alive
+                                    try:
+                                        data = json.loads(text_line)
+                                        break
+                                    except json.JSONDecodeError:
+                                        continue
+
+                        total_time = time.time() - start_time
+                        
+                        if data and data.get("status") == "success":
                             output_audio_base64 = data.get("audio_base64")
                             if output_audio_base64:
                                 import subprocess

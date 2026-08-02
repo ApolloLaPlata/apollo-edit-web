@@ -56,9 +56,19 @@ def main():
         ]
     }
     
-    payload = json.dumps({"script": script}).encode("utf-8")
+    # Setup correct payload for MultiPassRequest
+    req_data = {
+        "workflow": script,
+        "base_prompt": "A beautiful cinematic portrait of jinx from arcane",
+        "regional_prompts": [],
+        "input_images_b64": [jinx_b64] if jinx_b64 else [],
+        "seed": 42,
+        "use_upscale": False
+    }
     
-    url = "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/multi_pass"
+    payload = json.dumps(req_data).encode("utf-8")
+    
+    url = "https://filosofiadocodigo--apollo-render-router-apollo-api.modal.run/generate/multipass"
     req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
     
     t0 = time.time()

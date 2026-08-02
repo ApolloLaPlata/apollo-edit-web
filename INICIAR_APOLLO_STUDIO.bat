@@ -47,13 +47,10 @@ if not exist "apollo_studio.py" (
 REM Executar o programa principal
 echo.
 echo Iniciando Ponte do WhatsApp no mesmo terminal...
-start /b cmd /c "start_whatsapp.bat"
+REM start /b cmd /c "start_whatsapp.bat"
 echo.
-echo Iniciando Cao de Guarda (Load Balancer) no mesmo terminal...
-start /b %PYTHON_CMD% backend\router\load_balancer.py
-echo.
-echo Iniciando Maestro API (Gateway) no mesmo terminal...
-start /b %PYTHON_CMD% backend\maestro\main.py
+echo Iniciando Motor Central Colmeia (API Nativa) no mesmo terminal...
+start /b %PYTHON_CMD% -m backend.main
 echo.
 
 echo Executando Apollo Studio...

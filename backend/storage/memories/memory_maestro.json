@@ -1,0 +1,409 @@
+{
+    "agent_id": "Maestro",
+    "status": "idle",
+    "last_action": null,
+    "alerts": [],
+    "data": {
+        "radio_logs": [
+            {
+                "time": "2026-07-30 23:01:55",
+                "sender": "TrendResearcher",
+                "topic": "trend_detected",
+                "payload": {
+                    "model": "x-ai/grok-3-vision",
+                    "score": 83,
+                    "msg": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:01:55",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:01:56",
+                "sender": "TrendResearcher",
+                "topic": "trend_detected",
+                "payload": {
+                    "model": "banana-corp/nano-banana-v2",
+                    "score": 85,
+                    "msg": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:01:57",
+                "sender": "TrendResearcher",
+                "topic": "trend_detected",
+                "payload": {
+                    "model": "anthropic/claude-4.6-sonnet",
+                    "score": 99,
+                    "msg": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:06:56",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:11:57",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:16:58",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:21:59",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:27:00",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:32:01",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:37:02",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:42:03",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:47:04",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:52:05",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-30 23:57:06",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:09:21",
+                "sender": "PricingScraper",
+                "topic": "new_models_found",
+                "payload": {
+                    "count": 365,
+                    "source": "OpenRouter"
+                }
+            },
+            {
+                "time": "2026-07-31 06:09:22",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:14:23",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:19:24",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:24:25",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:29:26",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:34:27",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:39:28",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:44:29",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:49:30",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:54:31",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 06:59:32",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:04:33",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:09:34",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:14:35",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:19:36",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:24:37",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:29:38",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:34:39",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:39:40",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:44:41",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:49:42",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:54:43",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 07:59:44",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 08:04:45",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 08:09:46",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 08:14:47",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 08:19:48",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            },
+            {
+                "time": "2026-07-31 08:24:49",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
+                }
+            }
+        ]
+    }
+}

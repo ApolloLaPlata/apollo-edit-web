@@ -9,7 +9,7 @@ direto para as GPUs espec├¡ficas (L4 ou A100).
 # Modificado para forcar deploy
 """
 
-import modal
+import modal # force rebuild 5
 from typing import Optional
 from pydantic import BaseModel
 from fastapi import FastAPI
@@ -32,6 +32,7 @@ import backend.cloud_tools.engines.flux_engine
 import backend.cloud_tools.engines.flux_txt2img_engine
 import backend.cloud_tools.engines.moss_engine
 import backend.cloud_tools.engines.universal_engine
+import backend.cloud_tools.engines.lora_training_engine
 from backend.cloud_tools.engines.flux_engine import Flux2ComfyEngine_V2
 
 from backend.cloud_tools.modal_app import app
@@ -73,6 +74,7 @@ class ImageRequest(BaseModel):
     seed: int = 42
     reference_images_base64: Optional[list[str]] = None
     use_upscale: bool = True  # Se False, retorna a imagem base sem upscale
+    lora_name: Optional[str] = None
 
 class TTSRequest(BaseModel):
     text: str
@@ -90,7 +92,14 @@ class MultiPassRequest(BaseModel):
     regional_prompts: list[str]
     input_images_b64: list[str]
     seed: int = 42
-    use_upscale: bool = True  # Se False, retorna a imagem base sem upscale
+    use_upscale: bool = False  # Se False, retorna a imagem base sem upscale
+    lora_name: Optional[str] = None
+
+class TrainLoraRequest(BaseModel):
+    user_id: str
+    character_name: str
+    images_b64: list[str]
+    trigger_word: str = "ohwx"
 
 @web_app.post("/generate/image")
 def api_generate_image(req: ImageRequest):
@@ -283,8 +292,17 @@ def api_generate_multipass(req: MultiPassRequest):
             if "9" in req.workflow:
                 del req.workflow["9"]
             
-            with open("/workflows/apollo_flux2_klein_upscale.json", "r", encoding="utf-8") as f:
+            with open("/workflows/image_flux2_text_to_image_upscale.json", "r", encoding="utf-8") as f:
                 upscale_full = json.load(f)
+            
+            vae_decode_id = None
+            for node_id, node_data in req.workflow.items():
+                if isinstance(node_data, dict) and node_data.get("class_type") == "VAEDecode":
+                    vae_decode_id = str(node_id)
+                    break
+            
+            if vae_decode_id and "upscale_12" in upscale_full:
+                upscale_full["upscale_12"]["inputs"]["image"] = [vae_decode_id, 0]
             
             for k, v in upscale_full.items():
                 if k.startswith("upscale_"):
@@ -326,6 +344,109 @@ def api_generate_multipass(req: MultiPassRequest):
         return StreamingResponse(stream_result(), media_type="application/x-ndjson")
     except Exception as e:
         return {"status": "error", "message": f"Erro de roteamento Multipass: {str(e)}"}
+
+@web_app.post("/generate/autoblog/multipass")
+def api_generate_autoblog_multipass(req: MultiPassRequest):
+    try:
+        import json
+        from backend.cloud_tools.engines.universal_engine import BlogUniversalComfyEngine
+        engine = BlogUniversalComfyEngine()
+        
+        print(f"[Router] Spawning BlogUniversalComfyEngine Multipass -> Prompt: {req.base_prompt[:30]}...")
+        
+        if req.use_upscale:
+            if "9" in req.workflow:
+                del req.workflow["9"]
+            
+            with open("/workflows/image_flux2_text_to_image_upscale.json", "r", encoding="utf-8") as f:
+                upscale_full = json.load(f)
+            
+            vae_decode_id = None
+            for node_id, node_data in req.workflow.items():
+                if isinstance(node_data, dict) and node_data.get("class_type") == "VAEDecode":
+                    vae_decode_id = str(node_id)
+                    break
+            
+            if vae_decode_id and "upscale_12" in upscale_full:
+                upscale_full["upscale_12"]["inputs"]["image"] = [vae_decode_id, 0]
+            
+            for k, v in upscale_full.items():
+                if k.startswith("upscale_"):
+                    req.workflow[k] = v
+        
+        job = engine.generate.spawn(
+            workflow_json_string=json.dumps(req.workflow),
+            prompt=req.base_prompt,
+            input_images_b64=req.input_images_b64,
+            regional_prompts=req.regional_prompts,
+            seed=req.seed,
+            lora_name=req.lora_name
+        )
+        
+        async def stream_result():
+            try:
+                from modal.functions import FunctionCall
+                import asyncio
+                fc = FunctionCall.from_id(job.object_id)
+                
+                task = asyncio.create_task(fc.get.aio(timeout=1200))
+                
+                while not task.done():
+                    yield json.dumps({"status": "processing", "message": "Heartbeat"}) + "\n"
+                    done, pending = await asyncio.wait([task], timeout=10.0)
+                    if done:
+                        break
+                        
+                res = task.result()
+                
+                if res and res.get("status") == "success":
+                    yield json.dumps(res) + "\n"
+                else:
+                    yield json.dumps(res) + "\n"
+            except Exception as e:
+                import traceback
+                error_trace = traceback.format_exc()
+                yield json.dumps({"status": "error", "message": f"Erro interno Multipass: {str(e)}", "trace": error_trace}) + "\n"
+                    
+        return StreamingResponse(stream_result(), media_type="application/x-ndjson")
+    except Exception as e:
+        return {"status": "error", "message": f"Erro de roteamento Multipass: {str(e)}"}
+
+@web_app.post("/train_lora")
+def api_train_lora(req: TrainLoraRequest):
+    try:
+        from backend.cloud_tools.engines.lora_training_engine import FluxLoraTrainer
+        engine = FluxLoraTrainer()
+        
+        job = engine.train_lora.spawn(
+            user_id=req.user_id,
+            character_name=req.character_name,
+            images_b64=req.images_b64,
+            trigger_word=req.trigger_word
+        )
+        
+        return {"status": "processing", "job_id": job.object_id, "message": "Treinamento iniciado no Modal (A100/H100)"}
+    except Exception as e:
+        return {"status": "error", "message": f"Erro de roteamento LoRA: {str(e)}"}
+
+@web_app.get("/list_loras/{user_id}")
+def api_list_loras(user_id: str):
+    import os
+    try:
+        user_dir = f"/comfyui_models/loras/users/{user_id}"
+        if not os.path.exists(user_dir):
+            return {"status": "success", "loras": []}
+            
+        loras = [f for f in os.listdir(user_dir) if f.endswith(".safetensors")]
+        # Retornar o caminho relativo ao diretorio de loras do ComfyUI
+        # O ComfyUI procura em /comfyui/models/loras/
+        # Nosso script faz symlink de /comfyui_models/loras -> /comfyui/models/loras
+        # Entao o lora_name no JSON deve ser "users/master_user_1/nome.safetensors"
+        
+        lora_paths = [f"users/{user_id}/{lora}" for lora in loras]
+        return {"status": "success", "loras": lora_paths}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @web_app.get("/ping")
 def api_ping():

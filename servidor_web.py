@@ -66,11 +66,11 @@ async def read_root(request: Request):
     lang = request.cookies.get("apollo_lang", "pt")
     
     if lang in ["en", "es", "zh", "ja", "ru"]:
-        hub_path = os.path.join(WEB_UI_DIR, lang, "apollo_os.html")
+        hub_path = os.path.join(BASE_DIR, lang, "apollo_os.html")
         if not os.path.exists(hub_path):
-            hub_path = os.path.join(WEB_UI_DIR, "apollo_os.html")
+            hub_path = os.path.join(BASE_DIR, "apollo_os.html")
     else:
-        hub_path = os.path.join(WEB_UI_DIR, "apollo_os.html")
+        hub_path = os.path.join(BASE_DIR, "apollo_os.html")
         
     if os.path.exists(hub_path):
         response = HTMLResponse(content=open(hub_path, 'r', encoding='utf-8').read(), status_code=200)
@@ -113,6 +113,23 @@ async def read_apollo_master_login():
         with open(path, 'r', encoding='utf-8') as f:
             return HTMLResponse(content=f.read(), status_code=200)
     return HTMLResponse(content="<h1>Login nÃ£o encontrado</h1>", status_code=404)
+
+@app.get("/mobile")
+async def read_mobile(request: Request):
+    """Atalho para o novo Studio Mobile-First"""
+    lang = request.cookies.get("apollo_lang", "pt")
+    
+    if lang in ["en", "es", "zh", "ja", "ru"]:
+        path = os.path.join(WEB_UI_DIR, lang, "studio_mobile.html")
+        if not os.path.exists(path):
+            path = os.path.join(WEB_UI_DIR, "studio_mobile.html")
+    else:
+        path = os.path.join(WEB_UI_DIR, "studio_mobile.html")
+        
+    if os.path.exists(path):
+        response = HTMLResponse(content=open(path, 'r', encoding='utf-8').read(), status_code=200)
+        return response
+    return HTMLResponse(content="<h1>Mobile Studio não encontrado</h1>", status_code=404)
 
 @app.get("/{filename}.html")
 async def serve_html(request: Request, filename: str):
@@ -1744,6 +1761,9 @@ def tts_gerar(req: TTSRequest):
             "emocao_adicional": req.emocao_adicional
         }
         
+        if req.engine.lower() == "moss":
+            params["_modelo_override"] = 2
+            
         success = api.generate_audio(req.personagem, req.texto, output_path, **params)
         
         if success:
@@ -2409,9 +2429,6 @@ async def load_profile(nome: str):
 
 # ====== ENDPOINTS DA ABA TTS ======
 
-@app.post("/api/tts/gerar")
-async def gerar_tts(req: TTSRequest):
-    # Aqui entraria a chamada ao seu motor real de TTS (Voicemaker, ElevenLabs, etc)
     # Por enquanto, retornamos um dummy de sucesso
     print(f"[TTS] Gerando Ã¡udio para: {req.voz} usando engine {req.engine}")
     return {"status": "success", "message": "Ãudio gerado com sucesso! (SimulaÃ§Ã£o)", "path": ""}
@@ -4577,6 +4594,7 @@ async def modal_proxy(endpoint_name: str, request: Request):
             try:
                 body_json = json.loads(body)
                 ref_images = body_json.get("reference_images_base64", [])
+                use_upscale = body_json.get("use_upscale", False)
                 if ref_images and len(ref_images) >= 2 and body_json.get("model", "").lower() == "flux2-universal":
                     print(f"[Modal Proxy] Interceptado: {len(ref_images)} imagens de referência detectadas. Iniciando Multipass Workflow.")
                     from backend.api.ai_director_multipass import AIDirectorMultipass
@@ -4602,23 +4620,26 @@ async def modal_proxy(endpoint_name: str, request: Request):
                                 # Passo 2: Geração Base
                                 base_img_b64 = director.generate_base_image(base_prompt)
                                 # Passo 3: Multipass (Iterativo)
-                                workflow_path = os.path.join(os.path.dirname(__file__), "Comfyui Workflow API", "FLUX 2 DEV", "image_flux2", "10resultado_3_personagens_CHAINED_klein.json")
+                                workflow_path = os.path.join(os.path.dirname(__file__), "Comfyui Workflow API", "10resultado_3_personagens_CHAINED_dev.json")
                                 multipass_b64 = director.run_multipass(workflow_path, base_prompt, regional_prompts, base_img_b64, ref_images)
-                                # Passo 4: Upscale Final
-                                upscale_path = os.path.join(os.path.dirname(__file__), "Comfyui Workflow API", "WORKFLOW - INSANE UPSCALE", "WORKFLOW - INSANE UPSCALE.json")
                                 
-                                with open(upscale_path, "r", encoding="utf-8") as f:
-                                    upscale_wf = json.load(f)
-                                for node_id, node in upscale_wf.items():
-                                    if node.get("class_type") == "UNETLoader" and "unet_name" in node.get("inputs", {}):
-                                        node["inputs"]["unet_name"] = "flux1-dev-fp8.safetensors"
-                                    if node.get("class_type") == "LoadImage":
-                                        if "_meta" not in node:
-                                            node["_meta"] = {}
-                                        node["_meta"]["title"] = "APOLLO_BASE_IMAGE"
-                                        
-                                upscale_b64 = director.run_multipass(upscale_wf, "", [], multipass_b64, [])
-                                return upscale_b64
+                                if use_upscale:
+                                    # Passo 4: Upscale Final
+                                    upscale_path = os.path.join(os.path.dirname(__file__), "Comfyui Workflow API", "WORKFLOW - INSANE UPSCALE", "WORKFLOW - INSANE UPSCALE.json")
+                                    
+                                    with open(upscale_path, "r", encoding="utf-8") as f:
+                                        upscale_wf = json.load(f)
+                                    for node_id, node in upscale_wf.items():
+                                        if node.get("class_type") == "UNETLoader" and "unet_name" in node.get("inputs", {}):
+                                            node["inputs"]["unet_name"] = "flux1-dev-fp8.safetensors"
+                                        if node.get("class_type") == "LoadImage":
+                                            if "_meta" not in node:
+                                                node["_meta"] = {}
+                                            node["_meta"]["title"] = "APOLLO_BASE_IMAGE"
+                                            
+                                    upscale_b64 = director.run_multipass(upscale_wf, "", [], multipass_b64, [])
+                                    return upscale_b64
+                                return multipass_b64
 
                             loop = asyncio.get_event_loop()
                             final_b64 = await loop.run_in_executor(None, run_sync_director)

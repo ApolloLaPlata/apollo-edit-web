@@ -7,7 +7,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imagem "Gorda" (Omni-Image) com n├│s populares
+# Imagem "Gorda" (Omni-Image) com nÃ³s populares
 universal_comfy_image = (
     modal.Image.debian_slim(python_version="3.10")
     .pip_install("pillow", "requests", "PyYAML", "pytz") \
@@ -49,20 +49,19 @@ universal_comfy_image = (
             "comfy --workspace /comfyui node install https://github.com/WASasquatch/was-node-suite-comfyui"
         ]
     )
-    .add_local_file(
-        local_path=os.path.join(os.path.dirname(__file__), "pulid_ll_patch.py"),
-        remote_path="/pulid_ll_patch.py",
-        copy=True,
-    )
-    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/flux_upscale_ultrasharp.json", "/workflows/flux_upscale_ultrasharp.json", copy=True)
-    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/apollo_flux2_klein_upscale.json", "/workflows/apollo_flux2_klein_upscale.json", copy=True)
-    .run_commands(["python /pulid_ll_patch.py"])
+    .run_commands([
+        "python -c \"import re; f='/comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll/PulidFluxHook.py'; c=open(f).read(); c=re.sub(r'(attn_mask:\\s*Tensor\\s*=\\s*None,?)(\\s*\\)\\s*->\\s*Tensor:)', r'\\1\\n    **kwargs,\\2', c); open(f,'w').write(c); f2='/comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll/pulidflux.py'; c2=open(f2).read(); c2=re.sub(r'os\\.makedirs\\(dir_path(?:,\\s*exist_ok=True)?\\)', 'try:\\n        __import__(\\'os\\').makedirs(dir_path, exist_ok=True)\\n    except Exception:\\n        pass', c2); open(f2,'w').write(c2); print('Patched!');\""
+    ])
     .env({
         "HF_HUB_OFFLINE": "0",
         "TRANSFORMERS_OFFLINE": "0",
         "HF_HUB_ENABLE_HF_TRANSFER": "1",
         "MODAL_CACHE_BUSTER": "14"
     })
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/flux_upscale_ultrasharp.json", "/workflows/flux_upscale_ultrasharp.json")
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/apollo_flux2_klein_upscale.json", "/workflows/apollo_flux2_klein_upscale.json")
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/FLUX 2 DEV/texto_flux2/image_flux2_text_to_image.json", "/tmp/workflow.json")
+    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/image_flux2_text_to_image_upscale.json", "/tmp/workflow_upscale.json")
 )
 
 comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=True)
@@ -74,32 +73,163 @@ import time
 
 @contextmanager
 def force_cpu_during_snapshot():
+    import os
+    import sys
     import torch
-    orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
-    orig_current_device = getattr(torch.cuda, "current_device", lambda: torch.device("cpu"))
 
-    torch.cuda.is_available = lambda: False
-    torch.cuda.current_device = lambda: torch.device("cpu")
+    # Garante que o arquivo indicador NÃƒO existe no inicio do boot CPU
+    if os.path.exists("/tmp/modal_snapshot_done"):
+        try:
+            os.remove("/tmp/modal_snapshot_done")
+        except Exception:
+            pass
+
+    mock_dir = "/tmp/mock_cuda"
+    os.makedirs(mock_dir, exist_ok=True)
+    site_path = os.path.join(mock_dir, "sitecustomize.py")
+    with open(site_path, "w") as f:
+        f.write('''import os
+import torch
+_orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
+_orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
+_orig_device_count = getattr(torch.cuda, "device_count", lambda: 0)
+_orig_memory_stats = getattr(torch.cuda, "memory_stats", lambda device=None: {})
+_orig_mem_get_info = getattr(torch.cuda, "mem_get_info", lambda device=None: (85899345920, 85899345920))
+
+def _safe_memory_stats(device=None):
+    try:
+        stats = _orig_memory_stats(device)
+        if isinstance(stats, dict) and 'reserved_bytes.all.current' not in stats:
+            return {
+                'reserved_bytes.all.current': 0,
+                'allocated_bytes.all.current': 0,
+                'active_bytes.all.current': 0,
+                'inactive_split_bytes.all.current': 0
+            }
+        return stats
+    except Exception:
+        return {
+            'reserved_bytes.all.current': 0,
+            'allocated_bytes.all.current': 0,
+            'active_bytes.all.current': 0,
+            'inactive_split_bytes.all.current': 0
+        }
+
+def _safe_mem_get_info(device=None):
+    try:
+        return _orig_mem_get_info(device)
+    except Exception:
+        return (85899345920, 85899345920)
+
+def _safe_is_available():
+    if not os.path.exists("/tmp/modal_snapshot_done"):
+        return False
+    try:
+        return _orig_is_available()
+    except Exception:
+        return False
+
+def _safe_current_device():
+    try:
+        return _orig_current_device()
+    except Exception:
+        return 0
+
+def _safe_device_count():
+    try:
+        res = _orig_device_count()
+        return res if res > 0 else 1
+    except Exception:
+        return 1
+
+torch.cuda.memory_stats = _safe_memory_stats
+torch.cuda.mem_get_info = _safe_mem_get_info
+torch.cuda.is_available = _safe_is_available
+torch.cuda.current_device = _safe_current_device
+torch.cuda.device_count = _safe_device_count
+print("[sitecustomize] Holy Grail CUDA & VRAM stats fallback active for ComfyUI boot!")
+''')
+
+    old_pythonpath = os.environ.get("PYTHONPATH", "")
+    os.environ["PYTHONPATH"] = f"{mock_dir}:{old_pythonpath}" if old_pythonpath else mock_dir
+
+    orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
+    orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
+    orig_device_count = getattr(torch.cuda, "device_count", lambda: 0)
+    orig_memory_stats = getattr(torch.cuda, "memory_stats", lambda device=None: {})
+    orig_mem_get_info = getattr(torch.cuda, "mem_get_info", lambda device=None: (85899345920, 85899345920))
+
+    def safe_memory_stats(device=None):
+        try:
+            stats = orig_memory_stats(device)
+            if isinstance(stats, dict) and 'reserved_bytes.all.current' not in stats:
+                return {
+                    'reserved_bytes.all.current': 0,
+                    'allocated_bytes.all.current': 0,
+                    'active_bytes.all.current': 0,
+                    'inactive_split_bytes.all.current': 0
+                }
+            return stats
+        except Exception:
+            return {
+                'reserved_bytes.all.current': 0,
+                'allocated_bytes.all.current': 0,
+                'active_bytes.all.current': 0,
+                'inactive_split_bytes.all.current': 0
+            }
+
+    def safe_mem_get_info(device=None):
+        try:
+            return orig_mem_get_info(device)
+        except Exception:
+            return (85899345920, 85899345920)
+
+    def safe_is_available():
+        if not os.path.exists("/tmp/modal_snapshot_done"):
+            return False
+        try:
+            return orig_is_available()
+        except Exception:
+            return False
+
+    def safe_current_device():
+        try:
+            return orig_current_device()
+        except Exception:
+            return 0
+
+    def safe_device_count():
+        try:
+            res = orig_device_count()
+            return res if res > 0 else 1
+        except Exception:
+            return 1
+
+    torch.cuda.memory_stats = safe_memory_stats
+    torch.cuda.mem_get_info = safe_mem_get_info
+    torch.cuda.is_available = safe_is_available
+    torch.cuda.current_device = safe_current_device
+    torch.cuda.device_count = safe_device_count
+
     try:
         yield
     finally:
+        torch.cuda.memory_stats = orig_memory_stats
+        torch.cuda.mem_get_info = orig_mem_get_info
         torch.cuda.is_available = orig_is_available
         torch.cuda.current_device = orig_current_device
+        torch.cuda.device_count = orig_device_count
+        if old_pythonpath:
+            os.environ["PYTHONPATH"] = old_pythonpath
+        else:
+            os.environ.pop("PYTHONPATH", None)
 
 
-@app.cls(
-    gpu="H100",
-    image=universal_comfy_image,
-    volumes={"/comfyui_models": comfy_volume, "/apollo_volume": apollo_volume},
-    scaledown_window=120,
-    timeout=1200,
-    max_containers=5,
-    enable_memory_snapshot=True
-)
-class UniversalComfyEngine:
+
+class BaseUniversalComfyEngine:
     FORCE_REBUILD = 5
 
-    @modal.enter()
+    @modal.enter(snap=True)
     def load_model(self):
         import subprocess
         import urllib.request
@@ -137,40 +267,14 @@ class UniversalComfyEngine:
         # Garante que a pasta upscale_models existe no volume
         os.makedirs("/comfyui_models/upscale_models", exist_ok=True)
         
-        # Baixa o 4x-UltraSharp se n├úo existir
-        # Baixa o 4x-UltraSharp se não existir
+        # Baixa o 4x-UltraSharp se nÃ£o existir
         model_path = "/comfyui_models/upscale_models/4x-UltraSharp.pth"
         if not os.path.exists(model_path):
             print(f"[UniversalComfyEngine] Baixando 4x-UltraSharp para o volume {model_path}...")
             import urllib.request
             urllib.request.urlretrieve("https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth", model_path)
-            print("[UniversalComfyEngine] Download concluído.")
-            
-        subprocess.run("rm -rf /comfyui/models/upscale_models", shell=True)
-        subprocess.run("ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models", shell=True)
+            print("[UniversalComfyEngine] Download concluÃ­do.")
         
-        print("[UniversalComfyEngine] Setup de paths concluído!")
-        
-        print("[UniversalComfyEngine] Caching models para Memoria RAM (Snapshot Preparativo)...")
-        self.comfy_process = None
-        try:
-            import subprocess
-            models_to_cache = [
-                "/comfyui_models/unet/flux1-dev.safetensors",
-                "/comfyui_models/clip/t5xxl_fp16.safetensors",
-                "/comfyui_models/clip/clip_l.safetensors",
-                "/comfyui_models/vae/ae.safetensors",
-                "/comfyui_models/upscale_models/4x-UltraSharp.pth"
-            ]
-            for m in models_to_cache:
-                if os.path.exists(m):
-                    print(f"Lendo {m} para a RAM...")
-                    subprocess.run(f"cat {m} > /dev/null", shell=True)
-            print("[UniversalComfyEngine] Caching concluído com sucesso!")
-        except Exception as e:
-            print(f"[UniversalComfyEngine] Erro no caching: {e}")
-            
-        self.comfy_process = None
         print("[UniversalComfyEngine] Lancando ComfyUI como subprocesso (porta 8189)...")
         t_boot_start = time.perf_counter()
         
@@ -202,39 +306,34 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
         except Exception as e:
             print(f"[UniversalComfyEngine] Erro ao gravar patch: {e}")
             
-        self.comfy_process = None
-
-    def _ensure_comfyui_running(self):
-        import urllib.request
-        import subprocess
-        import time
-        import sys
-        
-        if self.comfy_process is not None:
-            return
-            
-        print("[UniversalComfyEngine] Lancando ComfyUI como subprocesso (porta 8189)...")
-        self.comfy_process = subprocess.Popen(
-            ["comfy", "--workspace", "/comfyui", "launch", "--",
-             "--listen", "127.0.0.1", "--port", "8189", "--highvram"],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            text=True
-        )
-
-        server_up = False
-        for _ in range(180):
-            try:
-                with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
-                    server_up = True
-                    break
-            except Exception:
-                time.sleep(1)
-
-        if server_up:
-            print("[UniversalComfyEngine] ComfyUI porta 8189 pronto.")
-        else:
-            raise RuntimeError("[UniversalComfyEngine] Timeout no boot do ComfyUI.")
+        with force_cpu_during_snapshot():
+            self.comfy_process = subprocess.Popen(
+                ["comfy", "--workspace", "/comfyui", "launch", "--",
+                 "--listen", "127.0.0.1", "--port", "8189", "--highvram", "--disable-xformers"],
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True
+            )
+    
+            server_up = False
+            for _ in range(300):
+                if self.comfy_process.poll() is not None:
+                    raise RuntimeError(f"[Boot] ComfyUI (porta 8189) encerrou inesperadamente com código {self.comfy_process.returncode}!")
+                try:
+                    with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
+                        server_up = True
+                        break
+                except Exception:
+                    time.sleep(1)
+    
+            if server_up:
+                with open("/tmp/modal_snapshot_done", "w") as f_snap:
+                    f_snap.write("done")
+                print("[Snapshot] Flag /tmp/modal_snapshot_done criada com sucesso!")
+                t2_boot_time = time.perf_counter() - t_boot_start
+                print(f"[UniversalComfyEngine] SNAPSHOT V_HTTP OK! ComfyUI porta 8189 pronto em {t2_boot_time:.2f}s.")
+            else:
+                raise RuntimeError("[UniversalComfyEngine] Timeout no boot do ComfyUI para snapshot.")
 
     @modal.method()
     def fetch_file(self, path):
@@ -258,8 +357,6 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
 
         t0 = time.time()
         print("[UniversalComfyEngine] Iniciando requisicao Universal...")
-        
-        self._ensure_comfyui_running()
 
         seed = kwargs.get("seed", int(time.time() * 1000) % 4294967295)
 
@@ -320,6 +417,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                     
                     wf_iter = json.loads(workflow_json_string)
                     
+                    lora_name = kwargs.get("lora_name")
                     for node_id, node in wf_iter.items():
                         title = node.get("_meta", {}).get("title", "")
                         if title == "APOLLO_BASE_IMAGE":
@@ -340,6 +438,13 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                             for k in ["noise_seed", "seed"]:
                                 if k in node["inputs"]:
                                     node["inputs"][k] = seed + idx
+                                    
+                        # Injetar LoRA customizado no workflow se ele existir
+                        if title == "LoraLoaderModelOnly" and lora_name:
+                            node["inputs"]["lora_name"] = lora_name
+                            node["inputs"]["strength_model"] = 1.0
+                        if title == "Enable Turbo LoRA" and lora_name:
+                            node["inputs"]["value"] = True
                                     
                     payload = json.dumps({"prompt": wf_iter}).encode("utf-8")
                     req = urllib.request.Request("http://127.0.0.1:8189/prompt", data=payload, headers={"Content-Type": "application/json"})
@@ -369,8 +474,8 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                                             final_b64 = current_base_b64
                                             iter_success = True
                                         break
-                                    # outputs existe mas sem imagens ainda ÔÇö continua esperando
-                                # prompt_id nao esta no historico ainda ÔÇö continua esperando
+                                    # outputs existe mas sem imagens ainda â€” continua esperando
+                                # prompt_id nao esta no historico ainda â€” continua esperando
                         except Exception as poll_err:
                             print(f"[Poll] Erro temporario: {poll_err}")
                         time.sleep(3)
@@ -439,10 +544,10 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
             if is_first_pass:
                 empty_latent_id = "EMPTY_LATENT_BASE_INJECTED"
                 workflow[empty_latent_id] = {
-                    "class_type": "EmptyLatentImage",
+                    "class_type": "EmptyFlux2LatentImage",
                     "inputs": {
-                        "width": 1024,
-                        "height": 1024,
+                        "width": 2048,
+                        "height": 1152,
                         "batch_size": 1
                     }
                 }
@@ -484,6 +589,15 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                         if k in node["inputs"]:
                             node["inputs"][k] = seed
                             nodes_updated.append(f"Seed({node_id})")
+                            
+                # Injetar LoRA customizado no workflow se ele existir
+                lora_name = kwargs.get("lora_name")
+                if title == "LoraLoaderModelOnly" and lora_name:
+                    node["inputs"]["lora_name"] = lora_name
+                    node["inputs"]["strength_model"] = 1.0
+                    nodes_updated.append(f"Lora_Injected({node_id})")
+                if title == "Enable Turbo LoRA" and lora_name:
+                    node["inputs"]["value"] = True
                             
                 # Upscale override
                 if is_upscale and (node.get("class_type") == "KSampler" or "Sampler" in str(node.get("class_type", ""))):
@@ -578,7 +692,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                                 elif isinstance(msg, dict) and msg.get("type") == "execution_error":
                                     error_details.append(str(msg))
                             
-                            error_str = " | ".join(error_details) if error_details else "Execu├º├úo falhou ou n├úo retornou outputs."
+                            error_str = " | ".join(error_details) if error_details else "ExecuÃ§Ã£o falhou ou nÃ£o retornou outputs."
                             
                             return {"status": "error", "message": error_str}
                     else:
@@ -588,7 +702,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                         pending = q_data.get("queue_running", []) + q_data.get("queue_pending", [])
                         is_in_queue = any(q[1] == prompt_id for q in pending)
                         if not is_in_queue:
-                            return {"status": "error", "message": "Prompt falhou silenciosamente (desapareceu da fila e n├úo est├í no hist├│rico)."}
+                            return {"status": "error", "message": "Prompt falhou silenciosamente (desapareceu da fila e nÃ£o estÃ¡ no histÃ³rico)."}
                 except Exception as ex:
                     print(f"Polling warning: {ex}")
                 time.sleep(2)
@@ -666,7 +780,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
         import os
         
         # Start ComfyUI if not running
-        # ComfyUI is already started by load_model() via @modal.enter()
+        # ComfyUI is already started by load_model() via @modal.enter(snap=True)
         
         # Save the UI JSON to a temporary file
         temp_ui_path = "/tmp/ui_workflow.json"
@@ -712,3 +826,28 @@ async def handle_request(endpoint_path: str, request: Request):
 @modal.asgi_app()
 def universal_web_api():
     return web_app
+
+
+@app.cls(
+    gpu="H100",
+    image=universal_comfy_image,
+    volumes={"/comfyui_models": comfy_volume, "/apollo_volume": apollo_volume},
+    scaledown_window=60,
+    timeout=1200,
+    max_containers=5,
+    enable_memory_snapshot=True
+)
+class UniversalComfyEngine(BaseUniversalComfyEngine):
+    pass
+
+@app.cls(
+    gpu="H100",
+    image=universal_comfy_image,
+    volumes={"/comfyui_models": comfy_volume, "/apollo_volume": apollo_volume},
+    scaledown_window=2,
+    timeout=1200,
+    max_containers=5,
+    enable_memory_snapshot=True
+)
+class BlogUniversalComfyEngine(BaseUniversalComfyEngine):
+    pass

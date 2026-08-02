@@ -1,0 +1,10 @@
+{
+    "agent_id": "MarketAnalyst",
+    "status": "analyzing_market",
+    "last_action": "2026-07-31 08:09:21",
+    "alerts": [],
+    "data": {
+        "market_health": "healthy",
+        "last_analysis": ""
+    }
+}

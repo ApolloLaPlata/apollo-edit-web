@@ -3,8 +3,8 @@ import json
 import httpx
 import uuid
 import asyncio
-from fastapi import APIRouter, Request, HTTPException, BackgroundTasks
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Request, HTTPException, BackgroundTasks, Response
+from fastapi.responses import JSONResponse, StreamingResponse
 
 router = APIRouter(prefix="/api/studio/modal", tags=["Studio Modal Proxy"])
 
@@ -62,6 +62,13 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
     if request.method == "OPTIONS":
         return JSONResponse(status_code=200, content={"status": "ok"})
     
+    # --- INTERNAL LOCK (BOT PROTECTION) ---
+    expected_lock = os.environ.get("APOLLO_SECRET_LOCK", "apollo-beta-key-2026")
+    client_lock = request.headers.get("x-apollo-lock")
+    if client_lock != expected_lock:
+        raise HTTPException(status_code=401, detail="Unauthorized access. Bot protection is active.")
+    # --------------------------------------
+    
     acc = get_active_modal_account()
     if not acc:
         raise HTTPException(status_code=503, detail="Nenhuma conta Modal ativa configurada na Colmeia.")
@@ -77,6 +84,8 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
         remote_path = "generate/video"
     elif path == "generate_universal":
         remote_path = "generate/universal"
+    elif path == "generate_tts":
+        remote_path = "generate/tts"
         
     modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/{remote_path}"
     
@@ -89,31 +98,32 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
             
     body = await request.body()
     
-    # Se for uma das rotas demoradas, usar Background Task
-    if path in ["generate_image", "generate_video", "generate_universal"] and request.method == "POST":
-        job_id = str(uuid.uuid4())
-        JOBS[job_id] = {"status": "processing"}
-        background_tasks.add_task(process_modal_job, job_id, request.method, modal_url, headers, body)
-        return JSONResponse(status_code=200, content={"status": "processing", "job_id": job_id})
-    
-    # Execucao sincrona para outras rotas (como ping, models)
-    async with httpx.AsyncClient(timeout=300.0) as client:
-        try:
-            response = await client.request(
-                method=request.method,
-                url=modal_url,
-                headers=headers,
-                content=body
-            )
+
+    # Execucao com Streaming para repassar heartbeats e evitar 504 no Nginx
+    client = httpx.AsyncClient(timeout=300.0)
+    try:
+        req = client.build_request(
+            method=request.method,
+            url=modal_url,
+            headers=headers,
+            content=body
+        )
+        response = await client.send(req, stream=True)
+        
+        async def stream_gen():
             try:
-                content = response.json()
-            except:
-                content = response.text
+                async for chunk in response.aiter_raw():
+                    yield chunk
+            finally:
+                await response.aclose()
+                await client.aclose()
                 
-            return JSONResponse(
-                status_code=response.status_code,
-                content=content
-            )
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        return StreamingResponse(
+            stream_gen(),
+            status_code=response.status_code,
+            media_type=response.headers.get("content-type", "application/json")
+        )
+    except Exception as e:
+        await client.aclose()
+        raise HTTPException(status_code=500, detail=str(e))
 

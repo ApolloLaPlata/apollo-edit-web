@@ -135,7 +135,7 @@ app.add_middleware(
 )
 app.add_middleware(RateLimitMiddleware)
 
-from backend.api import routes_video, routes_admin, routes_whatsapp, routes_phantom, worker_routes, routes_economy, routes_ui_ws, routes_render, routes_auth, routes_payments, routes_webhooks, routes_subtitles, routes_podcast, routes_tts, routes_dubbing, routes_editor, routes_ai_director, routes_clip_factory, routes_auto_mapper, routes_dark_facil, routes_settings, routes_queue, routes_copilot, routes_youtube, routes_studio
+from backend.api import routes_video, routes_admin, routes_whatsapp, routes_phantom, worker_routes, routes_economy, routes_ui_ws, routes_render, routes_auth, routes_payments, routes_webhooks, routes_subtitles, routes_podcast, routes_tts, routes_dubbing, routes_editor, routes_ai_director, routes_clip_factory, routes_auto_mapper, routes_dark_facil, routes_settings, routes_queue, routes_copilot, routes_youtube, routes_studio, routes_storage_gateway
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -172,6 +172,7 @@ app.include_router(routes_payments.router)
 app.include_router(routes_webhooks.router)
 app.include_router(routes_youtube.router)
 app.include_router(routes_studio.router)
+app.include_router(routes_storage_gateway.router)
 
 @app.get("/")
 def read_root():

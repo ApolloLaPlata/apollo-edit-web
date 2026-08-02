@@ -79,7 +79,8 @@ PRESETS = {
 }
 
 # Mudamos para A100 porque o modelo 14B de I2V não cabe na L4
-@app.cls(gpu="a10g", timeout=1200, image=wan_image, enable_memory_snapshot=True, experimental_options={"enable_gpu_snapshot": True})
+@app.cls(gpu="a10g", timeout=1200, scaledown_window=60,
+ image=wan_image, enable_memory_snapshot=True, experimental_options={"enable_gpu_snapshot": True})
 class Wan21Engine:
     @modal.enter()
     def load_model(self):

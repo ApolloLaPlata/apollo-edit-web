@@ -28,8 +28,8 @@ def main():
     texto_gerado = writer.escrever_artigo(pauta_escolhida, persona_prompt="Especialista")
     time.sleep(1)
     
-    # 3. Designer gera a imagem com o Apollo
-    imagem_final = designer.gerar_imagem(texto_gerado["image_prompt"])
+    # 3. Designer gera a imagem com o Apollo (Capa Hero com Upscale 4x-UltraSharp)
+    imagem_final = designer.gerar_imagem(texto_gerado["image_prompt"], image_format="Horizontal", upscale=True)
     time.sleep(1)
     
     # 4. Publisher publica o artigo no banco de dados do Next.js

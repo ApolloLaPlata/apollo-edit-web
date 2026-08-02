@@ -438,6 +438,11 @@
                     <input type="file" id="imgRefFiles" accept="image/*" multiple onchange="updateImgRefNames()">
                     <span class="file-name" id="imgRefFileNames">Nenhuma imagem selecionada</span>
                 </div>
+                
+                <div class="field-label" style="margin-top:10px;">LoRA (Fábrica de Personagens)</div>
+                <select id="imgLoraSelect" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                    <option value="">Nenhum LoRA</option>
+                </select>
 
                 <div style="display:flex; gap:8px; margin-top: 10px; align-items:center;">
                     <div style="flex:1;">
@@ -877,10 +882,12 @@ async function generateImage() {
         animateProgress('imgProgressFill','imgProgressText', 0, 30, 8000, 'Aguardando Modal Cloud');
         log(`⏳ Requisição enviada — aguardando resposta da Modal (pode levar 1-4 min no cold start)...`, 'warn');
 
+        const lora_name = document.getElementById('imgLoraSelect') ? document.getElementById('imgLoraSelect').value : '';
+
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, steps, aspect_ratio, model, reference_images_base64, use_upscale })
+            body: JSON.stringify({ prompt, steps, aspect_ratio, model, reference_images_base64, use_upscale, lora_name })
         });
 
         if (!res.ok) {
@@ -1114,6 +1121,30 @@ async function transcribeAudio() {
     }
 }
 
+// ─── LORAS ───────────────────────────────────────────────────────────
+async function loadLoras() {
+    try {
+        const userId = "master_user_1"; // Hardcoded para este contexto por enquanto
+        const url = `/api/studio/modal/list_loras/${userId}`;
+        const res = await fetch(url);
+        if (res.ok) {
+            const data = await res.json();
+            const select = document.getElementById('imgLoraSelect');
+            if (data.loras && data.loras.length > 0) {
+                data.loras.forEach(lora => {
+                    const opt = document.createElement('option');
+                    opt.value = lora;
+                    opt.textContent = lora.split('/').pop().replace('.safetensors', '');
+                    select.appendChild(opt);
+                });
+                log(`🎭 ${data.loras.length} LoRAs carregados com sucesso.`, 'ok');
+            }
+        }
+    } catch (e) {
+        log(`❌ Erro ao carregar LoRAs: ${e.message}`, 'error');
+    }
+}
+
 // ─── INICIALIZAÇÃO ───────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     log('🚀 Apollo Modal AI Studio v2.0 carregado', 'ok');
@@ -1121,6 +1152,8 @@ document.addEventListener('DOMContentLoaded', () => {
     log('→ Dica: cole os logs abaixo no chat se algo falhar!', 'warn');
     // Auto-ping ao carregar
     setTimeout(pingModal, 1500);
+    // Carregar LoRAs da Fábrica de Personagens
+    loadLoras();
 
     // ─── Toggle Upscale Visual ─────────────────────────────────────
     const toggleUpscale = document.getElementById('toggleUpscale');

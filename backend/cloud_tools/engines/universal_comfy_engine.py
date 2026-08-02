@@ -19,7 +19,9 @@ except Exception:
 from backend.cloud_tools.engines.flux_engine import flux2_comfy_image
 comfy_universal_image = flux2_comfy_image
 
-@app.cls(gpu="h100", timeout=1200, image=comfy_universal_image, scaledown_window=600)
+@app.cls(gpu="h100", timeout=1200,
+ image=comfy_universal_image, scaledown_window=30
+)
 class UniversalComfyEngine:
     @modal.enter()
     def start_server(self):
@@ -39,7 +41,8 @@ class UniversalComfyEngine:
         
         for i in range(30):
             try:
-                urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2)
+                urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2
+)
                 print("[UniversalComfyEngine] Servidor online!")
                 break
             except:

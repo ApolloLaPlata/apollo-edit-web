@@ -15,6 +15,7 @@ comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=Tr
     image=image,
     volumes={"/comfyui_models": comfy_volume},
     timeout=3600,
+    container_idle_timeout=30,
     secrets=[modal.Secret.from_name("huggingface-secret")]
 )
 def download_all_models():

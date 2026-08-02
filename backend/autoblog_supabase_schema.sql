@@ -182,3 +182,22 @@ CREATE TABLE IF NOT EXISTS "AffiliateClick" (
     "country" TEXT DEFAULT 'BR',
     "revenue" REAL DEFAULT 0
 );
+
+
+-- =========================================================================
+-- APOLLO STORAGE GATEWAY (MEDIA MAPPER)
+-- =========================================================================
+CREATE TABLE media_storage_map (
+    media_id TEXT PRIMARY KEY, -- ex: img_uuid ou vid_uuid
+    type TEXT NOT NULL, -- 'image', 'video', 'audio'
+    provider TEXT NOT NULL, -- 'cloudflare_r2_1', 'telegram_bot', 'local'
+    provider_url TEXT NOT NULL, -- URL real do provedor ou File ID
+    ttl_status TEXT NOT NULL DEFAULT 'garagem', -- 'bagagem' (temporario 24h) ou 'garagem' (permanente)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    metadata JSONB DEFAULT '{}'::jsonb -- para info extra como tamanho, hash, etc.
+);
+
+-- INDEX para acelerar as buscas
+CREATE INDEX idx_media_storage_map_id ON media_storage_map(media_id);
+CREATE INDEX idx_media_storage_ttl ON media_storage_map(ttl_status);
+

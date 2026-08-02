@@ -1,9 +1,15 @@
 {
     "agent_id": "Watchdog",
-    "status": "idle",
-    "last_action": null,
-    "alerts": [],
+    "status": "monitoring_cloud",
+    "last_action": "2026-07-31 08:24:21",
+    "alerts": [
+        "Atenção Admin: Apenas 0 contas Lightning ativas! Considere repor.",
+        "SISTEMA CRÍTICO: Nenhuma conta Lightning ativa. Operando 100% via OpenRouter (Custo Alto!)."
+    ],
     "data": {
-        "lightning_accounts": {}
+        "lightning_accounts": {
+            "total": 0,
+            "active": 0
+        }
     }
 }

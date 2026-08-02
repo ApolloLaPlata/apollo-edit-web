@@ -47,7 +47,8 @@ moss_image = (
     )
 )
 
-@app.cls(image=moss_image, gpu="H100", timeout=600, min_containers=0)
+@app.cls(image=moss_image, gpu="H100", timeout=600, scaledown_window=30,
+ min_containers=0)
 class MossTTSEngine:
     @modal.enter()
     def load_model(self):

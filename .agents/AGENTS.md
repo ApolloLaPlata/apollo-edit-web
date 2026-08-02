@@ -46,3 +46,15 @@ A quantidade de imagens de referÃªncia enviadas pelo usuÃ¡rio dita OBRIGATORIAME
    - O `SYSTEM_PROMPT` do LLM deve forÃ§ar contagens estritas de cena inteira a cada iteraÃ§Ã£o (ex: "CRITICAL: You must explicitly state EXACTLY how many people are in the entire scene... NEVER describe the same character twice"). Isso impede que o Flux gere personagens duplicados ou fundidos.
 
 Este protocolo Ã© a conquista final apÃ³s gasto de mais de 30 dÃ³lares em testes exaustivos. Se um agente esquecer isso e tentar reverter resoluÃ§Ãµes ou prompts, destruirÃ¡ o projeto inteiro devido Ã  falta de verba para consertar. Cumpra rigorosamente.
+
+### ?? [MAESTRO - PADRÃO OURO DE PERFORMANCE PARA UPSCALE E ENGINES - 27/07/2026] ??
+
+**O PROBLEMA HISTÓRICO (LENTIDÃO EXTREMA):**
+Anteriormente, o sistema utilizava dois containers/funções Modal diferentes para gerar uma imagem com upscale. O motor base (ex: Flux2Txt2ImgEngine) gerava a imagem, retornava pela rede, e o motor de Upscale (UniversalComfyEngine) era acionado. Isso causava cold starts duplos (2 a 4 minutos extras) e latência de rede pesada. O tempo total passava de 5 a 8 minutos.
+
+**A SOLUÇÃO DEFINITIVA (O SANTO GRAAL DOS 38 SEGUNDOS):**
+1. **Workflow Unificado In-Node:** O Upscale **NÃO DEVE** ser tratado como um container ou motor separado. A lógica deve ocorrer dentro do mesmo container GPU que gerou a imagem.
+2. **Injeção Dinâmica de JSON:** No arquivo da Engine (ex: lux_txt2img_engine.py), se use_upscale=True, o código Python deve ler o .json do workflow base e **anexar dinamicamente** os nodes de Upscale (ex: UpscaleModelLoader e ImageUpscaleWithModel) na ponta do Grafo antes de enviar para o ComfyUI.
+3. **Symlink Obrigatório (Erro 400 Bad Request):** Para o node UpscaleModelLoader funcionar com volumes da Modal, é obrigatório criar um symlink da pasta do volume para a pasta raiz do ComfyUI, pois o node muitas vezes ignora o arquivo extra_model_paths.yaml. Regra de código: subprocess.run("ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models", shell=True) antes de iniciar o servidor ComfyUI.
+
+**Por que isso é tão rápido?** Porque a imagem nunca sai da VRAM da placa de vídeo. A mesma H100 que acabou de rodar os 20 steps do modelo FLUX aplica o filtro UltraSharp em apenas 1 a 2 segundos adicionais. É este conhecimento que deve ser replicado ao integrar upscales em qualquer modelo futuro (como LTX Video, Wan2.1, etc).

@@ -1,40 +1,7 @@
 import modal
 import os
 
-flux2_txt2img_image = (
-    modal.Image.debian_slim(python_version="3.10")
-    .apt_install("git", "libgl1", "libglib2.0-0")
-    .pip_install(
-        "torch==2.4.0",
-        "torchvision==0.19.0",
-        "torchaudio==2.4.0",
-        "xformers==0.0.27.post2",
-        extra_options="--index-url https://download.pytorch.org/whl/cu121"
-    )
-    .pip_install(
-        "transformers",
-        "accelerate>=0.33.0",
-        "huggingface_hub[hf_transfer]",
-        "comfy-cli",
-        "requests",
-        "pillow"
-    )
-    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/FLUX 2 DEV/texto_flux2/image_flux2_text_to_image.json", "/tmp/workflow.json", copy=True)
-    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/image_flux2_text_to_image_upscale.json", "/tmp/workflow_upscale.json", copy=True)
-    .run_commands(
-        [
-            "comfy --workspace /comfyui install --nvidia",
-            "comfy --workspace /comfyui node install comfyui-tooling-nodes",
-            "comfy --workspace /comfyui node install ComfyUI-Manager",
-            "comfy --workspace /comfyui node install-deps --workflow /tmp/workflow.json"
-        ]
-    )
-    .env({
-        "HF_HUB_OFFLINE": "0", 
-        "TRANSFORMERS_OFFLINE": "0",
-        "HF_HUB_ENABLE_HF_TRANSFER": "1"
-    })
-)
+from backend.cloud_tools.engines.universal_engine import universal_comfy_image as flux2_txt2img_image
 
 comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=True)
 
@@ -50,8 +17,10 @@ FORMATS = {
     gpu="H100", 
     image=flux2_txt2img_image,
     volumes={"/comfyui_models": comfy_volume},
-    scaledown_window=120, 
+    scaledown_window=60,
+ 
     timeout=600,
+
     max_containers=5,
     enable_memory_snapshot=True
 )
@@ -110,7 +79,8 @@ class Flux2Txt2ImgEngine:
         server_up = False
         for _ in range(180):
             try:
-                with urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2):
+                with urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2
+):
                     server_up = True
                     break
             except Exception:
@@ -171,15 +141,22 @@ class Flux2Txt2ImgEngine:
             if "98:10" in workflow and "vae_name" in workflow["98:10"].get("inputs", {}):
                 workflow["98:10"]["inputs"]["vae_name"] = "ae.safetensors"
             
-            # Since we don't have the Turbo LORA in Modal yet, we bypass it completely by removing the node
-            if "98:101" in workflow:
-                del workflow["98:101"]
-                
-            for node_id, node_data in workflow.items():
-                inputs = node_data.get("inputs", {})
-                for k, v in inputs.items():
-                    if isinstance(v, list) and len(v) > 0 and v[0] == "98:101":
-                        inputs[k] = ["98:12", v[1]]
+            # Injetar LoRA ou ignorar se nao for passado
+            lora_name = kwargs.get("lora_name")
+            if lora_name and "98:101" in workflow:
+                print(f"[Flux2Txt2ImgEngine] Injetando LoRA: {lora_name}")
+                workflow["98:101"]["inputs"]["lora_name"] = lora_name
+                workflow["98:101"]["inputs"]["strength_model"] = 1.0
+                if "98:104" in workflow:
+                    workflow["98:104"]["inputs"]["value"] = True
+            else:
+                if "98:101" in workflow:
+                    del workflow["98:101"]
+                for node_id, node_data in workflow.items():
+                    inputs = node_data.get("inputs", {})
+                    for k, v in inputs.items():
+                        if isinstance(v, list) and len(v) > 0 and v[0] == "98:101":
+                            inputs[k] = ["98:12", v[1]]
                     
             print("[Flux2Txt2ImgEngine] Enviando job para API do ComfyUI...")
             req = urllib.request.Request("http://127.0.0.1:8188/prompt", data=json.dumps({"prompt": workflow}).encode("utf-8"), headers={"Content-Type": "application/json"})

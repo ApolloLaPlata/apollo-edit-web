@@ -1,40 +1,7 @@
 import modal
 import os
 
-flux2_comfy_image = (
-    modal.Image.debian_slim(python_version="3.10")
-    .apt_install("git", "libgl1", "libglib2.0-0")
-    .pip_install(
-        "torch==2.4.0",
-        "torchvision==0.19.0",
-        "torchaudio==2.4.0",
-        "xformers==0.0.27.post2",
-        extra_options="--index-url https://download.pytorch.org/whl/cu121"
-    )
-    .pip_install(
-        "transformers",
-        "accelerate>=0.33.0",
-        "huggingface_hub[hf_transfer]",
-        "comfy-cli",
-        "requests",
-        "pillow"
-    )
-    .add_local_file("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API/FLUX 2 DEV/image_flux2/image_flux2 .json", "/tmp/workflow.json", copy=True)
-    .run_commands(
-        [
-            "comfy --workspace /comfyui install --nvidia",
-            "comfy --workspace /comfyui node install comfyui-tooling-nodes",
-            "comfy --workspace /comfyui node install ComfyUI-Manager",
-            "comfy --workspace /comfyui node install-deps --workflow /tmp/workflow.json"
-        ]
-    )
-    .env({
-        "HF_HUB_OFFLINE": "0",
-        "TRANSFORMERS_OFFLINE": "0",
-        "HF_HUB_ENABLE_HF_TRANSFER": "1",
-        "MODAL_CACHE_BUSTER": "2"   # nao alterar ÔÇö evita rebuild Docker desnecessario
-    })
-)
+from backend.cloud_tools.engines.universal_engine import universal_comfy_image as flux2_comfy_image
 
 comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=True)
 
@@ -62,6 +29,7 @@ def force_cpu_during_snapshot():
     volumes={"/comfyui_models": comfy_volume},
     secrets=[modal.Secret.from_name("huggingface-secret")],
     timeout=3600
+
 )
 def download_comfy_models():
     import os
@@ -79,8 +47,10 @@ def download_comfy_models():
     gpu="H100",
     image=flux2_comfy_image,
     volumes={"/comfyui_models": comfy_volume},
-    scaledown_window=120,
+    scaledown_window=60,
+
     timeout=600,
+
     max_containers=5,
     enable_memory_snapshot=True
 )
@@ -138,7 +108,8 @@ class Flux2ComfyEngine_V2:
         server_up = False
         for _ in range(180):
             try:
-                with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2):
+                with urllib.request.urlopen("http://127.0.0.1:8189/system_stats", timeout=2
+):
                     server_up = True
                     break
             except Exception:
@@ -193,16 +164,22 @@ class Flux2ComfyEngine_V2:
             if "68:10" in workflow and "vae_name" in workflow["68:10"].get("inputs", {}):
                 workflow["68:10"]["inputs"]["vae_name"] = "ae.safetensors"
                 
-            # Bypass Turbo LORA (node 68:89) and PU-Lid since we don't have the weights
-            if "68:89" in workflow:
-                del workflow["68:89"]
-            
-            nodes_updated = []
-            for node_id, node_data in workflow.items():
-                inputs = node_data.get("inputs", {})
-                for k, v in inputs.items():
-                    if isinstance(v, list) and len(v) > 0 and v[0] == "68:89":
-                        inputs[k] = ["68:12", v[1]]
+            # Injetar LoRA customizado ou ignorar
+            lora_name = kwargs.get("lora_name")
+            if lora_name and "68:89" in workflow:
+                print(f"[Flux2ComfyEngine_V2] Injetando LoRA: {lora_name}")
+                workflow["68:89"]["inputs"]["lora_name"] = lora_name
+                workflow["68:89"]["inputs"]["strength_model"] = 1.0
+                if "68:90" in workflow: # Switch Node do LoRA (se existir)
+                    workflow["68:90"]["inputs"]["value"] = True
+            else:
+                if "68:89" in workflow:
+                    del workflow["68:89"]
+                for node_id, node_data in workflow.items():
+                    inputs = node_data.get("inputs", {})
+                    for k, v in inputs.items():
+                        if isinstance(v, list) and len(v) > 0 and v[0] == "68:89":
+                            inputs[k] = ["68:12", v[1]]
                 ct = node_data.get("class_type", "")
                 node = node_data
                 if ct == "CLIPTextEncode" and "text" in node["inputs"]:
@@ -234,6 +211,7 @@ class Flux2ComfyEngine_V2:
                 try:
                     hist_resp = urllib.request.urlopen(
                         f"http://127.0.0.1:8189/history/{prompt_id}", timeout=10
+
                     )
                     hist_data = json.loads(hist_resp.read().decode("utf-8"))
                     if prompt_id in hist_data:

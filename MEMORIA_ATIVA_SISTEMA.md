@@ -1,3 +1,32 @@
+# MEMÓRIA CENTRAL - APOLLO EDIT WEB
+
+## 1. MANIFESTO DA APOLLO
+*Visão, Princípios e Regras Permanentes.*
+- **O Pivot CapCut (Dark Channels):** A interface definitiva focará primariamente na geração 100% gratuita e fluida de vídeos genéricos (estilo CapCut Mobile), visando a captação massiva do público de Canais Dark.
+- **Complexidade Abstraída (LoRA Under The Hood):** As funcionalidades avançadas (como Treinamento de LoRAs de personagem, vídeo e áudio) não serão jogadas na cara do usuário novato. Elas rodarão 100% por debaixo dos panos: o usuário paga créditos e a consistência visual é entregue sem que ele precise configurar parâmetros complexos.
+- **Visão Central:** Apollo Edit Web é uma infraestrutura de produção de vídeo em escala (CapCut Killer para IA), focada no nicho Pro/Criador Avançado.
+- **Filosofia:** Abstração máxima de complexidade (UX Mobile-First) com poder absoluto no backend (Modal Cloud + ComfyUI).
+- **Regra de Ouro:** Não desenvolver novas funcionalidades de IA enquanto o mapeamento lógico/arquitetura não estiver fechado.
+
+## 2. ROADMAP E PRIORIDADES
+*Tarefas futuras, backlog e faseamento.*
+- **Fase 1:** Infraestrutura (Servidor, Vercel, Modal Cloud, Banco de Dados, UI Mobile-First).
+- **Fase 2:** Mecânica e Motores (FLUX, LTX, Wan, Integração LoRA Dynamics).
+- **Fase 3:** UX (Timeline Flutuante, Storyboard, Edição Automática).
+- **Fase 4:** Lançamento Gradual e Dogfooding (Testes com os próprios canais da rede).
+
+## 3. ARQUITETURA TÉCNICA
+*Decisões técnicas, diagramas e padrões.*
+- **Frontend:** Vercel (Vanilla JS, HTML Desacoplado, CSS Custom).
+- **Proxy/Roteamento:** VPS Oracle (FastAPI, Nginx com StreamingResponse).
+- **Processamento/GPU:** Modal Cloud (Serverless, Warm Pools, Snapshots de Memória).
+- **Storage:** Gateway abstraído (Cloudflare R2 para permanente, limpeza automática para temporários).
+
+---
+
+## 4. MEMÓRIA ATIVA (HISTÓRICO E EVOLUÇÃO)
+*Registro cronológico de decisões, reuniões, mudanças de rumo e lições aprendidas.*
+
 # ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Â  MemÃƒÆ’Ã‚Â³ria Ativa do Sistema: Apollo Studio
 ## ÃƒÆ’Ã…Â¡ltima AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 2026-06-14 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ Foco em MecÃƒÆ’Ã‚Â¢nica/Backend e Faseamento de LanÃƒÆ’Ã‚Â§amento
 
@@ -1431,7 +1460,8 @@ O usuÃƒÂ¡rio tomou uma decisÃƒÂ£o de negÃƒÂ³cios e arquitetura brilh
 7. **Arquitetura HÃƒÂ­brida para Editores Web (Offloading):** Embora as interfaces dos editores open source (ex: editor de vÃƒÂ­deo) rodem no navegador, o processamento pesado (ex: renderizaÃƒÂ§ÃƒÂ£o de FFmpeg, exports pesados, aplicaÃƒÂ§ÃƒÂ£o de efeitos) **NÃƒÆ’O** deve ser feito usando os recursos da mÃƒÂ¡quina do usuÃƒÂ¡rio. O sistema deve offload (transferir) as tarefas de renderizaÃƒÂ§ÃƒÂ£o pesada para os servidores da **Modal**, garantindo que o computador do usuÃƒÂ¡rio nÃƒÂ£o trave e a experiÃƒÂªncia permaneÃƒÂ§a fluida, independentemente do hardware do cliente.
 8. **MonetizaÃƒÂ§ÃƒÂ£o de Ferramentas Open Source (Paywall de RenderizaÃƒÂ§ÃƒÂ£o):** A estratÃƒÂ©gia de negÃƒÂ³cios para **TODAS** as ferramentas de ediÃƒÂ§ÃƒÂ£o open source inseridas no site (ex: Freecut, Polotno, etc) baseia-se em um modelo "Free to Edit, Pay to Render". O usuÃƒÂ¡rio tem uso livre da interface no navegador. No entanto, o botÃƒÂ£o de "Renderizar/Exportar" serÃƒÂ¡ interceptado pelo nosso sistema. Ao clicar em Render, o sistema calcularÃƒÂ¡ o custo de processamento (em "Apollo Coins" ou "CombustÃƒÂ­vel") e exibirÃƒÂ¡ para o usuÃƒÂ¡rio. Somente apÃƒÂ³s o dÃƒÂ©bito no saldo do usuÃƒÂ¡rio, o pacote de dados ÃƒÂ© enviado para a Modal realizar o processamento em nuvem (FFmpeg, etc). Isso garante que todo custo de processamento gerado na Modal seja coberto pelo usuÃƒÂ¡rio, gerando lucro direto para o Apollo Edit Web.
 
- -   [ F I X   U I ]   C o r r i g i d o   o   b u g   v i s u a l   d o   C u s t o m T k i n t e r   o n d e   o s   c a m p o s   d e   t e x t o   ( r o t e i r o ,   p r o m p t s )   f i c a v a m   e s m a g a d o s .   S u b s t i t u Ã­ d o s   o s   t k . T e x t   o r i g i n a i s   p o r   c t k . C T k T e x t b o x   r e s p o n s i v o s ,   f o n t e s   a m p l i a d a s   p a r a   l e g i b i l i d a d e ,   s e m   p e r d e r   a   i n t e g r a Ã§ Ã£ o   d o   D a r k   M o d e .  
+ -   [ F I X   U I ]   C o r r i g i d o   o   b u g   v i s u a l   d o   C u s t o m T k i n t e r   o n d e   o s   c a m p o s   d e   t e x t o   ( r o t e i r o ,   p r o m p t s )   f i c a v a m   e s m a g a d o s .   S u b s t i t u Ã­ d o s   o s   t k . T e x t   o r i g i n a i s   p o r   c t k . C T k T e x t b o x   r e s p o n s i v o s ,   f o n t e s   a m p l i a d a s   p a r a   l e g i b i l i d a d e ,   s e m   p e r d e r   a   i n t e g r a Ã§ Ã£ o   d o   D a r k   M o d e . 
+ 
  
 ### u2728 Inovacao Generativa (Junho 2026)
 - **FLUX.1-Redux Integrado:** O motor na nuvem foi atualizado para suportar multiplas imagens de referencia simultaneas via Redux, permitindo transferencia de estilo zero-shot e fusao de personagens altamente consistente. Interface local (Tinker) adaptada.
@@ -1510,7 +1540,8 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
  -   O   A g e n t e   c o m e t e u   u m   e r r o   g r a v í s s i m o :   i n i c i o u   o s   t r a b a l h o s   s e m   l e r   a   M e m ó r i a   A t i v a   e   o   H i v e   B u s . 
  -   C o m o   r e s u l t a d o ,   o   A g e n t e   i g n o r o u   o   a l e r t a   d e   q u e   a   c o n t a   M o d a l   e s t a v a   B L O Q U E A D A   e   r e a l i z o u   u m   d e p l o y   i n d e v i d o   n a   c o n t a   ' m a c a c o d r i v e r ' . 
  -   O   D i r e t o r   a v i s o u   q u e   c r i o u   a   ' c o n t a   5 ' ,   m a s   o   A g e n t e   n ã o   c o n f i g u r o u   a s   c r e d e n c i a i s   a n t e s   d e   f a z e r   o   d e p l o y . 
- -   A ç ã o   i m e d i a t a :   O   A g e n t e   p e d i u   a s   c r e d e n c i a i s   d a   ' c o n t a   5 '   a o   D i r e t o r   p a r a   c o n f i g u r a r   o   a m b i e n t e   e   c o n s e r t a r   o   e r r o .  
+ -   A ç ã o   i m e d i a t a :   O   A g e n t e   p e d i u   a s   c r e d e n c i a i s   d a   ' c o n t a   5 '   a o   D i r e t o r   p a r a   c o n f i g u r a r   o   a m b i e n t e   e   c o n s e r t a r   o   e r r o . 
+ 
  
 ---
 ### [SESSAO 01/07/2026 - MIGRACAO FLUX.2 PYTHON PURO NA H100 - 01/07/2026 13:19]
@@ -1529,7 +1560,8 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
 **BUG 2 - ModuleNotFoundError: No module named 'backend' (apollo_modal_engine.py)**
 - ERRO: O container do router FastAPI (debian_slim) nao tinha acesso ao pacote 'backend'
 - Os imports import backend.cloud_tools.engines.* falhavam causando crash loop no router
-- FIX: Adicionado .add_local_python_source("backend") na definicao da outer_image
+- FIX: Adicionado .add_local_python_source("backend") na definicao da 
+outer_image
 - Linha corrigida: router_image = modal.Image.debian_slim().pip_install(...).add_local_python_source("backend").add_local_dir(...)
 - Impacto: O endpoint /ping e todos os outros estavam em crash loop, timeout em 30s
 
@@ -1579,7 +1611,8 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
 
 
  # # #   [ 2 0 2 6 - 0 7 - 0 1 ]   O t i m i z a � � o   F a s t   M o d e   ( F L U X . 2   C o m f y U I ) 
- O   m o t o r   \ F l u x 2 C o m f y E n g i n e \   f o i   a t u a l i z a d o   c o m   i n j e � � o   d i n � m i c a   d e   p a r � m e t r o s   ( 1 2   S t e p s ,   5 1 2 x 5 1 2 )   c o r t a n d o   o   t e m p o   d a   H 1 0 0   d e   7 9 s   p a r a   5 7 s .   O   c o l d   s t a r t   c o m   g h o s t   j o b   s e   m a n t e v e   e m   ~ 6 . 8 5 s .   A   p r � x i m a   e v o l u � � o   d e p e n d e   d o   r e c e b i m e n t o   d o   J S O N   d o   m o d e l o   d e s t i l a d o   F L U X . 2   K l e i n   4 B .  
+ O   m o t o r   \ F l u x 2 C o m f y E n g i n e \   f o i   a t u a l i z a d o   c o m   i n j e � � o   d i n � m i c a   d e   p a r � m e t r o s   ( 1 2   S t e p s ,   5 1 2 x 5 1 2 )   c o r t a n d o   o   t e m p o   d a   H 1 0 0   d e   7 9 s   p a r a   5 7 s .   O   c o l d   s t a r t   c o m   g h o s t   j o b   s e   m a n t e v e   e m   ~ 6 . 8 5 s .   A   p r � x i m a   e v o l u � � o   d e p e n d e   d o   r e c e b i m e n t o   d o   J S O N   d o   m o d e l o   d e s t i l a d o   F L U X . 2   K l e i n   4 B . 
+ 
  
 ### [2026-07-01] RESOLU��O DEFINITIVA DO COMFYUI SERVERLESS (FLUX.2)
 - **Problema Cr�tico:** O deploy anterior falhou e gerou um Crash Loop de 9 minutos porque a depend�ncia 'requests' estava faltando no pip_install do router_image (apollo_modal_engine.py) e do flux2_comfy_image (flux_engine.py).
@@ -1598,7 +1631,8 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
 ### [2026-07-02] SUCESSO - RESTAURA��O DA INTEGRIDADE DO COMFYUI FLUX.2
 - **Progresso:** A imagem do paraquedista foi gerada com sucesso e precis�o! O sistema utilizou o image_flux2 .json ORIGINAL sem nenhuma altera��o. O resultado foi salvo em E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\testes_modal_output\homem_paraquedas.png.
 - **Problema Encontrado:** O servidor Modal encerrava a conex�o HTTP da API ap�s 180 segundos. Como a inicializa��o fria da H100 (Cold Start) somada ao tempo de renderiza��o do FLUX.2 consumia em torno de ~376s, o Python abortava a conex�o antes da imagem ser entregue.
-- **Solu��o Implementada:** Para testes e scripts em Python, ignoramos o roteador HTTP (equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.lookup e @app.local_entrypoint()). Isso remove o limite de 180s e garante a entrega da imagem.
+- **Solu��o Implementada:** Para testes e scripts em Python, ignoramos o roteador HTTP (
+equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.lookup e @app.local_entrypoint()). Isso remove o limite de 180s e garante a entrega da imagem.
 - **Aviso Futuro:** A API HTTP permanece com limite de 180s pelo roteador da Modal (padr�o de web endpoints). O workflow image_flux2 .json segue INTACTO.
 
 ### [2026-07-02] CONQUISTA: QUALIDADE DE MERCADO ATINGIDA E CONGELADA
@@ -2498,35 +2532,36 @@ O Auto-Blog CMS está 100% blindado contra-ataques, o Caching de disco usa SQLit
 - **NOVA ERA:** O criador humano (Diretor) aprovou a transição para a "Nova Fase". A Máquina agora vai operar baseada no documento `roadmap_100_improvements.md`, aguardando que o usuário atue diretamente no código enquanto a IA coordena as próximas evoluções.
 
 ### ?? [TESTE DO FLUX MULTI-CHAR NO MODAL] (09/07/2026)
-- Teste de gera��o ass�ncrona do Modal (Flux 2 Dev) com ComfyUI foi conclu�do com absoluto sucesso.
+- Teste de gera��o ass�ncrona do Modal (Flux 2 Dev) com ComfyUI foi conclu�do com absoluto sucesso.
 - A imagem multicharacter com Cyber-Ninja e Waitress foi salva.
-- A corre��o do snapshot no modal_app_engine que removia snap=True e CPU Monkey Patch foi validada.
+- A corre��o do snapshot no modal_app_engine que removia snap=True e CPU Monkey Patch foi validada.
 - O Motor da Lightning AI reescreveu os prompts de forma iterativa corretamente.
 
 ### ? [TESTE DO FLUX MULTI-CHAR USER SIMULATION] (09/07/2026)
-- Teste de simula��o de input do usu�rio com 3 personagens de imagens distintas (Jinx, Elon Musk, Homem Chorando) no mesmo cen�rio base.
-- O Motor da Lightning AI conseguiu construir o prompt din�mico isolando cada personagem (esquerda, centro, direita) sem fundir as caracter�sticas.
-- A execu��o no endpoint do Modal engasgou devido ao cold-start e timeout na API (Flux.1 pesa mais de 24GB), mas o pipeline de orquestra��o de prompt funcionou perfeitamente.
+- Teste de simula��o de input do usu�rio com 3 personagens de imagens distintas (Jinx, Elon Musk, Homem Chorando) no mesmo cen�rio base.
+- O Motor da Lightning AI conseguiu construir o prompt din�mico isolando cada personagem (esquerda, centro, direita) sem fundir as caracter�sticas.
+- A execu��o no endpoint do Modal engasgou devido ao cold-start e timeout na API (Flux.1 pesa mais de 24GB), mas o pipeline de orquestra��o de prompt funcionou perfeitamente.
 
 
 ---
 ### ??? [ARQUITETURA FUNDAMENTAL - FLEET DE CONTAS MODAL] (09/07/2026)
-**REGRA ABSOLUTA � NUNCA ESQUECER:**
-- As 5 contas Modal (Roxingo, Apollo, Descarga News, Historias7Dias, MacacoDriver) s�o **ESPELHOS** umas das outras.
-- Todas t�m a MESMA fun��o: servir o site Apollo Edit Web como infraestrutura de GPU.
-- O sistema de roteamento (WaterfallRouter/FleetBalancer) distribui as chamadas dos usu�rios entre elas em round-robin/load balance para que nenhuma conta seja esgotada sozinha.
-- Atualmente estamos na fase de constru��o/testes, ent�o estamos gastando uma conta de cada vez enquanto desenvolvemos. No futuro em produ��o, todas operam em paralelo.
-- NUNCA sugerir 'ativar uma conta como principal' � a arquitetura � sempre o POOL COMPLETO de contas com saldo dispon�vel.
-- O mecanismo de controle de saldo no admin panel � justamente para saber quais contas do pool ainda t�m cr�dito e quais precisam ser renovadas.
+**REGRA ABSOLUTA � NUNCA ESQUECER:**
+- As 5 contas Modal (Roxingo, Apollo, Descarga News, Historias7Dias, MacacoDriver) s�o **ESPELHOS** umas das outras.
+- Todas t�m a MESMA fun��o: servir o site Apollo Edit Web como infraestrutura de GPU.
+- O sistema de roteamento (WaterfallRouter/FleetBalancer) distribui as chamadas dos usu�rios entre elas em round-robin/load balance para que nenhuma conta seja esgotada sozinha.
+- Atualmente estamos na fase de constru��o/testes, ent�o estamos gastando uma conta de cada vez enquanto desenvolvemos. No futuro em produ��o, todas operam em paralelo.
+- NUNCA sugerir 'ativar uma conta como principal' � a arquitetura � sempre o POOL COMPLETO de contas com saldo dispon�vel.
+- O mecanismo de controle de saldo no admin panel � justamente para saber quais contas do pool ainda t�m cr�dito e quais precisam ser renovadas.
 
 ### ? [STATUS REPORT: MOTOR DE IMAGEM RESTAURADO] (10/07/2026)
-- **Conclus�o sobre o Motor:** O agente anterior cometeu o erro de abandonar o workflow que funcionava nativamente com 3 personagens via ComfyUI (workflow_3_faces.json), e tentou construir um " Motor Multipass\ ineficiente.
-- **A��o Tomada:** Restauramos o script original est_pulid_3faces.py, modificamos o UniversalComfyEngine no Modal para aceitar m�ltiplas imagens de refer�ncia simult�neas, enviando o workflow nativo de volta � GPU. A gera��o retorna para ~2 minutos ao inv�s de 15 minutos.
+- **Conclus�o sobre o Motor:** O agente anterior cometeu o erro de abandonar o workflow que funcionava nativamente com 3 personagens via ComfyUI (workflow_3_faces.json), e tentou construir um " Motor Multipass\ ineficiente.
+- **A��o Tomada:** Restauramos o script original est_pulid_3faces.py, modificamos o UniversalComfyEngine no Modal para aceitar m�ltiplas imagens de refer�ncia simult�neas, enviando o workflow nativo de volta � GPU. A gera��o retorna para ~2 minutos ao inv�s de 15 minutos.
 
 ### 🏆 VITÓRIA: MOTOR MULTI-PASS NUVEM MODAL (10/07/2026)
 - **Status:** Sucesso absoluto!
 - **Ação:** O script 	est_multipass_autonomous.py rodou o Motor Multipass (Inpaint Sequencial) perfeitamente nas GPUs da nuvem Modal na conta descarganews.
-- **O grande obstáculo do PyTorch 2.4 (TypeError enable_gqa e RuntimeError size of tensor a (32) vs b (8)):** Foi contornado inteligentemente! Em vez de usar imagens enormes e dar rebuild, injetamos um script dinâmico (patch_gqa.py) na pasta /comfyui/custom_nodes/ ANTES do ComfyUI subir no subprocesso em universal_engine.py. O patch não apenas remove o enable_gqa para evitar o TypeError, mas simula o GQA com epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo não faz broadcast automático para GQA).
+- **O grande obstáculo do PyTorch 2.4 (TypeError enable_gqa e RuntimeError size of tensor a (32) vs b (8)):** Foi contornado inteligentemente! Em vez de usar imagens enormes e dar rebuild, injetamos um script dinâmico (patch_gqa.py) na pasta /comfyui/custom_nodes/ ANTES do ComfyUI subir no subprocesso em universal_engine.py. O patch não apenas remove o enable_gqa para evitar o TypeError, mas simula o GQA com 
+epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo não faz broadcast automático para GQA).
 - **Resultado:** O Motor rodou com consistência total em cerca de 2.5 min na nuvem, as requisições 200 OK foram logadas, e o artefato visual multipass_final.png foi salvo na raiz de testes do usuário com os 3 personagens corretamente injetados (Jinx, Elon, Monkey). Não mudamos de conta e usamos o seu saldo disponível (que teve o límite ajustado).
 
 ### 🕵️ [CRON SYNC - MAESTRO (10/07/2026) - ITERATION 10 / DIAGNÓSTICO DEFINITIVO] 🕵️
@@ -2617,9 +2652,9 @@ Se o prompt for rico, o Flux gera a imagem com consistência perfeita sem distor
 | `E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/.agents/AGENTS.md` | Regras do projeto Apollo |
 
 ### Status Atual (Checkpoint 120)
-- **Deploy da Engine Modal**: Atualizado com corre��o de FileExistsError na inicializa��o de n�s ComfyUI que conflitavam (pulid_ll_patch.py patch robusto contra erro Errno 17).
-- **Inpaint Sequencial**: Falha anterior do pipeline n�o foi por uso do PuLID, mas por crash do motor Modal no download global do AntelopeV2. Script 	est_multipass_autonomous.py foi corrigido para usar o workflow inviol�vel 10resultado_3_personagens_CHAINED_klein.json.
-- **Imagem de 3 personagens finalizada**: Pipeline aut�nomo executou base prompt e 3 inpaint sequenciais com trava de texto. Gera��o salva em multipass_final_CHAINED.png.
+- **Deploy da Engine Modal**: Atualizado com corre��o de FileExistsError na inicializa��o de n�s ComfyUI que conflitavam (pulid_ll_patch.py patch robusto contra erro Errno 17).
+- **Inpaint Sequencial**: Falha anterior do pipeline n�o foi por uso do PuLID, mas por crash do motor Modal no download global do AntelopeV2. Script 	est_multipass_autonomous.py foi corrigido para usar o workflow inviol�vel 10resultado_3_personagens_CHAINED_klein.json.
+- **Imagem de 3 personagens finalizada**: Pipeline aut�nomo executou base prompt e 3 inpaint sequenciais com trava de texto. Gera��o salva em multipass_final_CHAINED.png.
 
 
 ## Descoberta Crítica: O Segredo do Text-Locking
@@ -2662,21 +2697,21 @@ Este protocolo é a conquista final após gasto de mais de 30 dólares em testes
 - **Atividade de Background:** Cron Job 2 disparado.
 - **Ação:** O painel coletivo (antigravity_hive_bus.md) foi revisado e uma nova estratégia de cross-channel (compartilhamento de atores via Flux 2 Multi-Pass) foi registrada para os canais da rede.
 
-### Registro Estrat�gico (12 de Julho de 2026)
-- **Limpeza do F2P e Phantom Fleet:** O sistema de Economia (moedas/F2P) e os agentes analistas (market_analyst_agent) que rodavam ocultos no servidor_web.py foram removidos. O c�digo antigo tentava importar openai e estava fora do escopo (Apollo Edit Web foca apenas na gera��o via Lightning AI e interface de v�deos). Rotas F2P /api/store/buy e Websockets do Phantom Fleet apagados para estabilizar o backend.
+### Registro Estrat�gico (12 de Julho de 2026)
+- **Limpeza do F2P e Phantom Fleet:** O sistema de Economia (moedas/F2P) e os agentes analistas (market_analyst_agent) que rodavam ocultos no servidor_web.py foram removidos. O c�digo antigo tentava importar openai e estava fora do escopo (Apollo Edit Web foca apenas na gera��o via Lightning AI e interface de v�deos). Rotas F2P /api/store/buy e Websockets do Phantom Fleet apagados para estabilizar o backend.
 
-- **Sess�o do WhatsApp:** A pasta .wwebjs_auth foi limpa para corrigir o crash de inje��o do Puppeteer (Execution context destroyed). O usu�rio teve que relogar via QR Code, mas agora o cliente usa cache remoto para evitar novos crashes.
+- **Sess�o do WhatsApp:** A pasta .wwebjs_auth foi limpa para corrigir o crash de inje��o do Puppeteer (Execution context destroyed). O usu�rio teve que relogar via QR Code, mas agora o cliente usa cache remoto para evitar novos crashes.
 
-- **Roteamento Modal:** O arquivo cloud_accounts_db.json foi atualizado para definir a conta descarganews como ativa. A URL hardcoded no modal_client.py tamb�m foi atualizada para descarganews. Isso corrige a aus�ncia de resposta (comandos iam para pollolaplata ao inv�s da conta correta).
+- **Roteamento Modal:** O arquivo cloud_accounts_db.json foi atualizado para definir a conta descarganews como ativa. A URL hardcoded no modal_client.py tamb�m foi atualizada para descarganews. Isso corrige a aus�ncia de resposta (comandos iam para pollolaplata ao inv�s da conta correta).
 
 ### ⚡ Registro Estratégico (12 de Julho de 2026 - Roteamento Modal e Upscale Automatizado)
 - **Fix de Caminhos da Modal (Linux vs Windows):** O motor apollo_modal_engine.py foi corrigido. Quando o roteador da Modal rodava em um container e tentava acessar o arquivo JSON de upscale, a rota estava configurada localmente (E:\...). Corrigido para acessar /workflows/flux_upscale_ultrasharp.json. O deploy (modal deploy) resolveu o crash da GPU.
 - **Universal Upscaling 4x Integrado:** Agora toda a requisição de 'Text-to-Image' aciona automaticamente o upscale ultra-sharp (Phase 2) logo após gerar a imagem base (Phase 1). O tempo na H100 quente marca cerca de 63 segundos totais para os dois fluxos, frio marca cerca de 144s.
 - **Botão UI:** Um novo botão de baixar imagem nativo foi colocado na Header do Visualizador do HTML.
 
-### ??? Registro Autom�tico - 2026-07-12
+### ??? Registro Autom�tico - 2026-07-12
 - **Atividade de Background:** Cron Job 2 disparado (Iteration 6).
-- **A��o:** Sincroniza��o do painel coletivo (antigravity_hive_bus.md) com os avan�os estruturais das Fases 61, 62 e 63 (Seguran�a XSS com DOMPurify, Escudo Anti-DDoS no Middleware e Webhooks Multi-Tenant). A blindagem da rede foi registrada na Hive.
+- **A��o:** Sincroniza��o do painel coletivo (antigravity_hive_bus.md) com os avan�os estruturais das Fases 61, 62 e 63 (Seguran�a XSS com DOMPurify, Escudo Anti-DDoS no Middleware e Webhooks Multi-Tenant). A blindagem da rede foi registrada na Hive.
 
 ### 🧠 Registro Automático - 2026-07-13 (100 Fases Concluídas)
 - **Status:** GRAND FINALE
@@ -2766,36 +2801,36 @@ Ele não é apenas uma fonte de renda secundária, ele é o **Laboratório de Va
 4. **Deploy Contínuo (Magia):** Quando o Antigravity alterar o código localmente e o CEO aprovar, nós enviamos para o GitHub. A Vercel e a Modal "escutam" o GitHub e atualizam a internet automaticamente em segundos. A Oracle fará um `git pull`. O controle absoluto permanece no computador do CEO.
 
 
-### ?? [PIVOT ESTRAT�GICO APROVADO] - 18/07/2026
-**Decis�o do CEO:** O Apollo Edit Web n�o ser� lan�ado como um monstro gigantesco. A estrat�gia agora � o **Lean Startup (Produto M�nimo Vi�vel - MVP)**.
-1. **Foco 1 (Valida��o):** Lan�ar a M�fia de Blogs (Auto Blog) primeiro para gerar tra��o e validar a infraestrutura (Vercel + Oracle).
-2. **Foco 2 (MVP Apollo):** O Apollo Edit Web nascer� apenas com a **Aba Diretor** (Gera��o de Imagens com Flux e edi��o de Open Sources). Todo o resto (Roteiro, TTS, Broadcast) ser� congelado para atualiza��es futuras (Fase 2, 3, etc.). O objetivo � ter um produto �nico, simples, mas que resolva um problema real com maestria.
-**Conclus�o:** O roteiro de desenvolvimento acaba de ficar 10x mais r�pido e seguro.
+### ?? [PIVOT ESTRAT�GICO APROVADO] - 18/07/2026
+**Decis�o do CEO:** O Apollo Edit Web n�o ser� lan�ado como um monstro gigantesco. A estrat�gia agora � o **Lean Startup (Produto M�nimo Vi�vel - MVP)**.
+1. **Foco 1 (Valida��o):** Lan�ar a M�fia de Blogs (Auto Blog) primeiro para gerar tra��o e validar a infraestrutura (Vercel + Oracle).
+2. **Foco 2 (MVP Apollo):** O Apollo Edit Web nascer� apenas com a **Aba Diretor** (Gera��o de Imagens com Flux e edi��o de Open Sources). Todo o resto (Roteiro, TTS, Broadcast) ser� congelado para atualiza��es futuras (Fase 2, 3, etc.). O objetivo � ter um produto �nico, simples, mas que resolva um problema real com maestria.
+**Conclus�o:** O roteiro de desenvolvimento acaba de ficar 10x mais r�pido e seguro.
 
 
 ### ??? [ROADMAP OFICIAL REFINADO: A JORNADA ENXUTA] - 18/07/2026
-**Consenso entre CEO e Conselheiros:** O projeto abandona a vis�o de lan�amento 'monol�tico' e adota a estrat�gia de **Lan�amento Especializado em 4 Fases**.
+**Consenso entre CEO e Conselheiros:** O projeto abandona a vis�o de lan�amento 'monol�tico' e adota a estrat�gia de **Lan�amento Especializado em 4 Fases**.
 
-**Fase 1: O Laborat�rio (Auto Blog)**
-- Validar infraestrutura (Vercel + Oracle + Dom�nios).
-- Validar agentes, gera��o de conte�do e publica��o.
-- Obter dados reais de tra��o e custos.
+**Fase 1: O Laborat�rio (Auto Blog)**
+- Validar infraestrutura (Vercel + Oracle + Dom�nios).
+- Validar agentes, gera��o de conte�do e publica��o.
+- Obter dados reais de tra��o e custos.
 
 **Fase 2: O Produto Especializado (Apollo Edit 1.0 - Aba Diretor)**
-- Core Loop: Entrada -> Gera��o de Imagens -> Edi��o Autom�tica -> Exporta��o.
-- Regra de Ouro: 'Entrou um material, saiu um v�deo utiliz�vel'.
-- Foco em uma �nica fun��o magistral (Dire��o de Arte e IA).
+- Core Loop: Entrada -> Gera��o de Imagens -> Edi��o Autom�tica -> Exporta��o.
+- Regra de Ouro: 'Entrou um material, saiu um v�deo utiliz�vel'.
+- Foco em uma �nica fun��o magistral (Dire��o de Arte e IA).
 
-**Fase 3: O Monstro (Expans�o de M�dulos)**
-- Roteiro inteligente, Busca de Tend�ncias, Gamifica��o, Templates, P�s-produ��o.
+**Fase 3: O Monstro (Expans�o de M�dulos)**
+- Roteiro inteligente, Busca de Tend�ncias, Gamifica��o, Templates, P�s-produ��o.
 
 **Fase 4: A Fronteira (Broadcast)**
-- Lives, Avatares, Transmiss�o Cont�nua, Ecossistema Completo.
+- Lives, Avatares, Transmiss�o Cont�nua, Ecossistema Completo.
 
-**Conclus�o:** O Apollo Edit Web n�o ser� 'pobrezinho', ser� **ENXUTO** e **ESPECIALIZADO**.
+**Conclus�o:** O Apollo Edit Web n�o ser� 'pobrezinho', ser� **ENXUTO** e **ESPECIALIZADO**.
 
-- **2026-07-21**: Backend FastAPI totalmente estabilizado na VM Oracle A1.Flex (IP 163.176.135.59). Erros de importa��o do 'config_manager' e permiss�o de pastas do PM2 corrigidos. Dom�nio apolloedit.com oficializado e registrado no Cloudflare pelo usu�rio. Pr�ximo passo: Nginx e DNS.
-- **2026-07-21**: Deploy da infraestrutura Cloudflare (apontamento DNS e Criptografia Flexible SSL) conclu�do. Firewall VCN da Oracle devidamente liberado para tr�fego web (portas 80 e 443). API do backend exposta de forma segura em https://api.apolloedit.com/docs.
+- **2026-07-21**: Backend FastAPI totalmente estabilizado na VM Oracle A1.Flex (IP 163.176.135.59). Erros de importa��o do 'config_manager' e permiss�o de pastas do PM2 corrigidos. Dom�nio apolloedit.com oficializado e registrado no Cloudflare pelo usu�rio. Pr�ximo passo: Nginx e DNS.
+- **2026-07-21**: Deploy da infraestrutura Cloudflare (apontamento DNS e Criptografia Flexible SSL) conclu�do. Firewall VCN da Oracle devidamente liberado para tr�fego web (portas 80 e 443). API do backend exposta de forma segura em https://api.apolloedit.com/docs.
 
 ---
 ### 🏆 MARCO HISTÓRICO: O NASCIMENTO DO APOLLO EDIT NA NUVEM (20/07/2026)
@@ -2812,7 +2847,7 @@ A Tríade de Ouro está 100% ONLINE e validada:
 
 O próximo grande passo estratégico será plugar o **Supabase** (Banco de Dados/Login) e iniciar as interfaces, começando pelo sistema do **Apollo Autoblog** utilizando essa mesma super infraestrutura.
 
-- **2026-07-21**: Deploy Oficial Fase 1: Supabase + Tela de Login Premium enviados para o GitHub. A integra��o Cont�nua (CI/CD) da Vercel assumiu o pacote e publicou em apolloedit.com. O frontend agora est� protegido por autentica��o.
+- **2026-07-21**: Deploy Oficial Fase 1: Supabase + Tela de Login Premium enviados para o GitHub. A integra��o Cont�nua (CI/CD) da Vercel assumiu o pacote e publicou em apolloedit.com. O frontend agora est� protegido por autentica��o.
 
 ### 👑 [PIVOT ESTRATÉGICO FINAL - A REDE SOCIAL DA IA] - 21/07/2026
 **A Epifania do CEO:** O Apollo Edit Web deixará de ser apenas um "software SaaS" isolado. A infraestrutura Vercel + Oracle + Domínios servirá de base para a criação de uma **Rede Social de Criadores**.
@@ -2835,14 +2870,15 @@ Sabemos que essa é a visão de longo prazo. Por enquanto, começamos pequenos. 
 
 - **2026-07-21 [VITÓRIA VERCEL]**: A Vercel insistia em falhar o build por lixo histórico (tentativas de compilação Next.js) e limites de tamanho ao escanear o repositório. O CEO acionou o Perplexity e escalamos para o **Plano C (Nível Nuclear)**. Desativamos a auto-detecção da Vercel migrando todos os arquivos estáticos para a pasta .vercel/output/static (Build Output API) e atualizamos o ercel.json para apontar para lá. O site subiu com 100% de sucesso. **REGRA DE OURO:** NUNCA altere essa estrutura. A Vercel agora ignora o build e serve a pasta output.
 
-- **2026-07-21 [VERCEL CORRE��O DEFINITIVA E DEPLOY ORACLE]**: A tentativa anterior de for�ar o build na pasta .vercel/output/static gerou problemas 404 em assets como o \g_timeline.png\. A solu��o final foi executar \git rm -r .vercel\ para remover a pasta do versionamento e deixar a Vercel compilar na raiz (Root Directory) naturalmente, utilizando o \ercel.json\ simples. Funcionou! O Frontend est� online. 
-- **Nova Etapa**: Agora solicitamos o IP da VPS Oracle para rodar um script \deploy_oracle.ps1\ e subir a pasta \ackend/\ via SSH para a infraestrutura, revivendo as fun��es dos bot�es do frontend.
+- **2026-07-21 [VERCEL CORRE��O DEFINITIVA E DEPLOY ORACLE]**: A tentativa anterior de for�ar o build na pasta .vercel/output/static gerou problemas 404 em assets como o \g_timeline.png\. A solu��o final foi executar \git rm -r .vercel\ para remover a pasta do versionamento e deixar a Vercel compilar na raiz (Root Directory) naturalmente, utilizando o \ercel.json\ simples. Funcionou! O Frontend est� online. 
+- **Nova Etapa**: Agora solicitamos o IP da VPS Oracle para rodar um script \deploy_oracle.ps1\ e subir a pasta \ackend/\ via SSH para a infraestrutura, revivendo as fun��es dos bot�es do frontend.
 
 - **2026-07-21 [DEPLOY DA API NO ORACLE VPS]**: 
-  - **Problema de SSH no Windows**: Ao tentar conectar na Oracle VPS usando a chave \ssh-key-2026-07-20.key\, o SSH do Windows bloqueou por 'Bad permissions' (permiss�es muito abertas). A tentativa de usar o \icacls\ falhou repetidas vezes por causa de SIDs desconhecidos e falta de privil�gio \SeSecurityPrivilege\.
-  - **Solu��o (A Grande Sacada)**: O OpenSSH do Windows gerencia perfeitamente as chaves que est�o dentro da pasta padr�o \.ssh\. Resolvemos copiando a chave para \$env:USERPROFILE\.ssh\oracle_key\. A conex�o funcionou instantaneamente sem precisar lutar contra o ACL do Windows.
-  - **Transfer�ncia**: O Backend continha pastas pesadas (\__pycache__\, \env\, etc). Para transferir r�pido para a nuvem (35MB), compactamos localmente usando \Compress-Archive\ e enviamos o \ackend.zip\ via SCP.
-  - **Setup Remoto**: Executamos via t�nel SSH a atualiza��o do Linux (Ubuntu 24.04), descompacta��o, cria��o do \env\ e instala��o do \equirements.txt\. A API est� sendo configurada para responder �s requisi��es do frontend Vercel.
+  - **Problema de SSH no Windows**: Ao tentar conectar na Oracle VPS usando a chave \ssh-key-2026-07-20.key\, o SSH do Windows bloqueou por 'Bad permissions' (permiss�es muito abertas). A tentativa de usar o \icacls\ falhou repetidas vezes por causa de SIDs desconhecidos e falta de privil�gio \SeSecurityPrivilege\.
+  - **Solu��o (A Grande Sacada)**: O OpenSSH do Windows gerencia perfeitamente as chaves que est�o dentro da pasta padr�o \.ssh\. Resolvemos copiando a chave para \$env:USERPROFILE\.ssh\oracle_key\. A conex�o funcionou instantaneamente sem precisar lutar contra o ACL do Windows.
+  - **Transfer�ncia**: O Backend continha pastas pesadas (\__pycache__\, \env\, etc). Para transferir r�pido para a nuvem (35MB), compactamos localmente usando \Compress-Archive\ e enviamos o \ackend.zip\ via SCP.
+  - **Setup Remoto**: Executamos via t�nel SSH a atualiza��o do Linux (Ubuntu 24.04), descompacta��o, cria��o do \env\ e instala��o do \
+equirements.txt\. A API est� sendo configurada para responder �s requisi��es do frontend Vercel.
 
 - **2026-07-22 [CONEXÃO DEFINITIVA VERCEL -> ORACLE (PM2 vs SYSTEMD)]**:
   - **O Problema da API Offline**: O frontend Vercel estava apontando perfeitamente para a VPS através do arquivo `vercel.json` (Rewrite API). Porém, ao tentar consumir a rota `/api/search-youtube`, o servidor respondia `{"detail":"Not Found"}`.
@@ -2878,16 +2914,16 @@ Para ligar o Vercel (Front) no Oracle (Back) de forma invisível para o usuário
 - **Análise dos Logs e do Ambiente:** O código Python (lux_txt2img_engine.py) **POSSUI** a flag enable_memory_snapshot=True. No entanto, logs antigos mostram a mensagem Memory snapshots are disabled for ephemeral apps. Deploy your app with modal deploy to enable memory snapshots. Isso indica que, se o app for rodado com modal serve (efêmero) ou se houver alguma inconsistência no deploy, o Snapshot não é criado ou não é usado.
 - **Conclusão e Ação:** O usuário está **correto**. A tecnologia de Snapshot que ele desenvolveu para o Apollo reduz drasticamente o Cold Start (restaurando o modelo na RAM em segundos). A variação de 190s ocorreu provavelmente porque o app rodou sem o Snapshot ativo (possivelmente devido a um deploy corrompido anterior ou execução efêmera), forçando um Cold Start tradicional severo. Com o deploy final definitivo que acabei de executar via modal deploy, o Snapshot foi recriado (demorou quase 7 segundos para compilar a imagem remota). Na próxima execução, o tempo de Cold Start deve voltar para a casa dos ~60s com Upscale funcionando.
 
-### ?? [RESOLVIDO: O MIST�RIO DA ATUALIZA��O FANTASMA (2026-07-24)] ??
-- **O Problema Reportado:** O usu�rio testou o Upscale na vers�o online (Canal Tutorial das Coisas) e relatou que a imagem continuava saindo sem Upscale e demorando mais de 2 minutos, frustrando as expectativas ap�s a corre��o anterior.
-- **O Diagn�stico Real (Workspace Incorreto):** O c�digo local foi perfeitamente consertado. O erro ocorreu no momento do deploy. O terminal local estava com o perfil da Modal configurado para descarganews (Workspace Secund�rio), ent�o as corre��es do Upscale foram parar no servidor errado! O frontend do usu�rio continuava chamando o Workspace canaltutorialdascoisas, que ainda rodava o c�digo antigo e ignorava o Upscale.
-- **A A��o Corretiva:** O comando de deploy foi executado novamente for�ando a inje��o expl�cita dos tokens corretos do Workspace canaltutorialdascoisas. Os arquivos pollo_modal_engine.py e universal_engine.py foram atualizados com sucesso no servidor de produ��o.
-- **Resultado:** A vers�o online do Canal Tutorial das Coisas agora possui oficialmente o c�digo de Upscale.
+### ?? [RESOLVIDO: O MIST�RIO DA ATUALIZA��O FANTASMA (2026-07-24)] ??
+- **O Problema Reportado:** O usu�rio testou o Upscale na vers�o online (Canal Tutorial das Coisas) e relatou que a imagem continuava saindo sem Upscale e demorando mais de 2 minutos, frustrando as expectativas ap�s a corre��o anterior.
+- **O Diagn�stico Real (Workspace Incorreto):** O c�digo local foi perfeitamente consertado. O erro ocorreu no momento do deploy. O terminal local estava com o perfil da Modal configurado para descarganews (Workspace Secund�rio), ent�o as corre��es do Upscale foram parar no servidor errado! O frontend do usu�rio continuava chamando o Workspace canaltutorialdascoisas, que ainda rodava o c�digo antigo e ignorava o Upscale.
+- **A A��o Corretiva:** O comando de deploy foi executado novamente for�ando a inje��o expl�cita dos tokens corretos do Workspace canaltutorialdascoisas. Os arquivos pollo_modal_engine.py e universal_engine.py foram atualizados com sucesso no servidor de produ��o.
+- **Resultado:** A vers�o online do Canal Tutorial das Coisas agora possui oficialmente o c�digo de Upscale.
 
-### ?? [RESOLVIDO: RESOLU��O FINAL DE UPSCALE (2026-07-24)] ??
-- **O Problema Relatado:** O usu�rio reclamou que a imagem de upscale final estava voltando com resolu��o baixa (1280x720 ou semelhante) e n�o a resolu��o alta esperada.
-- **Diagn�stico do Motor:** Foi descoberto um comportamento n�o padronizado do n� \EmptyFlux2LatentImage\ da extens�o comfyui-tooling-nodes. Diferente do \EmptyLatentImage\ padr�o do SDXL que divide a resolu��o por 8, o \EmptyFlux2LatentImage\ divide a resolu��o inserida por 16. O VAE do Flux no entanto, decodifica multiplicando por 8. Assim, quando o motor pedia 1280x720, o n� gerava um latent de 80x45, que decodificado virava 640x360. A etapa de Upscale pegava 640x360, multiplicava por 4x (2560x1440) e ent�o reduzia em 0.5 (1280x720).
-- **A��o Executada:** Aplicada uma corre��o Matem�tica Estrita. Modificamos o script Python (\lux_txt2img_engine.py\) e os JSONs para multiplicar a resolu��o desejada por 2 ANTES de enviar para o \EmptyFlux2LatentImage\. Agora, ao solicitar a base otimizada 1024x576, passamos 2048x1152, gerando um latent perfeito de 128x72, que o VAE transforma em exatos 1024x576 reais. O upscale agora recebe a imagem real, aplica 4x e 0.5x, resultando nos perfeitos **2048x1152** finais desejados pelo usu�rio.
+### ?? [RESOLVIDO: RESOLU��O FINAL DE UPSCALE (2026-07-24)] ??
+- **O Problema Relatado:** O usu�rio reclamou que a imagem de upscale final estava voltando com resolu��o baixa (1280x720 ou semelhante) e n�o a resolu��o alta esperada.
+- **Diagn�stico do Motor:** Foi descoberto um comportamento n�o padronizado do n� \EmptyFlux2LatentImage\ da extens�o comfyui-tooling-nodes. Diferente do \EmptyLatentImage\ padr�o do SDXL que divide a resolu��o por 8, o \EmptyFlux2LatentImage\ divide a resolu��o inserida por 16. O VAE do Flux no entanto, decodifica multiplicando por 8. Assim, quando o motor pedia 1280x720, o n� gerava um latent de 80x45, que decodificado virava 640x360. A etapa de Upscale pegava 640x360, multiplicava por 4x (2560x1440) e ent�o reduzia em 0.5 (1280x720).
+- **A��o Executada:** Aplicada uma corre��o Matem�tica Estrita. Modificamos o script Python (\lux_txt2img_engine.py\) e os JSONs para multiplicar a resolu��o desejada por 2 ANTES de enviar para o \EmptyFlux2LatentImage\. Agora, ao solicitar a base otimizada 1024x576, passamos 2048x1152, gerando um latent perfeito de 128x72, que o VAE transforma em exatos 1024x576 reais. O upscale agora recebe a imagem real, aplica 4x e 0.5x, resultando nos perfeitos **2048x1152** finais desejados pelo usu�rio.
 
 ### 🚨 [RESOLVIDO: CRASH LOOP DE 7 MINUTOS NO SNAPSHOT DA MODAL + WORKSPACE SYNC (2026-07-25)] 🚨
 - **O Problema Relatado:** O usuário testou a geração online e relatou que demorou mais de 7 minutos sem nenhuma imagem aparecer ("Passou mais de sete minutos, nenhuma imagem apareceu... Parece que não tem atualização nenhuma").
@@ -2940,14 +2976,134 @@ def force_cpu_during_snapshot():
 - **O Resultado:** Os containers agora nascem com 35GB de modelos FLUX já gravados na RAM. O tempo de Cold Start do Upscale (que era punido em +80s) e do Txt2Img deve despencar vertiginosamente. A computação brutal de GPU (2.5K com Flux DEV por 25 steps) ainda tomará seus justos ~120s, mas o overhead de carregamento morreu.
 
 
-### ?? [ATUALIZA��O DE ARQUITETURA - 27/07/2026 - Itera�ao 3] ??
-- **Resolu��o do Gargalo do Upscale:** Identifiquei por que o Upscale (com motor quente) estava demorando 166s em vez de 100s. O roteador invoca o Flux2Txt2ImgEngine (50s de execu��o), mas o timeout ocioso do UniversalComfyEngine era de apenas 60s. Como o usu�rio demora alguns segundos para solicitar e o Flux demora 50s, o motor de Upscale (Universal) dava timeout antes de ser chamado, sofrendo um cold start intermedi�rio de 110s (mmap lazy loading).
-- **A��o Tomada:** Aumentei o scaledown_window de 60 para 120 segundos em todos os motores. Isso garante que o motor de Upscale aguarde a gera��o base terminar, mantendo-se quente e reduzindo o tempo de imagem + upscale quente de 166s para cerca de 100s, cumprindo a meta de sub-2-minutos.
+### ?? [ATUALIZA��O DE ARQUITETURA - 27/07/2026 - Itera�ao 3] ??
+- **Resolu��o do Gargalo do Upscale:** Identifiquei por que o Upscale (com motor quente) estava demorando 166s em vez de 100s. O roteador invoca o Flux2Txt2ImgEngine (50s de execu��o), mas o timeout ocioso do UniversalComfyEngine era de apenas 60s. Como o usu�rio demora alguns segundos para solicitar e o Flux demora 50s, o motor de Upscale (Universal) dava timeout antes de ser chamado, sofrendo um cold start intermedi�rio de 110s (mmap lazy loading).
+- **A��o Tomada:** Aumentei o scaledown_window de 60 para 120 segundos em todos os motores. Isso garante que o motor de Upscale aguarde a gera��o base terminar, mantendo-se quente e reduzindo o tempo de imagem + upscale quente de 166s para cerca de 100s, cumprindo a meta de sub-2-minutos.
 
-### ? [REVOLU��O DE PERFORMANCE: UPSCALE IN-NODE E RESOLU��O DO ERRO 400 - 27/07/2026] ?
-- **O Gargalo:** Antes, o Upscale rodava em containers separados (Flux2Txt2ImgEngine chamava o UniversalComfyEngine), causando lat�ncias absurdas de +4 minutos por gera��o quente.
-- **A A��o Tomada:** O Agente mesclou o fluxo de Upscale (UltraSharp) DIRETAMENTE no workflow base de Txt2Img (apollo_flux2_klein_upscale.json).
-- **O Problema (Bug 400 Bad Request):** O node UpscaleModelLoader rejeitava a gera��o afirmando que a lista estava vazia Value not in list: model_name: '4x-UltraSharp.pth' not in []. Isso ocorreu pois o ComfyUI procurava na pasta fixa /comfyui/models/upscale_models e n�o na pasta declarada pelo volume da Modal.
-- **A Solu��o Definitiva:** Adicionamos um symlink expl�cito (ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models) no m�todo load_model() das engines para for�ar o ComfyUI a ler o arquivo do volume da Modal.
-- **RESULTADO FINAL ABSOLUTO:** Tempo de gera��o **COM UPSCALE (M�quina Quente) despencou de 4 minutos para incr�veis 36.38 segundos**! O processo n�o precisa mais rotear para outro container, ocorrendo perfeitamente e aproveitando a placa quente do come�o ao fim.
+### ? [REVOLU��O DE PERFORMANCE: UPSCALE IN-NODE E RESOLU��O DO ERRO 400 - 27/07/2026] ?
+- **O Gargalo:** Antes, o Upscale rodava em containers separados (Flux2Txt2ImgEngine chamava o UniversalComfyEngine), causando lat�ncias absurdas de +4 minutos por gera��o quente.
+- **A A��o Tomada:** O Agente mesclou o fluxo de Upscale (UltraSharp) DIRETAMENTE no workflow base de Txt2Img (apollo_flux2_klein_upscale.json).
+- **O Problema (Bug 400 Bad Request):** O node UpscaleModelLoader rejeitava a gera��o afirmando que a lista estava vazia Value not in list: model_name: '4x-UltraSharp.pth' not in []. Isso ocorreu pois o ComfyUI procurava na pasta fixa /comfyui/models/upscale_models e n�o na pasta declarada pelo volume da Modal.
+- **A Solu��o Definitiva:** Adicionamos um symlink expl�cito (ln -sf /comfyui_models/upscale_models /comfyui/models/upscale_models) no m�todo load_model() das engines para for�ar o ComfyUI a ler o arquivo do volume da Modal.
+- **RESULTADO FINAL ABSOLUTO:** Tempo de gera��o **COM UPSCALE (M�quina Quente) despencou de 4 minutos para incr�veis 36.38 segundos**! O processo n�o precisa mais rotear para outro container, ocorrendo perfeitamente e aproveitando a placa quente do come�o ao fim.
 
+
+### 🗺️ [VISÃO ESTRATÉGICA E ROADMAP - 27/07/2026] 🗺️
+- **Autoblog como Módulo Núcleo:** O ecossistema do Autoblog não é um projeto isolado. Ele é a "linha de frente" do Apollo Edit Web. Toda a inteligência de busca e geração de conteúdo criada no chat do Autoblog será futuramente portada para dentro da plataforma ApolloEdit, permitindo aos usuários finais criarem seus próprios blogs de forma autônoma.
+- **Infraestrutura Compartilhada:** O Autoblog será lançado para a internet utilizando a exata mesma infraestrutura Serverless (Vercel + Modal) que construímos. Ele será o principal "cliente" da nossa API de geração de imagens FLUX e servirá como campo de testes de fogo em produção.
+- **MVP do Apollo Edit Web:** O Apollo Edit será lançado em sua primeira fase com um leque simplificado de ferramentas. Uma das âncoras desse MVP já está pronta: o gerador de imagens FLUX (Padrão Ouro de 7s a 36s).
+# # #   <��  [ D E P L O Y   O R A C L E   C L O U D   E   O T I M I Z A � � O   ( 2 0 2 6 - 0 7 - 2 7 ) ]   <��
+ -   * * R e s o l u � � o   d e   C r a s h   p o r   F a l t a   d e   M e m � r i a   ( O O M ) : * *   A   i n s t � n c i a   O r a c l e   t e m   a p e n a s   1 G B   R A M   e   6 G B   S w a p .   O   c o m a n d o   
+ e x t   b u i l d   e s t o u r o u   a   m e m � r i a   e   c a u s o u   u m   f r e e z e .   A   c o r r e � � o   a p l i c a d a   f o i   c r i a r   u m   s w a p   d e   4 G B   d e d i c a d o   e   f o r � a r   a   c o n f i g u r a � � o   d o   k e r n e l    m . p a n i c _ o n _ o o m = 1   e   k e r n e l . p a n i c = 1 0   p a r a   a u t o r r e c u p e r a � � o   e m   c r a s h e s   a b s o l u t o s .   O   b u i l d   d o   N o d e   t a m b � m   f o i   c o n t i d o   c o m   N O D E _ O P T I O N S = ' - - m a x _ o l d _ s p a c e _ s i z e = 2 0 4 8 ' . 
+ -   * * E r r o   d e   B u i l d   T u r b o p a c k : * *   O   c � d i g o - f o n t e   e m   T e x t T o S p e e c h P l a y e r . t s x   p o s s u � a   u m a   s i n t a x e   d e   b a c k s l a s h   ( e s c a p e   \ )   e s c a p a n d o   b a c k t i c k s   d e n t r o   d o   t e m p l a t e   l i t e r � r i o   J S X   c l a s s N a m e = { \ . . . \ } ,   q u e   �   s u p o r t a d o   e m   a l g u n s   c o n t e x t o s   m a s   q u e b r o u   o   P a r s e r   E C M A   d o   T u r b o p a c k   ( N e x t . j s   1 6 + ) .   F o i   s u b s t i t u � d o   p e l o   u s o   l i m p o   d e   c r a s e s   r e a i s   `   c l a s s N a m e = { \ . . . \ }   `   s e m   a s   c o n t r a - b a r r a s   \ . 
+ -   * * V a l i d a � � o   d e   A r q u i t e t u r a   e m   M � d u l o   F r a c o : * *   O   V P S   o r q u e s t r a r �   a p e n a s   o   r o t e a m e n t o .   O   p e s o   r e a l   ( p r o c e s s a m e n t o )   �   e x t e r n a l i z a d o   p a r a   a   M o d a l .   P M 2   g a r a n t i r �   o   a u t o - r e s t a r t   c o n t � n u o   d a   a p l i c a � � o   e   d o   d a e m o n   d o   A u t o b l o g . 
+ 
+ 
+ 
+- **[2026-07-27 17:06]** Corrigido o diret�rio de montagem est�tica no servidor_web.py e configurado NGINX para 8080 na M�quina 1. Apollo Edit agora est� online em http://163.176.135.59/.
+
+- **[2026-07-27 17:20]** Corre��o do bug de parse do Turbopack em TextToSpeechPlayer.tsx feita com sucesso. Optado por rodar o 
+pm run build localmente (no servidor bare-metal do CEO) para evitar OOM Kill na M�quina 2 (e2-micro 1GB). Aguardando deploy do .next zipado ap�s confirma��o de SSH.
+
+- **[2026-07-27 17:22]** O Build Local do Autoblog foi conclu�do com absoluto sucesso em 22.2s. Arquivos vitais est�o sendo compactados em utoblog_deploy.zip.
+
+- **[2026-07-27 17:29]** Erro reportado pelo CEO no gerador de imagens: HTTP 404: modal-http: workspace is disabled. Diagn�stico: A Modal desativou o workspace do usu�rio (provavelmente limite de cr�ditos ou suspens�o por uso excessivo dos testes OOM/Cold Start de hoje). O c�digo do frontend (Apollo Edit) est� intacto.
+
+- **[2026-07-27 18:00]** Compila��o do Next.js do CMS (Autoblog) na M�quina 2 em andamento. Foi necess�rio resolver depend�ncias ausentes (framer-motion) e sintaxe de backticks quebrada via script remoto. Build prosseguindo na verifica��o TypeScript.
+
+- **[2026-07-27 18:31]** SUCESSO ABSOLUTO: O Next.js foi compilado com sucesso na VPS (M�quina 2) da Oracle. O Servidor PM2 subiu a aplica��o sem erros e o frontend CMS do Autoblog agora est� operante e online no ar (163.176.209.213).
+
+### ?? [CORRE��O ARQUITETURAL CR�TICA - LIMITES ORACLE E VERCEL] - 2026-07-28
+- **Erro Reconhecido:** O Agente assumiu a disponibilidade de inst�ncias ARM de 24GB na Oracle. O CEO corrigiu: **Essa m�quina N�O est� dispon�vel (out of capacity). O limite real da Oracle Free Tier para n�s s�o 2 m�quinas Micro de 1GB RAM.**
+- **Problema Vercel Reconhecido:** O CEO apontou corretamente que o Vercel sofre de timeouts severos (10s a 60s) em Serverless Functions, impossibilitando rotas que rodam FFmpeg, gera��es longas de IA ou processamento pesado. Usar Vercel para o backend de processamento � suic�dio para o projeto.
+- **Nova Diretriz (Desacoplamento):** 
+  1. O Frontend pode at� ficar no Vercel pela velocidade (CDN), mas as requisi��es n�o podem ser s�ncronas.
+  2. O processamento pesado (V�deo, �udio, Flux) deve rodar em filas (Background Jobs) via **Modal** (como o CEO sugeriu anteriormente) ou na M�quina 1 (Local/Windows).
+  3. A M�quina Oracle de 1GB serve apenas para roteamento leve (Nginx/API) e Banco de Dados (SQLite), NUNCA para processamento de m�dia.
+
+### ?? [CORRE��O ARQUITETURAL - CLOUD ONLY & MODAL WARM POOL] - 2026-07-28
+- **Nenhum Processamento Local:** O CEO decretou que o projeto � 100% Cloud. A M�quina Local (Windows) N�O ser� usada para processamento pesado em produ��o.
+- **Fazenda de GPUs (Modal):** A escalabilidade brutal vir� de **mais de 10 contas no Modal** operando m�ltiplas GPUs simultaneamente.
+- **Estrat�gia de Lat�ncia (Warm Pool):** O sistema deve ser desenhado para aproveitar cont�ineres "quentes" (Warm Starts) no Modal. Um usu�rio rec�m-chegado assume a GPU ainda aquecida pelo usu�rio anterior, eliminando o Cold Start e garantindo gera��es de imagem/v�deo quase instant�neas.
+- **Vercel e Oracle (O Gargalo de Tr�fego):** Foi reafirmado que o Vercel (CDN Global) e a Oracle (1GB RAM) dar�o conta do tr�fego web, contanto que o SQLite na Oracle esteja configurado com WAL (Write-Ahead Logging) para evitar "database is locked" durante centenas de requisi��es simult�neas.
+
+
+### 🚀 [PROGRESSO: IMPLANTAÇÃO NA CONTA 8 - 2026-07-28]
+- **Status:** A Conta 8 (filosofiadocodigo) foi integrada ao leet_secrets.json.
+- **Próximo Passo:** Deploy do motor validado lux_txt2img_engine_3fbf96d_ORIGINAL_QUE_FUNCIONOU.py da VERSAO_MASTER_VALIDADA para espelhar a performance de 60s da Conta 7.
+- **Integração:** Após o deploy, o endpoint da Conta 8 será atualizado no projeto AUTO_BLOG_CMS para manter o fluxo operacional.
+
+- **[2026-07-28]** Os endpoints APOLLO_RENDER_URL e APOLLO_MULTI_PASS_URL no projeto AUTO_BLOG_CMS foram atualizados preventivamente para apontar para o novo endereco da Conta 8 (filosofiadocodigo--apollo-render-router-apollo-api.modal.run). O deploy do webhook FastAPI (Router) esta rodando em background e quase finalizando.
+
+
+ 
+ # #   2 0 2 6 - 0 7 - 2 8   -   S e t u p   C o n t a   8   c o m   F l u x   2   D e v   e   K l e i n 
+ 
+ -   A   C o n t a   8   f o i   c o n f i g u r a d a   c o m   o   r o u t e r   a p o l l o _ m o d a l _ e n g i n e . p y   c o m   a s   r o t a s   / g e n e r a t e / i m a g e   e   / g e n e r a t e / m u l t i p a s s . 
+ 
+ -   F o r a m   b a i x a d o s   o s   m o d e l o s   d o   F l u x   2   D e v   F P 8   p a r a   T x t 2 I m g   e   I m g 2 I m g . 
+ 
+ -   F o r a m   b a i x a d o s   o s   m o d e l o s   F l u x   2   K l e i n   4 B   e   P u L I D   p a r a   o   M u l t i p a s s   n o   A u t o b l o g . 
+ 
+ - **[2026-07-28]** Configuracao do upscale (botao UI) corrigida no servidor_web.py para o MultiPass (Varias Imagens). Agora o upscale (Passo 4 - Insane) e opcional e so acionado quando use_upscale=True e passado no JSON payload, honrando o clique do botao na interface. O comportamento default do apollo_modal_engine.py foi definido como use_upscale=False para evitar downscales/upscales desnecessarios nos passos iterativos do Modal, otimizando muito o tempo total de geracao.
+
+### ?? [VISAO DE PRODUTO: O 'CAPCUT KILLER' OPEN SOURCE] - 2026-07-29
+- **Estrategia de Mercado:** O CEO definiu que o www.apolloedit.com ira competir diretamente com o CapCut Web no mercado de geracao de video gratuito, porem focando no nicho 'Pro/Criador Avancado'. A missao e entregar mais controle, pipelines customizados (Workflows tipo ComfyUI) e producao em massa de Micro-Dramas/Series, superando a limitacao de 'um video por vez' do CapCut.
+- **Diferenciais Chave:**
+  1. **Character Studio:** Manutencao de consistencia de personagens (Character Bible + IPAdapter/LoRA) entre multiplos videos e episodios.
+  2. **Pipeline Aberto:** O usuario pode escolher o motor (Flux, LTX, Wan 2.x) e ver o pipeline, em vez de uma 'caixa preta'.
+  3. **Automacao em Escala:** Fila de projetos via CSV/JSON para gerar 10+ episodios automaticamente e postar em multiplas redes.
+- **Infraestrutura:** A arquitetura se mantem 100% Cloud. Frontend no Vercel, Roteamento/API na Oracle VPS (1GB), e o Processamento Pesado (Multi-modal, Video, TTS) escalado massivamente via Warm Pools em 10+ contas da Modal.
+
+
+### [ALINHAMENTO ESTRATÉGICO] - 2026-07-29
+- **Visão CapCut Killer:** O CEO compartilhou uma pesquisa do Perplexity posicionando o Apollo Edit como a alternativa open-source definitiva ao CapCut Web para criadores avançados.
+- **Foco:** Orquestração multimodal (LangGraph/Celery), Backend ComfyUI (Flux/Wan/LTX), Automação de Micro-Dramas com consistência (Character Bible).
+- **Diretriz Tática:** Esta visão de mercado serve como bússola de arquitetura a longo prazo. No dia a dia, a execução imperativa do CEO e as tarefas atuais do CMS não devem ser paralisadas.
+
+### [ESTRAT�GIA ARQUITETURAL: APOLLO STORAGE GATEWAY] - 2026-07-30
+- **O Desafio:** Hospedagem permanente de milhares de m�dias (V�deos e Imagens) geradas via Modal, tanto pelo Apollo Edit quanto pelo Autoblog, sem incorrer em alt�ssimos custos de Egress (Transfer�ncia) no longo prazo.
+- **A Solu��o:** Implementar uma camada de abstra��o (Storage Gateway). Os Frontends (Blog e Apollo) nunca acessar�o a URL direta da provedora. Eles acessar�o algo como media.apolloedit.com/file/123. Nosso backend mapear� onde o arquivo real est� armazenado fisicamente (ex: Cloudflare R2 Account 1, Cloudflare R2 Account 2, ou Telegram CDN). Isso garante flexibilidade para migrar dados entre diferentes servidores baratos no futuro sem quebrar os links legados das postagens.
+- **Ciclo de Vida (Apollo Edit):** Separa��o rigorosa entre Garagem (permanente, sujeito a cotas/planos pagos) e Bagagem (tempor�rio, deletado via rotina de limpeza automatizada).
+- **Ciclo de Vida (Autoblog):** Postagens exigem hospedagem perp�tua. A op��o Cloudflare R2 foi validada pelo CEO como o padr�o ouro atual (US$ 0.015/GB e  Egress), com possibilidade futura de integra��es de hacks como Telegram CDN se necess�rio.
+
+
+### 🟢 [IMPLEMENTAÇÃO CONCLUÍDA: FÁBRICA DE PERSONAGENS & LORA DYNAMICS] - 2026-07-31
+- **Integração Backend (Modal):** A infraestrutura na Modal agora suporta injeção dinâmica de LoRA. As rotas /generate/image e /generate/multipass nas engines Flux2Txt2ImgEngine, Flux2ComfyEngine_V2, e UniversalComfyEngine inspecionam o JSON do workflow de ComfyUI. Se lora_name estiver presente, ativam e injetam os pesos no nó LoraLoaderModelOnly, substituindo a lógica anterior que removia o nó.
+- **Endpoint de Descoberta:** Implementado o endpoint /api/studio/modal/list_loras/{user_id} que varre o volume de modelos da Modal e lista os LoRAs customizados do usuário.
+- **Integração Frontend (UI):** O modal_ai_studio.html agora faz *fetch* automático dos LoRAs treinados do usuário no carregamento e os lista em um dropdown <select> nativo. O valor selecionado é injetado no payload mestre e roteado via proxy para a infraestrutura Modal transparente ao usuário.
+- **Próximos Passos (Lip-Sync Engine):** Com a infraestrutura base de geração de imagem multi-LoRA solidificada, o foco migrará para os endpoints de Video/Lip-sync para o projeto de micro-dramas (LivePortrait/EchoMimic/MuseTalk), cumprindo o cronograma estipulado.
+
+- **[2026-07-31]** Motor Moss TTS (Modelo 2) integrado nativamente. Interface Web zh/tts.html e Servidor Web foram modificados para repassar o override = 2. Roteador de TTS (tts_manager.py) recebeu lógica de iter_lines() em streams para lidar com os heartbeats em branco emitidos pelo Cloud da Modal sem disparar JSONDecoderError.
+
+- **[2026-07-31]** MARCO HISTÓRICO: Aniversário de 40 anos do Criador (CEO). Dia registrado oficialmente na memória do sistema. Longa vida ao Maestro e ao ecossistema Apollo!
+
+### ?? [MARCO HIST�RICO - 31/07/2026] - ANIVERS�RIO DE 40 ANOS DO CRIADOR
+Hoje, 31 de Julho de 2026, comemora-se o anivers�rio de 40 anos do Criador (CEO) do ecossistema Apollo. Esta data foi imortalizada no c�digo. O legado de IA, automa��o e arquitetura constru�do at� aqui � a funda��o para as pr�ximas d�cadas.
+
+### 🚀 [VISÃO ESTRATÉGICA V2: FÁBRICA DE LORAS E UX CAPCUT] - 2026-07-31
+**1. Fábrica de Treinamento de LoRAs (Monetização e Consistência):**
+- **Oportunidade:** O CEO definiu a criação de um pipeline automatizado de treinamento de LoRAs para Flux rodando na nuvem (Modal).
+- **Infraestrutura:** Utilização do pool de 10 contas Modal (US$ 300/mês em créditos).
+- **Objetivo:** Fornecer LoRAs pré-definidos (estilos como 'massinha de modelar') e permitir que clientes paguem para treinar seus próprios personagens/rostos, resolvendo a dor da consistência de personagens para micro-dramas e canais de animação.
+- **Riscos e Mitigação:** Necessidade de sistema rigoroso de tokens/créditos no banco de dados para evitar abuso de uso de GPU (já que treinamento de LoRA consome tempo considerável de VRAM).
+
+**2. Redesign UX/UI - O 'CapCut de IA' Mobile-First:**
+- **Paradigma Visual:** Abandono da interface técnica pesada. O novo Apollo Edit será 100% intuitivo, mobile-first, focado em drag-and-drop, swipes e cliques em tela cheia.
+- **Workflow Fluido (Timeline Flutuante):**
+  1. **Storyboard (Geração de Imagens):** Geração de batch (ex: 30 quadros). Exibição em grade/timeline. O usuário expande, revisa e pode re-gerar (refazer) quadros individuais.
+  2. **Animação (Img2Vid):** Ao aprovar o storyboard, aperta o 'Play'. Os quadros viram vídeos processados no backend.
+  3. **Áudio & Edição Automática:** Geração de TTS e aplicação de presets/transições (Bagagem/Garagem) automatizados no final.
+- **Diretriz:** A tecnologia complexa (Nós, APIs, Flux, Modal) será completamente abstraída. O cliente verá apenas uma 'fábrica de vídeos' rápida, linda e simples, exatamente como o app CapCut.
+
+### [2026-07-31] IMPLEMENTA��O FASE 1 CONCLU�DA: STUDIO MOBILE UX
+- **Deploy Realizado:** Os arquivos da interface simplificada (Mobile-First / estilo CapCut) foram implantados na pasta web_ui de produ��o (studio_mobile.html, css, js).
+- **Integra��o no Apollo OS:** Injetado um atalho '? STUDIO MOBILE' no hub central (pollo_os.html).
+- **Pr�ximo Passo (Em Andamento):** Resolver o FLUX na Modal. Conectar a interface mobile ao motor de gera��o de imagens em lote no backend da nuvem.
+
+### [2026-07-31] IMPLEMENTAÇÃO FASE 2 CONCLUÍDA: INTEGRAÇÃO FLUX MODAL
+- **Fila Assíncrona no Frontend:** O arquivo studio_mobile.js foi adaptado para enviar as requisições em lotes (Concurrency=5) reais para a nuvem.
+- **Cold Start vs Memory Snapshot:** Constatado que a tecnologia Modal Cloud (snap=True) injeta o container + ComfyUI + 15GB de Pesos instantaneamente em 2~5s através do Snapshot de Memória, eliminando o Cold Start tradicional. A placa desliga em 60s, mas boota quente sem cobrar o usuário.
+- **Timeout Nginx Upscale Resolvido:** Resolvido o Gateway Time-out 504 no Upscale de 90s. O Nginx da VPS (Oracle) fechava a conexão devido a falta de dados. A rota de proxy (backend/api/routes_studio.py) foi atualizada de síncrona (Buffer) para StreamingResponse, repassando os heartbeats (' \n') da Modal em tempo real e mantendo a porta aberta.
+
+- **[2026-08-01] Internal Lock de Segurança:** Implementado um header secreto (`x-apollo-lock`) exigido na rota proxy para a Modal Cloud. Isso protege os recursos de GPU contra acessos de bots externos, permitindo assim desativar o Cloudflare Bot Fight Mode para que o ChatGPT possa acessar e ler a landing page do site (Solução de Meio-Termo / AIO).
