@@ -1,0 +1,7 @@
+﻿*.zip
+*.tar.gz
+venv/
+venv_rag/
+node_modules/
+.git/
+.vscode/
