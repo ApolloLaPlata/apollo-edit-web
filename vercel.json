@@ -1,18 +1,22 @@
-{
-  "framework": null,
-  "buildCommand": null,
-  "outputDirectory": "public",
-  "redirects": [
-    {
-      "source": "/web_ui/(.*)",
-      "destination": "/$1",
-      "permanent": false
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "http://163.176.135.59/api/$1"
-    }
-  ]
+﻿{
+    "framework":  null,
+    "buildCommand":  null,
+    "outputDirectory":  "public",
+    "redirects":  [
+                      {
+                          "source":  "/web_ui/(.*)",
+                          "destination":  "/$1",
+                          "permanent":  false
+                      }
+                  ],
+    "rewrites":  [
+                     {
+                         "source":  "/api/(.*)",
+                         "destination":  "http://163.176.135.59/api/$1"
+                     },
+                     {
+                         "destination":  "/pocket_director.html",
+                         "source":  "/chat"
+                     }
+                 ]
 }
