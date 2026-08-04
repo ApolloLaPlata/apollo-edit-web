@@ -1,5 +1,5 @@
 // Apollo Pocket Director — Voice Core & Diagnostic OS (Master Turbo Blaster)
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8000' : 'https://api.apolloedit.com.br';
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8099' : 'https://api.apolloedit.com.br/pocket';
 
 // --- ETAPA 181: Módulo de Criptografia AES-256 ---
 class ApolloCrypto {
@@ -1493,6 +1493,9 @@ class PocketDirectorApp {
         break;
       case 'state':
         this.setOrbState(data.status, data.tool);
+        if (data.status === 'idle') {
+          window.dispatchEvent(new Event('llm_processing_finished'));
+        }
         break;
 
       case 'transcript':
@@ -2232,16 +2235,21 @@ class PocketDirectorApp {
     };
 
     const sendText = async () => {
-      // Se o usuário clicar no botão enquanto o LLM processa (botão quadrado vermelho)
-      if (this.isProcessingLLM) {
+      const txt = this.drawerInput.value.trim();
+
+      // Se o usuário clicar no botão enquanto o LLM processa (botão quadrado vermelho) sem digitar nada
+      if (this.isProcessingLLM && !txt) {
          this.sendToColmeia(JSON.stringify({ type: 'stop_generation' }));
          this.isProcessingLLM = false;
-         updateInputUIState(this.drawerInput.value.trim().length > 0 ? 'typing' : 'empty');
+         updateInputUIState('empty');
          return;
       }
       
-      const txt = this.drawerInput.value.trim();
       if (txt) {
+        if (this.isProcessingLLM) {
+           this.sendToColmeia(JSON.stringify({ type: 'stop_generation' }));
+        }
+        this.addTranscriptCard('user', txt, false);
         this.sendToColmeia(JSON.stringify({ type: 'user_text', text: txt }));
         this.drawerInput.value = '';
         this.isProcessingLLM = true;
@@ -2502,12 +2510,14 @@ class PocketDirectorApp {
           this.showToast('Enviando sinal de reinício para Maestro...', 'warn');
           try {
             await fetch('http://localhost:8080/api/mobile/approve', {
+            await fetch(`${API_BASE_URL}/api/mobile/approve`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'RESTART', biometric_hash: hash })
             });
           } catch(e) {
-            this.sendToColmeia(JSON.stringify({ type: 'user_text', text: 'Reiniciar infraestrutura (Fallback Socket)' }));
+              this.addTranscriptCard('user', 'Reiniciar infraestrutura (Fallback Socket)', false);
+              this.sendToColmeia(JSON.stringify({ type: 'user_text', text: 'Reiniciar infraestrutura (Fallback Socket)' }));
           }
         }
       });
@@ -2525,7 +2535,7 @@ class PocketDirectorApp {
             if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
               await window.Capacitor.Plugins.Preferences.clear();
             }
-            await fetch('http://localhost:8080/api/mobile/stealth', { method: 'POST' }).catch(()=>{});
+            await fetch(`${API_BASE_URL}/api/mobile/stealth`, { method: 'POST' }).catch(()=>{});
           } catch(e) {}
         }
       });
@@ -2535,7 +2545,7 @@ class PocketDirectorApp {
       this.btnTurboMode.addEventListener('click', async () => {
         this.showToast('Modo Turbo Ativado! 100% GPU focada em Render.', 'success');
         this.triggerHaptic('success');
-        fetch('http://localhost:8080/api/mobile/turbo', { method: 'POST' }).catch(()=>{});
+        fetch(`${API_BASE_URL}/api/mobile/turbo`, { method: 'POST' }).catch(()=>{});
       });
     }
 
@@ -2546,7 +2556,7 @@ class PocketDirectorApp {
         this.hiveLogOutput.textContent = "Conectando ao núcleo da Colmeia...";
         hiveLogInterval = setInterval(async () => {
           try {
-            const res = await fetch('http://localhost:8080/api/colmeia/logs', { timeout: 2000 });
+            const res = await fetch(`${API_BASE_URL}/api/colmeia/logs`, { timeout: 2000 });
             if(res.ok) {
               const logs = await res.text();
               this.hiveLogOutput.textContent = logs || "Colmeia aguardando comandos...";
@@ -2675,7 +2685,8 @@ class PocketDirectorApp {
           const cmd = e.target.getAttribute('data-cmd');
           if (cmd) {
             await this.activateAudioAndMic();
-            this.sendToColmeia(JSON.stringify({ type: 'user_text', text: cmd }));
+              this.addTranscriptCard('user', cmd, false);
+              this.sendToColmeia(JSON.stringify({ type: 'user_text', text: cmd }));
             this.textDrawer.classList.remove('open');
           }
         }
@@ -2985,6 +2996,8 @@ class PocketDirectorApp {
 }
 
 window.app = new PocketDirectorApp();
+
+
 
 
 
