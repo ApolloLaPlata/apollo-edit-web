@@ -1,6 +1,6 @@
 /**
  * autopilot_logic.js
- * Lógica do modo "Piloto Automático" (Full AI Mode)
+ * Lgica do modo "Piloto Automtico" (Full AI Mode)
  */
 
 function sendAutoPilotMessage() {
@@ -8,21 +8,21 @@ function sendAutoPilotMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    // Adiciona mensagem do usuário
+    // Adiciona mensagem do usurio
     appendAutoPilotMessage('user', text);
     input.value = '';
 
     // Simula processamento da IA
     setTimeout(() => {
         const cost = Math.floor(Math.random() * 50) + 10;
-        appendAutoPilotMessage('ai', `Entendido! Analisei seu pedido e verifiquei as configurações ao lado. 
+        appendAutoPilotMessage('ai', `Entendido! Analisei seu pedido e verifiquei as configuraes ao lado. 
         <br><br>
-        Esta operação custará aproximadamente <strong>${cost} Litros de Combustível</strong> e englobará as seguintes etapas:
+        Esta operao custar aproximadamente <strong>${cost} Litros de Combustvel</strong> e englobar as seguintes etapas:
         <ul style="margin-top:10px; padding-left:20px; color:#ddd;">
-            <li>Busca de Informação / Construção do Roteiro</li>
-            <li>Geração de 15 B-Rolls (Misturando IA e Bancos)</li>
-            <li>Geração de Narração TTS e Lip Sync (Se Ativado)</li>
-            <li>Montagem Automática na Timeline usando Templates selecionados</li>
+            <li>Busca de Informao / Construo do Roteiro</li>
+            <li>Gerao de 15 B-Rolls (Misturando IA e Bancos)</li>
+            <li>Gerao de Narrao TTS e Lip Sync (Se Ativado)</li>
+            <li>Montagem Automtica na Timeline usando Templates selecionados</li>
         </ul>
         <br>
         <button onclick="startAutoPilotTask()" style="background:var(--btn-green, #10b981); color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;">CONFIRMAR E INICIAR</button>
@@ -34,18 +34,18 @@ function sendAutoPilotMessage() {
 function startAutoPilotTask() {
     appendAutoPilotMessage('user', 'CONFIRMAR E INICIAR');
     setTimeout(() => {
-        appendAutoPilotMessage('ai', `Iniciando produção massiva! <br><br>
-        <em>⏳ Etapa 1/4: Escrevendo Roteiro...</em>`);
+        appendAutoPilotMessage('ai', `Iniciando produo massiva! <br><br>
+        <em> Etapa 1/4: Escrevendo Roteiro...</em>`);
         
         setTimeout(() => {
-            appendAutoPilotMessage('ai', `<em>⏳ Etapa 2/4: Gerando e minerando imagens...</em>`);
+            appendAutoPilotMessage('ai', `<em> Etapa 2/4: Gerando e minerando imagens...</em>`);
             
             setTimeout(() => {
-                appendAutoPilotMessage('ai', `<em>⏳ Etapa 3/4: Criando áudio e lip sync...</em>`);
+                appendAutoPilotMessage('ai', `<em> Etapa 3/4: Criando udio e lip sync...</em>`);
                 
                 setTimeout(() => {
-                    appendAutoPilotMessage('ai', `✅ <strong>PRODUÇÃO CONCLUÍDA!</strong><br><br>
-                    O vídeo foi montado e já está salvo no seu Bagageiro e no seu canal. Você pode conferir os ativos na Área de Transferência ou exportar diretamente!
+                    appendAutoPilotMessage('ai', ` <strong>PRODUO CONCLUDA!</strong><br><br>
+                    O vdeo foi montado e j est salvo no seu Bagageiro e no seu canal. Voc pode conferir os ativos na rea de Transferncia ou exportar diretamente!
                     <br><br>
                     <button onclick="window.location.href='noticias.html'" style="margin-top:10px; background:var(--btn-blue); color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;">Ir para o HUB</button>
                     `);
@@ -61,7 +61,7 @@ function appendAutoPilotMessage(role, text) {
     
     const msgHTML = `
         <div class="msg-${role}">
-            ${isAi ? '<strong style="color:var(--btn-yellow); display:block; margin-bottom:5px;">🤖 Copiloto Supremo</strong>' : ''}
+            ${isAi ? '<strong style="color:var(--btn-yellow); display:block; margin-bottom:5px;"> Copiloto Supremo</strong>' : ''}
             ${text}
         </div>
     `;
@@ -70,7 +70,7 @@ function appendAutoPilotMessage(role, text) {
 }
 
 function saveAutoPilotConfig() {
-    alert("Perfil de Configuração Salvo na Memória! A IA utilizará essas regras nas próximas delegações.");
+    alert("Perfil de Configurao Salvo na Memria! A IA utilizar essas regras nas prximas delegaes.");
 }
 
 // Suporte para tecla Enter no input

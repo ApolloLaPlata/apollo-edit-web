@@ -1,13 +1,13 @@
 // ============================================================
-// APOLLO VISUAL STUDIO v2.0 — Editor de Templates
-// Camadas FIXAS: salva path + posição. Borda sólida.
-// Camadas VARIÁVEIS: só salva posição/tamanho. Borda tracejada.
-// Thumbnails para TODOS os layers (imagem ou frame de vídeo).
+// APOLLO VISUAL STUDIO v2.0  Editor de Templates
+// Camadas FIXAS: salva path + posio. Borda slida.
+// Camadas VARIVEIS: s salva posio/tamanho. Borda tracejada.
+// Thumbnails para TODOS os layers (imagem ou frame de vdeo).
 // ============================================================
 
 const LAYERS_DEFAULT = [
     { id: 'lay0_bg',       title: '0. Background (Fundo)',    zIndex: 0, color: '#3b82f6', isFixed: true,  isFullscreen: true,  hasChroma: false, hasSortear: true  },
-    { id: 'lay1_fundo',    title: '1. Vídeo Base (Notícia)',  zIndex: 1, color: '#f59e0b', isFixed: false, isFullscreen: false, hasChroma: false, hasSortear: true,  defaultW: 1080, defaultH: 1920, defaultX: 0,  defaultY: 0   },
+    { id: 'lay1_fundo',    title: '1. Vdeo Base (Notcia)',  zIndex: 1, color: '#f59e0b', isFixed: false, isFullscreen: false, hasChroma: false, hasSortear: true,  defaultW: 1080, defaultH: 1920, defaultX: 0,  defaultY: 0   },
     { id: 'lay2_narrador', title: '2. Narrador (Loop)',       zIndex: 2, color: '#ef4444', isFixed: false, isFullscreen: false, hasChroma: true,  hasSortear: true,  defaultW: 324,  defaultH: 576,  defaultX: 50, defaultY: 1344 },
     { id: 'lay3_frente',   title: '3. Tag / Frente',          zIndex: 3, color: '#8b5cf6', isFixed: false, isFullscreen: false, hasChroma: true,  hasSortear: true,  defaultW: 324,  defaultH: 576,  defaultX: 50, defaultY: 1344 },
     { id: 'lay4_extra',    title: '4. Elemento Extra/Top',    zIndex: 4, color: '#ec4899', isFixed: false, isFullscreen: false, hasChroma: true,  hasSortear: true,  defaultW: 540,  defaultH: 540,  defaultX: 50, defaultY: 50  },
@@ -25,7 +25,7 @@ function getBaseWH() {
         : { W: 1080, H: 1920 };
 }
 
-// ── AUTO-SAVE (BACKUP)
+//  AUTO-SAVE (BACKUP)
 function autoSave() {
     if (layersDefs.length > 0) {
         const state = { defs: layersDefs, data: layersData, extraCount, currentFormat };
@@ -46,7 +46,7 @@ function restoreAutoSave() {
                 
                 // Dispara o toast visual de aviso
                 const toast = document.createElement('div');
-                toast.innerText = '💾 Sessão recuperada com sucesso!';
+                toast.innerText = ' Sesso recuperada com sucesso!';
                 toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:8px 16px;border-radius:20px;z-index:99999;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.5);';
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
@@ -58,14 +58,14 @@ function restoreAutoSave() {
     return false;
 }
 
-// ── INICIALIZAÇÃO
+//  INICIALIZAO
 function init() {
     const restored = restoreAutoSave();
     if (!restored) {
         layersDefs = LAYERS_DEFAULT.map(l => ({ ...l }));
     }
     
-    // Atualiza o rádio do formato
+    // Atualiza o rdio do formato
     const formatRadio = document.querySelector(`input[name="canvas_format"][value="${currentFormat}"]`);
     if (formatRadio) formatRadio.checked = true;
 
@@ -86,7 +86,7 @@ function init() {
     // Liga o Auto-Save a cada 5 segundos
     setInterval(autoSave, 5000);
 
-    // Centralizar o Canvas no meio do espaço virtual (pan infinito)
+    // Centralizar o Canvas no meio do espao virtual (pan infinito)
     setTimeout(() => {
         const cw = document.querySelector('.canvas-wrapper');
         if (cw) {
@@ -96,7 +96,7 @@ function init() {
     }, 100);
 }
 
-// ── RENDERIZA SIDEBAR + CANVAS COMPLETO
+//  RENDERIZA SIDEBAR + CANVAS COMPLETO
 function renderAll() {
     const sidebar = document.getElementById('layers-container');
     const canvas  = document.getElementById('render-canvas');
@@ -118,7 +118,7 @@ function initLayerData(l) {
         visible: true,
         chroma:  false,
         random:  false,
-        locked:  false, // ← Trava de segurança
+        locked:  false, //  Trava de segurana
         x:  l.defaultX ?? 0,
         y:  l.defaultY ?? 0,
         w:  l.defaultW ?? W,
@@ -126,12 +126,12 @@ function initLayerData(l) {
     };
 }
 
-// ── TOGGLE LOCK (Cadeado)
+//  TOGGLE LOCK (Cadeado)
 window.toggleLock = function(id) {
     const d = layersData[id];
     d.locked = !d.locked;
     const btn = document.getElementById(`btn_lock_${id}`);
-    if (btn) btn.innerText = d.locked ? '🔒' : '🔓';
+    if (btn) btn.innerText = d.locked ? '' : '';
     const box = document.getElementById(`box_${id}`);
     if (box) {
         // Se travado, ignora clicks no canvas
@@ -142,16 +142,16 @@ window.toggleLock = function(id) {
     cardInputs.forEach(i => i.disabled = d.locked);
 };
 
-// ── CARD DA SIDEBAR
+//  CARD DA SIDEBAR
 function renderSidebarCard(l, sidebar) {
     const d = layersData[l.id];
     const borderStyle = l.isFixed ? '3px solid #3b82f6' : '3px dashed #f59e0b';
     const badge = l.isFixed
         ? `<span class="badge fixed">FIXO</span>`
-        : `<span class="badge variable">VARIÁVEL</span>`;
+        : `<span class="badge variable">VARIVEL</span>`;
     const varNote = !l.isFixed
         ? `<div style="background:#1a1a2e;padding:4px 8px;border-radius:4px;font-size:0.76rem;color:#f59e0b;margin-bottom:4px;">
-               ⚡ Variável — apenas posição e tamanho são salvos no perfil.
+                Varivel  apenas posio e tamanho so salvos no perfil.
            </div>` : '';
 
     const card = document.createElement('div');
@@ -159,12 +159,12 @@ function renderSidebarCard(l, sidebar) {
     card.id = `card_${l.id}`;
     card.style.borderLeft = borderStyle;
 
-    // Botões de reordenação
+    // Botes de reordenao
     const canReorder = !l.isFullscreen;
     const reorderBtns = canReorder ? `
         <div style="display:flex;flex-direction:column;gap:1px;margin-left:4px;">
-            <button onclick="moveLayerUp('${l.id}')"   style="background:#334155;border:none;color:#fff;cursor:pointer;padding:1px 4px;border-radius:2px;font-size:10px;" title="Mover para frente">▲</button>
-            <button onclick="moveLayerDown('${l.id}')" style="background:#334155;border:none;color:#fff;cursor:pointer;padding:1px 4px;border-radius:2px;font-size:10px;" title="Mover para trás">▼</button>
+            <button onclick="moveLayerUp('${l.id}')"   style="background:#334155;border:none;color:#fff;cursor:pointer;padding:1px 4px;border-radius:2px;font-size:10px;" title="Mover para frente"></button>
+            <button onclick="moveLayerDown('${l.id}')" style="background:#334155;border:none;color:#fff;cursor:pointer;padding:1px 4px;border-radius:2px;font-size:10px;" title="Mover para trs"></button>
         </div>` : '';
 
     const titleHtml = l.isExtra 
@@ -179,7 +179,7 @@ function renderSidebarCard(l, sidebar) {
             </label>
             <div style="display:flex;align-items:center;gap:4px;">
                 ${badge}
-                ${!l.isFullscreen ? `<button onclick="toggleLock('${l.id}')" id="btn_lock_${l.id}" style="background:transparent;border:none;cursor:pointer;font-size:14px;" title="Travar Posição">🔓</button>` : ''}
+                ${!l.isFullscreen ? `<button onclick="toggleLock('${l.id}')" id="btn_lock_${l.id}" style="background:transparent;border:none;cursor:pointer;font-size:14px;" title="Travar Posio"></button>` : ''}
                 <div style="width:14px;height:14px;background:${l.color};border-radius:3px;"></div>
                 ${reorderBtns}
             </div>
@@ -191,10 +191,10 @@ function renderSidebarCard(l, sidebar) {
             <label>Arquivo / Pasta:</label>
             <div style="display:flex;gap:4px;align-items:center;">
                 <input type="text" id="path_${l.id}" placeholder="Caminho do arquivo..." value="${d.path}" style="flex:1;" oninput="onPathInput('${l.id}')">
-                <button onclick="browseFile('${l.id}')" class="btn-mini" title="Procurar arquivo">📁</button>
-                <button onclick="loadThumb('${l.id}')" class="btn-mini" title="Carregar preview no canvas">👁</button>
+                <button onclick="browseFile('${l.id}')" class="btn-mini" title="Procurar arquivo"></button>
+                <button onclick="loadThumb('${l.id}')" class="btn-mini" title="Carregar preview no canvas"></button>
             </div>
-            ${l.isFixed ? '' : '<div style="font-size:0.72rem;color:#64748b;margin-top:2px;">Preview apenas — path não salvo no perfil.</div>'}
+            ${l.isFixed ? '' : '<div style="font-size:0.72rem;color:#64748b;margin-top:2px;">Preview apenas  path no salvo no perfil.</div>'}
         </div>
 
         ${!l.isFullscreen ? `
@@ -203,12 +203,12 @@ function renderSidebarCard(l, sidebar) {
             <div><label>Y (px)</label><input type="number" id="y_${l.id}" value="${d.y}" oninput="syncFromSidebar('${l.id}')"></div>
             <div><label>L (px)</label><input type="number" id="w_${l.id}" value="${d.w}" oninput="syncFromSidebar('${l.id}')"></div>
             <div><label>A (px)</label><input type="number" id="h_${l.id}" value="${d.h}" oninput="syncFromSidebar('${l.id}')"></div>
-        </div>` : `<p style="font-size:0.78rem;color:#64748b;margin:4px 8px;">Tela Cheia — ocupa 100% do canvas.</p>`}
+        </div>` : `<p style="font-size:0.78rem;color:#64748b;margin:4px 8px;">Tela Cheia  ocupa 100% do canvas.</p>`}
 
         <div class="layer-controls" style="margin-top:6px;">
             ${l.hasChroma  ? `<label class="cb-wrap"><input type="checkbox" id="chroma_${l.id}" ${d.chroma ? 'checked' : ''}> Chroma Key</label>` : '<div></div>'}
             ${l.hasSortear ? `<label class="cb-wrap"><input type="checkbox" id="rand_${l.id}"   ${d.random ? 'checked' : ''}> Sortear Trecho</label>` : '<div></div>'}
-            ${l.isExtra    ? `<button onclick="removeLayer('${l.id}')" class="btn-remove">✕ Remover</button>` : '<div></div>'}
+            ${l.isExtra    ? `<button onclick="removeLayer('${l.id}')" class="btn-remove"> Remover</button>` : '<div></div>'}
         </div>
         
         ${l.id === 'lay_musica_onda' ? `
@@ -217,8 +217,8 @@ function renderSidebarCard(l, sidebar) {
             <select id="wave_style_${l.id}" onchange="syncFromSidebar('${l.id}')" style="background:#1a1a2e; color:#fff; border:1px solid #475569; border-radius:4px; padding:2px; flex:1;">
                 <option value="freqs" ${d.wave_style === 'freqs' ? 'selected' : ''}>EQ Trap (Barras)</option>
                 <option value="vectorscope" ${d.wave_style === 'vectorscope' ? 'selected' : ''}>Vectorscope (Estrela/Trap Nation)</option>
-                <option value="cqt" ${d.wave_style === 'cqt' ? 'selected' : ''}>CQT (Espectro Cromático)</option>
-                <option value="osc" ${d.wave_style === 'osc' ? 'selected' : ''}>Osciloscópio (Linha)</option>
+                <option value="cqt" ${d.wave_style === 'cqt' ? 'selected' : ''}>CQT (Espectro Cromtico)</option>
+                <option value="osc" ${d.wave_style === 'osc' ? 'selected' : ''}>Osciloscpio (Linha)</option>
             </select>
         </div>
         ` : ''}
@@ -231,7 +231,7 @@ function renderSidebarCard(l, sidebar) {
     });
 }
 
-// ── BOX NO CANVAS
+//  BOX NO CANVAS
 function renderCanvasBox(l, canvas) {
     const box = document.createElement('div');
     box.id = `box_${l.id}`;
@@ -257,7 +257,7 @@ function renderCanvasBox(l, canvas) {
     label.innerText  = l.title;
     box.appendChild(label);
 
-    // Thumbnail — existe em TODOS os layers (imagem ou frame de vídeo)
+    // Thumbnail  existe em TODOS os layers (imagem ou frame de vdeo)
     const thumb = document.createElement('img');
     thumb.id = `thumb_${l.id}`;
     thumb.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0.65;display:none;pointer-events:none;';
@@ -292,7 +292,7 @@ function makeHandle(l, dir, color) {
     return h;
 }
 
-// ── GLOBAL STATE PARA ACTIVE LAYER & NUDGE
+//  GLOBAL STATE PARA ACTIVE LAYER & NUDGE
 let activeLayerId = null;
 
 function setActiveLayer(id) {
@@ -302,7 +302,7 @@ function setActiveLayer(id) {
     if (card) card.style.background = '#334155'; // Destaca na sidebar
 }
 
-// ── SNAP GUIDES
+//  SNAP GUIDES
 function showSnapGuide(type, pos) {
     let guide = document.getElementById(`snap_${type}`);
     if (!guide) {
@@ -323,7 +323,7 @@ function hideSnapGuides() {
     });
 }
 
-// ── DRAG COM MAGNÉTICO (SNAPPING)
+//  DRAG COM MAGNTICO (SNAPPING)
 function makeDraggable(box, l) {
     box.addEventListener('mousedown', (e) => {
         if (e.target.classList.contains('resize-handle')) return;
@@ -340,7 +340,7 @@ function makeDraggable(box, l) {
 
             const w = layersData[l.id].w;
             const h = layersData[l.id].h;
-            const snap = 15; // px de atração magnética
+            const snap = 15; // px de atrao magntica
 
             hideSnapGuides();
 
@@ -371,7 +371,7 @@ function makeDraggable(box, l) {
     });
 }
 
-// ── RESIZE INDEPENDENTE W/H
+//  RESIZE INDEPENDENTE W/H
 function makeResizable(handle, l, dir) {
     handle.addEventListener('mousedown', (e) => {
         e.preventDefault(); e.stopPropagation();
@@ -399,7 +399,7 @@ function makeResizable(handle, l, dir) {
     });
 }
 
-// ── SYNC SIDEBAR → DATA
+//  SYNC SIDEBAR  DATA
 function syncFromSidebar(id) {
     const l = layersDefs.find(l => l.id === id);
     if (!l || l.isFullscreen) return;
@@ -421,7 +421,7 @@ function syncFromSidebar(id) {
     updateBox(l);
 }
 
-// ── SYNC DATA → SIDEBAR
+//  SYNC DATA  SIDEBAR
 function syncSidebarInputs(id) {
     const d = layersData[id];
     const xi = document.getElementById(`x_${id}`); if (xi) xi.value = d.x;
@@ -430,7 +430,7 @@ function syncSidebarInputs(id) {
     const hi = document.getElementById(`h_${id}`); if (hi) hi.value = d.h;
 }
 
-// ── UPDATE BOX VISUAL
+//  UPDATE BOX VISUAL
 function updateBox(l) {
     const box = document.getElementById(`box_${l.id}`);
     if (!box) return;
@@ -465,7 +465,7 @@ function updateVisualOrder() {
 function moveLayerUp(id) {
     const idx = layersDefs.findIndex(l => l.id === id);
     if (idx <= 0) return;
-    // Só troca com camadas não-fullscreen adjacentes
+    // S troca com camadas no-fullscreen adjacentes
     let target = idx - 1;
     while (target >= 0 && layersDefs[target].isFullscreen) target--;
     if (target < 0) return;
@@ -486,7 +486,7 @@ function moveLayerDown(id) {
     updateVisualOrder();
 }
 
-// ── THUMBNAIL: via API (FFmpeg) OU direto pelo File API
+//  THUMBNAIL: via API (FFmpeg) OU direto pelo File API
 function onPathInput(id) {
     // Se o user digitou um caminho manualmente, limpa o thumb anterior
     const thumb = document.getElementById(`thumb_${id}`);
@@ -498,7 +498,7 @@ async function loadThumb(id) {
     if (!pathEl) return;
     const path = pathEl.value.trim();
     if (!path) { 
-        // Tenta usar a URL armazenada se existe (após browseFile)
+        // Tenta usar a URL armazenada se existe (aps browseFile)
         const stored = layersData[id]?._localUrl;
         if (stored) { applyThumb(id, stored); return; }
         alert('Selecione ou digite um arquivo primeiro.'); 
@@ -515,13 +515,13 @@ async function loadThumb(id) {
             if (r.ok) { applyThumb(id, URL.createObjectURL(await r.blob())); return; }
         } catch {}
     }
-    // Para vídeos e fallback: usa a API de thumb
+    // Para vdeos e fallback: usa a API de thumb
     try {
         const r = await fetch(`/api/thumb?path=${encodeURIComponent(path)}`);
         if (r.ok) { applyThumb(id, URL.createObjectURL(await r.blob())); }
-        else       { alert('Não foi possível gerar preview. Verifique o caminho.'); }
+        else       { alert('No foi possvel gerar preview. Verifique o caminho.'); }
     } catch(e) {
-        alert('Servidor offline ou FFmpeg não disponível.');
+        alert('Servidor offline ou FFmpeg no disponvel.');
     }
 }
 
@@ -539,7 +539,7 @@ function applyThumb(id, url) {
                 if (nw > 0 && nh > 0) {
                     const d = layersData[id];
                     const aspect = nw / nh;
-                    // Mantém a largura atual e corrige a altura para o formato nativo
+                    // Mantm a largura atual e corrige a altura para o formato nativo
                     d.h = Math.round(d.w / aspect);
                     syncSidebarInputs(id);
                     updateBox(l);
@@ -553,13 +553,13 @@ function applyThumb(id, url) {
     if (label) label.style.display = 'none';
 }
 
-// ── FILE BROWSER (abre via API do Python para retornar Caminho Absoluto)
+//  FILE BROWSER (abre via API do Python para retornar Caminho Absoluto)
 async function browseFile(id) {
     try {
-        // Obtém o botão via document para evitar dependência do objeto 'event' implícito
+        // Obtm o boto via document para evitar dependncia do objeto 'event' implcito
         const btn = document.querySelector(`#card_${id} .btn-mini[onclick*="browseFile"]`);
-        const originalText = btn ? btn.innerHTML : '📁';
-        if (btn) btn.innerHTML = '⌛';
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) btn.innerHTML = '';
         
         const res = await fetch('https://api.apolloedit.com/api/browse_file');
         const data = await res.json();
@@ -579,7 +579,7 @@ async function browseFile(id) {
     }
 }
 
-// ── RENOMEAR CAMADA EXTRA
+//  RENOMEAR CAMADA EXTRA
 window.renameLayer = function(id, newTitle) {
     const l = layersDefs.find(x => x.id === id);
     if (l) {
@@ -590,7 +590,7 @@ window.renameLayer = function(id, newTitle) {
     }
 };
 
-// ── ADICIONAR CAMADA EXTRA (sempre FIXA por padrão, livre de isFullscreen)
+//  ADICIONAR CAMADA EXTRA (sempre FIXA por padro, livre de isFullscreen)
 function addExtraLayer() {
     extraCount++;
     const id = `lay_extra_${extraCount}`;
@@ -598,7 +598,7 @@ function addExtraLayer() {
     const l = {
         id, title: `Barra/Moldura ${extraCount}`,
         zIndex: 10 + extraCount, color: '#06b6d4',
-        isFixed: true,   // ← Agora todas as extras são fixas por padrão (ex: barras, molduras)
+        isFixed: true,   //  Agora todas as extras so fixas por padro (ex: barras, molduras)
         isFullscreen: false,
         hasChroma: true, hasSortear: true, isExtra: true,
         defaultW: Math.round(W * 0.4), defaultH: Math.round(H * 0.25),
@@ -614,40 +614,40 @@ function addExtraLayer() {
     updateBox(l);
 }
 
-// ── ADICIONAR CAMADA MUSICAL (Onda Sonora, Título, Progresso)
+//  ADICIONAR CAMADA MUSICAL (Onda Sonora, Ttulo, Progresso)
 function addMusicLayer(type) {
-    // Verifica se já existe, se existir, apenas seleciona
+    // Verifica se j existe, se existir, apenas seleciona
     const existing = layersDefs.find(l => l.id === `lay_musica_${type}`);
     if (existing) {
         setActiveLayer(existing.id);
-        alert(`A camada de ${type} já existe no template.`);
+        alert(`A camada de ${type} j existe no template.`);
         return;
     }
     
     const id = `lay_musica_${type}`;
     const { W, H } = getBaseWH();
     
-    let title = "🎵 Camada Musical";
+    let title = " Camada Musical";
     let color = "#eab308";
     let defaultW = 500, defaultH = 100;
     
     if (type === 'onda') {
-        title = "🎵 Onda Sonora (Visualizer)";
+        title = " Onda Sonora (Visualizer)";
         color = "#ec4899";
         defaultW = W;
         defaultH = Math.round(H * 0.15);
     } else if (type === 'titulo') {
-        title = "🎵 Título da Música";
+        title = " Ttulo da Msica";
         color = "#eab308";
         defaultW = Math.round(W * 0.8);
         defaultH = Math.round(H * 0.1);
     } else if (type === 'progresso') {
-        title = "🎵 Barra de Progresso";
+        title = " Barra de Progresso";
         color = "#ef4444";
         defaultW = W;
         defaultH = 20;
     } else if (type === 'capa') {
-        title = "🎵 Capa da Música";
+        title = " Capa da Msica";
         color = "#8b5cf6";
         defaultW = 400;
         defaultH = 400;
@@ -656,7 +656,7 @@ function addMusicLayer(type) {
     const l = {
         id, title,
         zIndex: 20, color,
-        isFixed: false,   // Variável porque não precisa de arquivo
+        isFixed: false,   // Varivel porque no precisa de arquivo
         isFullscreen: false,
         hasChroma: false, hasSortear: false, isExtra: true, isMusic: true,
         defaultW, defaultH,
@@ -671,20 +671,20 @@ function addMusicLayer(type) {
     renderCanvasBox(l, canvas);
     updateBox(l);
     
-    // Adicionar um CSS placeholder específico para diferenciar a caixa no canvas
+    // Adicionar um CSS placeholder especfico para diferenciar a caixa no canvas
     const box = document.getElementById(`box_${id}`);
     if (box) {
         if (type === 'onda') {
             box.style.background = `repeating-linear-gradient(90deg, transparent, transparent 5px, ${color} 5px, ${color} 10px)`;
             box.style.opacity = '0.5';
         } else if (type === 'titulo') {
-            box.innerHTML += `<div style="font-size:2rem; font-weight:bold; color:white; text-shadow: 2px 2px 0 #000;">NOME DA MÚSICA</div>`;
+            box.innerHTML += `<div style="font-size:2rem; font-weight:bold; color:white; text-shadow: 2px 2px 0 #000;">NOME DA MSICA</div>`;
         } else if (type === 'progresso') {
             box.style.background = `linear-gradient(90deg, ${color} 50%, transparent 50%)`;
             box.style.border = `2px solid ${color}`;
         } else if (type === 'capa') {
             box.style.background = `linear-gradient(135deg, ${color}33, ${color}88)`;
-            box.innerHTML += `<div style="font-size:3rem;">🖼️</div>`;
+            box.innerHTML += `<div style="font-size:3rem;"></div>`;
         }
     }
 }
@@ -699,7 +699,7 @@ function removeLayer(id) {
 
 
 
-// ── CANVAS CONTROLS
+//  CANVAS CONTROLS
 function setupCanvasControls() {
     const canvas     = document.getElementById('render-canvas');
     const scaler     = document.getElementById('canvas-scaler');
@@ -707,7 +707,7 @@ function setupCanvasControls() {
     const zoomSlider = document.getElementById('workspace-zoom');
     const zoomVal    = document.getElementById('zoom-val');
 
-    // ─── ZOOM: a sacada é setar width/height REAL no scaler para criar scroll no DOM ───
+    //  ZOOM: a sacada  setar width/height REAL no scaler para criar scroll no DOM 
     const updateZoom = (val) => {
         currentZoom = val / 100;
         zoomVal.innerText = `${Math.round(val)}%`;
@@ -720,7 +720,7 @@ function setupCanvasControls() {
         canvas.style.transform = `scale(${currentZoom})`;
         canvas.style.margin = '0';
         
-        // 2) O scaler OCUPA o espaço real escalado no DOM → cria barras de scroll reais
+        // 2) O scaler OCUPA o espao real escalado no DOM  cria barras de scroll reais
         scaler.style.width  = `${W * currentZoom}px`;
         scaler.style.height = `${H * currentZoom}px`;
     };
@@ -756,7 +756,7 @@ function setupCanvasControls() {
         });
     });
 
-    // ─── PAN (Mãozinha): Espaço+Drag OU Botão do Meio ───────────────────────────────
+    //  PAN (Mozinha): Espao+Drag OU Boto do Meio 
     let isPanning    = false;
     let isSpaceDown  = false;
     let panStartX    = 0;
@@ -775,7 +775,7 @@ function setupCanvasControls() {
             wrapper.style.cursor = 'grab';
         }
 
-        // ── AJUSTE FINO (NUDGE) COM SETINHAS
+        //  AJUSTE FINO (NUDGE) COM SETINHAS
         if (activeLayerId && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
             const l = layersDefs.find(x => x.id === activeLayerId);
             const d = layersData[activeLayerId];
@@ -827,7 +827,7 @@ function setupCanvasControls() {
         }
     });
 
-    // ─── ZOOM com scroll do mouse (Ctrl+Wheel) ────────────────────────────────────
+    //  ZOOM com scroll do mouse (Ctrl+Wheel) 
     wrapper.addEventListener('wheel', (e) => {
         if (e.ctrlKey) {
             e.preventDefault();
@@ -847,7 +847,7 @@ function setupToolbar() {
     document.getElementById('btn-load').addEventListener('click', loadProfile);
     document.getElementById('btn-add-layer').addEventListener('click', addExtraLayer);
     
-    // Botões Musicais
+    // Botes Musicais
     const btnWave = document.getElementById('btn-add-wave');
     const btnTitle = document.getElementById('btn-add-title');
     const btnProg = document.getElementById('btn-add-prog');
@@ -858,7 +858,7 @@ function setupToolbar() {
     if (btnCapa) btnCapa.addEventListener('click', () => addMusicLayer('capa'));
 }
 
-// ── GATHER PROFILE DATA
+//  GATHER PROFILE DATA
 function gatherProfileData() {
     const name   = document.getElementById('profile-name').value || 'perfil_padrao';
     const format = document.querySelector('input[name="canvas_format"]:checked').value;
@@ -879,21 +879,21 @@ function gatherProfileData() {
             zIndex: l.zIndex,
             wave_style: d.wave_style
         };
-        // Camadas FIXAS: também salvam o path
+        // Camadas FIXAS: tambm salvam o path
         if (l.isFixed && d.path) {
             entry.path = document.getElementById(`path_${l.id}`)?.value ?? '';
         }
-        // Camadas VARIÁVEIS: path vazio (não salvo, pois muda a cada render)
+        // Camadas VARIVEIS: path vazio (no salvo, pois muda a cada render)
         data.layers[l.id] = entry;
     });
 
     return data;
 }
 
-// ── SAVE
+//  SAVE
 async function saveProfile() {
     const btn = document.getElementById('btn-save');
-    btn.innerText = '🖼️ Gerando Preview...';
+    btn.innerText = ' Gerando Preview...';
     const payload = gatherProfileData();
 
     // Captura screenshot do Canvas
@@ -907,7 +907,7 @@ async function saveProfile() {
         });
         previewBase64 = canvasShot.toDataURL('image/jpeg', 0.7);
     } catch(err) {
-        console.warn('html2canvas falhou — salvando sem preview:', err);
+        console.warn('html2canvas falhou  salvando sem preview:', err);
     }
     payload.preview_b64 = previewBase64;
 
@@ -921,20 +921,20 @@ async function saveProfile() {
         const res = await r.json();
         if (res.status === 'success') {
             btn.style.background = '#10b981';
-            btn.innerText = '✅ Salvo!';
+            btn.innerText = ' Salvo!';
             loadProfileList();
         } else {
             alert('Erro: ' + res.message);
         }
     } catch(e) {
-        alert('Servidor offline. Certifique-se que o Python está rodando.');
+        alert('Servidor offline. Certifique-se que o Python est rodando.');
     } finally {
-        // SEMPRE restaura o botão, mesmo se ocorrer erro
-        setTimeout(() => { btn.style.background = ''; btn.innerText = '💾 Salvar no Apollo'; }, 2500);
+        // SEMPRE restaura o boto, mesmo se ocorrer erro
+        setTimeout(() => { btn.style.background = ''; btn.innerText = ' Salvar no Apollo'; }, 2500);
     }
 }
 
-// ── LIST E PREVIEW
+//  LIST E PREVIEW
 async function loadProfileList() {
     try {
         const r = await fetch('https://api.apolloedit.com/api/list_profiles');
@@ -947,7 +947,7 @@ async function loadProfileList() {
     } catch(e) { /* offline */ }
 }
 
-// ── LISTENERS DE GESTÃO DE TEMPLATES
+//  LISTENERS DE GESTO DE TEMPLATES
 document.addEventListener('DOMContentLoaded', () => {
     const sel = document.getElementById('profile-list');
     const previewBox = document.getElementById('template-preview-box');
@@ -967,12 +967,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Carrega preview (imagem PNG salva junto com o template)
             if (previewBox) {
                 const url = `/api/preview_image?name=${encodeURIComponent(name)}&t=${Date.now()}`;
-                previewBox.innerHTML = `<img src="${url}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='<span style=\\'color:#64748b;font-size:0.8rem;text-align:center;padding:10px;display:block;\\'>📷 Sem screenshot salvo</span>'">`;
+                previewBox.innerHTML = `<img src="${url}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='<span style=\\'color:#64748b;font-size:0.8rem;text-align:center;padding:10px;display:block;\\'> Sem screenshot salvo</span>'">`;
             }
         });
     }
 
-    // ── RENOMEAR PERFIL
+    //  RENOMEAR PERFIL
     if (btnRename) {
         btnRename.addEventListener('click', async () => {
             const name = sel?.value;
@@ -999,12 +999,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert(`Erro: ${data.message}`);
                 }
             } catch(e) {
-                alert('Falha na conexão com o servidor Python.');
+                alert('Falha na conexo com o servidor Python.');
             }
         });
     }
 
-    // ── DELETAR PERFIL
+    //  DELETAR PERFIL
     if (btnDelete) {
         btnDelete.addEventListener('click', async () => {
             const name = sel?.value;
@@ -1021,21 +1021,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert(`Erro ao excluir: ${data.message}`);
                     }
                 } catch(e) {
-                    alert('Falha na conexão com o servidor Python.');
+                    alert('Falha na conexo com o servidor Python.');
                 }
             }
         });
     }
 });
 
-// ── LOAD
+//  LOAD
 async function loadProfile() {
     const name = document.getElementById('profile-list').value;
     if (!name) return;
     try {
         const r = await fetch(`/api/load_profile?name=${name}`);
         const res = await r.json();
-        if (res.status !== 'success') { alert('Perfil não encontrado.'); return; }
+        if (res.status !== 'success') { alert('Perfil no encontrado.'); return; }
 
         const data = res.data;
         document.getElementById('profile-name').value = data.profile_name || name;
@@ -1053,14 +1053,14 @@ async function loadProfile() {
             Object.entries(data.layers).forEach(([id, ld]) => {
                 let l = layersDefs.find(x => x.id === id);
                 if (!l) {
-                    // Trata camadas especiais de música se não existirem
+                    // Trata camadas especiais de msica se no existirem
                     if (id.startsWith('lay_musica_')) {
                         const type = id.replace('lay_musica_', '');
                         addMusicLayer(type);
                         l = layersDefs.find(x => x.id === id);
                         if (l && ld.zIndex !== undefined) l.zIndex = ld.zIndex;
                     } else {
-                        // Camada extra não cadastrada: criar como FIXO
+                        // Camada extra no cadastrada: criar como FIXO
                         extraCount++;
                         l = { id, title: id, zIndex: ld.zIndex ?? (10 + extraCount), color: '#06b6d4', isFixed: true, isFullscreen: false, hasChroma: true, hasSortear: true, isExtra: true };
                         layersDefs.push(l);
@@ -1083,7 +1083,7 @@ async function loadProfile() {
 
                 // Sync the UI is handled by renderAll later
             });
-            // Ordena o array pela zIndex restaurada e reconstrói a interface
+            // Ordena o array pela zIndex restaurada e reconstri a interface
             layersDefs.sort((a, b) => a.zIndex - b.zIndex);
             renderAll();
         }

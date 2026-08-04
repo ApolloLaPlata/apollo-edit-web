@@ -269,7 +269,7 @@
             border: 1px solid #334155;
             border-radius: 12px;
             padding: 15px;
-            display: none; /* Só mostra se houver img */
+            display: none; /* S mostra se houver img */
             justify-content: space-between;
             align-items: center;
         }
@@ -327,7 +327,7 @@
         
         <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
             <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
-                <span style="font-size:2.5rem;">🔥</span> THUMBNAIL STUDIO
+                <span style="font-size:2.5rem;"></span> THUMBNAIL STUDIO
             </h3>
             <p style="color: #94a3b8; margin-top: 5px;">Crie miniaturas otimizadas para YouTube (16:9) e Shorts/TikTok (9:16).</p>
         </div>
@@ -339,14 +339,14 @@
                 
                 <!-- Modo -->
                 <div class="toggle-group" id="mode-toggle">
-                    <button class="toggle-btn active" data-mode="structured">📐 Designer</button>
-                    <button class="toggle-btn" data-mode="custom">💬 Prompt Livre</button>
+                    <button class="toggle-btn active" data-mode="structured"> Designer</button>
+                    <button class="toggle-btn" data-mode="custom"> Prompt Livre</button>
                 </div>
 
                 <!-- Formato -->
                 <div class="toggle-group" id="layout-toggle">
-                    <button class="toggle-btn" data-layout="16:9" style="background:#334155; color:white; border:1px solid #475569;">🖥️ Horiz (16:9)</button>
-                    <button class="toggle-btn" data-layout="9:16">📱 Vert (9:16)</button>
+                    <button class="toggle-btn" data-layout="16:9" style="background:#334155; color:white; border:1px solid #475569;"> Horiz (16:9)</button>
+                    <button class="toggle-btn" data-layout="9:16"> Vert (9:16)</button>
                 </div>
 
                 <!-- Personagens -->
@@ -360,13 +360,13 @@
                 <!-- Ref Imagens -->
                 <div class="input-group">
                     <label style="display:flex; justify-content:space-between;">
-                        <span>Imagens de Referência</span>
-                        <span style="color:#fb923c; font-size:10px;">Composição & Estilo</span>
+                        <span>Imagens de Referncia</span>
+                        <span style="color:#fb923c; font-size:10px;">Composio & Estilo</span>
                     </label>
                     <div class="ref-gallery" id="ref-gallery">
-                        <!-- Imagens dinâmicas -->
-                        <div class="ref-item ref-add" id="btn-add-ref" title="Adicionar Referência">+</div>
-                        <div class="ref-item ref-add" id="btn-paste-ref" title="Colar do Inventário" style="background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b;">🎒</div>
+                        <!-- Imagens dinmicas -->
+                        <div class="ref-item ref-add" id="btn-add-ref" title="Adicionar Referncia">+</div>
+                        <div class="ref-item ref-add" id="btn-paste-ref" title="Colar do Inventrio" style="background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b;"></div>
                     </div>
                     <input type="file" id="ref-file" accept="image/*" multiple style="display: none;">
                 </div>
@@ -381,9 +381,9 @@
                     <div class="input-group" style="background: rgba(30, 41, 59, 0.5); padding: 10px; border-radius: 8px;">
                         <label>Tipografia & Texto</label>
                         <input type="text" id="t-title" placeholder="MANCHETE PRINCIPAL (Curta)" style="font-weight:bold;">
-                        <input type="text" id="t-hook" placeholder="Hook / Gancho Secundário (Opcional)">
+                        <input type="text" id="t-hook" placeholder="Hook / Gancho Secundrio (Opcional)">
                         <select id="t-color">
-                            <option value="White & Red">Branco & Vermelho (Padrão)</option>
+                            <option value="White & Red">Branco & Vermelho (Padro)</option>
                             <option value="Yellow & Black">Amarelo & Preto (Aviso)</option>
                             <option value="Neon Green">Verde Neon (Gaming)</option>
                             <option value="Gold & White">Dourado & Branco (Luxo)</option>
@@ -393,9 +393,9 @@
 
                     <div style="display: flex; gap: 10px;">
                         <div class="input-group" style="flex:1;">
-                            <label>Posição do Sujeito</label>
+                            <label>Posio do Sujeito</label>
                             <select id="t-position">
-                                <option value="right">Direita (Padrão)</option>
+                                <option value="right">Direita (Padro)</option>
                                 <option value="left">Esquerda</option>
                                 <option value="center">Centro</option>
                             </select>
@@ -409,8 +409,8 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Descrição do Fundo</label>
-                        <textarea id="t-bg" rows="2" placeholder="Ex: Explosão, escritório, cidade cyberpunk..."></textarea>
+                        <label>Descrio do Fundo</label>
+                        <textarea id="t-bg" rows="2" placeholder="Ex: Exploso, escritrio, cidade cyberpunk..."></textarea>
                     </div>
 
                 </div>
@@ -419,12 +419,12 @@
                 <div id="panel-custom" style="display: none; flex-direction: column; gap: 10px;">
                     <div class="input-group">
                         <label>Prompt de Thumbnail Detalhado</label>
-                        <textarea id="t-custom" style="height: 200px; font-family: monospace;" placeholder="Descreva a thumbnail completa... O formato será respeitado."></textarea>
+                        <textarea id="t-custom" style="height: 200px; font-family: monospace;" placeholder="Descreva a thumbnail completa... O formato ser respeitado."></textarea>
                     </div>
                 </div>
 
                 <button class="btn-action" id="btn-generate">
-                    ⚡ Gerar Thumbnail
+                     Gerar Thumbnail
                 </button>
 
             </div>
@@ -435,7 +435,7 @@
                 <div class="viewer-container">
                     
                     <div class="placeholder-text" id="viewer-placeholder">
-                        <div style="font-size: 4rem; opacity: 0.5;">📸</div>
+                        <div style="font-size: 4rem; opacity: 0.5;"></div>
                         <div>
                             <strong style="color: white; font-size: 1.2rem; display:block;">Thumbnail Studio</strong>
                             Crie capas de alto impacto visual.
@@ -452,21 +452,21 @@
                         <div class="modal-overlay" id="edit-overlay" style="background: rgba(15, 23, 42, 0.95);">
                             <div style="width: 80%; max-width: 400px; display: flex; flex-direction: column; gap: 10px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; color:white;">
-                                    <strong style="color: #fb923c;">🪄 Edição Mágica</strong>
+                                    <strong style="color: #fb923c;"> Edio Mgica</strong>
                                     <button id="btn-cancel-edit" style="background:none; border:none; color:#94a3b8; cursor:pointer;">X</button>
                                 </div>
                                 <textarea id="edit-instruction" rows="3" style="width:100%; background:black; border:1px solid #334155; color:white; border-radius:8px; padding:10px; resize:none;" placeholder="Ex: Mude a cor da camisa para azul..."></textarea>
-                                <button id="btn-apply-edit" class="btn-action" style="padding: 10px; font-size: 1rem;">Aplicar Edição</button>
+                                <button id="btn-apply-edit" class="btn-action" style="padding: 10px; font-size: 1rem;">Aplicar Edio</button>
                             </div>
                         </div>
 
                         <img id="result-image" src="" alt="Thumbnail">
                         
                         <div class="overlay-tools" id="overlay-tools">
-                            <button class="tool-btn" id="tool-download" title="Baixar">📥</button>
-                            <button class="tool-btn" id="tool-reroll" style="background: #2563eb; color:white;" title="Regerar">🔄</button>
-                            <button class="tool-btn" id="tool-edit" style="background: #9333ea; color:white;" title="Editar">🪄</button>
-                            <button class="tool-btn" id="tool-prompt" style="background: #16a34a; color:white;" title="Extrair Prompt">💬</button>
+                            <button class="tool-btn" id="tool-download" title="Baixar"></button>
+                            <button class="tool-btn" id="tool-reroll" style="background: #2563eb; color:white;" title="Regerar"></button>
+                            <button class="tool-btn" id="tool-edit" style="background: #9333ea; color:white;" title="Editar"></button>
+                            <button class="tool-btn" id="tool-prompt" style="background: #16a34a; color:white;" title="Extrair Prompt"></button>
                         </div>
                     </div>
 
@@ -474,11 +474,11 @@
 
                 <div class="cross-format-bar" id="cross-format-bar">
                     <div>
-                        <strong style="color:white; font-size: 0.9rem;">Geração Cruzada</strong><br>
-                        <span style="color:#94a3b8; font-size: 0.75rem;">Gostou? Gere a versão oposta mantendo o estilo.</span>
+                        <strong style="color:white; font-size: 0.9rem;">Gerao Cruzada</strong><br>
+                        <span style="color:#94a3b8; font-size: 0.75rem;">Gostou? Gere a verso oposta mantendo o estilo.</span>
                     </div>
                     <button id="btn-cross-format" style="background: #9333ea; color:white; border:none; padding:10px 15px; border-radius:8px; font-weight:bold; cursor:pointer;">
-                        Gerar Versão ...
+                        Gerar Verso ...
                     </button>
                 </div>
 

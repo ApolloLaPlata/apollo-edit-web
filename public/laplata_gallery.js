@@ -1,13 +1,13 @@
 /**
  * Apollo La Plata - Gallery Logic
- * Gerencia a galeria de imagens e vídeos usando o laplata_db.js
+ * Gerencia a galeria de imagens e vdeos usando o laplata_db.js
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
     const grid = document.getElementById('gallery-grid');
     const galleryCount = document.getElementById('gallery-count');
     
-    // Paginação
+    // Paginao
     const btnPrevPage = document.getElementById('btn-prev-page');
     const btnNextPage = document.getElementById('btn-next-page');
     const pageIndicator = document.getElementById('page-indicator');
@@ -51,18 +51,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    // Formatação
+    // Formatao
     const padNumber = (num) => num.toString().padStart(3, '0');
 
     // --- CARREGAMENTO INICIAL ---
     async function loadGallery() {
         try {
             const rawMedia = await window.laplataDB.gallery.getAll();
-            // Ordena cronologicamente inverso (mais novo primeiro) para exibição
+            // Ordena cronologicamente inverso (mais novo primeiro) para exibio
             allMedia = rawMedia.sort((a, b) => b.timestamp - a.timestamp);
             galleryCount.innerText = `${allMedia.length} itens`;
             
-            // Corrige página se deletou o último item da página atual
+            // Corrige pgina se deletou o ltimo item da pgina atual
             const maxPages = Math.ceil(allMedia.length / ITEMS_PER_PAGE) || 1;
             if (currentPage > maxPages) currentPage = maxPages;
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderGrid() {
         if (allMedia.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px; color:#94a3b8;">A galeria está vazia. Gere imagens no Laboratório!</div>`;
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px; color:#94a3b8;">A galeria est vazia. Gere imagens no Laboratrio!</div>`;
             updatePagination();
             return;
         }
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="gallery-card" onclick="window.openLightbox('${item.id}')">
                 <div class="gallery-img-wrapper" style="aspect-ratio: ${item.aspectRatio === '1:1' ? '1/1' : '16/9'};">
                     ${mediaHtml}
-                    ${isVideo ? '<div class="video-badge">🎬 VÍDEO</div>' : ''}
+                    ${isVideo ? '<div class="video-badge"> VDEO</div>' : ''}
                 </div>
                 <div class="gallery-card-content">
                     <div class="prompt-text">${item.prompt}</div>
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function updatePagination() {
         const totalPages = Math.ceil(allMedia.length / ITEMS_PER_PAGE) || 1;
-        pageIndicator.innerText = `Página ${currentPage} de ${totalPages}`;
+        pageIndicator.innerText = `Pgina ${currentPage} de ${totalPages}`;
         
         btnPrevPage.disabled = currentPage === 1;
         btnNextPage.disabled = currentPage === totalPages;
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         playClick();
         lightboxModal.style.display = 'flex';
 
-        // Mídia
+        // Mdia
         const isVideo = !!item.videoUrl;
         const mainUrl = isVideo ? item.videoUrl : item.imageUrl;
         
@@ -181,16 +181,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnCloseLightbox.addEventListener('click', closeLightbox);
     
-    // Fechar ao clicar fora da área
+    // Fechar ao clicar fora da rea
     lightboxModal.addEventListener('click', (e) => {
         if (e.target === lightboxModal) closeLightbox();
     });
 
-    // Ações do Lightbox
+    // Aes do Lightbox
     btnCopyPrompt.addEventListener('click', () => {
         if (!currentLightboxItem) return;
         navigator.clipboard.writeText(currentLightboxItem.prompt);
-        showToast('Copiado!', 'Prompt copiado para a área de transferência.', 'system');
+        showToast('Copiado!', 'Prompt copiado para a rea de transferncia.', 'system');
         playClick();
     });
 
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnCopyToInventory.className = 'btn-action btn-secondary';
     btnCopyToInventory.style.padding = '12px';
     btnCopyToInventory.style.marginTop = '10px';
-    btnCopyToInventory.innerHTML = '🎒 Copiar para Área de Transferência';
+    btnCopyToInventory.innerHTML = ' Copiar para rea de Transferncia';
     btnCopyToInventory.onclick = () => {
         if (!currentLightboxItem) return;
         const mainUrl = currentLightboxItem.imageUrl; // Inventory mostly uses images
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (confirm("Deseja EXCLUIR permanentemente esta cena?")) {
             try {
                 await window.laplataDB.gallery.delete(currentLightboxItem.id);
-                showToast('Excluído', 'Mídia deletada com sucesso.', 'system');
+                showToast('Excludo', 'Mdia deletada com sucesso.', 'system');
                 playSuccess();
                 closeLightbox();
                 loadGallery();
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnClearGallery.addEventListener('click', async () => {
         if (allMedia.length === 0) return;
         
-        const answer = prompt('ATENÇÃO! Digite "DELETAR" para apagar todas as mídias permanentemente:');
+        const answer = prompt('ATENO! Digite "DELETAR" para apagar todas as mdias permanentemente:');
         if (answer === 'DELETAR') {
             try {
                 await window.laplataDB.gallery.clear();
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Geração de Script Mestre
+    // Gerao de Script Mestre
     function generateMasterScript(sortedArray) {
         let text = "PROJETO: APOLLO STORY BATCH\n";
         text += "===================================\n\n";
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             text += `-----------------------------------\n`;
             text += `Arquivo: Cena_${sceneNum}.png\n`;
             text += `Prompt Imagem : ${img.prompt}\n`;
-            text += `Prompt Vídeo  : ${img.videoPrompt || '[Nenhum]'}\n\n`;
+            text += `Prompt Vdeo  : ${img.videoPrompt || '[Nenhum]'}\n\n`;
         });
         return text;
     }
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (allMedia.length === 0) return;
         playClick();
         
-        // Ordem cronológica real (do mais antigo pro mais novo)
+        // Ordem cronolgica real (do mais antigo pro mais novo)
         const sorted = [...allMedia].sort((a,b) => a.timestamp - b.timestamp);
         const scriptText = generateMasterScript(sorted);
         
@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         playClick();
 
         const sorted = [...allMedia].sort((a,b) => a.timestamp - b.timestamp);
-        let csv = "Cena,Prompt de Imagem,Prompt de Vídeo,Proporção,Data\n";
+        let csv = "Cena,Prompt de Imagem,Prompt de Vdeo,Proporo,Data\n";
         
         sorted.forEach((img, idx) => {
             const sceneNum = padNumber(idx + 1);
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     folder.file(`Cena_${sceneNum}.png`, b64, { base64: true });
                 }
 
-                // Extrai base64 do Vídeo (se houver)
+                // Extrai base64 do Vdeo (se houver)
                 if (img.videoUrl && img.videoUrl.includes(',')) {
                     const vB64 = img.videoUrl.split(',')[1];
                     let ext = 'mp4';
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             link.click();
             URL.revokeObjectURL(url);
 
-            showToast('Sucesso', 'Download ZIP concluído!', 'success');
+            showToast('Sucesso', 'Download ZIP concludo!', 'success');
             playSuccess();
             
             // Dispara quest se existir
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (e) {
             console.error("Erro ao gerar ZIP:", e);
-            showToast('Erro', 'Falha ao compactar os arquivos. Mídias pesadas?', 'system');
+            showToast('Erro', 'Falha ao compactar os arquivos. Mdias pesadas?', 'system');
             playError();
         }
     }

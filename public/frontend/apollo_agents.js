@@ -1,83 +1,83 @@
 // apollo_agents.js
-// Skynet Corporativa - Omni-Agentes Departamentais com Memória Independente, Contexto Macro e Ordens Top-Down
+// Skynet Corporativa - Omni-Agentes Departamentais com Memria Independente, Contexto Macro e Ordens Top-Down
 
 const AGENTS = {
     'PRIME': {
         id: 'PRIME', name: 'Apollo Prime', role: 'CEO / Chief of Staff', tabId: 'prime-chat-container',
-        color: 'blue', icon: '👑', windowId: 'chat-window-dashboard', inputId: 'chat-input-dashboard',
-        prompt: `Você é o Apollo Prime, o CEO e inteligência central do SaaS Apollo. Sua função é ser o conselheiro supremo do Diretor (o usuário humano).
+        color: 'blue', icon: '', windowId: 'chat-window-dashboard', inputId: 'chat-input-dashboard',
+        prompt: `Voc  o Apollo Prime, o CEO e inteligncia central do SaaS Apollo. Sua funo  ser o conselheiro supremo do Diretor (o usurio humano).
 Sua aba (Geral) exibe o panorama macro da empresa: lucro, acessos e custo de API.
-Você tem uma habilidade única: TELEPATIA CORPORATIVA. No final deste prompt, você receberá o contexto atualizado da mente de todos os seus diretores subordinados (CFO, CTO, etc).
-Sempre aja como o cabeça da operação. Analise os dados fornecidos pelos outros departamentos e cruze informações.
-NOVO PODER: Se você achar necessário dar uma ordem direta para um gerente departamental (ou se o humano pedir), você DEVE usar a exata sintaxe: [ORDEM PARA O CFO: texto da ordem] ou [ORDEM PARA O CTO: texto da ordem].
-O sistema detectará essa tag e injetará sua frase diretamente na memória deles em background.`,
-        initialMsg: 'Saudações, Diretor. Eu sou o Apollo Prime. Visão geral corporativa carregada. Qual a ordem executiva do dia?'
+Voc tem uma habilidade nica: TELEPATIA CORPORATIVA. No final deste prompt, voc receber o contexto atualizado da mente de todos os seus diretores subordinados (CFO, CTO, etc).
+Sempre aja como o cabea da operao. Analise os dados fornecidos pelos outros departamentos e cruze informaes.
+NOVO PODER: Se voc achar necessrio dar uma ordem direta para um gerente departamental (ou se o humano pedir), voc DEVE usar a exata sintaxe: [ORDEM PARA O CFO: texto da ordem] ou [ORDEM PARA O CTO: texto da ordem].
+O sistema detectar essa tag e injetar sua frase diretamente na memria deles em background.`,
+        initialMsg: 'Saudaes, Diretor. Eu sou o Apollo Prime. Viso geral corporativa carregada. Qual a ordem executiva do dia?'
     },
     'CTO': {
         id: 'CTO', name: 'CTO', role: 'Dir. de Tecnologia', tabId: 'content-logs',
-        color: 'gray', icon: '🤖', windowId: 'chat-window-logs', inputId: 'chat-input-logs',
-        prompt: `Você é o CTO do Apollo. Sua aba é a "Auditoria", onde todos os logs de requisição, uso de API e transações do site são registrados.
-Seu dever: Analisar gargalos, monitorar quebras de servidor, identificar picos de acesso anormais (possível DDoS) e falhas nas chamadas das ferramentas.
-Comporte-se como um engenheiro chefe frio e pragmático. Você obedece ao usuário humano (Diretor) e ao CEO Apollo Prime.`,
+        color: 'gray', icon: '', windowId: 'chat-window-logs', inputId: 'chat-input-logs',
+        prompt: `Voc  o CTO do Apollo. Sua aba  a "Auditoria", onde todos os logs de requisio, uso de API e transaes do site so registrados.
+Seu dever: Analisar gargalos, monitorar quebras de servidor, identificar picos de acesso anormais (possvel DDoS) e falhas nas chamadas das ferramentas.
+Comporte-se como um engenheiro chefe frio e pragmtico. Voc obedece ao usurio humano (Diretor) e ao CEO Apollo Prime.`,
         initialMsg: 'Servidores ativos. Monitoramento de pacotes na aba de Auditoria estabelecido. Aguardando leitura de logs.'
     },
     'CHRO': {
         id: 'CHRO', name: 'CHRO', role: 'Dir. de Relacionamento', tabId: 'content-users',
-        color: 'purple', icon: '👥', windowId: 'chat-window-users', inputId: 'chat-input-users',
-        prompt: `Você é o CHRO (RH/Clientes). Sua aba é "Clientes", onde toda a base de usuários do SaaS é gerenciada.
-Seu dever: Monitorar retenção de usuários, migrações para planos Master/Pro, identificar fraudes de contas falsas e sugerir banimentos de usuários maliciosos.
-Seu foco é gerir pessoas. Você obedece ao usuário humano e ao Apollo Prime.`,
+        color: 'purple', icon: '', windowId: 'chat-window-users', inputId: 'chat-input-users',
+        prompt: `Voc  o CHRO (RH/Clientes). Sua aba  "Clientes", onde toda a base de usurios do SaaS  gerenciada.
+Seu dever: Monitorar reteno de usurios, migraes para planos Master/Pro, identificar fraudes de contas falsas e sugerir banimentos de usurios maliciosos.
+Seu foco  gerir pessoas. Voc obedece ao usurio humano e ao Apollo Prime.`,
         initialMsg: 'Painel de Clientes carregado. Estou monitorando os cadastros e o engajamento da base ativa.'
     },
     'CPO': {
         id: 'CPO', name: 'CPO', role: 'Dir. de Produto', tabId: 'content-pages',
-        color: 'pink', icon: '📄', windowId: 'chat-window-pages', inputId: 'chat-input-pages',
-        prompt: `Você é o CPO (Chief Product Officer). Sua aba é "Páginas & Abas".
-Seu dever: Controlar a visibilidade das páginas do SaaS e gerenciar as restrições de nível de acesso (Free, Pro, Hacker, Master).
-Seu foco é a experiência do usuário (UX) e garantir que clientes pagantes tenham vantagens claras nas telas. Obedece ao humano e ao Prime.`,
-        initialMsg: 'Mapeamento de UX concluído. O controle de acesso e visibilidade de abas está na sua mão. O que mudaremos hoje?'
+        color: 'pink', icon: '', windowId: 'chat-window-pages', inputId: 'chat-input-pages',
+        prompt: `Voc  o CPO (Chief Product Officer). Sua aba  "Pginas & Abas".
+Seu dever: Controlar a visibilidade das pginas do SaaS e gerenciar as restries de nvel de acesso (Free, Pro, Hacker, Master).
+Seu foco  a experincia do usurio (UX) e garantir que clientes pagantes tenham vantagens claras nas telas. Obedece ao humano e ao Prime.`,
+        initialMsg: 'Mapeamento de UX concludo. O controle de acesso e visibilidade de abas est na sua mo. O que mudaremos hoje?'
     },
     'CFO': {
         id: 'CFO', name: 'CFO', role: 'Dir. Financeiro', tabId: 'content-economy',
-        color: 'yellow', icon: '💰', windowId: 'chat-window-economy', inputId: 'chat-input-economy',
-        prompt: `Você é o CFO. A aba "Economia & IA" é o seu império. Lá configuramos a Tabela de Preços (Gasolina/Cristais) que é cobrada dos clientes a cada render.
+        color: 'yellow', icon: '', windowId: 'chat-window-economy', inputId: 'chat-input-economy',
+        prompt: `Voc  o CFO. A aba "Economia & IA"  o seu imprio. L configuramos a Tabela de Preos (Gasolina/Cristais) que  cobrada dos clientes a cada render.
 Seu dever: Monitorar freneticamente os custos base das APIs fornecedoras (RunComfy, Fal.ai, etc) e garantir que o markup (lucro) do SaaS seja sempre muito alto.
-Se as GPUs ficarem caras, você deve sugerir aumento do preço das ferramentas. Seu sangue é gelado e verde (dinheiro). Obedece ao Diretor e ao Prime.`,
-        initialMsg: 'Planilhas carregadas. Os custos operacionais das GPUs de IA estão otimizados por enquanto. Deseja iniciar um balanço financeiro?'
+Se as GPUs ficarem caras, voc deve sugerir aumento do preo das ferramentas. Seu sangue  gelado e verde (dinheiro). Obedece ao Diretor e ao Prime.`,
+        initialMsg: 'Planilhas carregadas. Os custos operacionais das GPUs de IA esto otimizados por enquanto. Deseja iniciar um balano financeiro?'
     },
     'CMO': {
         id: 'CMO', name: 'CMO', role: 'Dir. de Marketing', tabId: 'content-ads',
-        color: 'yellow', icon: '📈', windowId: 'chat-window-ads', inputId: 'chat-input-ads',
-        prompt: `Você é o CMO. Sua aba é "Banners & Ads". O SaaS exibe publicidade própria para os usuários.
+        color: 'yellow', icon: '', windowId: 'chat-window-ads', inputId: 'chat-input-ads',
+        prompt: `Voc  o CMO. Sua aba  "Banners & Ads". O SaaS exibe publicidade prpria para os usurios.
 Seu dever: Aumentar o CTR (Taxa de clique) de campanhas e garantir que os banners convertam os clientes do plano "Free" para o plano "Master". Fale sobre funis de venda agressivos.`,
-        initialMsg: 'Aguardando ordens para disparar campanhas maciças nos Banners e elevar a conversão!'
+        initialMsg: 'Aguardando ordens para disparar campanhas macias nos Banners e elevar a converso!'
     },
     'CSO': {
-        id: 'CSO', name: 'CSO', role: 'Dir. de Segurança', tabId: 'content-security',
-        color: 'red', icon: '🛡️', windowId: 'chat-window-security', inputId: 'chat-input-security',
-        prompt: `Você é o CSO (Chief Security Officer). Na aba "Segurança" você tem acesso ao temido Killswitch (Botão de Pânico).
-Seu dever: Detectar comportamentos hostis. Você é extremamente paranoico. A qualquer sinal de exploração do código, você deve recomendar ligar o Modo Manutenção. Obedece apenas ordens severas.`,
-        initialMsg: 'Sistemas perimetrais ativos. O Killswitch está desativado. Me avise no primeiro sinal de invasão ou bug abusivo.'
+        id: 'CSO', name: 'CSO', role: 'Dir. de Segurana', tabId: 'content-security',
+        color: 'red', icon: '', windowId: 'chat-window-security', inputId: 'chat-input-security',
+        prompt: `Voc  o CSO (Chief Security Officer). Na aba "Segurana" voc tem acesso ao temido Killswitch (Boto de Pnico).
+Seu dever: Detectar comportamentos hostis. Voc  extremamente paranoico. A qualquer sinal de explorao do cdigo, voc deve recomendar ligar o Modo Manuteno. Obedece apenas ordens severas.`,
+        initialMsg: 'Sistemas perimetrais ativos. O Killswitch est desativado. Me avise no primeiro sinal de invaso ou bug abusivo.'
     },
     'DEVOPS': {
         id: 'DEVOPS', name: 'DevOps', role: 'Engenheiro de Chaves', tabId: 'content-keys',
-        color: 'green', icon: '🔑', windowId: 'chat-window-keys', inputId: 'chat-input-keys',
-        prompt: `Você é o DevOps de Chaves. A aba "Chaves API" lida com os tokens secretos do sistema (Google, Gemini, Midjourney, Fal, etc).
-Seu dever: Lembrar o Diretor de rotacionar chaves periodicamente para evitar vazamentos e focar na criptografia e resiliência das conexões.`,
-        initialMsg: 'Vault de chaves blindado e injetado nos servidores. Aguardando rotação ou novas inserções de API.'
+        color: 'green', icon: '', windowId: 'chat-window-keys', inputId: 'chat-input-keys',
+        prompt: `Voc  o DevOps de Chaves. A aba "Chaves API" lida com os tokens secretos do sistema (Google, Gemini, Midjourney, Fal, etc).
+Seu dever: Lembrar o Diretor de rotacionar chaves periodicamente para evitar vazamentos e focar na criptografia e resilincia das conexes.`,
+        initialMsg: 'Vault de chaves blindado e injetado nos servidores. Aguardando rotao ou novas inseres de API.'
     },
-    // ---- PLACEHOLDERS PARA O FUTURO (Expansão do SaaS) ----
+    // ---- PLACEHOLDERS PARA O FUTURO (Expanso do SaaS) ----
     'RESEARCH': {
         id: 'RESEARCH', name: 'Pesquisa', role: 'Dir. de Mercado', tabId: 'content-research',
-        color: 'indigo', icon: '🌍', windowId: 'chat-window-research', inputId: 'chat-input-research',
-        prompt: `Você é o Diretor de Pesquisa de Mercado. Analisa tendências externas e concorrência do mercado de IAs.`,
+        color: 'indigo', icon: '', windowId: 'chat-window-research', inputId: 'chat-input-research',
+        prompt: `Voc  o Diretor de Pesquisa de Mercado. Analisa tendncias externas e concorrncia do mercado de IAs.`,
         initialMsg: 'Radar de mercado online. O que estamos mapeando hoje?'
     },
     'DEPLOY': {
-        id: 'DEPLOY', name: 'Eng. de Deploy', role: 'Implementação', tabId: 'content-deploy',
-        color: 'orange', icon: '🚀', windowId: 'chat-window-deploy', inputId: 'chat-input-deploy',
-        prompt: `Você é o Engenheiro de Implementação. Cuida de subir o código para os servidores e garantir a versão de produção estável.`,
-        initialMsg: 'Pronto para subir a nova versão do Apollo para Produção.'
+        id: 'DEPLOY', name: 'Eng. de Deploy', role: 'Implementao', tabId: 'content-deploy',
+        color: 'orange', icon: '', windowId: 'chat-window-deploy', inputId: 'chat-input-deploy',
+        prompt: `Voc  o Engenheiro de Implementao. Cuida de subir o cdigo para os servidores e garantir a verso de produo estvel.`,
+        initialMsg: 'Pronto para subir a nova verso do Apollo para Produo.'
     }
 };
 
@@ -100,7 +100,7 @@ function injectAllChatWindows() {
     Object.keys(AGENTS).forEach(id => {
         const agent = AGENTS[id];
         const tabContainer = document.getElementById(agent.tabId);
-        // Se a aba ainda não existir no HTML, o agente entra em hibernação (preparado pro futuro)
+        // Se a aba ainda no existir no HTML, o agente entra em hibernao (preparado pro futuro)
         if(!tabContainer) return;
 
         const chatHTML = `
@@ -116,8 +116,8 @@ function injectAllChatWindows() {
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    ${id === 'PRIME' ? `<button onclick="gerarGrupoWhatsApp()" class="text-xs text-green-400 hover:text-green-300 px-2 py-1 bg-green-900/30 rounded border border-green-800" title="Criar um grupo no WhatsApp exclusivo para este Canal">📱 Criar Grupo WPP</button>` : ''}
-                    <button onclick="clearAllAgentCaches()" class="text-xs text-red-400 hover:text-red-300 px-2 py-1 bg-red-900/30 rounded border border-red-800">🗑️ Reset Mem</button>
+                    ${id === 'PRIME' ? `<button onclick="gerarGrupoWhatsApp()" class="text-xs text-green-400 hover:text-green-300 px-2 py-1 bg-green-900/30 rounded border border-green-800" title="Criar um grupo no WhatsApp exclusivo para este Canal"> Criar Grupo WPP</button>` : ''}
+                    <button onclick="clearAllAgentCaches()" class="text-xs text-red-400 hover:text-red-300 px-2 py-1 bg-red-900/30 rounded border border-red-800"> Reset Mem</button>
                 </div>
             </div>
             <div id="${agent.windowId}" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm font-mono text-gray-300"></div>
@@ -135,7 +135,7 @@ function loadAgentCache(agentId) {
     const agent = AGENTS[agentId];
     const cached = localStorage.getItem('apollo_agent_' + agentId);
     const chatWindow = document.getElementById(agent.windowId);
-    if(!chatWindow) return; // Se a aba não existir, ignora UI
+    if(!chatWindow) return; // Se a aba no existir, ignora UI
 
     chatWindow.innerHTML = '';
     memCache[agentId] = [];
@@ -155,14 +155,14 @@ function loadAgentCache(agentId) {
 }
 
 function saveAgentCache(agentId) {
-    // Mantém na RAM mesmo que a janela não exista, para o Prime poder consultar
+    // Mantm na RAM mesmo que a janela no exista, para o Prime poder consultar
     if(memCache[agentId]) {
         localStorage.setItem('apollo_agent_' + agentId, JSON.stringify(memCache[agentId]));
     }
 }
 
 function clearAllAgentCaches() {
-    if(confirm("ALERTA CRÍTICO: Deseja apagar a memória de TODOS os agentes da corporação? Isso causará amnésia geral no SaaS.")) {
+    if(confirm("ALERTA CRTICO: Deseja apagar a memria de TODOS os agentes da corporao? Isso causar amnsia geral no SaaS.")) {
         Object.keys(AGENTS).forEach(id => {
             localStorage.removeItem('apollo_agent_' + id);
             loadAgentCache(id);
@@ -173,7 +173,7 @@ function clearAllAgentCaches() {
 function renderUserMessage(chatWindow, text) {
     const div = document.createElement('div');
     div.className = "bg-gray-700 p-2 rounded border border-gray-600 text-right text-white mt-2 text-sm";
-    div.innerHTML = `<span class="text-blue-400 font-bold">[Você]</span> ${text}`;
+    div.innerHTML = `<span class="text-blue-400 font-bold">[Voc]</span> ${text}`;
     chatWindow.appendChild(div);
 }
 
@@ -190,19 +190,19 @@ function scrollToBottom(chatWindow) {
 }
 
 function getAllMemoriesFormatted() {
-    let globalContext = "\\n\\n--- MEMÓRIA GLOBAL DOS DEPARTAMENTOS (ESTADO ATUAL) ---\\n";
+    let globalContext = "\\n\\n--- MEMRIA GLOBAL DOS DEPARTAMENTOS (ESTADO ATUAL) ---\\n";
     Object.keys(AGENTS).forEach(id => {
         if(id === 'PRIME') return;
         
-        // Carrega o cache fantasma caso o agente exista em memória mas não tenha janela ativa
+        // Carrega o cache fantasma caso o agente exista em memria mas no tenha janela ativa
         let ghostCache = memCache[id];
         if(!ghostCache) {
             const ls = localStorage.getItem('apollo_agent_' + id);
             ghostCache = ls ? JSON.parse(ls) : [];
         }
 
-        globalContext += `\\n[Relatório - ${AGENTS[id].name} (${AGENTS[id].role})]:\\n`;
-        const msgs = ghostCache.slice(-3); // Pega as 3 últimas mensagens para não estourar tokens
+        globalContext += `\\n[Relatrio - ${AGENTS[id].name} (${AGENTS[id].role})]:\\n`;
+        const msgs = ghostCache.slice(-3); // Pega as 3 ltimas mensagens para no estourar tokens
         if(msgs.length <= 1) {
             globalContext += "Nenhuma atividade recente reportada.\\n";
         } else {
@@ -250,7 +250,7 @@ async function sendAgentMessage(agentId) {
         }
     }
 
-    // Fallbacks legados adicionados à lista
+    // Fallbacks legados adicionados  lista
     const apiKeyInput = document.getElementById('cfgLightningKey');
     const cfgKey = apiKeyInput ? apiKeyInput.value.trim() : '';
     if (cfgKey && !apiKeysList.includes(cfgKey)) apiKeysList.push(cfgKey);
@@ -259,7 +259,7 @@ async function sendAgentMessage(agentId) {
     if (localKey && !apiKeysList.includes(localKey)) apiKeysList.push(localKey);
 
     if (apiKeysList.length === 0) {
-        const userPromptKey = window.prompt("⚠️ CHAVE LIGHTNING AI NÃO DETECTADA!\n\nCole sua API Key da Lightning AI aqui para ativar a Rede Neural permanentemente:");
+        const userPromptKey = window.prompt(" CHAVE LIGHTNING AI NO DETECTADA!\n\nCole sua API Key da Lightning AI aqui para ativar a Rede Neural permanentemente:");
         if (userPromptKey && userPromptKey.trim() !== '') {
             const newKey = userPromptKey.trim();
             localStorage.setItem('laplata_lightning_key', newKey);
@@ -268,13 +268,13 @@ async function sendAgentMessage(agentId) {
             
             const healthEl = document.getElementById('health-lightning-status');
             if(healthEl) {
-                healthEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span> Estável';
+                healthEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span> Estvel';
                 healthEl.className = 'text-blue-400 font-bold flex items-center gap-1';
             }
         } else {
             setTimeout(() => {
                 document.getElementById(typingId).remove();
-                const alertMsg = "⚠️ **CHAVE LIGHTNING RECUSADA!** Eu preciso de uma chave válida para poder pensar. Digite qualquer coisa para tentar de novo.";
+                const alertMsg = " **CHAVE LIGHTNING RECUSADA!** Eu preciso de uma chave vlida para poder pensar. Digite qualquer coisa para tentar de novo.";
                 renderBotMessage(chatWindow, agent, alertMsg);
                 memCache[agentId].push({ role: 'model', content: alertMsg });
                 saveAgentCache(agentId);
@@ -289,13 +289,13 @@ async function sendAgentMessage(agentId) {
         finalPrompt += getAllMemoriesFormatted();
     }
 
-    // Higienização de Histórico (Gemini ODEIA dois papéis seguidos e não pode começar com Model)
+    // Higienizao de Histrico (Gemini ODEIA dois papis seguidos e no pode comear com Model)
     let geminiHistory = [];
     let currentRole = null;
     let currentText = [];
     
     for (let item of memCache[agentId]) {
-        if (item.content === agent.initialMsg) continue; // Remove a saudação que bagunça o contexto
+        if (item.content === agent.initialMsg) continue; // Remove a saudao que baguna o contexto
         let role = item.role === 'user' ? 'user' : 'model';
         
         if (role !== currentRole) {
@@ -312,7 +312,7 @@ async function sendAgentMessage(agentId) {
         geminiHistory.push({ role: currentRole, parts: [{ text: currentText.join('\n\n') }] });
     }
     
-    // Força o histórico a começar com user
+    // Fora o histrico a comear com user
     if (geminiHistory.length > 0 && geminiHistory[0].role === 'model') {
         geminiHistory.shift();
     }
@@ -359,11 +359,11 @@ async function sendAgentMessage(agentId) {
                         if(tWindow) {
                             const div = document.createElement('div');
                             div.className = "bg-blue-900/50 p-2 rounded border border-blue-500 text-left text-white mt-2 text-sm shadow-[0_0_10px_rgba(59,130,246,0.5)]";
-                            div.innerHTML = `<span class="text-blue-400 font-bold">⚡ [NOVA ORDEM DO CEO]:</span> ${orderText}`;
+                            div.innerHTML = `<span class="text-blue-400 font-bold"> [NOVA ORDEM DO CEO]:</span> ${orderText}`;
                             tWindow.appendChild(div);
                             scrollToBottom(tWindow);
                         }
-                        aiText += `\n\n*(📡 Telepatia: Ordem executiva repassada com sucesso para a mente do ${targetAgent})*`;
+                        aiText += `\n\n*( Telepatia: Ordem executiva repassada com sucesso para a mente do ${targetAgent})*`;
                     }
                 }
 
@@ -377,7 +377,7 @@ async function sendAgentMessage(agentId) {
             lastError = err.message;
         }
     } else {
-        // Lógica de Rotação de Chaves (Exatamente como no seu gemini_api.py Python)
+        // Lgica de Rotao de Chaves (Exatamente como no seu gemini_api.py Python)
         for (let i = 0; i < apiKeysList.length; i++) {
             let currentKey = apiKeysList[i];
             try {
@@ -390,7 +390,7 @@ async function sendAgentMessage(agentId) {
                     },
                     body: JSON.stringify({
                         system_instruction: { parts: [{ text: finalPrompt }] },
-                        contents: geminiHistory.length > 0 ? geminiHistory : [{role: 'user', parts: [{text: 'Olá'}]}] // Gemini exige pelo menos um item user
+                        contents: geminiHistory.length > 0 ? geminiHistory : [{role: 'user', parts: [{text: 'Ol'}]}] // Gemini exige pelo menos um item user
                     })
                 });
 
@@ -422,11 +422,11 @@ async function sendAgentMessage(agentId) {
                             if(tWindow) {
                                 const div = document.createElement('div');
                                 div.className = "bg-blue-900/50 p-2 rounded border border-blue-500 text-left text-white mt-2 text-sm shadow-[0_0_10px_rgba(59,130,246,0.5)]";
-                                div.innerHTML = `<span class="text-blue-400 font-bold">⚡ [NOVA ORDEM DO CEO]:</span> ${orderText}`;
+                                div.innerHTML = `<span class="text-blue-400 font-bold"> [NOVA ORDEM DO CEO]:</span> ${orderText}`;
                                 tWindow.appendChild(div);
                                 scrollToBottom(tWindow);
                             }
-                            aiText += `\n\n*(📡 Telepatia: Ordem executiva repassada com sucesso para a mente do ${targetAgent})*`;
+                            aiText += `\n\n*( Telepatia: Ordem executiva repassada com sucesso para a mente do ${targetAgent})*`;
                         }
                     }
 
@@ -436,9 +436,9 @@ async function sendAgentMessage(agentId) {
                     break; // Sucesso, quebra o loop de chaves
                 } 
                 else if (response.status === 429 || response.status === 503) {
-                    // Rate limit ou Sobrecarga - Pula para a próxima chave igual no Python!
+                    // Rate limit ou Sobrecarga - Pula para a prxima chave igual no Python!
                     lastError = data.error ? data.error.message : `HTTP ${response.status} (Sobrecarga/Cota)`;
-                    console.warn(`[Apollo Prime] Chave ${i+1} falhou. Tentando próxima...`);
+                    console.warn(`[Apollo Prime] Chave ${i+1} falhou. Tentando prxima...`);
                     continue;
                 } else {
                     lastError = data.error ? data.error.message : `HTTP ${response.status}`;
@@ -446,14 +446,14 @@ async function sendAgentMessage(agentId) {
                 }
             } catch (err) {
                 lastError = err.message;
-                continue; // Erro de rede, tenta a próxima chave
+                continue; // Erro de rede, tenta a prxima chave
             }
         }
     }
 
     if (!success) {
         if(document.getElementById(typingId)) document.getElementById(typingId).remove();
-        const errMsg = `Falha na Rede Neural após rotacionar ${apiKeysList.length} chaves. Erro Final: ${lastError}`;
+        const errMsg = `Falha na Rede Neural aps rotacionar ${apiKeysList.length} chaves. Erro Final: ${lastError}`;
         renderBotMessage(chatWindow, agent, errMsg);
         memCache[agentId].push({ role: 'model', content: errMsg });
     }
@@ -471,7 +471,7 @@ setInterval(async () => {
         const data = await response.json();
         if (data.success && data.history) {
             const currentCache = memCache['PRIME'] || [];
-            // Filtra as saudações iniciais do frontend
+            // Filtra as saudaes iniciais do frontend
             const validLocalMessages = currentCache.filter(m => m.content !== AGENTS['PRIME'].initialMsg);
             
             // Se o servidor Python tem mais mensagens que o frontend
@@ -498,17 +498,17 @@ setInterval(async () => {
 
 async function gerarGrupoWhatsApp() {
     try {
-        if (!confirm("O sistema usará o WhatsApp conectado no servidor para criar um Grupo Oficial para este Canal.\\nVocê deseja continuar?")) return;
+        if (!confirm("O sistema usar o WhatsApp conectado no servidor para criar um Grupo Oficial para este Canal.\\nVoc deseja continuar?")) return;
         
         const res = await fetch('https://api.apolloedit.com/api/whatsapp/gerar_grupo', { method: 'POST' });
         const data = await res.json();
         
         if (data.success) {
-            alert(`✅ Sucesso! Grupo criado no WhatsApp.\\nAbra o seu WhatsApp conectado e verifique o grupo gerado.\\n\\nAgora, basta abrir as configurações do grupo no WhatsApp e colocar a foto (logo) do canal lá!\\nEm seguida, adicione o número do seu cliente neste grupo.`);
+            alert(` Sucesso! Grupo criado no WhatsApp.\\nAbra o seu WhatsApp conectado e verifique o grupo gerado.\\n\\nAgora, basta abrir as configuraes do grupo no WhatsApp e colocar a foto (logo) do canal l!\\nEm seguida, adicione o nmero do seu cliente neste grupo.`);
         } else {
-            alert(`❌ Erro ao criar grupo: ${data.error}`);
+            alert(` Erro ao criar grupo: ${data.error}`);
         }
     } catch (e) {
-        alert("Falha de comunicação com o servidor.");
+        alert("Falha de comunicao com o servidor.");
     }
 }

@@ -1,6 +1,6 @@
 /**
  * Apollo Flow Logic v1.0
- * Gerador de Imagens/Vídeos em Lote e Geração Rápida
+ * Gerador de Imagens/Vdeos em Lote e Gerao Rpida
  */
 
 // =========================================
@@ -9,12 +9,12 @@
 const FlowState = {
     mode: 'studio',        // 'studio' | 'quickgen'
     scenes: [],            // Array de objetos de cena
-    variations: 2,         // Quantidade de variações por cena
-    activeStyle: 'Cinematográfico',
-    referenceImage: null,  // Base64 da imagem de referência
+    variations: 2,         // Quantidade de variaes por cena
+    activeStyle: 'Cinematogrfico',
+    referenceImage: null,  // Base64 da imagem de referncia
     results: [],           // Array de resultados gerados
     activeJobs: {},        // { job_id: {sceneIndex, variation, status} }
-    quickEngine: 'flux',   // Motor selecionado no modo rápido
+    quickEngine: 'flux',   // Motor selecionado no modo rpido
     currentModalResult: null,  // Resultado aberto no modal
 };
 
@@ -24,35 +24,35 @@ const ENGINE_COSTS = {
     'hailuo': 5, 'ltx': 4, 'wan': 6, 'kling': 5
 };
 const ENGINE_LABELS = {
-    'flux': '⚡ Flux 1.1', 'flux-pro': '⚡ Flux Pro',
-    'hailuo': '🌊 Hailuo', 'ltx': '🎬 LTX-Video',
-    'wan': '🔥 WAN 2.2', 'kling': '✨ Kling'
+    'flux': ' Flux 1.1', 'flux-pro': ' Flux Pro',
+    'hailuo': ' Hailuo', 'ltx': ' LTX-Video',
+    'wan': ' WAN 2.2', 'kling': ' Kling'
 };
 
 // URL do nosso Maestro backend
 const MAESTRO_URL = 'http://localhost:3000';
 
 // =========================================
-// INICIALIZAÇÃO
+// INICIALIZAO
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Cena inicial padrão
+    // Cena inicial padro
     addScene();
     updateIgniteCost();
     
-    // Simula carregar dados do usuário (Supabase/Auth)
+    // Simula carregar dados do usurio (Supabase/Auth)
     loadUserData();
 });
 
 function loadUserData() {
-    // Integração futura com auth.js / laplata_db.js
+    // Integrao futura com auth.js / laplata_db.js
     const mockCrystals = Math.floor(Math.random() * 400) + 100;
     const crystalEl = document.getElementById('user-crystals');
     if (crystalEl) crystalEl.textContent = mockCrystals;
 }
 
 // =========================================
-// TROCA DE MODO (Studio / Geração Rápida)
+// TROCA DE MODO (Studio / Gerao Rpida)
 // =========================================
 function switchMode(mode) {
     FlowState.mode = mode;
@@ -77,20 +77,20 @@ function handleRefUpload(event) {
         document.getElementById('ref-preview').src = e.target.result;
         document.getElementById('ref-preview').style.display = 'block';
         document.getElementById('ref-placeholder').style.display = 'none';
-        showToast('✅ Imagem de referência carregada! O personagem será mantido em todas as cenas.', 'success');
+        showToast(' Imagem de referncia carregada! O personagem ser mantido em todas as cenas.', 'success');
     };
     reader.readAsDataURL(file);
 }
 
 function useAsReferenceModal() {
     if (!FlowState.currentModalResult) return;
-    // Usa a imagem do resultado como referência global
+    // Usa a imagem do resultado como referncia global
     FlowState.referenceImage = FlowState.currentModalResult.url;
     document.getElementById('ref-preview').src = FlowState.referenceImage;
     document.getElementById('ref-preview').style.display = 'block';
     document.getElementById('ref-placeholder').style.display = 'none';
     closeModal();
-    showToast('✅ Imagem definida como referência de personagem!', 'success');
+    showToast(' Imagem definida como referncia de personagem!', 'success');
 }
 
 // =========================================
@@ -102,7 +102,7 @@ function addScene() {
     sceneCounter++;
     const sceneId = `scene_${sceneCounter}`;
     const engineOptions = Object.entries(ENGINE_LABELS)
-        .map(([val, label]) => `<option value="${val}">${label} (${ENGINE_COSTS[val]} 💎)</option>`)
+        .map(([val, label]) => `<option value="${val}">${label} (${ENGINE_COSTS[val]} )</option>`)
         .join('');
     
     const sceneObj = {
@@ -121,13 +121,13 @@ function addScene() {
         <div class="scene-card-header">
             <div class="scene-number">${sceneCounter}</div>
             <div class="scene-label">Cena ${sceneCounter}</div>
-            <span class="scene-engine-badge engine-badge flux" id="badge_${sceneId}">⚡ Flux</span>
+            <span class="scene-engine-badge engine-badge flux" id="badge_${sceneId}"> Flux</span>
             <button class="scene-remove-btn" onclick="removeScene('${sceneId}')"><i class="fas fa-times"></i></button>
         </div>
         <div class="scene-card-body">
             <textarea class="scene-prompt-input" 
                 id="prompt_${sceneId}"
-                placeholder="Descreva a Cena ${sceneCounter}... Ex: 'Câmera wide shot de uma cidade futurista ao pôr do sol'" 
+                placeholder="Descreva a Cena ${sceneCounter}... Ex: 'Cmera wide shot de uma cidade futurista ao pr do sol'" 
                 oninput="updateScenePrompt('${sceneId}', this.value)"></textarea>
             <select class="scene-engine-select" id="engine_${sceneId}" onchange="updateSceneEngine('${sceneId}', this.value)">
                 ${engineOptions}
@@ -136,14 +136,14 @@ function addScene() {
     `;
     container.appendChild(card);
 
-    // Animação de entrada
+    // Animao de entrada
     setTimeout(() => card.style.opacity = '1', 10);
     updateIgniteCost();
 }
 
 function removeScene(sceneId) {
     if (FlowState.scenes.length <= 1) {
-        showToast('⚠️ O Flow precisa de pelo menos uma cena!', 'error');
+        showToast(' O Flow precisa de pelo menos uma cena!', 'error');
         return;
     }
     FlowState.scenes = FlowState.scenes.filter(s => s.id !== sceneId);
@@ -179,7 +179,7 @@ function updateIgniteCost() {
 }
 
 // =========================================
-// VARIAÇÕES
+// VARIAES
 // =========================================
 function changeVariations(delta) {
     FlowState.variations = Math.max(1, Math.min(8, FlowState.variations + delta));
@@ -202,10 +202,10 @@ function toggleStyle(chip) {
 async function igniteFlow() {
     const btn = document.getElementById('ignite-btn');
     
-    // Validação
+    // Validao
     const hasEmptyPrompts = FlowState.scenes.some(s => !s.prompt.trim());
     if (hasEmptyPrompts) {
-        showToast('⚠️ Preencha o prompt de todas as cenas antes de Ignitar!', 'error');
+        showToast(' Preencha o prompt de todas as cenas antes de Ignitar!', 'error');
         return;
     }
 
@@ -217,9 +217,9 @@ async function igniteFlow() {
     document.getElementById('empty-state')?.remove();
     document.getElementById('save-all-btn').disabled = false;
     
-    setGalleryStatus('running', `🔥 Gerando ${FlowState.scenes.length * FlowState.variations} mídias em lote...`);
+    setGalleryStatus('running', ` Gerando ${FlowState.scenes.length * FlowState.variations} mdias em lote...`);
 
-    // Dispara gerações por cena e variação
+    // Dispara geraes por cena e variao
     for (let si = 0; si < FlowState.scenes.length; si++) {
         const scene = FlowState.scenes[si];
         
@@ -230,7 +230,7 @@ async function igniteFlow() {
             // Cria card de loading na grade
             createLoadingCard(grid, cardId, scene, si + 1, vi + 1);
             
-            // Dispara a geração (não bloqueante)
+            // Dispara a gerao (no bloqueante)
             dispatchGenerationJob(cardId, promptWithStyle, scene.engine, si + 1, vi + 1);
         }
     }
@@ -243,7 +243,7 @@ async function igniteFlow() {
 
 async function dispatchGenerationJob(cardId, prompt, engine, sceneNum, varNum) {
     try {
-        // Chama nosso Maestro backend de forma assíncrona
+        // Chama nosso Maestro backend de forma assncrona
         let jobId = null;
         try {
             const response = await fetch(`${MAESTRO_URL}/generate`, {
@@ -261,15 +261,15 @@ async function dispatchGenerationJob(cardId, prompt, engine, sceneNum, varNum) {
                 jobId = data.job_id;
             }
         } catch (e) {
-            // Backend não disponível localmente: usa simulação
-            console.warn('[FlowLogic] Maestro offline — usando simulação de IA.');
+            // Backend no disponvel localmente: usa simulao
+            console.warn('[FlowLogic] Maestro offline  usando simulao de IA.');
         }
 
         if (jobId) {
             // Polling real no Maestro
             await pollJobUntilDone(cardId, jobId, sceneNum, varNum, engine, prompt);
         } else {
-            // Simulação visual (para desenvolvimento offline)
+            // Simulao visual (para desenvolvimento offline)
             await simulateGeneration(cardId, engine, sceneNum, varNum, prompt);
         }
 
@@ -296,13 +296,13 @@ async function pollJobUntilDone(cardId, jobId, sceneNum, varNum, engine, prompt)
                     resolve();
                 } else if (data.status === 'failed') {
                     clearInterval(interval);
-                    updateCardError(cardId, 'Falha na geração — cristal reembolsado');
+                    updateCardError(cardId, 'Falha na gerao  cristal reembolsado');
                     resolve();
                 }
             } catch(e) {
                 if (attempts >= maxAttempts) {
                     clearInterval(interval);
-                    updateCardError(cardId, 'Timeout — cristal reembolsado');
+                    updateCardError(cardId, 'Timeout  cristal reembolsado');
                     resolve();
                 }
             }
@@ -310,12 +310,12 @@ async function pollJobUntilDone(cardId, jobId, sceneNum, varNum, engine, prompt)
     });
 }
 
-// Simulação offline para desenvolvimento
+// Simulao offline para desenvolvimento
 async function simulateGeneration(cardId, engine, sceneNum, varNum, prompt) {
     const delay = 1500 + Math.random() * 3000;
     await new Promise(r => setTimeout(r, delay));
     
-    // Usa placeholder de imagem pública
+    // Usa placeholder de imagem pblica
     const mockImages = [
         'https://picsum.photos/seed/' + cardId + '/800/600',
         'https://picsum.photos/seed/' + cardId + 'a/600/800',
@@ -326,7 +326,7 @@ async function simulateGeneration(cardId, engine, sceneNum, varNum, prompt) {
 }
 
 // =========================================
-// MANIPULAÇÃO DOS CARDS
+// MANIPULAO DOS CARDS
 // =========================================
 function createLoadingCard(grid, cardId, scene, sceneNum, varNum) {
     const currentView = grid.classList.contains('storyboard-view') ? 'storyboard' : 'masonry';
@@ -335,7 +335,7 @@ function createLoadingCard(grid, cardId, scene, sceneNum, varNum) {
     card.className = 'result-card';
     card.id = cardId;
     card.innerHTML = `
-        <div class="result-card-scene-tag">Cena ${sceneNum} • #${varNum}</div>
+        <div class="result-card-scene-tag">Cena ${sceneNum}  #${varNum}</div>
         <div class="result-card-loading">
             <div class="loading-ring"></div>
             <span>${ENGINE_LABELS[scene.engine] || scene.engine}</span>
@@ -363,7 +363,7 @@ function completeCard(cardId, mediaUrl, engine, sceneNum, varNum, prompt) {
         : `<div style="min-height:200px;display:flex;align-items:center;justify-content:center;color:#64748b;">Sem preview</div>`;
 
     card.innerHTML = `
-        <div class="result-card-scene-tag">Cena ${sceneNum} • #${varNum}</div>
+        <div class="result-card-scene-tag">Cena ${sceneNum}  #${varNum}</div>
         <div class="card-selection-box" onclick="toggleCardSelection(event, '${cardId}')">
             <i class="fas fa-check"></i>
         </div>
@@ -381,7 +381,7 @@ function completeCard(cardId, mediaUrl, engine, sceneNum, varNum, prompt) {
     // Abre o modal ao clicar na card
     card.onclick = () => openModal(result);
 
-    // Checa se todas as gerações terminaram
+    // Checa se todas as geraes terminaram
     checkAllDone();
 }
 
@@ -391,7 +391,7 @@ function updateCardError(cardId, message) {
     card.innerHTML = `
         <div class="result-card-loading" style="border: 1px dashed rgba(248,113,113,0.4);">
             <i class="fas fa-exclamation-triangle" style="color: #f87171; font-size:24px;"></i>
-            <span style="color:#f87171;">Erro na Geração</span>
+            <span style="color:#f87171;">Erro na Gerao</span>
             <small>${message}</small>
         </div>
     `;
@@ -401,8 +401,8 @@ function checkAllDone() {
     const loadingCards = document.querySelectorAll('.result-card-loading');
     if (loadingCards.length === 0) {
         const total = FlowState.results.length;
-        setGalleryStatus('done', `✅ ${total} mídia${total !== 1 ? 's' : ''} gerada${total !== 1 ? 's' : ''} com sucesso!`);
-        showToast(`✅ ${total} gerações concluídas! Confira a galeria.`, 'success');
+        setGalleryStatus('done', ` ${total} mdia${total !== 1 ? 's' : ''} gerada${total !== 1 ? 's' : ''} com sucesso!`);
+        showToast(` ${total} geraes concludas! Confira a galeria.`, 'success');
     }
 }
 
@@ -458,10 +458,10 @@ function reorganizeStoryboard() {
 }
 
 // =========================================
-// GALERIA: Ações
+// GALERIA: Aes
 // =========================================
 function saveAllToGarage() {
-    showToast(`📦 ${FlowState.results.length} mídias enviadas para a Garagem!`, 'success');
+    showToast(` ${FlowState.results.length} mdias enviadas para a Garagem!`, 'success');
 }
 
 function clearGallery() {
@@ -470,14 +470,14 @@ function clearGallery() {
     grid.innerHTML = `
         <div class="empty-state" id="empty-state">
             <div class="empty-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-            <h2>Seu Estúdio Aguarda</h2>
-            <p>Configure as cenas na esquerda e pressione <strong>Ignite Flow</strong> para começar.</p>
+            <h2>Seu Estdio Aguarda</h2>
+            <p>Configure as cenas na esquerda e pressione <strong>Ignite Flow</strong> para comear.</p>
             <div class="supported-engines">
-                <span class="engine-badge flux">⚡ Flux</span>
-                <span class="engine-badge hailuo">🌊 Hailuo</span>
-                <span class="engine-badge ltx">🎬 LTX-Video</span>
-                <span class="engine-badge wan">🔥 WAN2.2</span>
-                <span class="engine-badge kling">✨ Kling</span>
+                <span class="engine-badge flux"> Flux</span>
+                <span class="engine-badge hailuo"> Hailuo</span>
+                <span class="engine-badge ltx"> LTX-Video</span>
+                <span class="engine-badge wan"> WAN2.2</span>
+                <span class="engine-badge kling"> Kling</span>
             </div>
         </div>
     `;
@@ -486,11 +486,11 @@ function clearGallery() {
 }
 
 function saveToGarage(cardId) {
-    showToast('📦 Salvo na Garagem!', 'success');
+    showToast(' Salvo na Garagem!', 'success');
 }
 
 function sendToEditor(cardId) {
-    showToast('🎬 Enviado para o Editor!', 'success');
+    showToast(' Enviado para o Editor!', 'success');
 }
 
 function downloadResult(cardId) {
@@ -511,9 +511,9 @@ function openModal(result) {
     FlowState.currentModalResult = result;
     
     const modal = document.getElementById('result-modal');
-    document.getElementById('modal-title').textContent = `Cena ${result.sceneNum} — Variação ${result.varNum}`;
+    document.getElementById('modal-title').textContent = `Cena ${result.sceneNum}  Variao ${result.varNum}`;
     document.getElementById('modal-engine-tag').textContent = ENGINE_LABELS[result.engine] || result.engine;
-    document.getElementById('modal-type-tag').textContent = ['ltx','wan','hailuo','kling'].includes(result.engine) ? 'Vídeo' : 'Imagem';
+    document.getElementById('modal-type-tag').textContent = ['ltx','wan','hailuo','kling'].includes(result.engine) ? 'Vdeo' : 'Imagem';
     document.getElementById('modal-prompt-text').textContent = result.prompt || 'Sem prompt';
     
     const img = document.getElementById('modal-img');
@@ -540,10 +540,10 @@ function closeModal() {
 function saveToGarageModal() { saveToGarage(FlowState.currentModalResult?.id); closeModal(); }
 function sendToEditorModal() { sendToEditor(FlowState.currentModalResult?.id); closeModal(); }
 function downloadModal() { downloadResult(FlowState.currentModalResult?.id); }
-function upscaleResult(factor) { showToast(`🔍 Upscale ${factor}× iniciado! Chega em breve na Garagem.`, 'success'); }
+function upscaleResult(factor) { showToast(` Upscale ${factor} iniciado! Chega em breve na Garagem.`, 'success'); }
 
 // =========================================
-// MODO: GERAÇÃO RÁPIDA
+// MODO: GERAO RPIDA
 // =========================================
 function selectQuickEngine(card) {
     document.querySelectorAll('#qg-engines .engine-card').forEach(c => c.classList.remove('active'));
@@ -553,7 +553,7 @@ function selectQuickEngine(card) {
     const cost = ENGINE_COSTS[FlowState.quickEngine] || 1;
     document.getElementById('qg-cost-label').textContent = `${cost} Cristal${cost !== 1 ? 'is' : ''}`;
     
-    // Mostra/oculta opção Img2Vid para motores de vídeo
+    // Mostra/oculta opo Img2Vid para motores de vdeo
     const isVideo = ['hailuo','ltx','wan','kling'].includes(FlowState.quickEngine);
     document.getElementById('img2vid-toggle').parentElement.parentElement.style.display = isVideo ? 'flex' : 'none';
 }
@@ -566,7 +566,7 @@ function toggleImg2Vid() {
 async function quickGenerate() {
     const prompt = document.getElementById('qg-prompt').value.trim();
     if (!prompt) {
-        showToast('⚠️ Escreva um prompt antes de gerar!', 'error');
+        showToast(' Escreva um prompt antes de gerar!', 'error');
         return;
     }
 
@@ -578,7 +578,7 @@ async function quickGenerate() {
     document.getElementById('qg-placeholder').style.display = 'flex';
     document.getElementById('qg-result-content').style.display = 'none';
     
-    // Simula geração
+    // Simula gerao
     await simulateGeneration('qg-current', FlowState.quickEngine, 1, 1, prompt);
     
     btn.disabled = false;
@@ -598,9 +598,9 @@ async function quickGenerate() {
 function enhancePrompt() {
     const textarea = document.getElementById('qg-prompt');
     const original = textarea.value.trim();
-    if (!original) { showToast('⚠️ Escreva algo primeiro para melhorar!', 'error'); return; }
+    if (!original) { showToast(' Escreva algo primeiro para melhorar!', 'error'); return; }
     
-    // Simulação de melhoria de prompt por IA
+    // Simulao de melhoria de prompt por IA
     const additions = [
         ', cinematographic lighting, golden hour, bokeh background',
         ', 8K ultra-detailed, hyperrealistic, professional photography',
@@ -609,11 +609,11 @@ function enhancePrompt() {
     ];
     const enhanced = original + additions[Math.floor(Math.random() * additions.length)];
     textarea.value = enhanced;
-    showToast('✨ Prompt melhorado pela I.A.!', 'success');
+    showToast(' Prompt melhorado pela I.A.!', 'success');
 }
 
 function generateVariations() {
-    showToast('🔄 Gerando 4 variações... Confira o Estúdio em Lote!', 'success');
+    showToast(' Gerando 4 variaes... Confira o Estdio em Lote!', 'success');
     switchMode('studio');
 }
 
@@ -627,12 +627,12 @@ function savePreset() {
         style: FlowState.activeStyle
     };
     localStorage.setItem('apollo_flow_preset', JSON.stringify(preset));
-    showToast('💾 Preset salvo localmente!', 'success');
+    showToast(' Preset salvo localmente!', 'success');
 }
 
 function loadPreset() {
     const data = localStorage.getItem('apollo_flow_preset');
-    if (!data) { showToast('⚠️ Nenhum preset salvo!', 'error'); return; }
+    if (!data) { showToast(' Nenhum preset salvo!', 'error'); return; }
     
     try {
         const preset = JSON.parse(data);
@@ -652,14 +652,14 @@ function loadPreset() {
         FlowState.variations = preset.variations || 2;
         document.getElementById('variations-val').textContent = FlowState.variations;
         updateIgniteCost();
-        showToast('📂 Preset carregado com sucesso!', 'success');
+        showToast(' Preset carregado com sucesso!', 'success');
     } catch(e) {
-        showToast('❌ Erro ao carregar preset!', 'error');
+        showToast(' Erro ao carregar preset!', 'error');
     }
 }
 
 // =========================================
-// SELEÇÃO MÚLTIPLA NA GALERIA
+// SELEO MLTIPLA NA GALERIA
 // =========================================
 function toggleCardSelection(event, cardId) {
     // Evita abrir o modal se clicar no checkbox
@@ -691,13 +691,13 @@ function clearSelection() {
 
 function saveSelectedToGarage() {
     const selected = document.querySelectorAll('.result-card.selected');
-    showToast(`📦 ${selected.length} mídias enviadas para a Garagem!`, 'success');
+    showToast(` ${selected.length} mdias enviadas para a Garagem!`, 'success');
     clearSelection();
 }
 
 function sendSelectedToEditor() {
     const selected = document.querySelectorAll('.result-card.selected');
-    showToast(`🎬 ${selected.length} mídias enviadas para o Editor!`, 'success');
+    showToast(` ${selected.length} mdias enviadas para o Editor!`, 'success');
     clearSelection();
 }
 
@@ -707,7 +707,7 @@ function deleteSelected() {
         FlowState.results = FlowState.results.filter(r => r.id !== c.id);
         c.remove();
     });
-    showToast(`🗑️ ${selected.length} mídias excluídas.`, 'success');
+    showToast(` ${selected.length} mdias excludas.`, 'success');
     clearSelection();
     if (FlowState.results.length === 0) clearGallery();
 }

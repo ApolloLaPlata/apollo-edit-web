@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 <div style="padding-bottom:10px; border-bottom:1px solid var(--border-color); margin-bottom:15px;">
-    <h2 style="color:var(--accent);">🚀 PRODUÇÃO FINAL (ESTEIRA)</h2>
-    <p style="color:#888; font-size:13px; margin-top:5px;">Montagem Automática: Capa + Vídeo Base (com áudio/legenda) + Mascote + Música</p>
+    <h2 style="color:var(--accent);"> PRODUO FINAL (ESTEIRA)</h2>
+    <p style="color:#888; font-size:13px; margin-top:5px;">Montagem Automtica: Capa + Vdeo Base (com udio/legenda) + Mascote + Msica</p>
 </div>
 
 <div style="max-width: 900px;">
     <div class="group-box" style="display:flex; flex-direction:column; gap:15px;">
-        <div class="group-title">🎬 Configuração do Vídeo Final</div>
+        <div class="group-title"> Configurao do Vdeo Final</div>
 
         <div class="row">
             <label style="width:220px; color:#aaa; font-weight:bold;">1. VIDEO BASE (Do DarkFacil)</label>
-            <input type="text" id="pf_video_base" class="flex-1" readonly placeholder="Selecione o vídeo base...">
+            <input type="text" id="pf_video_base" class="flex-1" readonly placeholder="Selecione o vdeo base...">
             <button class="btn primary" onclick="browseFile('pf_video_base','video')">Procurar...</button>
         </div>
 
@@ -23,12 +23,12 @@
 
         <div class="row">
             <label style="width:220px; color:#aaa; font-weight:bold;">3. MUSICA DE FUNDO</label>
-            <input type="text" id="pf_musica" class="flex-1" readonly placeholder="Selecione a música...">
+            <input type="text" id="pf_musica" class="flex-1" readonly placeholder="Selecione a msica...">
             <button class="btn primary" onclick="browseFile('pf_musica','audio')">Procurar...</button>
         </div>
 
         <div class="row">
-            <label style="width:220px; color:#aaa; font-weight:bold;">Volume da Música</label>
+            <label style="width:220px; color:#aaa; font-weight:bold;">Volume da Msica</label>
             <input type="range" id="pf_vol_musica" min="-40" max="10" value="-9" style="flex:1;" oninput="document.getElementById('pf_vol_lbl').textContent=this.value+' dB'">
             <span id="pf_vol_lbl" style="width:60px; text-align:right;">-9 dB</span>
         </div>
@@ -57,13 +57,13 @@
 
         <div class="row">
             <label style="width:220px; color:#aaa; font-weight:bold;">Nome do Arquivo Final:</label>
-            <input type="text" id="pf_nome_final" class="flex-1" value="video_pronto" placeholder="Nome sem extensão...">
+            <input type="text" id="pf_nome_final" class="flex-1" value="video_pronto" placeholder="Nome sem extenso...">
         </div>
     </div>
 
     <div style="text-align:center; margin-top:25px;">
         <button class="btn primary pulse-animation" style="padding:18px 60px; font-size:20px; border-radius:6px;" onclick="gerarVideo()">
-            🚀 GERAR VÍDEO FINAL
+             GERAR VDEO FINAL
         </button>
     </div>
 
@@ -84,10 +84,10 @@ async function browseDir(id) {
     if (d.path) document.getElementById(id).value = d.path;
 }
 function gerarVideo() {
-    if (!document.getElementById('pf_video_base').value) { alert('⚠️ Selecione um Vídeo Base!'); return; }
-    if (!document.getElementById('pf_saida_dir').value) { alert('⚠️ Selecione a pasta de saída!'); return; }
+    if (!document.getElementById('pf_video_base').value) { alert(' Selecione um Vdeo Base!'); return; }
+    if (!document.getElementById('pf_saida_dir').value) { alert(' Selecione a pasta de sada!'); return; }
     const status = document.getElementById('pf-status');
-    status.textContent = '⏳ Processando... Aguarde.';
+    status.textContent = ' Processando... Aguarde.';
     status.style.color = '#f59e0b';
     // TODO: POST para o backend Flask
 }

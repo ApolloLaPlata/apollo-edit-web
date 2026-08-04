@@ -1,10 +1,10 @@
-// radar_logic.js - Lógica para o Radar YouTube
+// radar_logic.js - Lgica para o Radar YouTube
 
 const RADAR_CATEGORIES = [
-    { id: 'politica', label: 'Política Nacional', query: 'notícias política brasil hoje' },
-    { id: 'economia', label: 'Economia', query: 'notícias economia brasil mercado' },
-    { id: 'mundo', label: 'Internacional', query: 'notícias internacionais hoje' },
-    { id: 'polemicas', label: 'Polêmicas e Debates', query: 'debate polêmica podcast brasil' }
+    { id: 'politica', label: 'Poltica Nacional', query: 'notcias poltica brasil hoje' },
+    { id: 'economia', label: 'Economia', query: 'notcias economia brasil mercado' },
+    { id: 'mundo', label: 'Internacional', query: 'notcias internacionais hoje' },
+    { id: 'polemicas', label: 'Polmicas e Debates', query: 'debate polmica podcast brasil' }
 ];
 
 let activeRadarCategory = RADAR_CATEGORIES[0];
@@ -78,7 +78,7 @@ async function fetchRadarVideos(categoryObj = activeRadarCategory) {
     
     try {
         const res = await fetch(`/api/search-youtube?q=${encodeURIComponent(categoryObj.query)}`);
-        if (!res.ok) throw new Error('Falha ao buscar vídeos');
+        if (!res.ok) throw new Error('Falha ao buscar vdeos');
         const data = await res.json();
         
         radarVideos = data.videos || [];
@@ -91,7 +91,7 @@ async function fetchRadarVideos(categoryObj = activeRadarCategory) {
         
     } catch (err) {
         console.error(err);
-        errorText.textContent = err.message || 'Não foi possível carregar os vídeos em alta no momento.';
+        errorText.textContent = err.message || 'No foi possvel carregar os vdeos em alta no momento.';
         errorBox.style.display = 'block';
     } finally {
         isFetchingRadar = false;
@@ -106,7 +106,7 @@ function renderRadarGrid() {
     radarVideos.forEach(video => {
         const card = document.createElement('div');
         
-        // Mantendo o violeta no lugar de indigo para os botões do radar
+        // Mantendo o violeta no lugar de indigo para os botes do radar
         card.style.cssText = 'background: #1e1e1e; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.3);';
         
         card.onmouseover = () => {
@@ -159,7 +159,7 @@ function renderRadarGrid() {
                     </div>
                 </div>
                 
-                <button onclick="sendRadarToScripts('${encodeURIComponent(video.title)}', '${encodeURIComponent(video.url)}')" style="margin-top: 12px; width: 100%; padding: 8px; background: #ede9fe; color: #8b5cf6; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s;" title="Criar roteiro inspirado neste vídeo" onmouseover="this.style.background='#ddd6fe'" onmouseout="this.style.background='#ede9fe'">
+                <button onclick="sendRadarToScripts('${encodeURIComponent(video.title)}', '${encodeURIComponent(video.url)}')" style="margin-top: 12px; width: 100%; padding: 8px; background: #ede9fe; color: #8b5cf6; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s;" title="Criar roteiro inspirado neste vdeo" onmouseover="this.style.background='#ddd6fe'" onmouseout="this.style.background='#ede9fe'">
                     <i class="fas fa-pen" style="margin-right: 4px;"></i> Copiar Ideia
                 </button>
             </div>
@@ -215,7 +215,7 @@ function sendRadarToScripts(encTitle, encUrl) {
     const url = decodeURIComponent(encUrl);
     
     localStorage.setItem('scripts_prefill', JSON.stringify({
-        text: `Vídeo de referência: ${url}\nTítulo: ${title}\n\nAnalise o assunto deste vídeo e crie um roteiro melhorado com um ângulo diferente.`
+        text: `Vdeo de referncia: ${url}\nTtulo: ${title}\n\nAnalise o assunto deste vdeo e crie um roteiro melhorado com um ngulo diferente.`
     }));
     window.location.href = 'noticias_scripts.html';
 }

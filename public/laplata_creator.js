@@ -1,6 +1,6 @@
 /**
  * Apollo La Plata - Character Creator Logic
- * Gerencia a lógica do laplata_creator.html
+ * Gerencia a lgica do laplata_creator.html
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     mainPrompt.addEventListener('input', updateGenerateBtnState);
 
-    // --- SELEÇÃO DE MODO ---
+    // --- SELEO DE MODO ---
     modeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             if (isGenerating) return;
@@ -76,16 +76,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // Ajusta o placeholder dependendo do modo
             if (currentMode === 't-pose') {
-                mainPrompt.placeholder = "Ex: Um ninja ciborgue, simetria, mãos abertas, rosto neutro...";
+                mainPrompt.placeholder = "Ex: Um ninja ciborgue, simetria, mos abertas, rosto neutro...";
             } else if (currentMode === 'expression') {
-                mainPrompt.placeholder = "Ex: Expressões de um elfo ladino. Rindo, Chorando, Com Raiva. Poses de ataque...";
+                mainPrompt.placeholder = "Ex: Expresses de um elfo ladino. Rindo, Chorando, Com Raiva. Poses de ataque...";
             } else {
                 mainPrompt.placeholder = "Ex: Um samurai cyberpunk com armadura verde neon, katana nas costas...";
             }
         });
     });
 
-    // --- UPLOAD DE REFERÊNCIA ---
+    // --- UPLOAD DE REFERNCIA ---
     refDropzone.addEventListener('click', (e) => {
         if (e.target !== btnRemoveRef && !isGenerating) refFileInput.click();
     });
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 refPreview.src = referenceImageBase64;
                 refPreview.style.display = 'block';
                 btnRemoveRef.style.display = 'block';
-                // btnDescribeImg.style.display = 'flex'; // Opcional, mantido escondido por padrão se não for usar a API de descrever
+                // btnDescribeImg.style.display = 'flex'; // Opcional, mantido escondido por padro se no for usar a API de descrever
                 
                 playClick();
             };
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         playClick();
         isGenerating = true;
-        btnExpandPrompt.innerHTML = "✨ Expandindo...";
+        btnExpandPrompt.innerHTML = " Expandindo...";
         updateGenerateBtnState();
 
         try {
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             mainPrompt.value = expanded;
-            showToast('Expansão Concluída', 'O prompt foi detalhado com sucesso!', 'success');
+            showToast('Expanso Concluda', 'O prompt foi detalhado com sucesso!', 'success');
             playSuccess();
         } catch (e) {
             console.error(e);
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             playError();
         } finally {
             isGenerating = false;
-            btnExpandPrompt.innerHTML = "✨ Expandir com IA";
+            btnExpandPrompt.innerHTML = " Expandir com IA";
             updateGenerateBtnState();
         }
     });
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // 1. Carrega configurações e DB de personagens
+            // 1. Carrega configuraes e DB de personagens
             const settings = await window.laplataSettings.getSettings();
             const characters = await window.laplataDB.characters.getAll();
 
@@ -226,11 +226,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             let finalSettings = { ...settings };
             finalSettings.aspectRatio = currentMode === 'turnaround' ? '16:9' : '1:1';
 
-            // 2. Rotação de Chaves e Geração via ESM SDK (laplata_ai.js)
+            // 2. Rotao de Chaves e Gerao via ESM SDK (laplata_ai.js)
             let resultBase64;
 
             if (isEdit) {
-                // A edição no Gemini 2.5/Flash geralmente envia a imagem atual como ref
+                // A edio no Gemini 2.5/Flash geralmente envia a imagem atual como ref
                 resultBase64 = await window.laplataSettings.executeWithKeyRotation(async (apiKey) => {
                     return await window.laplataAI.generateImage(apiKey, promptText, characters, finalSettings, generatedImageBase64);
                 });
@@ -255,9 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             saveBar.style.display = 'flex';
 
             playSuccess();
-            showToast('Geração Concluída', 'Sua imagem está pronta!', 'quest');
+            showToast('Gerao Concluda', 'Sua imagem est pronta!', 'quest');
 
-            // 4. Salvar backup automático na Galeria
+            // 4. Salvar backup automtico na Galeria
             let promptPrefix = currentMode === 't-pose' ? '[T-Pose]' : currentMode === 'expression' ? '[Expressions]' : '[Character Sheet]';
             const finalSavePrompt = isEdit ? `[Editado: ${editPrompt.value.trim()}] ${promptPrefix} ${mainPrompt.value}` : `${promptPrefix} ${promptText}`;
 
@@ -272,8 +272,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (window.apolloQuests) window.apolloQuests.checkAction('generate_image');
 
         } catch (e) {
-            console.error("Geração falhou:", e);
-            showToast('Erro de Renderização', e.message, 'system');
+            console.error("Gerao falhou:", e);
+            showToast('Erro de Renderizao', e.message, 'system');
             playError();
         } finally {
             isGenerating = false;
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showToast('Copiado', 'Prompt original copiado!', 'system');
     });
 
-    // --- EDIÇÃO (INPAINT/STYLE TRANSFER SIMULADO) ---
+    // --- EDIO (INPAINT/STYLE TRANSFER SIMULADO) ---
     btnCancelEdit.addEventListener('click', () => {
         playClick();
         editOverlay.style.display = 'none';
@@ -323,10 +323,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         playClick();
         editOverlay.style.display = 'none';
         
-        // Envia instrução de edição para o Gemini junto com a imagem original
+        // Envia instruo de edio para o Gemini junto com a imagem original
         const fullEditPrompt = `Modify the provided image based on this instruction: ${text}. DO NOT change the overall structure drastically unless requested. Maintain the same character: ${mainPrompt.value}`;
         
-        await startGenerationLogic(fullEditPrompt, "Aplicando Edição (Magia em processo)...", true);
+        await startGenerationLogic(fullEditPrompt, "Aplicando Edio (Magia em processo)...", true);
     });
 
     // --- SALVAR NO ROSTER ---

@@ -1,6 +1,6 @@
 /**
  * apollo_notifications.js
- * Injeta o sino de notificações de forma global no cabeçalho.
+ * Injeta o sino de notificaes de forma global no cabealho.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function injectNotificationSystem() {
     const userWidget = document.querySelector('.user-widget');
-    if (!userWidget) return; // Se não houver cabeçalho padrão, ignora
+    if (!userWidget) return; // Se no houver cabealho padro, ignora
 
-    // CSS para as animações e layout
+    // CSS para as animaes e layout
     const style = document.createElement('style');
     style.innerHTML = `
         @keyframes bellRing {
@@ -92,12 +92,12 @@ function injectNotificationSystem() {
     
     notifContainer.innerHTML = `
         <button id="apollo-bell-btn" style="background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; position: relative; transition: color 0.3s;">
-            🔔
+            
             <div id="apollo-notif-dot" class="notif-dot"></div>
         </button>
         <div id="apollo-notif-dropdown" class="notif-dropdown">
             <div class="notif-dropdown-header">
-                <span>NOTIFICAÇÕES</span>
+                <span>NOTIFICAES</span>
                 <button onclick="clearNotifications()" style="background:none; border:none; color:var(--btn-yellow); cursor:pointer; font-size:0.8rem;">Limpar</button>
             </div>
             <div class="notif-dropdown-body" id="apollo-notif-list">
@@ -108,7 +108,7 @@ function injectNotificationSystem() {
 
     userWidget.insertBefore(notifContainer, userWidget.firstChild);
 
-    // Lógica do Clique
+    // Lgica do Clique
     const bellBtn = document.getElementById('apollo-bell-btn');
     const dropdown = document.getElementById('apollo-notif-dropdown');
     const dot = document.getElementById('apollo-notif-dot');
@@ -162,7 +162,7 @@ window.triggerNotification = function(message, type = 'info') {
     }, 600);
 
     // Playzinho sonoro sutil (opcional/mock)
-    console.log('[NOTIFICAÇÃO] ' + message);
+    console.log('[NOTIFICAO] ' + message);
 }
 
 window.apolloNotifications = {

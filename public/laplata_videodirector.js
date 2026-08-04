@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStatus() {
         const totalCorta = cues.filter(c => c.type === 'CORTA').length;
         if (images.length < totalCorta) {
-            imgStatus.innerText = `${images.length}/${totalCorta} Necessárias`;
+            imgStatus.innerText = `${images.length}/${totalCorta} Necessrias`;
             imgStatus.style.color = '#f59e0b'; // amber
         } else {
             imgStatus.innerText = `${images.length}/${totalCorta} Preenchidas`;
@@ -86,10 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderImages();
                 updateStatus();
                 playClick();
-                showToast('Colado', 'Imagem carregada do Inventário!', 'success');
+                showToast('Colado', 'Imagem carregada do Inventrio!', 'success');
             } else {
                 playError();
-                showToast('Aviso', 'O inventário está vazio!', 'system');
+                showToast('Aviso', 'O inventrio est vazio!', 'system');
             }
         });
     }
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             slot.innerHTML = `
                 <img src="${img.base64}">
                 <div class="scene-tag">Cena ${index + 1}</div>
-                <div class="btn-remove-img" title="Remover"><span style="font-size:1.2rem; margin:0;">🗑️</span></div>
+                <div class="btn-remove-img" title="Remover"><span style="font-size:1.2rem; margin:0;"></span></div>
             `;
             
             const btnRemove = slot.querySelector('.btn-remove-img');
@@ -127,11 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- EXECUTE DIRECTOR ---
     
-    // MOCK: Extrai último frame do vídeo
+    // MOCK: Extrai ltimo frame do vdeo
     async function extractLastFrameMock(videoUrl) {
         return new Promise(resolve => {
-            // Em um sistema real, leríamos o video via Canvas.
-            // Aqui, vamos simular que extraímos um frame usando uma imagem base64 de placeholder
+            // Em um sistema real, leramos o video via Canvas.
+            // Aqui, vamos simular que extramos um frame usando uma imagem base64 de placeholder
             setTimeout(() => {
                 // Return a generic grey placeholder as the "extracted frame"
                 const canvas = document.createElement('canvas');
@@ -141,20 +141,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fillRect(0,0,640,360);
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '20px Arial';
-                ctx.fillText('Frame Extraído MOCK', 200, 180);
+                ctx.fillText('Frame Extrado MOCK', 200, 180);
                 resolve(canvas.toDataURL('image/png'));
             }, 500);
         });
     }
 
-    // MOCK: Gera Vídeo
+    // MOCK: Gera Vdeo
     async function generateVideoMock(prompt, imageBase64) {
         return new Promise(resolve => {
             setTimeout(() => {
-                // Simula retorno de vídeo do ComfyUI
-                // Usando um placeholder genérico da W3Schools ou um local se existir
+                // Simula retorno de vdeo do ComfyUI
+                // Usando um placeholder genrico da W3Schools ou um local se existir
                 resolve("https://www.w3schools.com/html/mov_bbb.mp4");
-            }, 3000); // 3 segundos simulando geração
+            }, 3000); // 3 segundos simulando gerao
         });
     }
 
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cues.length === 0) {
             cueList.innerHTML = `
                 <div class="placeholder-text" style="text-align: center; margin-top: 50px; color: #475569;">
-                    <div style="font-size: 4rem; opacity: 0.5;">🎞️</div>
+                    <div style="font-size: 4rem; opacity: 0.5;"></div>
                     <div style="margin-top: 10px;">Nenhum script processado.</div>
                 </div>`;
             return;
@@ -186,9 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Status Icon
             const iconDiv = el.querySelector('.cue-status-icon');
             if (cue.status === 'processing') iconDiv.innerHTML = '<div class="spinner"></div>';
-            else if (cue.status === 'completed') iconDiv.innerHTML = '✅';
-            else if (cue.status === 'error') iconDiv.innerHTML = '❌';
-            else iconDiv.innerHTML = '<span style="color:#475569;">⏳</span>'; // pending
+            else if (cue.status === 'completed') iconDiv.innerHTML = '';
+            else if (cue.status === 'error') iconDiv.innerHTML = '';
+            else iconDiv.innerHTML = '<span style="color:#475569;"></span>'; // pending
 
             // Media Preview
             if (cue.thumbnailUrl || cue.videoUrl) {
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const totalCorta = cues.filter(c => c.type === 'CORTA').length;
         if (images.length < totalCorta) {
-            showToast('Falta de Imagens', `Você tem ${images.length} imagens, mas o roteiro pede ${totalCorta} cenas de [CORTA].`, 'error');
+            showToast('Falta de Imagens', `Voc tem ${images.length} imagens, mas o roteiro pede ${totalCorta} cenas de [CORTA].`, 'error');
             playError();
             return;
         }
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playClick();
         isProcessing = true;
         btnExecute.disabled = true;
-        btnExecute.innerText = "🎬 Gravando Cenas (MOCK)...";
+        btnExecute.innerText = " Gravando Cenas (MOCK)...";
         scriptInput.disabled = true;
 
         let cortaIndex = 0;
@@ -261,27 +261,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 cue.thumbnailUrl = sourceBase64;
                 renderCues();
 
-                // Simula Geração de Vídeo
+                // Simula Gerao de Vdeo
                 const videoUrl = await generateVideoMock(cue.text, sourceBase64);
                 
-                if (!videoUrl) throw new Error("Erro ao gerar vídeo (MOCK).");
+                if (!videoUrl) throw new Error("Erro ao gerar vdeo (MOCK).");
 
                 cue.videoUrl = videoUrl;
                 cue.status = 'completed';
                 renderCues();
 
-                // Extrai último frame para o próximo CONTINUA
+                // Extrai ltimo frame para o prximo CONTINUA
                 if (i < cues.length - 1 && cues[i+1].type === 'CONTINUA') {
                     lastGeneratedFrame = await extractLastFrameMock(videoUrl);
                 }
             }
 
             playSuccess();
-            showToast('Sucesso', 'Gravação do Diretor finalizada!', 'success');
+            showToast('Sucesso', 'Gravao do Diretor finalizada!', 'success');
 
         } catch (e) {
             console.error(e);
-            showToast('Erro na Gravação', e.message, 'error');
+            showToast('Erro na Gravao', e.message, 'error');
             playError();
             // Marca o que estiver processando como erro
             cues.forEach(c => { if (c.status === 'processing') c.status = 'error'; });
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             isProcessing = false;
             btnExecute.disabled = false;
-            btnExecute.innerHTML = "🎬 Iniciar GRAVAÇÃO EM CADEIA";
+            btnExecute.innerHTML = " Iniciar GRAVAO EM CADEIA";
             scriptInput.disabled = false;
         }
     });

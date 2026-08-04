@@ -216,28 +216,28 @@
 
     <!-- OS TOPBAR -->
     <header class="os-topbar">
-        <div class="os-logo" style="cursor: pointer;" onclick="openAppTab('hub.html', '🏠 Hub Central', false)" title="Voltar ao Hub">
-            <span>🚀</span> APOLLO OS
+        <div class="os-logo" style="cursor: pointer;" onclick="openAppTab('hub.html', ' Hub Central', false)" title="Voltar ao Hub">
+            <span></span> APOLLO OS
         </div>
         
         <div class="os-topbar-right" style="display: flex; gap: 15px; align-items: center;">
             <select id="lang-selector" onchange="setLanguage && setLanguage(this.value)" style="background: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; height: 35px;">
-                <option value="pt">🇧🇷 PT</option>
-                <option value="en">🇺🇸 EN</option>
-                <option value="es">🇪🇸 ES</option>
+                <option value="pt"> PT</option>
+                <option value="en"> EN</option>
+                <option value="es"> ES</option>
             </select>
             
             <div class="credits-badge" style="display: flex; align-items: center; gap: 8px; border-color: #9B59B6;">
-                <span class="gas-icon" style="font-size: 1.2rem;">💎</span>
+                <span class="gas-icon" style="font-size: 1.2rem;"></span>
                 <span><strong id="user-cristais" style="color: #e0b0ff;">0</strong> Cristais</span>
             </div>
 
             <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
-                <span class="gas-icon" style="font-size: 1.2rem;">⛽</span>
+                <span class="gas-icon" style="font-size: 1.2rem;"></span>
                 <span><strong id="user-credits" style="color: #ec4899;">...</strong> Gasolina</span>
             </div>
             
-            <a href="#" onclick="openAppTab('perfil.html', '👨‍🚀 Meu Perfil', true); return false;" style="text-decoration: none; color: inherit;">
+            <a href="#" onclick="openAppTab('perfil.html', ' Meu Perfil', true); return false;" style="text-decoration: none; color: inherit;">
                 <div class="avatar-container" style="display:flex; align-items:center; gap:10px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     <div class="avatar" style="width:40px; height:40px; border-radius:50%; background:#333; border:2px solid #FFD32A;"></div>
                     <span class="user-name" id="user-name" style="display:flex; flex-direction:column;">
@@ -259,7 +259,7 @@
         <!-- Iframes injected by JS -->
     </main>
 
-    <!-- INJEÇÃO DO MOTOR DO OS -->
+    <!-- INJEO DO MOTOR DO OS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script src="apollo_os_desktop.js?v=2"></script>

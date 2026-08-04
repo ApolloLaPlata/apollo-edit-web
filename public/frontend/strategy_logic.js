@@ -6,13 +6,13 @@ window.ApolloAlert = function(msg) {
         alert(msg);
     }
 };
-// strategy_logic.js - Lógica para a Aba de Estratégia do Canal
+// strategy_logic.js - Lgica para a Aba de Estratgia do Canal
 
 let activeStrategyProfileId = '';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Escuta evento customizado de quando os perfis são carregados/atualizados
-    // Como os perfis vêm de scripts_logic.js, faremos um fallback com intervalo ou chamaremos init
+    // Escuta evento customizado de quando os perfis so carregados/atualizados
+    // Como os perfis vm de scripts_logic.js, faremos um fallback com intervalo ou chamaremos init
     setTimeout(initStrategyTab, 500);
 });
 
@@ -52,7 +52,7 @@ function loadStrategyProfileContext() {
     const profile = getActiveStrategyProfile();
     if (profile) {
         infoBox.style.display = 'block';
-        descSpan.textContent = profile.description || 'Sem descrição.';
+        descSpan.textContent = profile.description || 'Sem descrio.';
         renderStrategyCompetitors();
     } else {
         infoBox.style.display = 'none';
@@ -174,7 +174,7 @@ async function generateStrategy() {
             if (idea.urgency === 'Alta') {
                 urgencyColor = '#b91c1c'; // Red
                 urgencyBg = '#fef2f2';
-            } else if (idea.urgency === 'Média' || idea.urgency === 'Media') {
+            } else if (idea.urgency === 'Mdia' || idea.urgency === 'Media') {
                 urgencyColor = '#b45309'; // Amber
                 urgencyBg = '#fffbeb';
             }
@@ -184,7 +184,7 @@ async function generateStrategy() {
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px;">
                     <h4 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0; line-height: 1.3;">${idea.title}</h4>
-                    <span style="background: ${urgencyBg}; color: ${urgencyColor}; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap;">Urgência ${idea.urgency}</span>
+                    <span style="background: ${urgencyBg}; color: ${urgencyColor}; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap;">Urgncia ${idea.urgency}</span>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
@@ -199,7 +199,7 @@ async function generateStrategy() {
                     <div style="display: flex; gap: 8px; align-items: flex-start;">
                         <i class="fas fa-crosshairs" style="color: #059669; margin-top: 4px;"></i>
                         <div>
-                            <strong style="color: #fff; display: block;">Seu ângulo único:</strong>
+                            <strong style="color: #fff; display: block;">Seu ngulo nico:</strong>
                             <span style="color: #94a3b8;">${idea.angle}</span>
                         </div>
                     </div>
@@ -207,7 +207,7 @@ async function generateStrategy() {
                     <div style="display: flex; gap: 8px; align-items: flex-start; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid #333;">
                         <i class="fas fa-eye" style="color: #ef4444; margin-top: 4px;"></i>
                         <div>
-                            <strong style="color: #fff; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Contexto da Concorrência</strong>
+                            <strong style="color: #fff; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Contexto da Concorrncia</strong>
                             <span style="color: #94a3b8; font-size: 13px;">${idea.competitorContext}</span>
                         </div>
                     </div>
@@ -215,7 +215,7 @@ async function generateStrategy() {
                 
                 <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333; display: flex; justify-content: flex-end;">
                     <button onclick="sendToScriptsTab('${encodeURIComponent(idea.title)}')" style="background: none; border: none; color: #8b5cf6; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#8b5cf6'">
-                        Criar Roteiro para este Vídeo <i class="fas fa-arrow-right"></i>
+                        Criar Roteiro para este Vdeo <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             `;

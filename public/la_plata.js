@@ -4,13 +4,13 @@ const geminiApiKey = 'AIzaSyAIZ1suEFBsyoXUf2hLO7J4UWkRBTfFrH4';
 const chatgptApiKey = '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';
 const grokApiKey = 'xai-YnxdyfVPgVzbt0NR3EkohunMy6mFhhuzffvLiGffu4CI1Ny2Dq21IQ7y7Swbp6QmRi92gbb9hZVZbXy6';
 
-// Configuração da API ativa
+// Configurao da API ativa
 let activeApi = 'chatgpt'; // chatgpt, grok, gemini, openrouter
 
 // Estado atual
 let currentPage = 'dashboard';
 
-// Inicialização
+// Inicializao
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
     setupEventListeners();
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeVisualScriptGenerator();
 });
 
-// Função para corrigir visibilidade dos selects
+// Funo para corrigir visibilidade dos selects
 function fixSelectVisibility() {
     // Adicionar estilos inline para garantir visibilidade
     const style = document.createElement('style');
@@ -86,24 +86,24 @@ function setupEventListeners() {
         });
     });
     
-    // Formulários
+    // Formulrios
     setupFormListeners();
 }
 
 function setupFormListeners() {
-    // Formulário de Prompt
+    // Formulrio de Prompt
     const promptForm = document.getElementById('promptForm');
     if (promptForm) {
         promptForm.addEventListener('submit', handlePromptSubmit);
     }
     
-    // Formulário de Hashtag
+    // Formulrio de Hashtag
     const hashtagForm = document.getElementById('hashtagForm');
     if (hashtagForm) {
         hashtagForm.addEventListener('submit', handleHashtagSubmit);
     }
     
-    // Formulário de Imagem
+    // Formulrio de Imagem
     const imageForm = document.getElementById('imageForm');
     if (imageForm) {
         imageForm.addEventListener('submit', handleImageSubmit);
@@ -115,25 +115,25 @@ function setupFormListeners() {
         }
     }
     
-    // Formulário de Títulos
+    // Formulrio de Ttulos
     const titulosForm = document.getElementById('titulosForm');
     if (titulosForm) {
         titulosForm.addEventListener('submit', handleTitulosSubmit);
     }
     
-    // Formulário de Descrições
+    // Formulrio de Descries
     const descricoesForm = document.getElementById('descricoesForm');
     if (descricoesForm) {
         descricoesForm.addEventListener('submit', handleDescricoesSubmit);
     }
     
-    // Formulário de Gerar Imagem
+    // Formulrio de Gerar Imagem
     const gerarImagemForm = document.getElementById('gerarImagemForm');
     if (gerarImagemForm) {
         gerarImagemForm.addEventListener('submit', handleGerarImagemSubmit);
     }
     
-    // Formulário de Tendências
+    // Formulrio de Tendncias
     const tendenciasForm = document.getElementById('tendenciasForm');
     if (tendenciasForm) {
         tendenciasForm.addEventListener('submit', handleTendenciasSubmit);
@@ -177,7 +177,7 @@ async function handlePromptSubmit(e) {
     };
     
     if (!data.mainDescription.trim()) {
-        showNotification('Por favor, preencha a descrição principal!', 'error');
+        showNotification('Por favor, preencha a descrio principal!', 'error');
         return;
     }
     
@@ -195,17 +195,17 @@ async function handlePromptSubmit(e) {
 }
 
 async function generatePrompt(data) {
-    const prompt = `Crie um prompt profissional para geração de imagens com IA baseado nos seguintes parâmetros:
+    const prompt = `Crie um prompt profissional para gerao de imagens com IA baseado nos seguintes parmetros:
 
-Descrição Principal: ${data.mainDescription}
+Descrio Principal: ${data.mainDescription}
 Estilo Visual: ${data.visualStyle}
 Qualidade: ${data.quality}
-Iluminação: ${data.lighting}
-Composição: ${data.composition}
+Iluminao: ${data.lighting}
+Composio: ${data.composition}
 Idioma: ${data.language}
 Elementos Adicionais: ${data.additionalElements.join(', ')}
 
-Crie um prompt detalhado e profissional que combine todos esses elementos de forma coesa e criativa. O prompt deve ser otimizado para geração de imagens com IA e incluir termos técnicos apropriados.`;
+Crie um prompt detalhado e profissional que combine todos esses elementos de forma coesa e criativa. O prompt deve ser otimizado para gerao de imagens com IA e incluir termos tcnicos apropriados.`;
 
     const response = await callOpenRouterAPI(prompt);
     return response;
@@ -229,7 +229,7 @@ function clearPromptForm() {
     document.getElementById('promptResult').innerHTML = `
         <div class="placeholder">
             <i class="fas fa-magic"></i>
-            <p>Preencha o formulário e clique em 'Gerar Prompt' para ver o resultado aqui</p>
+            <p>Preencha o formulrio e clique em 'Gerar Prompt' para ver o resultado aqui</p>
         </div>
     `;
 }
@@ -263,26 +263,26 @@ async function handleHashtagSubmit(e) {
 }
 
 async function generateHashtags(data) {
-    const prompt = `Crie hashtags estratégicas para redes sociais baseado nos seguintes parâmetros:
+    const prompt = `Crie hashtags estratgicas para redes sociais baseado nos seguintes parmetros:
 
 Nicho/Categoria: ${data.niche}
 Mercado/Idioma: ${data.market}
 Quantidade: ${data.quantity} hashtags
-Tipo de Conteúdo: ${data.contentType}
+Tipo de Contedo: ${data.contentType}
 Objetivos: ${data.objectives.join(', ')}
-Incluir Título: ${data.includeTitle ? 'Sim' : 'Não'}
-Incluir Descrição: ${data.includeDescription ? 'Sim' : 'Não'}
-Incluir Emojis: ${data.includeEmojis ? 'Sim' : 'Não'}
+Incluir Ttulo: ${data.includeTitle ? 'Sim' : 'No'}
+Incluir Descrio: ${data.includeDescription ? 'Sim' : 'No'}
+Incluir Emojis: ${data.includeEmojis ? 'Sim' : 'No'}
 
 Crie hashtags que sejam:
 - Relevantes para o nicho
 - Otimizadas para o mercado/idioma
 - Balanceadas entre populares e de nicho
-- Apropriadas para o tipo de conteúdo
+- Apropriadas para o tipo de contedo
 - Alinhadas com os objetivos
 
-${data.includeTitle ? 'Inclua um título envolvente sobre o assunto.' : ''}
-${data.includeDescription ? 'Inclua uma descrição envolvente sobre o assunto.' : ''}
+${data.includeTitle ? 'Inclua um ttulo envolvente sobre o assunto.' : ''}
+${data.includeDescription ? 'Inclua uma descrio envolvente sobre o assunto.' : ''}
 ${data.includeEmojis ? 'Use emojis relevantes nas hashtags.' : ''}
 
 Formate a resposta de forma clara e organizada.`;
@@ -324,7 +324,7 @@ function handleFileSelect(e) {
         
         // Validar tamanho (50MB)
         if (file.size > 50 * 1024 * 1024) {
-            showNotification('Arquivo muito grande! Máximo 50MB.', 'error');
+            showNotification('Arquivo muito grande! Mximo 50MB.', 'error');
             e.target.value = '';
             fileName.textContent = 'Nenhum arquivo escolhido';
             return;
@@ -380,7 +380,7 @@ async function analyzeImage(file) {
             contents: [{
                 parts: [
                     {
-                        text: "Analise esta imagem e crie uma descrição detalhada e profissional que possa ser usada para recriar a imagem com IA. Inclua detalhes sobre: composição, cores, iluminação, estilo, elementos visuais, texturas, atmosfera e qualquer outro aspecto importante. A descrição deve ser precisa e técnica, adequada para geração de imagens com IA."
+                        text: "Analise esta imagem e crie uma descrio detalhada e profissional que possa ser usada para recriar a imagem com IA. Inclua detalhes sobre: composio, cores, iluminao, estilo, elementos visuais, texturas, atmosfera e qualquer outro aspecto importante. A descrio deve ser precisa e tcnica, adequada para gerao de imagens com IA."
                     },
                     {
                         inline_data: {
@@ -402,7 +402,7 @@ async function analyzeImage(file) {
     if (data.candidates && data.candidates[0] && data.candidates[0].content) {
         return data.candidates[0].content.parts[0].text;
     } else {
-        throw new Error('Resposta inválida da API');
+        throw new Error('Resposta invlida da API');
     }
 }
 
@@ -422,7 +422,7 @@ function displayImageResult(description) {
             <div class="result-text">${description}</div>
             <button class="copy-btn" onclick="copyToClipboard('${description.replace(/'/g, "\\'")}')">
                 <i class="fas fa-copy"></i>
-                Copiar Descrição
+                Copiar Descrio
             </button>
         </div>
     `;
@@ -434,7 +434,7 @@ function clearImageForm() {
     document.getElementById('imageResult').innerHTML = `
         <div class="placeholder">
             <i class="fas fa-image"></i>
-            <p>A descrição aparecerá aqui após a análise...</p>
+            <p>A descrio aparecer aqui aps a anlise...</p>
         </div>
     `;
 }
@@ -449,7 +449,7 @@ async function pasteFromClipboard() {
                     const blob = await clipboardItem.getType(type);
                     const file = new File([blob], 'clipboard-image.png', { type });
                     
-                    // Simular seleção de arquivo
+                    // Simular seleo de arquivo
                     const fileInput = document.getElementById('imageFile');
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
@@ -464,14 +464,14 @@ async function pasteFromClipboard() {
             }
         }
         
-        showNotification('Nenhuma imagem encontrada na área de transferência!', 'error');
+        showNotification('Nenhuma imagem encontrada na rea de transferncia!', 'error');
     } catch (error) {
         console.error('Erro ao colar imagem:', error);
-        showNotification('Erro ao colar imagem da área de transferência!', 'error');
+        showNotification('Erro ao colar imagem da rea de transferncia!', 'error');
     }
 }
 
-// ===== GERADOR DE TÍTULOS =====
+// ===== GERADOR DE TTULOS =====
 async function handleTitulosSubmit(e) {
     e.preventDefault();
     
@@ -488,52 +488,52 @@ async function handleTitulosSubmit(e) {
     }
     
     const resultArea = document.getElementById('titulosResult');
-    resultArea.innerHTML = '<div class="loading">Gerando títulos...</div>';
+    resultArea.innerHTML = '<div class="loading">Gerando ttulos...</div>';
     
     try {
         const titulos = await generateTitulos(data);
         displayTitulosResult(titulos);
     } catch (error) {
-        console.error('Erro ao gerar títulos:', error);
-        resultArea.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-triangle"></i><p>Erro ao gerar títulos. Tente novamente.</p></div>';
-        showNotification('Erro ao gerar títulos!', 'error');
+        console.error('Erro ao gerar ttulos:', error);
+        resultArea.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-triangle"></i><p>Erro ao gerar ttulos. Tente novamente.</p></div>';
+        showNotification('Erro ao gerar ttulos!', 'error');
     }
 }
 
 async function generateTitulos(data) {
     const gatilhosMentais = {
-        'curiosidade': 'Use gatilhos de curiosidade como "O que acontece quando...", "Você nunca vai acreditar...", "Descubra o segredo..."',
-        'controversia': 'Use gatilhos de controvérsia como "Por que X está errado", "A verdade que ninguém conta sobre...", "Por que todos estão fazendo errado..."',
-        'mistério': 'Use gatilhos de mistério como "O segredo que ninguém conta", "O que eles não querem que você saiba", "A verdade oculta sobre..."',
-        'urgência': 'Use gatilhos de urgência como "Última chance de...", "Antes que seja tarde", "Apenas hoje..."',
-        'medo': 'Use gatilhos de medo como "Cuidado com...", "Isso pode destruir...", "O perigo que você não vê..."',
-        'ganancia': 'Use gatilhos de ganância como "Como ganhar R$ X", "Método para ficar rico", "Estratégia que gera lucro..."',
-        'autoridade': 'Use gatilhos de autoridade como "Especialista revela...", "Médico explica...", "Cientista descobre..."',
-        'prova-social': 'Use gatilhos de prova social como "Milhões já fizeram...", "Todo mundo está falando sobre...", "Tendência que está bombando..."',
-        'escassez': 'Use gatilhos de escassez como "Apenas X vagas restantes", "Oferta limitada", "Últimas unidades..."',
-        'reciprocidade': 'Use gatilhos de reciprocidade como "Presente grátis para você", "Sem custo para você", "De graça para seguidores..."',
+        'curiosidade': 'Use gatilhos de curiosidade como "O que acontece quando...", "Voc nunca vai acreditar...", "Descubra o segredo..."',
+        'controversia': 'Use gatilhos de controvrsia como "Por que X est errado", "A verdade que ningum conta sobre...", "Por que todos esto fazendo errado..."',
+        'mistrio': 'Use gatilhos de mistrio como "O segredo que ningum conta", "O que eles no querem que voc saiba", "A verdade oculta sobre..."',
+        'urgncia': 'Use gatilhos de urgncia como "ltima chance de...", "Antes que seja tarde", "Apenas hoje..."',
+        'medo': 'Use gatilhos de medo como "Cuidado com...", "Isso pode destruir...", "O perigo que voc no v..."',
+        'ganancia': 'Use gatilhos de ganncia como "Como ganhar R$ X", "Mtodo para ficar rico", "Estratgia que gera lucro..."',
+        'autoridade': 'Use gatilhos de autoridade como "Especialista revela...", "Mdico explica...", "Cientista descobre..."',
+        'prova-social': 'Use gatilhos de prova social como "Milhes j fizeram...", "Todo mundo est falando sobre...", "Tendncia que est bombando..."',
+        'escassez': 'Use gatilhos de escassez como "Apenas X vagas restantes", "Oferta limitada", "ltimas unidades..."',
+        'reciprocidade': 'Use gatilhos de reciprocidade como "Presente grtis para voc", "Sem custo para voc", "De graa para seguidores..."',
         'tutorial': 'Use gatilhos de tutorial como "Como fazer X em 5 passos", "Guia completo para...", "Tutorial definitivo..."',
-        'reacao': 'Use gatilhos de reação como "Minha reação quando...", "Fiquei chocado com...", "Não esperava isso..."',
-        'comparacao': 'Use gatilhos de comparação como "X vs Y: Qual é melhor?", "Comparação que vai te surpreender", "Diferenças que ninguém conta..."',
+        'reacao': 'Use gatilhos de reao como "Minha reao quando...", "Fiquei chocado com...", "No esperava isso..."',
+        'comparacao': 'Use gatilhos de comparao como "X vs Y: Qual  melhor?", "Comparao que vai te surpreender", "Diferenas que ningum conta..."',
         'lista': 'Use gatilhos de lista como "10 coisas que...", "5 motivos para...", "Lista definitiva de..."',
-        'pergunta': 'Use gatilhos de pergunta como "Você sabia que...?", "Por que isso acontece?", "O que você faria se...?"',
-        'shock': 'Use gatilhos de choque como "Isso vai te chocar", "Prepare-se para ficar surpreso", "Você não vai acreditar..."'
+        'pergunta': 'Use gatilhos de pergunta como "Voc sabia que...?", "Por que isso acontece?", "O que voc faria se...?"',
+        'shock': 'Use gatilhos de choque como "Isso vai te chocar", "Prepare-se para ficar surpreso", "Voc no vai acreditar..."'
     };
 
-    const prompt = `Crie ${data.quantidade} títulos virais para ${data.plataforma} baseado no tema: "${data.tema}"
+    const prompt = `Crie ${data.quantidade} ttulos virais para ${data.plataforma} baseado no tema: "${data.tema}"
 
 Gatilho Mental: ${data.estilo}
 ${gatilhosMentais[data.estilo] || 'Use gatilhos mentais poderosos'}
 
-Os títulos devem ser:
-- Chamativos e irresistíveis usando o gatilho mental ${data.estilo}
+Os ttulos devem ser:
+- Chamativos e irresistveis usando o gatilho mental ${data.estilo}
 - Otimizados para ${data.plataforma}
 - Capazes de gerar cliques e engajamento
-- Únicos e criativos
+- nicos e criativos
 - Com emojis quando apropriado
 - Entre 40-60 caracteres para melhor performance
 
-Formate a resposta numerando cada título (1., 2., 3., etc.).`;
+Formate a resposta numerando cada ttulo (1., 2., 3., etc.).`;
 
     const response = await callOpenRouterAPI(prompt);
     return response;
@@ -546,7 +546,7 @@ function displayTitulosResult(titulos) {
             <div class="result-text">${titulos}</div>
             <button class="copy-btn" onclick="copyToClipboard('${titulos.replace(/'/g, "\\'")}')">
                 <i class="fas fa-copy"></i>
-                Copiar Títulos
+                Copiar Ttulos
             </button>
         </div>
     `;
@@ -557,12 +557,12 @@ function clearTitulosForm() {
     document.getElementById('titulosResult').innerHTML = `
         <div class="placeholder">
             <i class="fas fa-heading"></i>
-            <p>Preencha o formulário e clique em "Gerar Títulos"</p>
+            <p>Preencha o formulrio e clique em "Gerar Ttulos"</p>
         </div>
     `;
 }
 
-// ===== GERADOR DE DESCRIÇÕES =====
+// ===== GERADOR DE DESCRIES =====
 async function handleDescricoesSubmit(e) {
     e.preventDefault();
     
@@ -579,58 +579,58 @@ async function handleDescricoesSubmit(e) {
     }
     
     const resultArea = document.getElementById('descricoesResult');
-    resultArea.innerHTML = '<div class="loading">Gerando descrição...</div>';
+    resultArea.innerHTML = '<div class="loading">Gerando descrio...</div>';
     
     try {
         const descricao = await generateDescricao(data);
         displayDescricaoResult(descricao);
     } catch (error) {
-        console.error('Erro ao gerar descrição:', error);
-        resultArea.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-triangle"></i><p>Erro ao gerar descrição. Tente novamente.</p></div>';
-        showNotification('Erro ao gerar descrição!', 'error');
+        console.error('Erro ao gerar descrio:', error);
+        resultArea.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-triangle"></i><p>Erro ao gerar descrio. Tente novamente.</p></div>';
+        showNotification('Erro ao gerar descrio!', 'error');
     }
 }
 
 async function generateDescricao(data) {
     const tonsDescricao = {
-        'formal': 'Use um tom formal, profissional e sério. Linguagem técnica e acadêmica.',
-        'casual': 'Use um tom casual, descontraído e amigável. Linguagem do dia a dia.',
-        'divertido': 'Use um tom divertido, com humor e entretenimento. Linguagem descontraída e engraçada.',
+        'formal': 'Use um tom formal, profissional e srio. Linguagem tcnica e acadmica.',
+        'casual': 'Use um tom casual, descontrado e amigvel. Linguagem do dia a dia.',
+        'divertido': 'Use um tom divertido, com humor e entretenimento. Linguagem descontrada e engraada.',
         'inspirador': 'Use um tom inspirador, motivacional e emocional. Linguagem que motiva e inspira.',
-        'urgente': 'Use um tom urgente, criando senso de urgência. Linguagem que pressiona para ação.',
-        'autoridade': 'Use um tom de autoridade, como especialista confiável. Linguagem técnica e assertiva.',
-        'intimo': 'Use um tom íntimo, pessoal e próximo. Linguagem como se fosse um amigo próximo.',
-        'dramatico': 'Use um tom dramático, impactante e emocionante. Linguagem que causa impacto.',
-        'educativo': 'Use um tom educativo, informativo e didático. Linguagem clara e explicativa.',
+        'urgente': 'Use um tom urgente, criando senso de urgncia. Linguagem que pressiona para ao.',
+        'autoridade': 'Use um tom de autoridade, como especialista confivel. Linguagem tcnica e assertiva.',
+        'intimo': 'Use um tom ntimo, pessoal e prximo. Linguagem como se fosse um amigo prximo.',
+        'dramatico': 'Use um tom dramtico, impactante e emocionante. Linguagem que causa impacto.',
+        'educativo': 'Use um tom educativo, informativo e didtico. Linguagem clara e explicativa.',
         'persuasivo': 'Use um tom persuasivo, focado em convencimento e vendas. Linguagem que convence.',
         'conversacional': 'Use um tom conversacional, como uma conversa natural. Linguagem fluida e natural.',
         'misterioso': 'Use um tom misterioso, intrigante e curioso. Linguagem que desperta curiosidade.'
     };
 
     const tamanhosDescricao = {
-        'curta': '1-2 parágrafos curtos (100-200 palavras)',
-        'media': '3-4 parágrafos médios (200-400 palavras)',
-        'longa': '5+ parágrafos longos (400+ palavras)'
+        'curta': '1-2 pargrafos curtos (100-200 palavras)',
+        'media': '3-4 pargrafos mdios (200-400 palavras)',
+        'longa': '5+ pargrafos longos (400+ palavras)'
     };
 
-    const prompt = `Crie uma descrição envolvente para ${data.tipo} baseada no tema: "${data.tema}"
+    const prompt = `Crie uma descrio envolvente para ${data.tipo} baseada no tema: "${data.tema}"
 
 Tom: ${data.tom}
 ${tonsDescricao[data.tom] || 'Use um tom apropriado'}
 
 Tamanho: ${data.tamanho}
-${tamanhosDescricao[data.tamanho] || 'Tamanho médio'}
+${tamanhosDescricao[data.tamanho] || 'Tamanho mdio'}
 
-A descrição deve ser:
+A descrio deve ser:
 - Envolvente e atrativa usando o tom ${data.tom}
 - Adequada para ${data.tipo}
 - Do tamanho ${data.tamanho}
-- Otimizada para engajamento e interação
-- Bem estruturada com parágrafos claros
+- Otimizada para engajamento e interao
+- Bem estruturada com pargrafos claros
 - Incluir call-to-action quando apropriado
 - Usar emojis moderadamente se o tom permitir
 
-Formate a resposta de forma clara e organizada com parágrafos bem definidos.`;
+Formate a resposta de forma clara e organizada com pargrafos bem definidos.`;
 
     const response = await callOpenRouterAPI(prompt);
     return response;
@@ -643,7 +643,7 @@ function displayDescricaoResult(descricao) {
             <div class="result-text">${descricao}</div>
             <button class="copy-btn" onclick="copyToClipboard('${descricao.replace(/'/g, "\\'")}')">
                 <i class="fas fa-copy"></i>
-                Copiar Descrição
+                Copiar Descrio
             </button>
         </div>
     `;
@@ -654,7 +654,7 @@ function clearDescricoesForm() {
     document.getElementById('descricoesResult').innerHTML = `
         <div class="placeholder">
             <i class="fas fa-file-alt"></i>
-            <p>Preencha o formulário e clique em "Gerar Descrição"</p>
+            <p>Preencha o formulrio e clique em "Gerar Descrio"</p>
         </div>
     `;
 }
@@ -732,7 +732,7 @@ Requirements: masterpiece, best quality, highly detailed, professional, 4k, ultr
             }
         }
     } catch (error) {
-        console.log('Nano Banana não disponível, usando fallback:', error);
+        console.log('Nano Banana no disponvel, usando fallback:', error);
     }
     
     // Fallback: Usar Pollinations.ai com prompt otimizado
@@ -773,12 +773,12 @@ function clearGerarImagemForm() {
     document.getElementById('gerarImagemResult').innerHTML = `
         <div class="placeholder">
             <i class="fas fa-paint-brush"></i>
-            <p>Preencha o formulário e clique em "Gerar Imagem"</p>
+            <p>Preencha o formulrio e clique em "Gerar Imagem"</p>
         </div>
     `;
 }
 
-// ===== ANALISADOR DE TENDÊNCIAS =====
+// ===== ANALISADOR DE TENDNCIAS =====
 async function handleTendenciasSubmit(e) {
     e.preventDefault();
     
@@ -794,15 +794,15 @@ async function handleTendenciasSubmit(e) {
     }
     
     const resultArea = document.getElementById('tendenciasResult');
-    resultArea.innerHTML = '<div class="loading">Analisando tendências...</div>';
+    resultArea.innerHTML = '<div class="loading">Analisando tendncias...</div>';
     
     try {
         const analise = await analyzeTrends(data);
         displayTrendsResult(analise);
     } catch (error) {
-        console.error('Erro ao analisar tendências:', error);
-        resultArea.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-triangle"></i><p>Erro ao analisar tendências. Tente novamente.</p></div>';
-        showNotification('Erro ao analisar tendências!', 'error');
+        console.error('Erro ao analisar tendncias:', error);
+        resultArea.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-triangle"></i><p>Erro ao analisar tendncias. Tente novamente.</p></div>';
+        showNotification('Erro ao analisar tendncias!', 'error');
     }
 }
 
@@ -817,7 +817,7 @@ function displayTrendsResult(analise) {
             <div class="result-text">${analise}</div>
             <button class="copy-btn" onclick="copyToClipboard('${analise.replace(/'/g, "\\'")}')">
                 <i class="fas fa-copy"></i>
-                Copiar Análise
+                Copiar Anlise
             </button>
         </div>
     `;
@@ -828,14 +828,14 @@ function clearTendenciasForm() {
     document.getElementById('tendenciasResult').innerHTML = `
         <div class="placeholder">
             <i class="fas fa-chart-line"></i>
-            <p>Preencha o formulário e clique em "Analisar Tendências"</p>
+            <p>Preencha o formulrio e clique em "Analisar Tendncias"</p>
         </div>
     `;
 }
 
 // ===== FUNCIONALIDADES VEO3/FLOW GENERATOR =====
 
-// Inicialização do VEO3
+// Inicializao do VEO3
 function initializeVeo3() {
     const veo3Input = document.getElementById('veo3MessageInput');
     if (veo3Input) {
@@ -855,7 +855,7 @@ function initializeVeo3() {
     }
 }
 
-// Função para enviar mensagem no VEO3
+// Funo para enviar mensagem no VEO3
 function sendVeo3Message() {
     const input = document.getElementById('veo3MessageInput');
     const userMessage = input.value.trim();
@@ -872,7 +872,7 @@ function sendVeo3Message() {
     }, 800);
 }
 
-// Função para adicionar mensagem do usuário
+// Funo para adicionar mensagem do usurio
 function addVeo3UserMessage(text) {
     const conversationArea = document.getElementById('veo3ConversationArea');
     
@@ -894,7 +894,7 @@ function addVeo3UserMessage(text) {
     conversationArea.scrollTop = conversationArea.scrollHeight;
 }
 
-// Função para adicionar mensagem do bot
+// Funo para adicionar mensagem do bot
 function addVeo3BotMessage(response) {
     const conversationArea = document.getElementById('veo3ConversationArea');
     const div = document.createElement('div');
@@ -910,9 +910,9 @@ function addVeo3BotMessage(response) {
     conversationArea.scrollTop = conversationArea.scrollHeight;
 }
 
-// Função para gerar resposta VEO3 aprimorada
+// Funo para gerar resposta VEO3 aprimorada
 function generateVeo3Response(userPrompt) {
-    // Obter configurações do usuário
+    // Obter configuraes do usurio
     const format = document.getElementById('veo3Format')?.value || 'vertical';
     const duration = document.getElementById('veo3Duration')?.value || 'medium';
     const style = document.getElementById('veo3Style')?.value || 'realistic';
@@ -920,14 +920,14 @@ function generateVeo3Response(userPrompt) {
     const music = document.getElementById('veo3Music')?.value || 'ambient';
     const language = document.getElementById('veo3Language')?.value || 'pt-br';
 
-    // As 5 primeiras palavras em inglês
+    // As 5 primeiras palavras em ingls
     const englishTitleStart = "Here generated prompt for";
     const englishDescStart = "Detailed description based";
 
     // Gera hashtags automaticamente melhoradas
     const generateHashtags = (prompt) => {
         const keywords = prompt.toLowerCase().match(/\b\w{4,}\b/g) || [];
-        const stopWords = ["um", "uma", "para", "com", "que", "como", "nao", "das", "dos", "esta", "este", "isso", "aqui", "onde", "quando", "porque", "sobre", "entre", "através", "durante", "antes", "depois", "acima", "abaixo", "dentro", "fora"];
+        const stopWords = ["um", "uma", "para", "com", "que", "como", "nao", "das", "dos", "esta", "este", "isso", "aqui", "onde", "quando", "porque", "sobre", "entre", "atravs", "durante", "antes", "depois", "acima", "abaixo", "dentro", "fora"];
         
         const filteredKeywords = keywords
             .filter(kw => !stopWords.includes(kw))
@@ -950,21 +950,21 @@ function generateVeo3Response(userPrompt) {
         return [...new Set(allHashtags)].slice(0, 8);
     };
 
-    // Análise inteligente aprimorada do prompt
+    // Anlise inteligente aprimorada do prompt
     const promptLower = userPrompt.toLowerCase();
     
     // Detectar tipo de cena
     const isNightScene = promptLower.includes('noite') || promptLower.includes('escuro') || promptLower.includes('lua') || promptLower.includes('luzes');
-    const isDayScene = promptLower.includes('dia') || promptLower.includes('sol') || promptLower.includes('claro') || promptLower.includes('manhã');
+    const isDayScene = promptLower.includes('dia') || promptLower.includes('sol') || promptLower.includes('claro') || promptLower.includes('manh');
     const hasDialogue = promptLower.includes('fala') || promptLower.includes('diz') || promptLower.includes('conversa') || promptLower.includes('falar');
-    const isActionScene = promptLower.includes('corre') || promptLower.includes('luta') || promptLower.includes('ação') || promptLower.includes('correndo') || promptLower.includes('perseguição');
+    const isActionScene = promptLower.includes('corre') || promptLower.includes('luta') || promptLower.includes('ao') || promptLower.includes('correndo') || promptLower.includes('perseguio');
     const isRomanceScene = promptLower.includes('romance') || promptLower.includes('amor') || promptLower.includes('beijo') || promptLower.includes('casal');
     const isHorrorScene = promptLower.includes('terror') || promptLower.includes('medo') || promptLower.includes('assustador') || promptLower.includes('fantasma');
-    const isComedyScene = promptLower.includes('comédia') || promptLower.includes('engraçado') || promptLower.includes('riso') || promptLower.includes('humor');
-    const isDramaScene = promptLower.includes('drama') || promptLower.includes('emocional') || promptLower.includes('triste') || promptLower.includes('sério');
-    const isSciFiScene = promptLower.includes('futuro') || promptLower.includes('robô') || promptLower.includes('espaço') || promptLower.includes('tecnologia');
+    const isComedyScene = promptLower.includes('comdia') || promptLower.includes('engraado') || promptLower.includes('riso') || promptLower.includes('humor');
+    const isDramaScene = promptLower.includes('drama') || promptLower.includes('emocional') || promptLower.includes('triste') || promptLower.includes('srio');
+    const isSciFiScene = promptLower.includes('futuro') || promptLower.includes('rob') || promptLower.includes('espao') || promptLower.includes('tecnologia');
 
-    // Determinar configurações baseadas na análise
+    // Determinar configuraes baseadas na anlise
     let shotType, cameraAngle, cameraMovement, lighting, mood, musicGenre, durationValue;
     
     if (isActionScene) {
@@ -1025,7 +1025,7 @@ function generateVeo3Response(userPrompt) {
         durationValue = "30-60 seconds";
     }
 
-    // Configurar formato e resolução
+    // Configurar formato e resoluo
     const formatMap = {
         'vertical': 'Vertical (9:16)',
         'horizontal': 'Horizontal (16:9)',
@@ -1038,7 +1038,7 @@ function generateVeo3Response(userPrompt) {
         'custom': ['Custom resolution based on requirements']
     };
 
-    // Configurar música
+    // Configurar msica
     const musicMap = {
         'ambient': 'Ambient atmospheric soundtrack',
         'cinematic': 'Cinematic orchestral score',
@@ -1076,7 +1076,7 @@ function generateVeo3Response(userPrompt) {
                     "speaker": "Character",
                     "language": languageMap[language],
                     "dialogue_in_pt_br": hasDialogue && language !== 'none'
-                        ? "Diálogo natural em português baseado na descrição..."
+                        ? "Dilogo natural em portugus baseado na descrio..."
                         : "[Apenas efeitos sonoros ambientais realistas]"
                 }
             ],
@@ -1117,7 +1117,7 @@ function generateVeo3Response(userPrompt) {
     };
 }
 
-// Função para copiar JSON do VEO3
+// Funo para copiar JSON do VEO3
 function copyVeo3Json(button) {
     const jsonOutput = button.previousElementSibling;
     navigator.clipboard.writeText(jsonOutput.textContent)
@@ -1139,9 +1139,9 @@ function copyVeo3Json(button) {
         });
 }
 
-// ===== FUNCIONALIDADES AVANÇADAS VEO3 =====
+// ===== FUNCIONALIDADES AVANADAS VEO3 =====
 
-// Toggle das configurações
+// Toggle das configuraes
 function toggleVeo3Settings() {
     const content = document.getElementById('veo3SettingsContent');
     const toggle = document.querySelector('.toggle-settings i');
@@ -1155,18 +1155,18 @@ function toggleVeo3Settings() {
     }
 }
 
-// Aplicar templates pré-definidos
+// Aplicar templates pr-definidos
 function applyTemplate(templateType) {
     const templates = {
         'action': {
-            prompt: 'Uma perseguição emocionante pela cidade à noite, com carros em alta velocidade, luzes neon piscando, e muita adrenalina',
+            prompt: 'Uma perseguio emocionante pela cidade  noite, com carros em alta velocidade, luzes neon piscando, e muita adrenalina',
             format: 'horizontal',
             duration: 'short',
             style: 'cinematic',
             music: 'cinematic'
         },
         'romance': {
-            prompt: 'Um casal caminhando pela praia ao pôr do sol, com ondas suaves, brisa marinha, e um momento romântico e íntimo',
+            prompt: 'Um casal caminhando pela praia ao pr do sol, com ondas suaves, brisa marinha, e um momento romntico e ntimo',
             format: 'vertical',
             duration: 'medium',
             style: 'realistic',
@@ -1180,21 +1180,21 @@ function applyTemplate(templateType) {
             music: 'ambient'
         },
         'comedy': {
-            prompt: 'Uma situação engraçada no escritório, com personagens cômicos, expressões exageradas, e muito humor',
+            prompt: 'Uma situao engraada no escritrio, com personagens cmicos, expresses exageradas, e muito humor',
             format: 'square',
             duration: 'short',
             style: 'stylized',
             music: 'electronic'
         },
         'drama': {
-            prompt: 'Um momento emocional profundo, com personagem em conflito interno, iluminação dramática, e atmosfera séria',
+            prompt: 'Um momento emocional profundo, com personagem em conflito interno, iluminao dramtica, e atmosfera sria',
             format: 'horizontal',
             duration: 'long',
             style: 'realistic',
             music: 'cinematic'
         },
         'sci-fi': {
-            prompt: 'Uma nave espacial futurística voando através de nebulosas coloridas, com tecnologia avançada e efeitos visuais impressionantes',
+            prompt: 'Uma nave espacial futurstica voando atravs de nebulosas coloridas, com tecnologia avanada e efeitos visuais impressionantes',
             format: 'horizontal',
             duration: 'medium',
             style: 'stylized',
@@ -1204,7 +1204,7 @@ function applyTemplate(templateType) {
     
     const template = templates[templateType];
     if (template) {
-        // Aplicar configurações
+        // Aplicar configuraes
         document.getElementById('veo3Format').value = template.format;
         document.getElementById('veo3Duration').value = template.duration;
         document.getElementById('veo3Style').value = template.style;
@@ -1218,34 +1218,34 @@ function applyTemplate(templateType) {
         // Feedback visual
         const button = event.target;
         button.style.background = 'linear-gradient(135deg, #10B981, #059669)';
-        button.textContent = '✓ Aplicado!';
+        button.textContent = ' Aplicado!';
         setTimeout(() => {
             button.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(255, 215, 0, 0.2))';
-            button.textContent = button.textContent.replace('✓ Aplicado!', button.textContent.includes('🎬') ? '🎬 Ação' : 
-                button.textContent.includes('💕') ? '💕 Romance' : 
-                button.textContent.includes('👻') ? '👻 Terror' : 
-                button.textContent.includes('😂') ? '😂 Comédia' : 
-                button.textContent.includes('🎭') ? '🎭 Drama' : '🚀 Ficção Científica');
+            button.textContent = button.textContent.replace(' Aplicado!', button.textContent.includes('') ? ' Ao' : 
+                button.textContent.includes('') ? ' Romance' : 
+                button.textContent.includes('') ? ' Terror' : 
+                button.textContent.includes('') ? ' Comdia' : 
+                button.textContent.includes('') ? ' Drama' : ' Fico Cientfica');
         }, 2000);
     }
 }
 
-// Limpar histórico de conversas
+// Limpar histrico de conversas
 function clearVeo3History() {
     const conversationArea = document.getElementById('veo3ConversationArea');
     conversationArea.innerHTML = `
         <div class="veo3-welcome">
-            <div class="welcome-icon">🎬</div>
+            <div class="welcome-icon"></div>
             <h3>Bem-vindo ao Gerador VEO3/FLOW</h3>
-            <p>Descreva sua cena com detalhes e receba um prompt JSON completo com especificações técnicas para VEO3 e FLOW</p>
+            <p>Descreva sua cena com detalhes e receba um prompt JSON completo com especificaes tcnicas para VEO3 e FLOW</p>
             <div class="welcome-tips">
                 <div class="tip">
                     <i class="fas fa-lightbulb"></i>
-                    <span>Use descrições detalhadas para melhores resultados</span>
+                    <span>Use descries detalhadas para melhores resultados</span>
                 </div>
                 <div class="tip">
                     <i class="fas fa-cog"></i>
-                    <span>Configure as opções avançadas acima</span>
+                    <span>Configure as opes avanadas acima</span>
                 </div>
             </div>
         </div>
@@ -1259,7 +1259,7 @@ function clearVeo3History() {
     }, 2000);
 }
 
-// Exportar histórico
+// Exportar histrico
 function exportVeo3History() {
     const messages = document.querySelectorAll('.veo3-message');
     if (messages.length === 0) {
@@ -1314,7 +1314,7 @@ function exportVeo3History() {
 
 // ===== GERADOR DE ROTEIROS =====
 
-// Inicialização do Gerador de Roteiros
+// Inicializao do Gerador de Roteiros
 function initializeRoteiroGenerator() {
     // Atualizar meta de caracteres inicial
     updateCharacterTarget();
@@ -1329,7 +1329,7 @@ function initializeRoteiroGenerator() {
     });
 }
 
-// Sistema de cálculo de duração por caracteres
+// Sistema de clculo de durao por caracteres
 const SPEECH_RATES = {
     'lenta': { wordsPerMinute: 130, charsPerWord: 5.5 },
     'normal': { wordsPerMinute: 155, charsPerWord: 5.5 },
@@ -1355,7 +1355,7 @@ const DURATION_MAP = {
     '2h': 7200
 };
 
-// Atualizar meta de caracteres baseada na duração e velocidade
+// Atualizar meta de caracteres baseada na durao e velocidade
 function updateCharacterTarget() {
     const duration = document.getElementById('roteiroDuracao')?.value || '1m';
     const speed = document.getElementById('roteiroVelocidade')?.value || 'normal';
@@ -1369,7 +1369,7 @@ function updateCharacterTarget() {
     const durationSeconds = DURATION_MAP[duration];
     const speechRate = SPEECH_RATES[speed];
     
-    // Calcular caracteres baseado na duração e velocidade
+    // Calcular caracteres baseado na durao e velocidade
     const wordsPerSecond = speechRate.wordsPerMinute / 60;
     const charsPerSecond = wordsPerSecond * speechRate.charsPerWord;
     const targetChars = Math.round(durationSeconds * charsPerSecond);
@@ -1378,7 +1378,7 @@ function updateCharacterTarget() {
     document.getElementById('durationTarget').textContent = formatDuration(durationSeconds);
 }
 
-// Atualizar estatísticas em tempo real
+// Atualizar estatsticas em tempo real
 function updateRoteiroStats() {
     const tema = document.getElementById('roteiroTema')?.value || '';
     const objetivo = document.getElementById('roteiroObjetivo')?.value || '';
@@ -1388,7 +1388,7 @@ function updateRoteiroStats() {
     const charCount = fullText.length;
     const wordCount = fullText.split(/\s+/).filter(word => word.length > 0).length;
     
-    // Calcular duração estimada
+    // Calcular durao estimada
     const speed = document.getElementById('roteiroVelocidade')?.value || 'normal';
     const speechRate = SPEECH_RATES[speed];
     const estimatedSeconds = Math.round((charCount / speechRate.charsPerWord) / (speechRate.wordsPerMinute / 60));
@@ -1399,7 +1399,7 @@ function updateRoteiroStats() {
     document.getElementById('estimatedDuration').textContent = formatDuration(estimatedSeconds);
 }
 
-// Formatar duração em formato legível
+// Formatar durao em formato legvel
 function formatDuration(seconds) {
     if (seconds < 60) {
         return `${seconds}s`;
@@ -1414,7 +1414,7 @@ function formatDuration(seconds) {
     }
 }
 
-// Toggle das configurações de roteiro
+// Toggle das configuraes de roteiro
 function toggleRoteiroSettings() {
     const content = document.getElementById('roteiroSettingsContent');
     const toggle = document.querySelector('#roteiro-generator .toggle-settings i');
@@ -1483,7 +1483,7 @@ function applyRoteiroTemplate(templateType) {
     
     const template = templates[templateType];
     if (template) {
-        // Aplicar configurações
+        // Aplicar configuraes
         Object.keys(template).forEach(key => {
             const element = document.getElementById(`roteiro${key.charAt(0).toUpperCase() + key.slice(1)}`);
             if (element) {
@@ -1498,7 +1498,7 @@ function applyRoteiroTemplate(templateType) {
         const button = event.target;
         button.style.background = 'linear-gradient(135deg, #10B981, #059669)';
         const originalText = button.textContent;
-        button.textContent = '✓ Aplicado!';
+        button.textContent = ' Aplicado!';
         setTimeout(() => {
             button.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(255, 215, 0, 0.2))';
             button.textContent = originalText;
@@ -1557,7 +1557,7 @@ async function generateRoteiro() {
         displayRoteiroResult(roteiro, targetChars, durationSeconds);
     } catch (error) {
         console.error('Erro ao gerar roteiro com IA:', error);
-        // Fallback para geração local
+        // Fallback para gerao local
         const roteiro = generateRoteiroContent({
             tema,
             objetivo,
@@ -1575,45 +1575,45 @@ async function generateRoteiro() {
     }
 }
 
-// Gerar conteúdo do roteiro
+// Gerar contedo do roteiro
 function generateRoteiroContent(params) {
     const { tema, objetivo, pontos, duracao, genero, pegada, estrutura, publico, targetChars } = params;
     
-    // Mapear configurações para texto
+    // Mapear configuraes para texto
     const generoMap = {
         'educativo': 'educativo e informativo',
         'entretenimento': 'divertido e envolvente',
-        'noticias': 'jornalístico e objetivo',
-        'tecnologia': 'técnico e inovador',
+        'noticias': 'jornalstico e objetivo',
+        'tecnologia': 'tcnico e inovador',
         'lifestyle': 'inspirador e pessoal',
-        'gaming': 'dinâmico e competitivo',
-        'culinaria': 'apetitoso e prático',
+        'gaming': 'dinmico e competitivo',
+        'culinaria': 'apetitoso e prtico',
         'viagem': 'aventureiro e inspirador',
-        'fitness': 'motivador e energético',
-        'negocios': 'profissional e estratégico',
-        'comedia': 'engraçado e descontraído',
+        'fitness': 'motivador e energtico',
+        'negocios': 'profissional e estratgico',
+        'comedia': 'engraado e descontrado',
         'drama': 'emocional e profundo'
     };
     
     const pegadaMap = {
         'formal': 'tom formal e respeitoso',
-        'casual': 'tom casual e amigável',
-        'divertido': 'tom divertido e descontraído',
-        'serio': 'tom sério e respeitoso',
+        'casual': 'tom casual e amigvel',
+        'divertido': 'tom divertido e descontrado',
+        'serio': 'tom srio e respeitoso',
         'inspirador': 'tom inspirador e motivador',
-        'dramatico': 'tom dramático e envolvente',
+        'dramatico': 'tom dramtico e envolvente',
         'relaxado': 'tom relaxado e tranquilo',
-        'energico': 'tom energético e dinâmico',
-        'intimo': 'tom íntimo e pessoal',
-        'profissional': 'tom profissional e confiável'
+        'energico': 'tom energtico e dinmico',
+        'intimo': 'tom ntimo e pessoal',
+        'profissional': 'tom profissional e confivel'
     };
     
     const estruturaMap = {
-        'simples': ['Introdução', 'Desenvolvimento', 'Conclusão'],
-        'detalhada': ['Hook', 'Introdução', 'Desenvolvimento', 'Conclusão', 'Call to Action'],
-        'narrativa': ['Início', 'Meio', 'Fim'],
-        'tutorial': ['Problema', 'Solução', 'Demonstração', 'Resumo'],
-        'storytelling': ['Contexto', 'Conflito', 'Resolução', 'Moral']
+        'simples': ['Introduo', 'Desenvolvimento', 'Concluso'],
+        'detalhada': ['Hook', 'Introduo', 'Desenvolvimento', 'Concluso', 'Call to Action'],
+        'narrativa': ['Incio', 'Meio', 'Fim'],
+        'tutorial': ['Problema', 'Soluo', 'Demonstrao', 'Resumo'],
+        'storytelling': ['Contexto', 'Conflito', 'Resoluo', 'Moral']
     };
     
     // Gerar roteiro baseado na estrutura
@@ -1621,8 +1621,8 @@ function generateRoteiroContent(params) {
     const charsPerSecao = Math.floor(targetChars / estruturaSecoes.length);
     
     let roteiro = `ROTEIRO: ${tema.toUpperCase()}\n`;
-    roteiro += `Duração: ${formatDuration(duracao)} | Gênero: ${generoMap[genero]} | Tom: ${pegadaMap[pegada]}\n`;
-    roteiro += `Público: ${publico} | Estrutura: ${estrutura}\n\n`;
+    roteiro += `Durao: ${formatDuration(duracao)} | Gnero: ${generoMap[genero]} | Tom: ${pegadaMap[pegada]}\n`;
+    roteiro += `Pblico: ${publico} | Estrutura: ${estrutura}\n\n`;
     
     if (objetivo) {
         roteiro += `OBJETIVO: ${objetivo}\n\n`;
@@ -1632,7 +1632,7 @@ function generateRoteiroContent(params) {
         roteiro += `PONTOS PRINCIPAIS:\n${pontos}\n\n`;
     }
     
-    // Gerar cada seção
+    // Gerar cada seo
     estruturaSecoes.forEach((secao, index) => {
         roteiro += `${secao.toUpperCase()}:\n`;
         
@@ -1641,19 +1641,19 @@ function generateRoteiroContent(params) {
             case 'Hook':
                 conteudoSecao = generateHook(tema, genero, pegada, publico);
                 break;
-            case 'Introdução':
+            case 'Introduo':
                 conteudoSecao = generateIntroducao(tema, objetivo, genero, pegada, publico);
                 break;
             case 'Desenvolvimento':
                 conteudoSecao = generateDesenvolvimento(tema, pontos, genero, pegada, publico);
                 break;
-            case 'Conclusão':
+            case 'Concluso':
                 conteudoSecao = generateConclusao(tema, objetivo, genero, pegada, publico);
                 break;
             case 'Call to Action':
                 conteudoSecao = generateCTA(tema, genero, pegada, publico);
                 break;
-            case 'Início':
+            case 'Incio':
                 conteudoSecao = generateInicio(tema, genero, pegada, publico);
                 break;
             case 'Meio':
@@ -1665,10 +1665,10 @@ function generateRoteiroContent(params) {
             case 'Problema':
                 conteudoSecao = generateProblema(tema, genero, pegada, publico);
                 break;
-            case 'Solução':
+            case 'Soluo':
                 conteudoSecao = generateSolucao(tema, genero, pegada, publico);
                 break;
-            case 'Demonstração':
+            case 'Demonstrao':
                 conteudoSecao = generateDemonstracao(tema, genero, pegada, publico);
                 break;
             case 'Resumo':
@@ -1680,7 +1680,7 @@ function generateRoteiroContent(params) {
             case 'Conflito':
                 conteudoSecao = generateConflito(tema, genero, pegada, publico);
                 break;
-            case 'Resolução':
+            case 'Resoluo':
                 conteudoSecao = generateResolucao(tema, genero, pegada, publico);
                 break;
             case 'Moral':
@@ -1690,7 +1690,7 @@ function generateRoteiroContent(params) {
                 conteudoSecao = generateConteudoGenerico(tema, secao, genero, pegada, publico);
         }
         
-        // Ajustar tamanho do conteúdo
+        // Ajustar tamanho do contedo
         if (conteudoSecao.length > charsPerSecao) {
             conteudoSecao = conteudoSecao.substring(0, charsPerSecao - 3) + '...';
         } else if (conteudoSecao.length < charsPerSecao * 0.7) {
@@ -1702,60 +1702,60 @@ function generateRoteiroContent(params) {
     
     roteiro += `---\n`;
     roteiro += `Caracteres: ${roteiro.length}\n`;
-    roteiro += `Duração estimada: ${formatDuration(duracao)}\n`;
+    roteiro += `Durao estimada: ${formatDuration(duracao)}\n`;
     roteiro += `Velocidade: ${velocidade}\n`;
     
     return roteiro;
 }
 
-// Funções geradoras de conteúdo para cada seção
+// Funes geradoras de contedo para cada seo
 function generateHook(tema, genero, pegada, publico) {
     const hooks = {
-        'educativo': `Você sabia que ${tema} pode mudar completamente sua perspectiva?`,
-        'entretenimento': `Prepare-se para descobrir algo incrível sobre ${tema}!`,
-        'noticias': `Últimas informações sobre ${tema} que você precisa saber.`,
-        'tecnologia': `A revolução em ${tema} está acontecendo agora.`,
+        'educativo': `Voc sabia que ${tema} pode mudar completamente sua perspectiva?`,
+        'entretenimento': `Prepare-se para descobrir algo incrvel sobre ${tema}!`,
+        'noticias': `ltimas informaes sobre ${tema} que voc precisa saber.`,
+        'tecnologia': `A revoluo em ${tema} est acontecendo agora.`,
         'lifestyle': `Transforme sua vida com essas dicas sobre ${tema}.`,
-        'gaming': `O segredo por trás de ${tema} que todo gamer precisa conhecer.`,
+        'gaming': `O segredo por trs de ${tema} que todo gamer precisa conhecer.`,
         'culinaria': `A receita perfeita de ${tema} que vai impressionar todos.`,
-        'viagem': `Descubra os segredos de ${tema} que ninguém te conta.`,
-        'fitness': `O método definitivo para dominar ${tema}.`,
-        'negocios': `A estratégia de ${tema} que está gerando milhões.`,
-        'comedia': `A verdade hilária sobre ${tema} que ninguém fala.`,
-        'drama': `A história emocionante por trás de ${tema}.`
+        'viagem': `Descubra os segredos de ${tema} que ningum te conta.`,
+        'fitness': `O mtodo definitivo para dominar ${tema}.`,
+        'negocios': `A estratgia de ${tema} que est gerando milhes.`,
+        'comedia': `A verdade hilria sobre ${tema} que ningum fala.`,
+        'drama': `A histria emocionante por trs de ${tema}.`
     };
-    return hooks[genero] || `Descubra tudo sobre ${tema} neste vídeo!`;
+    return hooks[genero] || `Descubra tudo sobre ${tema} neste vdeo!`;
 }
 
 function generateIntroducao(tema, objetivo, genero, pegada, publico) {
-    let intro = `Olá pessoal! Hoje vamos falar sobre ${tema}.`;
+    let intro = `Ol pessoal! Hoje vamos falar sobre ${tema}.`;
     
     if (objetivo) {
-        intro += ` O objetivo deste vídeo é ${objetivo.toLowerCase()}.`;
+        intro += ` O objetivo deste vdeo  ${objetivo.toLowerCase()}.`;
     }
     
-    intro += ` Vou compartilhar com vocês informações valiosas que vão fazer toda a diferença.`;
+    intro += ` Vou compartilhar com vocs informaes valiosas que vo fazer toda a diferena.`;
     
     if (publico === 'jovens') {
-        intro += ` Galera, vocês vão adorar!`;
+        intro += ` Galera, vocs vo adorar!`;
     } else if (publico === 'profissionais') {
-        intro += ` Profissionais, este conteúdo é essencial para vocês.`;
+        intro += ` Profissionais, este contedo  essencial para vocs.`;
     }
     
     return intro;
 }
 
 function generateDesenvolvimento(tema, pontos, genero, pegada, publico) {
-    let desenvolvimento = `Vamos começar explorando os aspectos fundamentais de ${tema}.`;
+    let desenvolvimento = `Vamos comear explorando os aspectos fundamentais de ${tema}.`;
     
     if (pontos) {
-        desenvolvimento += ` Os pontos principais que vamos abordar são: ${pontos.toLowerCase()}.`;
+        desenvolvimento += ` Os pontos principais que vamos abordar so: ${pontos.toLowerCase()}.`;
     }
     
-    desenvolvimento += ` É importante entender que cada detalhe faz diferença.`;
+    desenvolvimento += `  importante entender que cada detalhe faz diferena.`;
     
     if (genero === 'educativo') {
-        desenvolvimento += ` Vou explicar de forma clara e didática para que todos possam acompanhar.`;
+        desenvolvimento += ` Vou explicar de forma clara e didtica para que todos possam acompanhar.`;
     } else if (genero === 'entretenimento') {
         desenvolvimento += ` Vamos tornar isso divertido e envolvente!`;
     }
@@ -1764,38 +1764,38 @@ function generateDesenvolvimento(tema, pontos, genero, pegada, publico) {
 }
 
 function generateConclusao(tema, objetivo, genero, pegada, publico) {
-    let conclusao = `Como vocês podem ver, ${tema} é um tema fascinante e cheio de possibilidades.`;
+    let conclusao = `Como vocs podem ver, ${tema}  um tema fascinante e cheio de possibilidades.`;
     
     if (objetivo) {
-        conclusao += ` Espero que tenham conseguido ${objetivo.toLowerCase()} com este conteúdo.`;
+        conclusao += ` Espero que tenham conseguido ${objetivo.toLowerCase()} com este contedo.`;
     }
     
-    conclusao += ` Lembrem-se de praticar e aplicar essas informações no seu dia a dia.`;
+    conclusao += ` Lembrem-se de praticar e aplicar essas informaes no seu dia a dia.`;
     
     return conclusao;
 }
 
 function generateCTA(tema, genero, pegada, publico) {
     const ctas = {
-        'educativo': `Se gostaram do conteúdo, deixem um like e se inscrevam no canal para mais dicas como esta!`,
+        'educativo': `Se gostaram do contedo, deixem um like e se inscrevam no canal para mais dicas como esta!`,
         'entretenimento': `Curtiram? Deixem um like e comentem qual foi a parte mais divertida!`,
-        'noticias': `Para mais notícias como esta, se inscrevam e ativem o sininho!`,
-        'tecnologia': `Se inscrevam para ficarem por dentro das últimas novidades em tecnologia!`,
-        'lifestyle': `Se inscrevam para transformarem suas vidas com mais conteúdos como este!`,
-        'gaming': `Se inscrevam para mais gameplays e dicas incríveis!`,
+        'noticias': `Para mais notcias como esta, se inscrevam e ativem o sininho!`,
+        'tecnologia': `Se inscrevam para ficarem por dentro das ltimas novidades em tecnologia!`,
+        'lifestyle': `Se inscrevam para transformarem suas vidas com mais contedos como este!`,
+        'gaming': `Se inscrevam para mais gameplays e dicas incrveis!`,
         'culinaria': `Se inscrevam para mais receitas deliciosas!`,
         'viagem': `Se inscrevam para mais dicas de viagem e aventuras!`,
-        'fitness': `Se inscrevam para mais dicas de fitness e saúde!`,
-        'negocios': `Se inscrevam para mais estratégias de negócios!`,
-        'comedia': `Se inscrevam para mais diversão e risadas!`,
-        'drama': `Se inscrevam para mais histórias emocionantes!`
+        'fitness': `Se inscrevam para mais dicas de fitness e sade!`,
+        'negocios': `Se inscrevam para mais estratgias de negcios!`,
+        'comedia': `Se inscrevam para mais diverso e risadas!`,
+        'drama': `Se inscrevam para mais histrias emocionantes!`
     };
-    return ctas[genero] || `Se inscrevam no canal para mais conteúdos como este!`;
+    return ctas[genero] || `Se inscrevam no canal para mais contedos como este!`;
 }
 
-// Funções auxiliares para outras seções
+// Funes auxiliares para outras sees
 function generateInicio(tema, genero, pegada, publico) {
-    return `Tudo começou quando descobri ${tema}. Foi uma experiência que mudou minha perspectiva completamente.`;
+    return `Tudo comeou quando descobri ${tema}. Foi uma experincia que mudou minha perspectiva completamente.`;
 }
 
 function generateMeio(tema, pontos, genero, pegada, publico) {
@@ -1803,51 +1803,51 @@ function generateMeio(tema, pontos, genero, pegada, publico) {
 }
 
 function generateFim(tema, genero, pegada, publico) {
-    return `E assim chegamos ao final desta história sobre ${tema}. Uma experiência que certamente ficará marcada.`;
+    return `E assim chegamos ao final desta histria sobre ${tema}. Uma experincia que certamente ficar marcada.`;
 }
 
 function generateProblema(tema, genero, pegada, publico) {
-    return `Muitas pessoas enfrentam dificuldades com ${tema}. É um problema comum que precisa de uma solução eficaz.`;
+    return `Muitas pessoas enfrentam dificuldades com ${tema}.  um problema comum que precisa de uma soluo eficaz.`;
 }
 
 function generateSolucao(tema, genero, pegada, publico) {
-    return `A solução para ${tema} está mais próxima do que você imagina. Vou mostrar o caminho certo.`;
+    return `A soluo para ${tema} est mais prxima do que voc imagina. Vou mostrar o caminho certo.`;
 }
 
 function generateDemonstracao(tema, genero, pegada, publico) {
-    return `Agora vou demonstrar na prática como funciona ${tema}. Observem atentamente cada passo.`;
+    return `Agora vou demonstrar na prtica como funciona ${tema}. Observem atentamente cada passo.`;
 }
 
 function generateResumo(tema, genero, pegada, publico) {
-    return `Para resumir, ${tema} é essencial quando aplicado corretamente. Lembrem-se dos pontos principais.`;
+    return `Para resumir, ${tema}  essencial quando aplicado corretamente. Lembrem-se dos pontos principais.`;
 }
 
 function generateContexto(tema, genero, pegada, publico) {
-    return `A história de ${tema} começa em um contexto muito específico. Vamos entender melhor essa situação.`;
+    return `A histria de ${tema} comea em um contexto muito especfico. Vamos entender melhor essa situao.`;
 }
 
 function generateConflito(tema, genero, pegada, publico) {
-    return `Mas nem tudo foi fácil. O conflito principal envolvendo ${tema} trouxe desafios inesperados.`;
+    return `Mas nem tudo foi fcil. O conflito principal envolvendo ${tema} trouxe desafios inesperados.`;
 }
 
 function generateResolucao(tema, genero, pegada, publico) {
-    return `A resolução veio quando finalmente entendemos a verdade sobre ${tema}. Foi um momento de clareza.`;
+    return `A resoluo veio quando finalmente entendemos a verdade sobre ${tema}. Foi um momento de clareza.`;
 }
 
 function generateMoral(tema, genero, pegada, publico) {
-    return `A lição que fica sobre ${tema} é que sempre há algo novo para aprender e descobrir.`;
+    return `A lio que fica sobre ${tema}  que sempre h algo novo para aprender e descobrir.`;
 }
 
 function generateConteudoGenerico(tema, secao, genero, pegada, publico) {
-    return `Nesta seção sobre ${secao.toLowerCase()}, vamos explorar ${tema} de forma detalhada e envolvente.`;
+    return `Nesta seo sobre ${secao.toLowerCase()}, vamos explorar ${tema} de forma detalhada e envolvente.`;
 }
 
 function generateConteudoAdicional(tema, genero, pegada, publico, charsNeeded) {
     const frases = [
-        ` É importante destacar que cada detalhe faz diferença.`,
+        `  importante destacar que cada detalhe faz diferena.`,
         ` Vamos explorar isso mais profundamente.`,
-        ` Essa informação é crucial para o sucesso.`,
-        ` Não percam nenhum detalhe importante.`,
+        ` Essa informao  crucial para o sucesso.`,
+        ` No percam nenhum detalhe importante.`,
         ` Vamos tornar isso ainda mais interessante.`
     ];
     
@@ -1887,7 +1887,7 @@ function displayRoteiroResult(roteiro, targetChars, durationSeconds) {
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${formatDuration(durationSeconds)}</span>
-                    <span class="stat-label">Duração</span>
+                    <span class="stat-label">Durao</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${Math.round((charCount / targetChars) * 100)}%</span>
@@ -1949,7 +1949,7 @@ function exportRoteiro() {
     }
 }
 
-// Limpar formulário de roteiro
+// Limpar formulrio de roteiro
 function clearRoteiroForm() {
     document.getElementById('roteiroTema').value = '';
     document.getElementById('roteiroObjetivo').value = '';
@@ -1968,7 +1968,7 @@ function clearRoteiroForm() {
 
 // ===== SISTEMA DE APIS INTEGRADO =====
 
-// Inicialização do seletor de API
+// Inicializao do seletor de API
 function initializeApiSelector() {
     updateApiStatus();
 }
@@ -2006,7 +2006,7 @@ function updateApiStatus() {
     }
 }
 
-// Notificação de mudança de API
+// Notificao de mudana de API
 function showApiChangeNotification(apiName) {
     const apiNames = {
         'chatgpt': 'ChatGPT',
@@ -2015,7 +2015,7 @@ function showApiChangeNotification(apiName) {
         'openrouter': 'OpenRouter'
     };
     
-    // Criar notificação temporária
+    // Criar notificao temporria
     const notification = document.createElement('div');
     notification.className = 'api-notification';
     notification.innerHTML = `
@@ -2030,7 +2030,7 @@ function showApiChangeNotification(apiName) {
     }, 3000);
 }
 
-// Função principal para chamar APIs
+// Funo principal para chamar APIs
 async function callAIAPI(prompt, options = {}) {
     const {
         model = 'default',
@@ -2137,7 +2137,7 @@ async function callGrokAPI(prompt, options = {}) {
     return data.choices[0].message.content;
 }
 
-// API do Gemini (já existente, mas melhorada)
+// API do Gemini (j existente, mas melhorada)
 async function callGeminiAPI(prompt, options = {}) {
     const {
         model = 'gemini-pro',
@@ -2209,77 +2209,77 @@ async function fallbackToOtherAPI(prompt, options) {
     throw new Error('Todas as APIs falharam');
 }
 
-// Funções específicas para diferentes tipos de conteúdo
+// Funes especficas para diferentes tipos de contedo
 async function generateCreativeContent(prompt, options = {}) {
-    const systemPrompt = "Você é um criador de conteúdo especializado em criar textos criativos, envolventes e virais. Seja original, criativo e mantenha o tom adequado para o público-alvo.";
+    const systemPrompt = "Voc  um criador de contedo especializado em criar textos criativos, envolventes e virais. Seja original, criativo e mantenha o tom adequado para o pblico-alvo.";
     return await callAIAPI(prompt, { ...options, systemPrompt });
 }
 
 async function generateTechnicalContent(prompt, options = {}) {
-    const systemPrompt = "Você é um especialista técnico que cria conteúdo preciso, detalhado e bem estruturado. Use linguagem clara e forneça informações técnicas precisas.";
+    const systemPrompt = "Voc  um especialista tcnico que cria contedo preciso, detalhado e bem estruturado. Use linguagem clara e fornea informaes tcnicas precisas.";
     return await callAIAPI(prompt, { ...options, systemPrompt });
 }
 
 async function generateEducationalContent(prompt, options = {}) {
-    const systemPrompt = "Você é um educador experiente que cria conteúdo didático, claro e fácil de entender. Use exemplos práticos e explique conceitos de forma acessível.";
+    const systemPrompt = "Voc  um educador experiente que cria contedo didtico, claro e fcil de entender. Use exemplos prticos e explique conceitos de forma acessvel.";
     return await callAIAPI(prompt, { ...options, systemPrompt });
 }
 
 async function generateEntertainmentContent(prompt, options = {}) {
-    const systemPrompt = "Você é um criador de conteúdo de entretenimento que sabe como engajar audiências com humor, criatividade e conteúdo envolvente. Seja divertido mas respeitoso.";
+    const systemPrompt = "Voc  um criador de contedo de entretenimento que sabe como engajar audincias com humor, criatividade e contedo envolvente. Seja divertido mas respeitoso.";
     return await callAIAPI(prompt, { ...options, systemPrompt });
 }
 
-// Função para análise de tendências com IA
+// Funo para anlise de tendncias com IA
 async function analyzeTrendsWithAI(topic, platform, period) {
-    const prompt = `Analise as tendências atuais sobre "${topic}" na plataforma ${platform} no período de ${period}. 
-    Forneça insights sobre:
-    1. Tópicos em alta
+    const prompt = `Analise as tendncias atuais sobre "${topic}" na plataforma ${platform} no perodo de ${period}. 
+    Fornea insights sobre:
+    1. Tpicos em alta
     2. Palavras-chave populares
-    3. Formato de conteúdo que funciona
-    4. Público-alvo
-    5. Oportunidades de conteúdo
-    6. Sugestões práticas
+    3. Formato de contedo que funciona
+    4. Pblico-alvo
+    5. Oportunidades de contedo
+    6. Sugestes prticas
     
-    Seja específico e acionável.`;
+    Seja especfico e acionvel.`;
     
     return await callAIAPI(prompt, {
         temperature: 0.3,
         maxTokens: 1500,
-        systemPrompt: "Você é um analista de tendências especializado em mídias sociais e marketing digital."
+        systemPrompt: "Voc  um analista de tendncias especializado em mdias sociais e marketing digital."
     });
 }
 
-// Função para geração de roteiros com IA
+// Funo para gerao de roteiros com IA
 async function generateScriptWithAI(tema, objetivo, duracao, genero, pegada, publico) {
-    const prompt = `Crie um roteiro profissional para um vídeo sobre "${tema}".
+    const prompt = `Crie um roteiro profissional para um vdeo sobre "${tema}".
     
-    Especificações:
+    Especificaes:
     - Objetivo: ${objetivo}
-    - Duração: ${duracao}
-    - Gênero: ${genero}
+    - Durao: ${duracao}
+    - Gnero: ${genero}
     - Tom/Pegada: ${pegada}
-    - Público-alvo: ${publico}
+    - Pblico-alvo: ${publico}
     
     O roteiro deve incluir:
     1. Hook inicial (primeiros 3 segundos)
-    2. Introdução clara do tema
+    2. Introduo clara do tema
     3. Desenvolvimento com pontos principais
-    4. Conclusão forte
+    4. Concluso forte
     5. Call-to-action
     
-    Seja específico, envolvente e adequado ao público-alvo.`;
+    Seja especfico, envolvente e adequado ao pblico-alvo.`;
     
     return await callAIAPI(prompt, {
         temperature: 0.7,
         maxTokens: 2000,
-        systemPrompt: "Você é um roteirista profissional especializado em criar roteiros virais para diferentes plataformas e públicos."
+        systemPrompt: "Voc  um roteirista profissional especializado em criar roteiros virais para diferentes plataformas e pblicos."
     });
 }
 
-// ===== OTIMIZADOR DE CONTEÚDO =====
+// ===== OTIMIZADOR DE CONTEDO =====
 
-// Inicialização do Otimizador de Conteúdo
+// Inicializao do Otimizador de Contedo
 function initializeContentOptimizer() {
     const contentInput = document.getElementById('contentInput');
     if (contentInput) {
@@ -2294,7 +2294,7 @@ function initializeContentOptimizer() {
     updateContentStats();
 }
 
-// Atualizar estatísticas do conteúdo
+// Atualizar estatsticas do contedo
 function updateContentStats() {
     const contentInput = document.getElementById('contentInput');
     const contentStats = document.getElementById('contentStats');
@@ -2304,11 +2304,11 @@ function updateContentStats() {
         const charCount = text.length;
         const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
         
-        contentStats.textContent = `${charCount} caracteres • ${wordCount} palavras`;
+        contentStats.textContent = `${charCount} caracteres  ${wordCount} palavras`;
     }
 }
 
-// Alternar configurações do otimizador
+// Alternar configuraes do otimizador
 function toggleContentOptimizerSettings() {
     const settingsContent = document.getElementById('contentOptimizerSettings');
     const toggleBtn = document.querySelector('.content-optimizer-settings .toggle-settings i');
@@ -2324,7 +2324,7 @@ function toggleContentOptimizerSettings() {
     }
 }
 
-// Limpar entrada de conteúdo
+// Limpar entrada de contedo
 function clearContentInput() {
     const contentInput = document.getElementById('contentInput');
     if (contentInput) {
@@ -2333,13 +2333,13 @@ function clearContentInput() {
     }
 }
 
-// Otimizar conteúdo
+// Otimizar contedo
 async function optimizeContent() {
     const contentInput = document.getElementById('contentInput');
     const resultsArea = document.getElementById('optimizationResults');
     
     if (!contentInput || !contentInput.value.trim()) {
-        alert('Por favor, insira o conteúdo para otimizar!');
+        alert('Por favor, insira o contedo para otimizar!');
         return;
     }
     
@@ -2358,10 +2358,10 @@ async function optimizeContent() {
     }
     
     // Mostrar loading
-    resultsArea.innerHTML = '<div class="loading">Otimizando conteúdo para todas as redes sociais...</div>';
+    resultsArea.innerHTML = '<div class="loading">Otimizando contedo para todas as redes sociais...</div>';
     
     try {
-        // Gerar conteúdo otimizado
+        // Gerar contedo otimizado
         const optimizedContent = {};
         for (const platform of selectedPlatforms) {
             optimizedContent[platform] = generateLocalPlatformContent({
@@ -2376,12 +2376,12 @@ async function optimizeContent() {
         
         displayOptimizationResults(optimizedContent);
     } catch (error) {
-        console.error('Erro ao otimizar conteúdo:', error);
+        console.error('Erro ao otimizar contedo:', error);
         resultsArea.innerHTML = `
             <div class="error">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h3>Erro na Otimização</h3>
-                <p>Não foi possível otimizar o conteúdo. Tente novamente.</p>
+                <h3>Erro na Otimizao</h3>
+                <p>No foi possvel otimizar o contedo. Tente novamente.</p>
                 <button class="btn-secondary" onclick="optimizeContent()">
                     <i class="fas fa-refresh"></i> Tentar Novamente
                 </button>
@@ -2396,7 +2396,7 @@ function getSelectedPlatforms() {
     return Array.from(checkboxes).map(cb => cb.value);
 }
 
-// Gerar conteúdo otimizado
+// Gerar contedo otimizado
 async function generateOptimizedContent(params) {
     const { content, contentType, contentTone, targetAudience, contentGoal, platforms } = params;
     
@@ -2415,8 +2415,8 @@ async function generateOptimizedContent(params) {
             
             optimizedContent[platform] = platformContent;
         } catch (error) {
-            console.error(`Erro ao gerar conteúdo para ${platform}:`, error);
-            // Fallback para geração local
+            console.error(`Erro ao gerar contedo para ${platform}:`, error);
+            // Fallback para gerao local
             optimizedContent[platform] = generateLocalPlatformContent({
                 content,
                 contentType,
@@ -2431,96 +2431,96 @@ async function generateOptimizedContent(params) {
     return optimizedContent;
 }
 
-// Gerar conteúdo para plataforma específica com IA
+// Gerar contedo para plataforma especfica com IA
 async function generatePlatformContent(params) {
     const { content, contentType, contentTone, targetAudience, contentGoal, platform } = params;
     
     const platformConfig = getPlatformConfig(platform);
     
-    const prompt = `Você é um especialista em marketing digital e criação de conteúdo viral. Sua tarefa é analisar o conteúdo original abaixo e criar versões otimizadas para ${platformConfig.name}, MANTENDO A ESSÊNCIA E RELEVÂNCIA DO CONTEÚDO ORIGINAL.
+    const prompt = `Voc  um especialista em marketing digital e criao de contedo viral. Sua tarefa  analisar o contedo original abaixo e criar verses otimizadas para ${platformConfig.name}, MANTENDO A ESSNCIA E RELEVNCIA DO CONTEDO ORIGINAL.
 
-CONTEÚDO ORIGINAL (BASE PRINCIPAL):
+CONTEDO ORIGINAL (BASE PRINCIPAL):
 "${content}"
 
-CONFIGURAÇÕES SECUNDÁRIAS:
-- Tipo de Conteúdo: ${contentType}
+CONFIGURAES SECUNDRIAS:
+- Tipo de Contedo: ${contentType}
 - Tom: ${contentTone}
-- Público-Alvo: ${targetAudience}
+- Pblico-Alvo: ${targetAudience}
 - Objetivo: ${contentGoal}
 - Plataforma: ${platformConfig.name}
 
-REQUISITOS ESPECÍFICOS DA PLATAFORMA:
-- Título: ${platformConfig.titleMaxLength} caracteres máximo
-- Descrição: ${platformConfig.descriptionMaxLength} caracteres máximo
+REQUISITOS ESPECFICOS DA PLATAFORMA:
+- Ttulo: ${platformConfig.titleMaxLength} caracteres mximo
+- Descrio: ${platformConfig.descriptionMaxLength} caracteres mximo
 - Hashtags: ${platformConfig.hashtagCount} hashtags relevantes${platformConfig.hasTags ? `
-- Tags: Tags para YouTube (separadas por vírgula, máximo ${platformConfig.tagsMaxLength} caracteres)` : ''}
+- Tags: Tags para YouTube (separadas por vrgula, mximo ${platformConfig.tagsMaxLength} caracteres)` : ''}
 
-INSTRUÇÕES CRÍTICAS:
+INSTRUES CRTICAS:
 
-TÍTULO:
-- BASEIE-SE PRINCIPALMENTE no conteúdo original
-- Use as palavras-chave e conceitos do conteúdo original
-- Aplique o tom ${contentTone} mantendo a essência do conteúdo
-- Torne o título clickável e relevante ao conteúdo original
-- NÃO ignore o conteúdo original - ele é a base principal
+TTULO:
+- BASEIE-SE PRINCIPALMENTE no contedo original
+- Use as palavras-chave e conceitos do contedo original
+- Aplique o tom ${contentTone} mantendo a essncia do contedo
+- Torne o ttulo clickvel e relevante ao contedo original
+- NO ignore o contedo original - ele  a base principal
 
-DESCRIÇÃO:
-- USE O CONTEÚDO ORIGINAL como base principal
-- Expanda e desenvolva o conteúdo original com valor agregado
-- Inclua um HOOK inicial baseado no conteúdo original
-- Desenvolva os pontos principais do conteúdo original
-- Use emojis estratégicos para engajamento
-- Inclua CALL-TO-ACTION específico para ${contentGoal}
+DESCRIO:
+- USE O CONTEDO ORIGINAL como base principal
+- Expanda e desenvolva o contedo original com valor agregado
+- Inclua um HOOK inicial baseado no contedo original
+- Desenvolva os pontos principais do contedo original
+- Use emojis estratgicos para engajamento
+- Inclua CALL-TO-ACTION especfico para ${contentGoal}
 - Adapte o formato para ${platformConfig.name}
-- MANTENHA A RELEVÂNCIA com o conteúdo original
+- MANTENHA A RELEVNCIA com o contedo original
 
 HASHTAGS:
-- Use hashtags baseadas nas palavras-chave do conteúdo original
+- Use hashtags baseadas nas palavras-chave do contedo original
 - Inclua hashtags trending para ${platformConfig.name}
-- Misture hashtags específicas do conteúdo e populares
+- Misture hashtags especficas do contedo e populares
 - Foque em hashtags que geram engajamento
 
 ${platformConfig.hasTags ? `TAGS (YouTube):
-- Use tags baseadas no conteúdo original
+- Use tags baseadas no contedo original
 - Inclua tags populares do YouTube
-- Separe por vírgulas
-- Foque em descoberta orgânica` : ''}
+- Separe por vrgulas
+- Foque em descoberta orgnica` : ''}
 
-IMPORTANTE: O conteúdo original é a BASE PRINCIPAL. As configurações secundárias (tom, objetivo, etc.) são apenas para AJUSTAR o formato e estilo, mas NÃO devem substituir ou ignorar o conteúdo original.
+IMPORTANTE: O contedo original  a BASE PRINCIPAL. As configuraes secundrias (tom, objetivo, etc.) so apenas para AJUSTAR o formato e estilo, mas NO devem substituir ou ignorar o contedo original.
 
 Formate a resposta EXATAMENTE assim:
-TÍTULO: [título baseado no conteúdo original]
-DESCRIÇÃO: [descrição expandindo o conteúdo original com hook, desenvolvimento e CTA]
+TTULO: [ttulo baseado no contedo original]
+DESCRIO: [descrio expandindo o contedo original com hook, desenvolvimento e CTA]
 HASHTAGS: [hashtag1] [hashtag2] [hashtag3]...${platformConfig.hasTags ? `
 TAGS: [tag1, tag2, tag3, ...]` : ''}`;
 
     const response = await callAIAPI(prompt, {
         temperature: 0.7,
         maxTokens: 800,
-        systemPrompt: `Você é um especialista em marketing digital e otimização de conteúdo para redes sociais. Crie títulos, descrições e hashtags que maximizem o engajamento e alcance em cada plataforma específica.`
+        systemPrompt: `Voc  um especialista em marketing digital e otimizao de contedo para redes sociais. Crie ttulos, descries e hashtags que maximizem o engajamento e alcance em cada plataforma especfica.`
     });
     
     return parsePlatformResponse(response, platform);
 }
 
-// Gerar conteúdo local (fallback)
+// Gerar contedo local (fallback)
 function generateLocalPlatformContent(params) {
     const { content, contentType, contentTone, targetAudience, contentGoal, platform } = params;
     const platformConfig = getPlatformConfig(platform);
     
-    // Extrair palavras-chave do conteúdo
+    // Extrair palavras-chave do contedo
     const keywords = extractKeywords(content);
     
-    // Gerar título
+    // Gerar ttulo
     const title = generateLocalTitle(content, keywords, platformConfig, contentTone);
     
-    // Gerar descrição
+    // Gerar descrio
     const description = generateLocalDescription(content, keywords, platformConfig, contentTone, contentGoal);
     
     // Gerar hashtags
     const hashtags = generateLocalHashtags(keywords, contentType, platformConfig);
     
-    // Gerar tags para YouTube (se aplicável)
+    // Gerar tags para YouTube (se aplicvel)
     let tags = null;
     if (platformConfig.hasTags) {
         tags = generateYouTubeTags(keywords, contentType, platformConfig);
@@ -2539,7 +2539,7 @@ function generateLocalPlatformContent(params) {
     return result;
 }
 
-// Configurações das plataformas
+// Configuraes das plataformas
 function getPlatformConfig(platform) {
     const configs = {
         'instagram': {
@@ -2607,9 +2607,9 @@ function getPlatformConfig(platform) {
     return configs[platform] || configs['instagram'];
 }
 
-// Extrair palavras-chave do conteúdo
+// Extrair palavras-chave do contedo
 function extractKeywords(content) {
-    // Primeiro, extrair frases principais do conteúdo
+    // Primeiro, extrair frases principais do contedo
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 10);
     
     // Extrair palavras-chave das frases principais
@@ -2632,65 +2632,65 @@ function extractKeywords(content) {
     return mainWords;
 }
 
-// Gerar título local
+// Gerar ttulo local
 function generateLocalTitle(content, keywords, platformConfig, tone) {
-    // Extrair a primeira frase principal do conteúdo
+    // Extrair a primeira frase principal do contedo
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 10);
     const firstSentence = sentences[0] || content;
     
-    // Extrair palavras-chave principais do conteúdo
+    // Extrair palavras-chave principais do contedo
     const mainKeyword = keywords[0] || '';
     const secondKeyword = keywords[1] || '';
     const thirdKeyword = keywords[2] || '';
     
-    // Criar títulos baseados no conteúdo real
+    // Criar ttulos baseados no contedo real
     const contentBasedTitles = {
         'instagram': {
-            'professional': `💼 ${firstSentence}`,
-            'casual': `👋 ${firstSentence}`,
-            'funny': `🤣 ${firstSentence}`,
-            'inspiring': `✨ ${firstSentence}`,
-            'educational': `📚 ${firstSentence}`,
-            'dramatic': `⚠️ ${firstSentence}`,
-            'mysterious': `🔍 ${firstSentence}`,
-            'urgent': `🚨 ${firstSentence}`
+            'professional': ` ${firstSentence}`,
+            'casual': ` ${firstSentence}`,
+            'funny': ` ${firstSentence}`,
+            'inspiring': ` ${firstSentence}`,
+            'educational': ` ${firstSentence}`,
+            'dramatic': ` ${firstSentence}`,
+            'mysterious': ` ${firstSentence}`,
+            'urgent': ` ${firstSentence}`
         },
         'tiktok': {
             'professional': `POV: ${firstSentence}`,
             'casual': `${firstSentence}`,
-            'funny': `🤣 ${firstSentence}`,
-            'inspiring': `✨ ${firstSentence}`,
+            'funny': ` ${firstSentence}`,
+            'inspiring': ` ${firstSentence}`,
             'educational': `Como ${mainKeyword} funciona`,
-            'dramatic': `⚠️ ${firstSentence}`,
-            'mysterious': `🔍 ${firstSentence}`,
-            'urgent': `🚨 ${firstSentence}`
+            'dramatic': ` ${firstSentence}`,
+            'mysterious': ` ${firstSentence}`,
+            'urgent': ` ${firstSentence}`
         },
         'youtube': {
             'professional': `${firstSentence} - Guia Completo`,
-            'casual': `${firstSentence} - Minha experiência`,
-            'funny': `🤣 ${firstSentence}`,
-            'inspiring': `✨ ${firstSentence}`,
+            'casual': `${firstSentence} - Minha experincia`,
+            'funny': ` ${firstSentence}`,
+            'inspiring': ` ${firstSentence}`,
             'educational': `Tutorial: ${firstSentence}`,
-            'dramatic': `⚠️ ${firstSentence} - Situação Crítica`,
-            'mysterious': `🔍 ${firstSentence} - Segredos Revelados`,
-            'urgent': `🚨 ${firstSentence} - URGENTE`
+            'dramatic': ` ${firstSentence} - Situao Crtica`,
+            'mysterious': ` ${firstSentence} - Segredos Revelados`,
+            'urgent': ` ${firstSentence} - URGENTE`
         },
         'twitter': {
             'professional': `${firstSentence}`,
             'casual': `${firstSentence}`,
-            'funny': `🤣 ${firstSentence}`,
-            'inspiring': `✨ ${firstSentence}`,
+            'funny': ` ${firstSentence}`,
+            'inspiring': ` ${firstSentence}`,
             'educational': `Thread: ${firstSentence}`,
-            'dramatic': `⚠️ ${firstSentence}`,
-            'mysterious': `🔍 ${firstSentence}`,
-            'urgent': `🚨 ${firstSentence}`
+            'dramatic': ` ${firstSentence}`,
+            'mysterious': ` ${firstSentence}`,
+            'urgent': ` ${firstSentence}`
         }
     };
     
     const platformTitles = contentBasedTitles[platformConfig.name.toLowerCase()] || contentBasedTitles['instagram'];
     let title = platformTitles[tone] || platformTitles['casual'];
     
-    // Limitar o tamanho do título
+    // Limitar o tamanho do ttulo
     if (title.length > platformConfig.titleMaxLength) {
         title = title.substring(0, platformConfig.titleMaxLength - 3) + '...';
     }
@@ -2698,9 +2698,9 @@ function generateLocalTitle(content, keywords, platformConfig, tone) {
     return title;
 }
 
-// Gerar descrição local
+// Gerar descrio local
 function generateLocalDescription(content, keywords, platformConfig, tone, goal) {
-    // Usar o conteúdo original como base principal
+    // Usar o contedo original como base principal
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 10);
     const firstSentence = sentences[0] || content;
     const secondSentence = sentences[1] || '';
@@ -2711,47 +2711,47 @@ function generateLocalDescription(content, keywords, platformConfig, tone, goal)
     const secondKeyword = keywords[1] || '';
     const thirdKeyword = keywords[2] || '';
     
-    // Criar descrições baseadas no conteúdo real
+    // Criar descries baseadas no contedo real
     const contentBasedDescriptions = {
         'instagram': {
-            'professional': `💼 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Este é um tópico importante que merece atenção. ${mainKeyword ? `Especialmente quando se trata de ${mainKeyword}, ` : ''}é fundamental entender todos os aspectos.\n\n🎯 Se você está interessado em saber mais sobre isso, continue acompanhando para mais informações valiosas.`,
-            'casual': `👋 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Que interessante, né? ${mainKeyword ? `Especialmente essa parte sobre ${mainKeyword} ` : ''}é algo que todo mundo deveria saber.\n\n🎯 Compartilha com seus amigos que também vão achar interessante!`,
-            'funny': `🤣 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Sério, isso é mais engraçado do que parece! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}é algo que você não vai esquecer.\n\n🎯 Compartilha aí para todo mundo rir junto!`,
-            'inspiring': `✨ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Isso é realmente inspirador! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}pode mudar a perspectiva de muita gente.\n\n🎯 Compartilha para inspirar mais pessoas!`,
-            'educational': `📚 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Este é um conhecimento valioso! ${mainKeyword ? `Especialmente sobre ${mainKeyword}, ` : ''}é importante entender bem.\n\n🎯 Salva este post para consultar depois!`,
-            'dramatic': `⚠️ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 ATENÇÃO: ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}é algo que você precisa saber.\n\n🎯 Compartilha para alertar outras pessoas!`,
-            'mysterious': `🔍 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Há algo mais por trás disso... ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}tem segredos que poucos conhecem.\n\n🎯 Compartilha para descobrir mais juntos!`,
-            'urgent': `🚨 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 URGENTE: ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}é algo que não pode esperar.\n\n🎯 Compartilha AGORA para alertar todo mundo!`
+            'professional': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Este  um tpico importante que merece ateno. ${mainKeyword ? `Especialmente quando se trata de ${mainKeyword}, ` : ''} fundamental entender todos os aspectos.\n\n Se voc est interessado em saber mais sobre isso, continue acompanhando para mais informaes valiosas.`,
+            'casual': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Que interessante, n? ${mainKeyword ? `Especialmente essa parte sobre ${mainKeyword} ` : ''} algo que todo mundo deveria saber.\n\n Compartilha com seus amigos que tambm vo achar interessante!`,
+            'funny': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Srio, isso  mais engraado do que parece! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''} algo que voc no vai esquecer.\n\n Compartilha a para todo mundo rir junto!`,
+            'inspiring': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Isso  realmente inspirador! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}pode mudar a perspectiva de muita gente.\n\n Compartilha para inspirar mais pessoas!`,
+            'educational': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Este  um conhecimento valioso! ${mainKeyword ? `Especialmente sobre ${mainKeyword}, ` : ''} importante entender bem.\n\n Salva este post para consultar depois!`,
+            'dramatic': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n ATENO: ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''} algo que voc precisa saber.\n\n Compartilha para alertar outras pessoas!`,
+            'mysterious': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n H algo mais por trs disso... ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}tem segredos que poucos conhecem.\n\n Compartilha para descobrir mais juntos!`,
+            'urgent': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n URGENTE: ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''} algo que no pode esperar.\n\n Compartilha AGORA para alertar todo mundo!`
         },
         'tiktok': {
-            'professional': `POV: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Isso é mais importante do que você imagina! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}pode mudar tudo.\n\n🎯 Comenta aí o que você acha!`,
-            'casual': `${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Sério, isso é mais legal do que parece! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}é incrível.\n\n🎯 Curte se gostou!`,
-            'funny': `🤣 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Isso é hilário! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}é mais engraçado do que você imagina.\n\n🎯 Compartilha para todo mundo rir!`,
-            'inspiring': `✨ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Isso é inspirador! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}pode mudar sua vida.\n\n🎯 Salva o vídeo!`,
-            'educational': `Como ${mainKeyword || 'isso'} funciona: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Aprende algo novo hoje! ${mainKeyword ? `Especialmente sobre ${mainKeyword} ` : ''}é conhecimento valioso.\n\n🎯 Aplica as dicas e me conta!`,
-            'dramatic': `⚠️ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Você precisa saber disso! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}é sério.\n\n🎯 Compartilha para alertar!`,
-            'mysterious': `🔍 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Há algo mais aqui... ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}tem segredos.\n\n🎯 Descobre mais comigo!`,
-            'urgent': `🚨 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 URGENTE! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}não pode esperar.\n\n🎯 Compartilha AGORA!`
+            'professional': `POV: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Isso  mais importante do que voc imagina! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}pode mudar tudo.\n\n Comenta a o que voc acha!`,
+            'casual': `${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Srio, isso  mais legal do que parece! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''} incrvel.\n\n Curte se gostou!`,
+            'funny': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Isso  hilrio! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''} mais engraado do que voc imagina.\n\n Compartilha para todo mundo rir!`,
+            'inspiring': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Isso  inspirador! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}pode mudar sua vida.\n\n Salva o vdeo!`,
+            'educational': `Como ${mainKeyword || 'isso'} funciona: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Aprende algo novo hoje! ${mainKeyword ? `Especialmente sobre ${mainKeyword} ` : ''} conhecimento valioso.\n\n Aplica as dicas e me conta!`,
+            'dramatic': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Voc precisa saber disso! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''} srio.\n\n Compartilha para alertar!`,
+            'mysterious': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n H algo mais aqui... ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}tem segredos.\n\n Descobre mais comigo!`,
+            'urgent': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n URGENTE! ${mainKeyword ? `Especialmente ${mainKeyword} ` : ''}no pode esperar.\n\n Compartilha AGORA!`
         },
         'youtube': {
-            'professional': `Neste vídeo, vou te explicar: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 O que você vai aprender:\n• ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os conceitos principais'}\n• ${secondKeyword ? `A relação com ${secondKeyword}` : 'Por que isso é importante'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Aplicações práticas'}\n• Dicas e insights valiosos\n\n💡 Este é um conteúdo que vai agregar muito valor à sua vida!`,
-            'casual': `Oi galera! No vídeo de hoje vou falar sobre: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 Vou te mostrar:\n• ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os detalhes importantes'}\n• ${secondKeyword ? `A conexão com ${secondKeyword}` : 'Por que isso importa'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se relaciona` : 'Exemplos práticos'}\n• Minha experiência pessoal\n\n💡 Espero que vocês gostem!`,
-            'funny': `🤣 Pessoal, vocês não vão acreditar: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 Neste vídeo hilário:\n• ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os detalhes engraçados'}\n• ${secondKeyword ? `A relação com ${secondKeyword}` : 'Por que isso é engraçado'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Situações cômicas'}\n• Muitas risadas garantidas\n\n💡 Preparem-se para rir muito!`,
-            'inspiring': `✨ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 Neste vídeo inspirador:\n• ${mainKeyword ? `Como ${mainKeyword} pode mudar sua vida` : 'A transformação possível'}\n• ${secondKeyword ? `A conexão com ${secondKeyword}` : 'Por que isso é inspirador'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se relaciona` : 'Histórias de superação'}\n• Lições de vida valiosas\n\n💡 Este vídeo vai te motivar!`,
-            'educational': `📚 Tutorial completo: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 O que você vai aprender:\n• ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os conceitos fundamentais'}\n• ${secondKeyword ? `A relação com ${secondKeyword}` : 'Por que isso é importante'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Aplicações práticas'}\n• Passo a passo detalhado\n• Dicas e truques\n\n💡 Conhecimento que vai fazer a diferença!`,
-            'dramatic': `⚠️ SITUAÇÃO CRÍTICA: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 Neste vídeo urgente:\n• ${mainKeyword ? `Como ${mainKeyword} afeta você` : 'O que você precisa saber'}\n• ${secondKeyword ? `A relação com ${secondKeyword}` : 'Por que isso é crítico'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Situações de emergência'}\n• Ações imediatas necessárias\n\n💡 Este vídeo pode salvar vidas!`,
-            'mysterious': `🔍 SEGREDOS REVELADOS: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 Neste vídeo misterioso:\n• ${mainKeyword ? `Os segredos de ${mainKeyword}` : 'O que eles não querem que você saiba'}\n• ${secondKeyword ? `A conexão com ${secondKeyword}` : 'Por que isso é secreto'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se relaciona` : 'Descobertas surpreendentes'}\n• Verdades ocultas\n\n💡 Prepare-se para descobrir a verdade!`,
-            'urgent': `🚨 URGENTE: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n📖 Neste vídeo de emergência:\n• ${mainKeyword ? `Como ${mainKeyword} afeta você AGORA` : 'O que você precisa saber AGORA'}\n• ${secondKeyword ? `A relação com ${secondKeyword}` : 'Por que isso é urgente'}\n• ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Situações críticas'}\n• Ações imediatas\n\n💡 Este vídeo não pode esperar!`
+            'professional': `Neste vdeo, vou te explicar: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n O que voc vai aprender:\n ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os conceitos principais'}\n ${secondKeyword ? `A relao com ${secondKeyword}` : 'Por que isso  importante'}\n ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Aplicaes prticas'}\n Dicas e insights valiosos\n\n Este  um contedo que vai agregar muito valor  sua vida!`,
+            'casual': `Oi galera! No vdeo de hoje vou falar sobre: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Vou te mostrar:\n ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os detalhes importantes'}\n ${secondKeyword ? `A conexo com ${secondKeyword}` : 'Por que isso importa'}\n ${thirdKeyword ? `Como ${thirdKeyword} se relaciona` : 'Exemplos prticos'}\n Minha experincia pessoal\n\n Espero que vocs gostem!`,
+            'funny': ` Pessoal, vocs no vo acreditar: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Neste vdeo hilrio:\n ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os detalhes engraados'}\n ${secondKeyword ? `A relao com ${secondKeyword}` : 'Por que isso  engraado'}\n ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Situaes cmicas'}\n Muitas risadas garantidas\n\n Preparem-se para rir muito!`,
+            'inspiring': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Neste vdeo inspirador:\n ${mainKeyword ? `Como ${mainKeyword} pode mudar sua vida` : 'A transformao possvel'}\n ${secondKeyword ? `A conexo com ${secondKeyword}` : 'Por que isso  inspirador'}\n ${thirdKeyword ? `Como ${thirdKeyword} se relaciona` : 'Histrias de superao'}\n Lies de vida valiosas\n\n Este vdeo vai te motivar!`,
+            'educational': ` Tutorial completo: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n O que voc vai aprender:\n ${mainKeyword ? `Como ${mainKeyword} funciona` : 'Os conceitos fundamentais'}\n ${secondKeyword ? `A relao com ${secondKeyword}` : 'Por que isso  importante'}\n ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Aplicaes prticas'}\n Passo a passo detalhado\n Dicas e truques\n\n Conhecimento que vai fazer a diferena!`,
+            'dramatic': ` SITUAO CRTICA: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Neste vdeo urgente:\n ${mainKeyword ? `Como ${mainKeyword} afeta voc` : 'O que voc precisa saber'}\n ${secondKeyword ? `A relao com ${secondKeyword}` : 'Por que isso  crtico'}\n ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Situaes de emergncia'}\n Aes imediatas necessrias\n\n Este vdeo pode salvar vidas!`,
+            'mysterious': ` SEGREDOS REVELADOS: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Neste vdeo misterioso:\n ${mainKeyword ? `Os segredos de ${mainKeyword}` : 'O que eles no querem que voc saiba'}\n ${secondKeyword ? `A conexo com ${secondKeyword}` : 'Por que isso  secreto'}\n ${thirdKeyword ? `Como ${thirdKeyword} se relaciona` : 'Descobertas surpreendentes'}\n Verdades ocultas\n\n Prepare-se para descobrir a verdade!`,
+            'urgent': ` URGENTE: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Neste vdeo de emergncia:\n ${mainKeyword ? `Como ${mainKeyword} afeta voc AGORA` : 'O que voc precisa saber AGORA'}\n ${secondKeyword ? `A relao com ${secondKeyword}` : 'Por que isso  urgente'}\n ${thirdKeyword ? `Como ${thirdKeyword} se conecta` : 'Situaes crticas'}\n Aes imediatas\n\n Este vdeo no pode esperar!`
         },
         'twitter': {
-            'professional': `${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Thread sobre ${mainKeyword || 'este tópico'}: insights importantes que você precisa saber.\n\n🎯 Retweet se foi útil!`,
-            'casual': `${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Dica rápida sobre ${mainKeyword || 'isso'}: é mais interessante do que parece!\n\n🎯 Compartilha aí!`,
-            'funny': `🤣 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 ${mainKeyword || 'Isso'} é mais engraçado do que você imagina!\n\n🎯 Retweet para todo mundo rir!`,
-            'inspiring': `✨ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 ${mainKeyword || 'Isso'} pode mudar sua perspectiva!\n\n🎯 Compartilha para inspirar!`,
-            'educational': `Thread: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 Conhecimento valioso sobre ${mainKeyword || 'este tópico'}.\n\n🎯 Salva o tweet!`,
-            'dramatic': `⚠️ ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 ${mainKeyword || 'Isso'} é mais sério do que parece!\n\n🎯 Retweet para alertar!`,
-            'mysterious': `🔍 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 ${mainKeyword || 'Isso'} tem segredos que poucos conhecem!\n\n🎯 Descobre mais comigo!`,
-            'urgent': `🚨 ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n💡 ${mainKeyword || 'Isso'} é URGENTE!\n\n🎯 Retweet AGORA!`
+            'professional': `${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Thread sobre ${mainKeyword || 'este tpico'}: insights importantes que voc precisa saber.\n\n Retweet se foi til!`,
+            'casual': `${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Dica rpida sobre ${mainKeyword || 'isso'}:  mais interessante do que parece!\n\n Compartilha a!`,
+            'funny': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n ${mainKeyword || 'Isso'}  mais engraado do que voc imagina!\n\n Retweet para todo mundo rir!`,
+            'inspiring': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n ${mainKeyword || 'Isso'} pode mudar sua perspectiva!\n\n Compartilha para inspirar!`,
+            'educational': `Thread: ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n Conhecimento valioso sobre ${mainKeyword || 'este tpico'}.\n\n Salva o tweet!`,
+            'dramatic': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n ${mainKeyword || 'Isso'}  mais srio do que parece!\n\n Retweet para alertar!`,
+            'mysterious': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n ${mainKeyword || 'Isso'} tem segredos que poucos conhecem!\n\n Descobre mais comigo!`,
+            'urgent': ` ${firstSentence}${secondSentence ? ` ${secondSentence}` : ''}${thirdSentence ? ` ${thirdSentence}` : ''}\n\n ${mainKeyword || 'Isso'}  URGENTE!\n\n Retweet AGORA!`
         }
     };
     
@@ -2762,35 +2762,35 @@ function generateLocalDescription(content, keywords, platformConfig, tone, goal)
     // Adicionar call-to-action baseado no objetivo
     const ctas = {
         'engagement': {
-            'instagram': '\n\n💬 Deixe nos comentários: o que você acha sobre isso?\n👆 Curta se este post te ajudou!\n📢 Compartilhe com quem precisa ver!',
-            'tiktok': '\n\n💬 Comenta aí: você já sabia disso?\n❤️ Curte se gostou!\n📢 Compartilha com os amigos!',
-            'youtube': '\n\n💬 Deixe seu comentário: qual parte foi mais interessante?\n👍 Curta o vídeo se te ajudou!\n🔔 Ative o sininho para não perder os próximos!\n📢 Compartilhe com quem precisa ver!',
-            'twitter': '\n\n💬 O que você acha? Comenta aí!\n🔄 Retweet se foi útil!\n📢 Compartilha com a galera!'
+            'instagram': '\n\n Deixe nos comentrios: o que voc acha sobre isso?\n Curta se este post te ajudou!\n Compartilhe com quem precisa ver!',
+            'tiktok': '\n\n Comenta a: voc j sabia disso?\n Curte se gostou!\n Compartilha com os amigos!',
+            'youtube': '\n\n Deixe seu comentrio: qual parte foi mais interessante?\n Curta o vdeo se te ajudou!\n Ative o sininho para no perder os prximos!\n Compartilhe com quem precisa ver!',
+            'twitter': '\n\n O que voc acha? Comenta a!\n Retweet se foi til!\n Compartilha com a galera!'
         },
         'sales': {
-            'instagram': '\n\n🔗 Link na bio para mais informações!\n💼 Quer saber mais? Me chama no DM!\n📞 Agende uma conversa!',
-            'tiktok': '\n\n🔗 Link no perfil para mais detalhes!\n💼 Quer saber mais? Me chama!',
-            'youtube': '\n\n🔗 Links úteis na descrição!\n💼 Quer resultados profissionais? Entre em contato!\n📧 Email para parcerias na descrição!',
-            'twitter': '\n\n🔗 Link no perfil para mais info!\n💼 DM aberto para conversas!'
+            'instagram': '\n\n Link na bio para mais informaes!\n Quer saber mais? Me chama no DM!\n Agende uma conversa!',
+            'tiktok': '\n\n Link no perfil para mais detalhes!\n Quer saber mais? Me chama!',
+            'youtube': '\n\n Links teis na descrio!\n Quer resultados profissionais? Entre em contato!\n Email para parcerias na descrio!',
+            'twitter': '\n\n Link no perfil para mais info!\n DM aberto para conversas!'
         },
         'awareness': {
-            'instagram': '\n\n📢 Compartilhe este post para espalhar a informação!\n👥 Marque seus amigos que precisam ver!\n💡 Salve o post para consultar depois!',
-            'tiktok': '\n\n📢 Compartilha com todo mundo!\n👥 Marca os amigos!\n💾 Salva o vídeo!',
-            'youtube': '\n\n📢 Compartilhe este vídeo com quem precisa ver!\n👥 Marque seus amigos nos comentários!\n💾 Salve o vídeo para assistir depois!',
-            'twitter': '\n\n📢 Retweet para espalhar a informação!\n👥 Marca a galera que precisa ver!\n💾 Salva o tweet!'
+            'instagram': '\n\n Compartilhe este post para espalhar a informao!\n Marque seus amigos que precisam ver!\n Salve o post para consultar depois!',
+            'tiktok': '\n\n Compartilha com todo mundo!\n Marca os amigos!\n Salva o vdeo!',
+            'youtube': '\n\n Compartilhe este vdeo com quem precisa ver!\n Marque seus amigos nos comentrios!\n Salve o vdeo para assistir depois!',
+            'twitter': '\n\n Retweet para espalhar a informao!\n Marca a galera que precisa ver!\n Salva o tweet!'
         },
         'education': {
-            'instagram': '\n\n📚 Salve este post para consultar depois!\n💡 Aplique as dicas e me conta o resultado!\n📖 Quer mais conteúdo assim? Me segue!',
-            'tiktok': '\n\n💾 Salva o vídeo para não esquecer!\n📚 Aplica as dicas e me conta!\n👆 Me segue para mais conteúdo!',
-            'youtube': '\n\n💾 Salve o vídeo para assistir depois!\n📚 Aplique as dicas e me conta o resultado!\n🔔 Ative o sininho para mais tutoriais!',
-            'twitter': '\n\n💾 Salva o tweet para consultar depois!\n📚 Aplica as dicas e me conta!\n👆 Me segue para mais conteúdo!'
+            'instagram': '\n\n Salve este post para consultar depois!\n Aplique as dicas e me conta o resultado!\n Quer mais contedo assim? Me segue!',
+            'tiktok': '\n\n Salva o vdeo para no esquecer!\n Aplica as dicas e me conta!\n Me segue para mais contedo!',
+            'youtube': '\n\n Salve o vdeo para assistir depois!\n Aplique as dicas e me conta o resultado!\n Ative o sininho para mais tutoriais!',
+            'twitter': '\n\n Salva o tweet para consultar depois!\n Aplica as dicas e me conta!\n Me segue para mais contedo!'
         }
     };
     
     const cta = ctas[goal]?.[platformName] || ctas['engagement'][platformName] || ctas['engagement']['instagram'];
     description += cta;
     
-    // Limitar o tamanho da descrição
+    // Limitar o tamanho da descrio
     if (description.length > platformConfig.descriptionMaxLength) {
         description = description.substring(0, platformConfig.descriptionMaxLength - 3) + '...';
     }
@@ -2800,10 +2800,10 @@ function generateLocalDescription(content, keywords, platformConfig, tone, goal)
 
 // Gerar hashtags locais
 function generateLocalHashtags(keywords, contentType, platformConfig) {
-    // Hashtags baseadas nas palavras-chave principais do conteúdo
+    // Hashtags baseadas nas palavras-chave principais do contedo
     const baseHashtags = keywords.slice(0, 5).map(keyword => `#${keyword}`);
     
-    // Hashtags específicas por tipo de conteúdo
+    // Hashtags especficas por tipo de contedo
     const typeHashtags = {
         'video': ['#video', '#conteudo', '#criativo', '#entretenimento', '#viral'],
         'post': ['#post', '#conteudo', '#dica', '#informacao', '#util'],
@@ -2815,7 +2815,7 @@ function generateLocalHashtags(keywords, contentType, platformConfig) {
         'news': ['#noticia', '#atualidade', '#informacao', '#novidades', '#trending']
     };
     
-    // Hashtags específicas por plataforma
+    // Hashtags especficas por plataforma
     const platformHashtags = {
         'instagram': ['#instagram', '#insta', '#foto', '#feed', '#stories'],
         'tiktok': ['#tiktok', '#fyp', '#viral', '#trending', '#foryou'],
@@ -2843,7 +2843,7 @@ function generateLocalHashtags(keywords, contentType, platformConfig) {
     const platformTags = platformHashtags[platformConfig.name.toLowerCase()] || ['#social'];
     const trendingTags = trendingHashtags[platformConfig.name.toLowerCase()] || ['#brasil', '#portugues'];
     
-    // Combinar todas as hashtags, priorizando as do conteúdo
+    // Combinar todas as hashtags, priorizando as do contedo
     const allHashtags = [...baseHashtags, ...typeTags, ...platformTags, ...trendingTags];
     
     // Remover duplicatas e limitar
@@ -2858,10 +2858,10 @@ function generateYouTubeTags(keywords, contentType, platformConfig) {
     const secondKeyword = keywords[1] || '';
     const thirdKeyword = keywords[2] || '';
     
-    // Tags baseadas nas palavras-chave principais do conteúdo
+    // Tags baseadas nas palavras-chave principais do contedo
     const baseTags = keywords.slice(0, 8).map(keyword => keyword.toLowerCase());
     
-    // Tags específicas por tipo de conteúdo
+    // Tags especficas por tipo de contedo
     const typeTags = {
         'video': ['video', 'conteudo', 'criativo', 'entretenimento', 'viral', 'youtube'],
         'post': ['post', 'conteudo', 'dica', 'informacao', 'util', 'youtube'],
@@ -2882,7 +2882,7 @@ function generateYouTubeTags(keywords, contentType, platformConfig) {
         'canal', 'youtuber', 'criador', 'influencer'
     ];
     
-    // Tags específicas por nicho (baseadas nas palavras-chave do conteúdo)
+    // Tags especficas por nicho (baseadas nas palavras-chave do contedo)
     const nicheTags = [];
     const allKeywords = keywords.join(' ').toLowerCase();
     
@@ -2919,13 +2919,13 @@ function generateYouTubeTags(keywords, contentType, platformConfig) {
     // Remover duplicatas
     const uniqueTags = [...new Set(allTags)];
     
-    // Converter para string separada por vírgulas
+    // Converter para string separada por vrgulas
     let tagsString = uniqueTags.join(', ');
     
     // Limitar a 500 caracteres
     if (tagsString.length > platformConfig.tagsMaxLength) {
         tagsString = tagsString.substring(0, platformConfig.tagsMaxLength);
-        // Encontrar a última vírgula completa
+        // Encontrar a ltima vrgula completa
         const lastComma = tagsString.lastIndexOf(',');
         if (lastComma > 0) {
             tagsString = tagsString.substring(0, lastComma);
@@ -2950,7 +2950,7 @@ function initializeVisualScriptGenerator() {
     }
 }
 
-// Atualizar estatísticas do roteiro
+// Atualizar estatsticas do roteiro
 function updateScriptStats() {
     const scriptInput = document.getElementById('scriptInput');
     const statsElement = document.getElementById('scriptStats');
@@ -2961,16 +2961,16 @@ function updateScriptStats() {
     const charCount = content.length;
     const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
     
-    // Calcular segmentos estimados baseado na duração selecionada
+    // Calcular segmentos estimados baseado na durao selecionada
     const segmentDuration = parseInt(document.getElementById('segmentDuration')?.value || 8);
     const estimatedSegments = Math.ceil(charCount / (segmentDuration * 12)); // ~12 caracteres por segundo
     
     statsElement.innerHTML = `
-        <span>${charCount} caracteres • ${wordCount} palavras • ${estimatedSegments} segmentos estimados</span>
+        <span>${charCount} caracteres  ${wordCount} palavras  ${estimatedSegments} segmentos estimados</span>
     `;
 }
 
-// Alternar configurações
+// Alternar configuraes
 function toggleVisualScriptSettings() {
     const settingsContent = document.querySelector('.visual-script-settings .settings-content');
     const toggleBtn = document.querySelector('.visual-script-settings .toggle-settings i');
@@ -2993,7 +2993,7 @@ function clearScriptInput() {
     }
     
     if (statsElement) {
-        statsElement.innerHTML = '<span>0 caracteres • 0 palavras • 0 segmentos estimados</span>';
+        statsElement.innerHTML = '<span>0 caracteres  0 palavras  0 segmentos estimados</span>';
     }
     
     // Limpar resultados
@@ -3001,9 +3001,9 @@ function clearScriptInput() {
     if (resultsElement) {
         resultsElement.innerHTML = `
             <div class="results-placeholder">
-                <div class="placeholder-icon">🎬</div>
+                <div class="placeholder-icon"></div>
                 <h3>Prompts Visuais Gerados</h3>
-                <p>Cole seu roteiro acima e clique em "Gerar Prompts Visuais" para converter em prompts de imagem e animação</p>
+                <p>Cole seu roteiro acima e clique em "Gerar Prompts Visuais" para converter em prompts de imagem e animao</p>
             </div>
         `;
     }
@@ -3022,7 +3022,7 @@ async function generateVisualScript() {
         return;
     }
     
-    // Obter configurações
+    // Obter configuraes
     const generationType = document.getElementById('generationType')?.value || 'both';
     const segmentDuration = parseInt(document.getElementById('segmentDuration')?.value || 8);
     const videoFormat = document.getElementById('videoFormat')?.value || 'vertical';
@@ -3060,7 +3060,7 @@ async function generateVisualScript() {
         resultsElement.innerHTML = `
             <div class="error-message">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h3>Erro na Geração</h3>
+                <h3>Erro na Gerao</h3>
                 <p>Ocorreu um erro ao gerar os prompts visuais. Tente novamente.</p>
             </div>
         `;
@@ -3069,7 +3069,7 @@ async function generateVisualScript() {
 
 // Calcular segmentos do roteiro
 function calculateScriptSegments(script, segmentDuration) {
-    // Taxa de fala: ~12 caracteres por segundo (baseado em fala normal em português)
+    // Taxa de fala: ~12 caracteres por segundo (baseado em fala normal em portugus)
     const charsPerSecond = 12;
     const charsPerSegment = segmentDuration * charsPerSecond;
     
@@ -3084,7 +3084,7 @@ function calculateScriptSegments(script, segmentDuration) {
         // Tentar quebrar em uma frase completa
         let segmentEnd = endPos;
         if (endPos < script.length) {
-            // Procurar por ponto, exclamação ou interrogação próximos
+            // Procurar por ponto, exclamao ou interrogao prximos
             const searchStart = Math.max(0, endPos - 30);
             const searchEnd = Math.min(script.length, endPos + 30);
             const searchText = script.substring(searchStart, searchEnd);
@@ -3133,7 +3133,7 @@ async function generateVisualPrompts(segments, config) {
     for (const segment of segments) {
         try {
             const prompt = await generateSegmentPrompt(segment, config);
-            // Garantir que o prompt tenha tanto imagem quanto animação se necessário
+            // Garantir que o prompt tenha tanto imagem quanto animao se necessrio
             if (config.generationType === 'both') {
                 if (!prompt.imagePrompt) {
                     prompt.imagePrompt = generateFallbackPrompt(segment, config).imagePrompt;
@@ -3239,7 +3239,7 @@ function parseVisualPromptResponse(response, segment, config) {
         }
     }
     
-    // Se não encontrou os prompts, usar fallback
+    // Se no encontrou os prompts, usar fallback
     if (!imagePrompt && !animationPrompt) {
         const fallback = generateFallbackPrompt(segment, config);
         imagePrompt = fallback.imagePrompt;
@@ -3270,10 +3270,10 @@ function generateFallbackPrompt(segment, config) {
         'commercial': 'commercial quality, professional, polished, high-end, premium'
     };
     
-    // Gerar prompt de imagem em inglês
+    // Gerar prompt de imagem em ingls
     const imagePrompt = `Create a ${styleSpecs[config.visualStyle]} image representing the concept: "${segment.text}". Format: ${formatSpecs[config.videoFormat]}. High quality, detailed composition, professional lighting, sharp focus.`;
     
-    // Gerar prompt de animação em inglês otimizado para VEO3/VEO2
+    // Gerar prompt de animao em ingls otimizado para VEO3/VEO2
     const animationPrompt = config.animationModel === 'veo3' 
         ? `Create a ${config.segmentDuration}-second video showing: "${segment.text}". Format: ${config.videoFormat}. Style: ${config.visualStyle}. ${config.includeAudio === 'with-audio' ? 'Include audio synchronization and lip sync.' : 'No audio, focus on visual storytelling.'} Professional quality, smooth motion, cinematic transitions.`
         : `Generate a ${config.segmentDuration}-second video depicting: "${segment.text}". Format: ${config.videoFormat}. Style: ${config.visualStyle}. ${config.includeAudio === 'with-audio' ? 'Include audio synchronization.' : 'No audio, visual focus.'} High quality, professional video production.`;
@@ -3294,13 +3294,13 @@ function displayVisualScriptResults(prompts, generationType) {
     
     let html = '<div class="visual-script-results-content">';
     
-    // Estatísticas gerais
+    // Estatsticas gerais
     const totalDuration = prompts.reduce((sum, prompt) => sum + prompt.segment.duration, 0);
     const totalSegments = prompts.length;
     
     html += `
         <div class="results-summary">
-            <h3><i class="fas fa-chart-bar"></i> Resumo da Geração</h3>
+            <h3><i class="fas fa-chart-bar"></i> Resumo da Gerao</h3>
             <div class="summary-stats">
                 <div class="stat-item">
                     <span class="stat-value">${totalSegments}</span>
@@ -3308,7 +3308,7 @@ function displayVisualScriptResults(prompts, generationType) {
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${totalDuration}s</span>
-                    <span class="stat-label">Duração Total</span>
+                    <span class="stat-label">Durao Total</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${Math.round(totalDuration / 60 * 10) / 10}min</span>
@@ -3334,14 +3334,14 @@ function displayVisualScriptResults(prompts, generationType) {
                 ${(generationType === 'image-only' || generationType === 'both') ? `
                 <div class="prompt-section">
                     <h5><i class="fas fa-image"></i> Prompt de Imagem</h5>
-                    <div class="prompt-content">${prompt.imagePrompt || 'Prompt não gerado'}</div>
+                    <div class="prompt-content">${prompt.imagePrompt || 'Prompt no gerado'}</div>
                 </div>
                 ` : ''}
                 
                 ${(generationType === 'video-only' || generationType === 'both') ? `
                 <div class="prompt-section">
-                    <h5><i class="fas fa-video"></i> Prompt de Animação</h5>
-                    <div class="prompt-content">${prompt.animationPrompt || 'Prompt não gerado'}</div>
+                    <h5><i class="fas fa-video"></i> Prompt de Animao</h5>
+                    <div class="prompt-content">${prompt.animationPrompt || 'Prompt no gerado'}</div>
                 </div>
                 ` : ''}
                 
@@ -3356,7 +3356,7 @@ function displayVisualScriptResults(prompts, generationType) {
                     ` : ''}
                     ${(generationType === 'video-only' || generationType === 'both') ? `
                     <button class="copy-segment-btn" onclick="copyAnimationPrompt(${index})">
-                        <i class="fas fa-video"></i> Copiar Animação
+                        <i class="fas fa-video"></i> Copiar Animao
                     </button>
                     ` : ''}
                 </div>
@@ -3364,7 +3364,7 @@ function displayVisualScriptResults(prompts, generationType) {
         `;
     });
     
-    // Botão de exportar tudo
+    // Boto de exportar tudo
     html += `
         <button class="export-all-btn" onclick="exportAllVisualPrompts()">
             <i class="fas fa-download"></i> Exportar Todos os Prompts
@@ -3375,11 +3375,11 @@ function displayVisualScriptResults(prompts, generationType) {
     
     resultsElement.innerHTML = html;
     
-    // Armazenar prompts globalmente para acesso nas funções de cópia
+    // Armazenar prompts globalmente para acesso nas funes de cpia
     window.visualPrompts = prompts;
 }
 
-// Funções de cópia
+// Funes de cpia
 function copySegmentPrompt(index) {
     const prompt = window.visualPrompts[index];
     if (!prompt) return;
@@ -3390,11 +3390,11 @@ ${prompt.segment.text}
 ${prompt.imagePrompt ? `PROMPT DE IMAGEM:
 ${prompt.imagePrompt}
 
-` : ''}${prompt.animationPrompt ? `PROMPT DE ANIMAÇÃO:
+` : ''}${prompt.animationPrompt ? `PROMPT DE ANIMAO:
 ${prompt.animationPrompt}` : ''}`;
     
     navigator.clipboard.writeText(text).then(() => {
-        showNotification('Segmento copiado para a área de transferência!', 'success');
+        showNotification('Segmento copiado para a rea de transferncia!', 'success');
     });
 }
 
@@ -3412,7 +3412,7 @@ function copyAnimationPrompt(index) {
     if (!prompt || !prompt.animationPrompt) return;
     
     navigator.clipboard.writeText(prompt.animationPrompt).then(() => {
-        showNotification('Prompt de animação copiado!', 'success');
+        showNotification('Prompt de animao copiado!', 'success');
     });
 }
 
@@ -3422,12 +3422,12 @@ function exportAllVisualPrompts() {
     if (!prompts || prompts.length === 0) return;
     
     let content = `# ROTEIRO VISUAL GERADO\n\n`;
-    content += `**Configurações:**\n`;
+    content += `**Configuraes:**\n`;
     content += `- Tipo: ${prompts[0].config.generationType}\n`;
-    content += `- Duração por segmento: ${prompts[0].config.segmentDuration}s\n`;
+    content += `- Durao por segmento: ${prompts[0].config.segmentDuration}s\n`;
     content += `- Formato: ${prompts[0].config.videoFormat}\n`;
     content += `- Modelo: ${prompts[0].config.animationModel}\n`;
-    content += `- Áudio: ${prompts[0].config.includeAudio}\n`;
+    content += `- udio: ${prompts[0].config.includeAudio}\n`;
     content += `- Estilo: ${prompts[0].config.visualStyle}\n\n`;
     
     const totalDuration = prompts.reduce((sum, prompt) => sum + prompt.segment.duration, 0);
@@ -3444,7 +3444,7 @@ function exportAllVisualPrompts() {
         }
         
         if (prompt.animationPrompt) {
-            content += `**Prompt de Animação:**\n${prompt.animationPrompt}\n\n`;
+            content += `**Prompt de Animao:**\n${prompt.animationPrompt}\n\n`;
         }
         
         content += `---\n\n`;
@@ -3473,10 +3473,10 @@ function parsePlatformResponse(response, platform) {
     let tags = '';
     
     for (const line of lines) {
-        if (line.startsWith('TÍTULO:')) {
-            title = line.replace('TÍTULO:', '').trim();
-        } else if (line.startsWith('DESCRIÇÃO:')) {
-            description = line.replace('DESCRIÇÃO:', '').trim();
+        if (line.startsWith('TTULO:')) {
+            title = line.replace('TTULO:', '').trim();
+        } else if (line.startsWith('DESCRIO:')) {
+            description = line.replace('DESCRIO:', '').trim();
         } else if (line.startsWith('HASHTAGS:')) {
             const hashtagText = line.replace('HASHTAGS:', '').trim();
             hashtags = hashtagText.split(/\s+/).filter(tag => tag.startsWith('#'));
@@ -3501,7 +3501,7 @@ function parsePlatformResponse(response, platform) {
     return result;
 }
 
-// Exibir resultados da otimização
+// Exibir resultados da otimizao
 function displayOptimizationResults(optimizedContent) {
     const resultsArea = document.getElementById('optimizationResults');
     
@@ -3509,8 +3509,8 @@ function displayOptimizationResults(optimizedContent) {
         resultsArea.innerHTML = `
             <div class="error">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h3>Nenhum conteúdo gerado</h3>
-                <p>Não foi possível gerar conteúdo otimizado.</p>
+                <h3>Nenhum contedo gerado</h3>
+                <p>No foi possvel gerar contedo otimizado.</p>
             </div>
         `;
         return;
@@ -3539,8 +3539,8 @@ function displayOptimizationResults(optimizedContent) {
                 <div class="platform-content">
                     <div class="content-section">
                         <div class="section-header">
-                            <h5>Título</h5>
-                            <button class="copy-btn" onclick="copySectionContent('${platform}', 'title')" title="Copiar título">
+                            <h5>Ttulo</h5>
+                            <button class="copy-btn" onclick="copySectionContent('${platform}', 'title')" title="Copiar ttulo">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -3549,8 +3549,8 @@ function displayOptimizationResults(optimizedContent) {
                     
                     <div class="content-section">
                         <div class="section-header">
-                            <h5>Descrição</h5>
-                            <button class="copy-btn" onclick="copySectionContent('${platform}', 'description')" title="Copiar descrição">
+                            <h5>Descrio</h5>
+                            <button class="copy-btn" onclick="copySectionContent('${platform}', 'description')" title="Copiar descrio">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -3599,9 +3599,9 @@ function displayOptimizationResults(optimizedContent) {
     resultsArea.innerHTML = html;
 }
 
-// Copiar seção específica do conteúdo
+// Copiar seo especfica do contedo
 function copySectionContent(platform, section) {
-    // Encontrar o botão clicado e navegar para o card da plataforma
+    // Encontrar o boto clicado e navegar para o card da plataforma
     const button = event.target.closest('button');
     const platformResult = button.closest('.platform-result');
     
@@ -3613,11 +3613,11 @@ function copySectionContent(platform, section) {
     switch (section) {
         case 'title':
             contentToCopy = platformResult.querySelector('.content-section:nth-child(1) p').textContent;
-            sectionName = 'título';
+            sectionName = 'ttulo';
             break;
         case 'description':
             contentToCopy = platformResult.querySelector('.content-section:nth-child(2) p').textContent;
-            sectionName = 'descrição';
+            sectionName = 'descrio';
             break;
         case 'hashtags':
             const hashtags = Array.from(platformResult.querySelectorAll('.hashtag')).map(tag => tag.textContent);
@@ -3630,25 +3630,25 @@ function copySectionContent(platform, section) {
                 contentToCopy = tagsElement.textContent;
                 sectionName = 'tags';
             } else {
-                showNotification('Tags não encontradas!', 'error');
+                showNotification('Tags no encontradas!', 'error');
                 return;
             }
             break;
         default:
-            showNotification('Seção não encontrada!', 'error');
+            showNotification('Seo no encontrada!', 'error');
             return;
     }
     
     navigator.clipboard.writeText(contentToCopy).then(() => {
-        showNotification(`${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} copiado para a área de transferência!`, 'success');
+        showNotification(`${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} copiado para a rea de transferncia!`, 'success');
     }).catch(() => {
-        showNotification('Erro ao copiar conteúdo!', 'error');
+        showNotification('Erro ao copiar contedo!', 'error');
     });
 }
 
-// Copiar conteúdo completo da plataforma
+// Copiar contedo completo da plataforma
 function copyPlatformContent(platform) {
-    // Encontrar o botão clicado e navegar para o card da plataforma
+    // Encontrar o boto clicado e navegar para o card da plataforma
     const button = event.target.closest('button');
     const platformResult = button.closest('.platform-result');
     
@@ -3667,15 +3667,15 @@ function copyPlatformContent(platform) {
     }
     
     navigator.clipboard.writeText(fullContent).then(() => {
-        showNotification('Conteúdo completo copiado para a área de transferência!', 'success');
+        showNotification('Contedo completo copiado para a rea de transferncia!', 'success');
     }).catch(() => {
-        showNotification('Erro ao copiar conteúdo!', 'error');
+        showNotification('Erro ao copiar contedo!', 'error');
     });
 }
 
-// Exportar conteúdo da plataforma
+// Exportar contedo da plataforma
 function exportPlatformContent(platform) {
-    // Encontrar o botão clicado e navegar para o card da plataforma
+    // Encontrar o boto clicado e navegar para o card da plataforma
     const button = event.target.closest('button');
     const platformResult = button.closest('.platform-result');
     
@@ -3685,7 +3685,7 @@ function exportPlatformContent(platform) {
     const description = platformResult.querySelector('.content-section:nth-child(2) p').textContent;
     const hashtags = Array.from(platformResult.querySelectorAll('.hashtag')).map(tag => tag.textContent).join(' ');
     
-    let content = `TÍTULO:\n${title}\n\nDESCRIÇÃO:\n${description}\n\nHASHTAGS:\n${hashtags}`;
+    let content = `TTULO:\n${title}\n\nDESCRIO:\n${description}\n\nHASHTAGS:\n${hashtags}`;
     
     // Adicionar tags se existirem
     const tagsElement = platformResult.querySelector('.tags-content');
@@ -3703,7 +3703,7 @@ function exportPlatformContent(platform) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showNotification('Conteúdo exportado com sucesso!', 'success');
+    showNotification('Contedo exportado com sucesso!', 'success');
 }
 
 // ===== OPENROUTER API =====
@@ -3738,14 +3738,14 @@ async function callOpenRouterAPI(prompt, model = "meta-llama/llama-3.2-3b-instru
     if (data.choices && data.choices[0] && data.choices[0].message) {
         return data.choices[0].message.content;
     } else {
-        throw new Error('Resposta inválida da API');
+        throw new Error('Resposta invlida da API');
     }
 }
 
-// ===== UTILITÁRIOS =====
+// ===== UTILITRIOS =====
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        showNotification('Copiado para a área de transferência!', 'success');
+        showNotification('Copiado para a rea de transferncia!', 'success');
     }).catch(err => {
         console.error('Erro ao copiar:', err);
         showNotification('Erro ao copiar!', 'error');

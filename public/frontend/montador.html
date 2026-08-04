@@ -1,11 +1,11 @@
-﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <link rel="stylesheet" href="global_style.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit — O Montador</title>
+    <title>Apollo Edit  O Montador</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,7 +34,7 @@
             overflow: hidden;
         }
 
-        /* ─── HEADER ─── */
+        /*  HEADER  */
         header {
             background: linear-gradient(90deg, #0e0e1e 0%, #12083a 100%);
             border-bottom: 1px solid var(--border);
@@ -60,7 +60,7 @@
         .nav-links a.active { color: var(--gold); border-color: var(--gold); background: rgba(245,158,11,.08); }
         .spacer { flex: 1; }
 
-        /* ─── MAIN LAYOUT ─── */
+        /*  MAIN LAYOUT  */
         .main {
             flex: 1;
             display: grid;
@@ -70,7 +70,7 @@
             overflow: hidden;
         }
 
-        /* ─── LEFT PANEL: SELEÇÃO DE VÍDEOS ─── */
+        /*  LEFT PANEL: SELEO DE VDEOS  */
         .panel-left {
             display: flex;
             flex-direction: column;
@@ -154,7 +154,7 @@
         }
         .video-remove:hover { background: rgba(239,68,68,.15); border-color: var(--danger); color: var(--danger); }
 
-        /* ─── RIGHT PANEL: CONFIGURAÇÕES ─── */
+        /*  RIGHT PANEL: CONFIGURAES  */
         .panel-right {
             display: flex;
             flex-direction: column;
@@ -290,7 +290,7 @@
             transition: width .4s;
         }
 
-        /* ─── BOTTOM: LOG ─── */
+        /*  BOTTOM: LOG  */
         .log-panel {
             grid-column: 1 / -1;
             background: #050510;
@@ -334,7 +334,7 @@
 
 <!-- HEADER -->
 <header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; border-bottom: 1px solid var(--border);">
-        <!-- Logo e Créditos -->
+        <!-- Logo e Crditos -->
         <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
             <a href="hub.html" style="text-decoration: none;">
                 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
@@ -348,7 +348,7 @@
 
         <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
             <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usuário Pro</span>
+                <span class="user-name" id="user-name" data-i18n="header.user_pro" style="font-size: 14px; font-weight: bold; color: #fff;">Usurio Pro</span>
             </div>
             <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
         </div>
@@ -362,45 +362,45 @@
 <!-- MAIN -->
 <div class="main">
 
-    <!-- ── COLUNA ESQUERDA: SELEÇÃO ── -->
+    <!--  COLUNA ESQUERDA: SELEO  -->
     <div class="panel-left">
         <div class="panel-header">
-            <h2>📂 Vídeos Selecionados <span class="badge-count" id="video-count">0</span></h2>
+            <h2> Vdeos Selecionados <span class="badge-count" id="video-count">0</span></h2>
             <div class="panel-header-actions">
-                <button class="btn" onclick="adicionarVideos()">➕ Adicionar Vídeos</button>
-                <button class="btn danger" onclick="limparSelecao()">🗑 Limpar Seleção</button>
+                <button class="btn" onclick="adicionarVideos()"> Adicionar Vdeos</button>
+                <button class="btn danger" onclick="limparSelecao()"> Limpar Seleo</button>
             </div>
         </div>
         <div class="video-list" id="video-list">
             <div class="empty-drop" id="empty-drop" onclick="adicionarVideos()">
-                <div class="icon">🎞️</div>
-                <h3>Nenhum vídeo selecionado</h3>
-                <p>Clique aqui ou no botão <strong>➕ Adicionar Vídeos</strong> para selecionar os arquivos de vídeo a serem processados.</p>
+                <div class="icon"></div>
+                <h3>Nenhum vdeo selecionado</h3>
+                <p>Clique aqui ou no boto <strong> Adicionar Vdeos</strong> para selecionar os arquivos de vdeo a serem processados.</p>
             </div>
         </div>
     </div>
 
-    <!-- ── COLUNA DIREITA: CONFIGURAÇÕES ── -->
+    <!--  COLUNA DIREITA: CONFIGURAES  -->
     <div class="panel-right">
 
         <!-- Formato -->
         <div class="config-section">
-            <div class="section-title">📐 Formato do Vídeo</div>
+            <div class="section-title"> Formato do Vdeo</div>
             <div class="format-toggle">
-                <button class="format-btn active" id="fmt-v" onclick="setFormato('vertical')">📱 Vertical (9:16)</button>
-                <button class="format-btn" id="fmt-h" onclick="setFormato('horizontal')">🖥️ Horizontal (16:9)</button>
+                <button class="format-btn active" id="fmt-v" onclick="setFormato('vertical')"> Vertical (9:16)</button>
+                <button class="format-btn" id="fmt-h" onclick="setFormato('horizontal')"> Horizontal (16:9)</button>
             </div>
         </div>
 
-        <!-- Sequência -->
+        <!-- Sequncia -->
         <div class="config-section">
-            <div class="section-title">🎬 Adicionar ao Final (Sequência)</div>
+            <div class="section-title"> Adicionar ao Final (Sequncia)</div>
             <div class="check-list">
                 <div class="check-item checked" id="chk-transicao" onclick="toggleCheck('chk-transicao','usar_transicao')">
-                    <div class="check-box">✓</div>
+                    <div class="check-box"></div>
                     <div>
-                        <div class="check-label">1. Transição</div>
-                        <div class="check-sub">Clipe de transição aleatório ao final</div>
+                        <div class="check-label">1. Transio</div>
+                        <div class="check-sub">Clipe de transio aleatrio ao final</div>
                     </div>
                 </div>
                 <div class="check-item" id="chk-cta" onclick="toggleCheck('chk-cta','usar_cta')">
@@ -420,68 +420,68 @@
             </div>
         </div>
 
-        <!-- Pastas Transições -->
+        <!-- Pastas Transies -->
         <div class="config-section">
-            <div class="section-title">📁 Pastas de Transições</div>
+            <div class="section-title"> Pastas de Transies</div>
             <div class="pasta-row">
                 <label>H (Trans):</label>
-                <input type="text" id="pasta_trans_h" placeholder="Pasta de transições horizontais" oninput="salvarCacheDebounce()">
-                <button class="btn-browse" onclick="browsePasta('pasta_trans_h')">📁</button>
+                <input type="text" id="pasta_trans_h" placeholder="Pasta de transies horizontais" oninput="salvarCacheDebounce()">
+                <button class="btn-browse" onclick="browsePasta('pasta_trans_h')"></button>
             </div>
             <div class="pasta-row">
                 <label>V (Trans):</label>
-                <input type="text" id="pasta_trans_v" placeholder="Pasta de transições verticais" oninput="salvarCacheDebounce()">
-                <button class="btn-browse" onclick="browsePasta('pasta_trans_v')">📁</button>
+                <input type="text" id="pasta_trans_v" placeholder="Pasta de transies verticais" oninput="salvarCacheDebounce()">
+                <button class="btn-browse" onclick="browsePasta('pasta_trans_v')"></button>
             </div>
         </div>
 
         <!-- Pastas CTA -->
         <div class="config-section">
-            <div class="section-title">📁 Pastas de Somente CTA</div>
+            <div class="section-title"> Pastas de Somente CTA</div>
             <div class="pasta-row">
                 <label>H (CTA):</label>
                 <input type="text" id="pasta_cta_h" placeholder="Pasta de CTA horizontais" oninput="salvarCacheDebounce()">
-                <button class="btn-browse" onclick="browsePasta('pasta_cta_h')">📁</button>
+                <button class="btn-browse" onclick="browsePasta('pasta_cta_h')"></button>
             </div>
             <div class="pasta-row">
                 <label>V (CTA):</label>
                 <input type="text" id="pasta_cta_v" placeholder="Pasta de CTA verticais" oninput="salvarCacheDebounce()">
-                <button class="btn-browse" onclick="browsePasta('pasta_cta_v')">📁</button>
+                <button class="btn-browse" onclick="browsePasta('pasta_cta_v')"></button>
             </div>
         </div>
 
         <!-- Pastas Logomarcas -->
         <div class="config-section">
-            <div class="section-title">📁 Pastas de Logomarcas com CTA</div>
+            <div class="section-title"> Pastas de Logomarcas com CTA</div>
             <div class="pasta-row">
                 <label>H (Logo):</label>
                 <input type="text" id="pasta_logo_h" placeholder="Pasta de logos horizontais" oninput="salvarCacheDebounce()">
-                <button class="btn-browse" onclick="browsePasta('pasta_logo_h')">📁</button>
+                <button class="btn-browse" onclick="browsePasta('pasta_logo_h')"></button>
             </div>
             <div class="pasta-row">
                 <label>V (Logo):</label>
                 <input type="text" id="pasta_logo_v" placeholder="Pasta de logos verticais" oninput="salvarCacheDebounce()">
-                <button class="btn-browse" onclick="browsePasta('pasta_logo_v')">📁</button>
+                <button class="btn-browse" onclick="browsePasta('pasta_logo_v')"></button>
             </div>
             <div style="margin-top:10px">
-                <button class="btn full" onclick="verificarPastas()">🔍 Verificar Pastas</button>
+                <button class="btn full" onclick="verificarPastas()"> Verificar Pastas</button>
             </div>
         </div>
 
         <!-- Info Pastas -->
         <div class="config-section">
-            <div class="section-title">📊 Status das Pastas</div>
+            <div class="section-title"> Status das Pastas</div>
             <div class="pasta-info" id="pasta-info">
-                <span style="color:var(--muted)">Clique em "Verificar Pastas" para checar o conteúdo.</span>
+                <span style="color:var(--muted)">Clique em "Verificar Pastas" para checar o contedo.</span>
             </div>
         </div>
 
         <!-- Processar -->
         <div class="config-section">
             <button class="btn processar full" id="btn-processar" onclick="processarVideos()">
-                🚀 PROCESSAR VÍDEOS
+                 PROCESSAR VDEOS
             </button>
-            <div class="status-line" id="status-line">Aguardando seleção de vídeos...</div>
+            <div class="status-line" id="status-line">Aguardando seleo de vdeos...</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
             </div>
@@ -489,10 +489,10 @@
 
     </div>
 
-    <!-- ── LOG TERMINAL ── -->
+    <!--  LOG TERMINAL  -->
     <div class="log-panel">
         <div class="log-header">
-            📟 Terminal do Montador
+             Terminal do Montador
             <button onclick="limparLog()" style="padding:2px 8px;border-radius:4px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:10px;font-family:'Inter',sans-serif;">Limpar</button>
         </div>
         <div class="log-body" id="log-body">
@@ -507,7 +507,7 @@
 <!-- I18N Loader -->
 <script src="i18n_loader.js"></script>
 
-<!-- Supabase SDK e Autenticação -->
+<!-- Supabase SDK e Autenticao -->
 <script src="bg_parallax.js"></script>
     <script src="apollo_quests.js"></script>
     <script src="apollo_tour.js"></script>

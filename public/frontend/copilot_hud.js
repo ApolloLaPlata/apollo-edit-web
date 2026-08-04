@@ -1,8 +1,8 @@
 /**
  * copilot_hud.js
  * Injeta o Mascote/Copiloto IA no canto inferior direito da tela.
- * Oferece uma janela "intermediária" de chat para conversas rápidas e ações sugeridas,
- * além de ser flutuante e arrastável pelo usuário.
+ * Oferece uma janela "intermediria" de chat para conversas rpidas e aes sugeridas,
+ * alm de ser flutuante e arrastvel pelo usurio.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const copilotHTML = `
         <div id="apollo-copilot-hud" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end;">
             
-            <!-- Janela Intermediária de Chat (Oculta por padrão) -->
+            <!-- Janela Intermediria de Chat (Oculta por padro) -->
             <div id="copilot-chat-window" style="display: none; width: 350px; background: #fff; border: 4px solid #000; border-radius: 20px; box-shadow: 6px 6px 0px #000; margin-bottom: 25px; position: relative; overflow: visible; font-family: 'Nunito', sans-serif;">
                 
                 <!-- Tail pointing to the mascot -->
@@ -26,41 +26,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <!-- Header Comic style -->
                 <div id="copilot-drag-handle" style="background: #facc15; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: grab; border-bottom: 4px solid #000; border-radius: 16px 16px 0 0;">
-                    <strong style="color: #000; font-family: 'Bangers'; font-size: 1.5rem; letter-spacing: 1px; text-transform: uppercase;">🤖 Copiloto IA</strong>
-                    <button onclick="toggleCopilotChat()" style="background: #ef4444; border: 3px solid #000; color: white; cursor: pointer; font-size: 1rem; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 2px 2px 0px #000; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='0 0 0 #000';" onmouseup="this.style.transform=''; this.style.boxShadow='2px 2px 0px #000';">✖</button>
+                    <strong style="color: #000; font-family: 'Bangers'; font-size: 1.5rem; letter-spacing: 1px; text-transform: uppercase;"> Copiloto IA</strong>
+                    <button onclick="toggleCopilotChat()" style="background: #ef4444; border: 3px solid #000; color: white; cursor: pointer; font-size: 1rem; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 2px 2px 0px #000; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='0 0 0 #000';" onmouseup="this.style.transform=''; this.style.boxShadow='2px 2px 0px #000';"></button>
                 </div>
                 
-                <!-- Histórico de Chat -->
+                <!-- Histrico de Chat -->
                 <div id="copilot-chat-history" style="height: 250px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #fff;">
                     <div style="background: #f1f5f9; border: 2px solid #000; border-radius: 10px; padding: 10px; box-shadow: 2px 2px 0 #000;">
-                        <p style="color: #000; font-size: 0.95rem; font-weight: bold; margin-bottom: 8px;">Yaaay! 👏 Olá! Eu sou o seu Copiloto de Produção. Pronto pra gente criar umas loucuras hoje?</p>
-                        <p style="color: #475569; font-size: 0.85rem;">Estou de olho na sua Área de Transferência. O que vamos criar hoje?</p>
+                        <p style="color: #000; font-size: 0.95rem; font-weight: bold; margin-bottom: 8px;">Yaaay!  Ol! Eu sou o seu Copiloto de Produo. Pronto pra gente criar umas loucuras hoje?</p>
+                        <p style="color: #475569; font-size: 0.85rem;">Estou de olho na sua rea de Transferncia. O que vamos criar hoje?</p>
                     </div>
                 </div>
 
-                <!-- Input e Ações Rápidas -->
+                <!-- Input e Aes Rpidas -->
                 <div style="padding: 10px; background: #fff; border-top: 4px solid #000; border-radius: 0 0 16px 16px;">
                     <div id="copilot-quick-actions" style="display: flex; gap: 5px; overflow-x: auto; margin-bottom: 10px; padding-bottom: 5px;">
-                        <button onclick="simulateAITask('Gerar Imagens de Cachorro')" style="background: #fff; color: #000; border: 2px solid #000; border-radius: 12px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; font-weight: bold; box-shadow: 2px 2px 0 #000;">🐕 Imagens de Cachorro</button>
-                        <button onclick="window.location.href='noticias_autopilot.html'" style="background: var(--btn-green); color: #000; border: 2px solid #000; border-radius: 12px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; font-weight: bold; box-shadow: 2px 2px 0 #000;">✈️ Piloto Automático</button>
+                        <button onclick="simulateAITask('Gerar Imagens de Cachorro')" style="background: #fff; color: #000; border: 2px solid #000; border-radius: 12px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; font-weight: bold; box-shadow: 2px 2px 0 #000;"> Imagens de Cachorro</button>
+                        <button onclick="window.location.href='noticias_autopilot.html'" style="background: var(--btn-green); color: #000; border: 2px solid #000; border-radius: 12px; padding: 5px 10px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; font-weight: bold; box-shadow: 2px 2px 0 #000;"> Piloto Automtico</button>
                     </div>
                     <div style="display: flex; gap: 5px;">
-                        <input type="text" id="copilot-input" placeholder="Peça para a IA..." style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 2px solid #000; background: #fff; color: #000; font-weight: bold;" onkeydown="if(event.key === 'Enter') sendCopilotMessage()" />
+                        <input type="text" id="copilot-input" placeholder="Pea para a IA..." style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 2px solid #000; background: #fff; color: #000; font-weight: bold;" onkeydown="if(event.key === 'Enter') sendCopilotMessage()" />
                         <button onclick="sendCopilotMessage()" style="background: var(--btn-purple, #8b5cf6); color: white; border: 2px solid #000; border-radius: 8px; padding: 0 15px; cursor: pointer; font-weight: bold; box-shadow: 2px 2px 0 #000;">Enviar</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Balãozinho rápido de erro (Automático) -->
+            <!-- Balozinho rpido de erro (Automtico) -->
             <div id="copilot-quick-bubble" style="display: none; position: absolute; bottom: 85px; right: 0; background: #fff; border: 3px solid #000; border-radius: 15px; padding: 10px 15px; box-shadow: 4px 4px 0px #000; font-family: 'Bangers', cursive; font-size: 1.2rem; color: #000; white-space: nowrap; z-index: 10000; opacity: 0; transition: opacity 0.3s; transform-origin: bottom right;">
-                Mensagem Rápida!
+                Mensagem Rpida!
                 <div style="position: absolute; bottom: -10px; right: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #000;"></div>
                 <div style="position: absolute; bottom: -6px; right: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #fff;"></div>
             </div>
 
-            <!-- Mascote Flutuante (Botão) -->
+            <!-- Mascote Flutuante (Boto) -->
             <div id="copilot-mascot-btn" style="width: 100px; height: 100px; background: var(--btn-purple, #8b5cf6); border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 3.5rem; cursor: pointer; border: 4px solid #fff; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 0 30px rgba(139,92,246,0.8)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.5)';">
-                🤖
+                
             </div>
             
         </div>
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     makeCopilotDraggable();
 });
 
-// Alterna a visibilidade da janela de chat intermediária
+// Alterna a visibilidade da janela de chat intermediria
 window.toggleCopilotChat = function() {
     const chatWindow = document.getElementById('copilot-chat-window');
     const mascotBtn = document.getElementById('copilot-mascot-btn');
@@ -79,14 +79,14 @@ window.toggleCopilotChat = function() {
     if (chatWindow.style.display === 'none') {
         chatWindow.style.display = 'block';
         mascotBtn.style.transform = 'scale(0.9)';
-        if (bubble) bubble.style.display = 'none'; // Esconde o balãozinho se abrir o chat
+        if (bubble) bubble.style.display = 'none'; // Esconde o balozinho se abrir o chat
     } else {
         chatWindow.style.display = 'none';
         mascotBtn.style.transform = 'scale(1)';
     }
 }
 
-// Envia mensagem do usuário para o chat da IA
+// Envia mensagem do usurio para o chat da IA
 window.sendCopilotMessage = function() {
     const input = document.getElementById('copilot-input');
     const msg = input.value.trim();
@@ -97,11 +97,11 @@ window.sendCopilotMessage = function() {
 
     // Simula resposta da IA (Placeholder)
     setTimeout(() => {
-        addChatMessage('ai', `Entendido! Estou processando a sua instrução: "${msg}". No futuro, isso ativará a tela de carregamento e moverá os itens gerados direto para a Área de Transferência.`);
+        addChatMessage('ai', `Entendido! Estou processando a sua instruo: "${msg}". No futuro, isso ativar a tela de carregamento e mover os itens gerados direto para a rea de Transferncia.`);
     }, 1000);
 }
 
-// Simula uma tarefa de IA que resulta em itens na Área de Transferência
+// Simula uma tarefa de IA que resulta em itens na rea de Transferncia
 window.simulateAITask = function(taskName) {
     addChatMessage('user', `Me ajude com: ${taskName}`);
     setTimeout(() => {
@@ -109,15 +109,15 @@ window.simulateAITask = function(taskName) {
         
         // Simula carregamento
         setTimeout(() => {
-            addChatMessage('ai', `Pronto! Finalizei o processamento de "${taskName}". Os arquivos foram enviados para a sua Área de Transferência.`);
-            // Se a Área de Transferência estiver carregada, envia mock data
+            addChatMessage('ai', `Pronto! Finalizei o processamento de "${taskName}". Os arquivos foram enviados para a sua rea de Transferncia.`);
+            // Se a rea de Transferncia estiver carregada, envia mock data
             if (typeof addToTransferArea === 'function') {
                 addToTransferArea('image', 'Lote de Cachorros', 'IA Generativa', '');
             }
             
-            // Renderiza um botão dinâmico no chat da IA
-            appendActionToChat('Você quer animar essas imagens?', 'Animar Imagens', () => {
-                alert('A IA irá levar as imagens para o estúdio de animação agora!');
+            // Renderiza um boto dinmico no chat da IA
+            appendActionToChat('Voc quer animar essas imagens?', 'Animar Imagens', () => {
+                alert('A IA ir levar as imagens para o estdio de animao agora!');
             });
             
         }, 2000);
@@ -158,7 +158,7 @@ function appendActionToChat(text, btnLabel, callbackFn) {
     // Adiciona botao
     const btn = document.createElement('button');
     btn.style = "background: var(--btn-green, #10b981); color: #fff; border: none; border-radius: 8px; padding: 5px 10px; cursor: pointer; font-weight: bold;";
-    btn.innerText = `▶ ${btnLabel}`;
+    btn.innerText = ` ${btnLabel}`;
     btn.onclick = callbackFn;
     container.appendChild(btn);
     
@@ -166,7 +166,7 @@ function appendActionToChat(text, btnLabel, callbackFn) {
     history.scrollTop = history.scrollHeight;
 }
 
-// Lógica de Draggable para o Mascote e sua janela
+// Lgica de Draggable para o Mascote e sua janela
 function makeCopilotDraggable() {
     const copilotHUD = document.getElementById('apollo-copilot-hud');
     const handle = document.getElementById('copilot-drag-handle');
@@ -229,7 +229,7 @@ function makeCopilotDraggable() {
 }
 
 // ==========================================
-// MÓDULOS DE CONSCIÊNCIA DA IA (SENSORS)
+// MDULOS DE CONSCINCIA DA IA (SENSORS)
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -271,11 +271,11 @@ function injectCopilotCSS() {
 }
 
 function initCopilotSensors() {
-    // 1. Observer da Área de Transferência
+    // 1. Observer da rea de Transferncia
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                // Apenas interage ocasionalmente para não ficar chato
+                // Apenas interage ocasionalmente para no ficar chato
                 if (Math.random() > 0.5) return; 
                 
                 const addedNode = mutation.addedNodes[0];
@@ -286,7 +286,7 @@ function initCopilotSensors() {
         });
     });
 
-    // Tenta anexar observer na Área de Transferência
+    // Tenta anexar observer na rea de Transferncia
     const tryAttachObserver = setInterval(() => {
         const hudContainer = document.getElementById('hud-item-container');
         if (hudContainer) {
@@ -295,7 +295,7 @@ function initCopilotSensors() {
         }
     }, 1000);
 
-    // 2. Interceptador de Botões e Cliques Errados
+    // 2. Interceptador de Botes e Cliques Errados
     let randomClickCount = 0;
     document.body.addEventListener('click', (e) => {
         const btn = e.target.closest('button, .btn');
@@ -306,7 +306,7 @@ function initCopilotSensors() {
             randomClickCount++;
             if (randomClickCount >= 5) {
                 randomClickCount = 0;
-                window.showCopilotQuickBubble("Tá perdido, chefe? Clica no mascote pra pedir um mapa!");
+                window.showCopilotQuickBubble("T perdido, chefe? Clica no mascote pra pedir um mapa!");
             }
         } else {
             randomClickCount = 0;
@@ -318,7 +318,7 @@ function initCopilotSensors() {
                 const emptyInputs = Array.from(document.querySelectorAll('input[type="text"], textarea')).filter(i => i.value.trim() === '' && i.id !== 'copilot-input' && i.style.display !== 'none');
                 
                 if (emptyInputs.length > 0) {
-                    // Impede o clique em 30% das vezes só para simular o fallback carismático
+                    // Impede o clique em 30% das vezes s para simular o fallback carismtico
                     if (Math.random() > 0.7) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -327,7 +327,7 @@ function initCopilotSensors() {
                         mascotBtn.classList.add('copilot-jump', 'copilot-error-glow');
                         setTimeout(() => mascotBtn.classList.remove('copilot-jump', 'copilot-error-glow'), 500);
                         
-                        window.showCopilotQuickBubble(`Opa, peraí! 🛑 Você esqueceu de preencher algo!`);
+                        window.showCopilotQuickBubble(`Opa, pera!  Voc esqueceu de preencher algo!`);
                     }
                 }
             }
@@ -361,7 +361,7 @@ window.getSystemContext = function() {
     const match = path.match(/noticias_([a-zA-Z0-9_]+)\.html/);
     if (match) currentTab = match[1];
 
-    // Lê a Área de Transferência
+    // L a rea de Transferncia
     const transferItems = [];
     document.querySelectorAll('#hud-item-container .hud-item').forEach(item => {
         const strong = item.querySelector('strong');
@@ -378,7 +378,7 @@ window.getSystemContext = function() {
     };
 };
 
-// Modifica a função de enviar mensagem para injetar o contexto real
+// Modifica a funo de enviar mensagem para injetar o contexto real
 const originalSendCopilotMessage = window.sendCopilotMessage;
 window.sendCopilotMessage = async function() {
     const input = document.getElementById('copilot-input');
@@ -395,30 +395,30 @@ window.sendCopilotMessage = async function() {
     mascotBtn.classList.add('copilot-jump');
     setTimeout(() => mascotBtn.classList.remove('copilot-jump'), 500);
 
-    // --- Motor Local de Intenções (NLP Mock) ---
+    // --- Motor Local de Intenes (NLP Mock) ---
     const lowerMsg = msg.toLowerCase();
     
-    // Intenção: Navegação
+    // Inteno: Navegao
     const isNavigation = /ir para|abrir|navegar|onde|como vou para|aba/i.test(lowerMsg);
     
     if (isNavigation) {
         if (/mapeamento|timeline/i.test(lowerMsg)) {
             setTimeout(() => {
-                addChatMessage('ai', `Entendido! Apertos os cintos, estou redirecionando você para a <b>Aba de Mapeamento (Timeline)</b> agora mesmo! 🚀`);
+                addChatMessage('ai', `Entendido! Apertos os cintos, estou redirecionando voc para a <b>Aba de Mapeamento (Timeline)</b> agora mesmo! `);
                 setTimeout(() => window.location.href = 'noticias_timeline.html', 2000);
             }, 1000);
             return;
         }
         if (/config|configura|ajuste/i.test(lowerMsg)) {
             setTimeout(() => {
-                addChatMessage('ai', `Buscando configurações globais... Levando você para as Configurações do Apollo! ⚙️`);
+                addChatMessage('ai', `Buscando configuraes globais... Levando voc para as Configuraes do Apollo! `);
                 setTimeout(() => window.location.href = 'noticias_settings.html', 2000); // Exemplo futuro
             }, 1000);
             return;
         }
         if (/invent|transferencia|itens/i.test(lowerMsg)) {
             setTimeout(() => {
-                addChatMessage('ai', `Você já tem a Área de Transferência bem ali no cantinho, mas vou abri-la para você! 🎒`);
+                addChatMessage('ai', `Voc j tem a rea de Transferncia bem ali no cantinho, mas vou abri-la para voc! `);
                 setTimeout(() => {
                     if (window.laplataInventory) {
                         const panel = document.getElementById('laplata-inventory-panel');
@@ -430,21 +430,21 @@ window.sendCopilotMessage = async function() {
         }
         if (/imagem|imagens|gerar imagem/i.test(lowerMsg)) {
             setTimeout(() => {
-                addChatMessage('ai', `Partiu Estúdio de Imagens! Vou abrir a aba do Caçador para você gerar suas artes. 🎨`);
+                addChatMessage('ai', `Partiu Estdio de Imagens! Vou abrir a aba do Caador para voc gerar suas artes. `);
                 setTimeout(() => window.location.href = 'noticias_miner.html', 2000);
             }, 1000);
             return;
         }
         if (/hub|inicio|voltar/i.test(lowerMsg)) {
             setTimeout(() => {
-                addChatMessage('ai', `Voltando para a Base (Hub Central)! 🛸`);
+                addChatMessage('ai', `Voltando para a Base (Hub Central)! `);
                 setTimeout(() => window.location.href = 'hub.html', 2000);
             }, 1000);
             return;
         }
     }
 
-    // --- Integração Real com Lightning AI (Conta 1) ---
+    // --- Integrao Real com Lightning AI (Conta 1) ---
     // Adiciona loading
     const history = document.getElementById('copilot-chat-history');
     const loadingId = 'loading-' + Date.now();
@@ -460,7 +460,7 @@ window.sendCopilotMessage = async function() {
         const apiKey = "16338b74-3f36-4c89-84db-a8e00b099058/roxingo/apollo-maquinas-virtuais";
         
         // Contexto inteligente para a IA saber em qual aba o usuario esta
-        const sysPrompt = "Você é o Copiloto IA do Apollo Studio. Você é sarcástico, direto e muito inteligente. O usuário está atualmente na aba: " + context.current_tab + ". Ajude-o com dúvidas sobre criação de vídeo, roteiros ou operação do sistema.";
+        const sysPrompt = "Voc  o Copiloto IA do Apollo Studio. Voc  sarcstico, direto e muito inteligente. O usurio est atualmente na aba: " + context.current_tab + ". Ajude-o com dvidas sobre criao de vdeo, roteiros ou operao do sistema.";
 
         const response = await fetch('https://api.apolloedit.com/api/lightning_proxy", {
             method: "POST",
@@ -481,14 +481,14 @@ window.sendCopilotMessage = async function() {
         document.getElementById(loadingId).remove();
 
         if(!response.ok) {
-            addChatMessage('ai', `❌ Erro de Conexão na Lightning AI. Status: ${response.status}`);
+            addChatMessage('ai', ` Erro de Conexo na Lightning AI. Status: ${response.status}`);
             return;
         }
 
         const data = await response.json();
         
         if (data.error) {
-            addChatMessage('ai', `⚠️ Erro da API: ${data.error.message || JSON.stringify(data.error)}`);
+            addChatMessage('ai', ` Erro da API: ${data.error.message || JSON.stringify(data.error)}`);
             return;
         }
 
@@ -497,7 +497,7 @@ window.sendCopilotMessage = async function() {
 
     } catch (error) {
         document.getElementById(loadingId).remove();
-        addChatMessage('ai', `💥 Crash no sistema local! Detalhe: ${error.message}`);
+        addChatMessage('ai', ` Crash no sistema local! Detalhe: ${error.message}`);
     }
 }
 
@@ -513,8 +513,8 @@ function triggerCopilotReaction(type, data) {
     }
 
     if (type === 'item_added') {
-        addChatMessage('ai', `👀 Eu vi que você colocou um novo item do tipo <b>${data}</b> na Área de Transferência. Muito bem! Quer que eu conecte isso à próxima etapa pra você?`);
-        appendActionToChat('Levar para a Timeline', 'Montar Vídeo', () => {
+        addChatMessage('ai', ` Eu vi que voc colocou um novo item do tipo <b>${data}</b> na rea de Transferncia. Muito bem! Quer que eu conecte isso  prxima etapa pra voc?`);
+        appendActionToChat('Levar para a Timeline', 'Montar Vdeo', () => {
             alert('Enviando para a Timeline...');
         });
     }

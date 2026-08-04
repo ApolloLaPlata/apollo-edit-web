@@ -1,9 +1,9 @@
 /**
- * montador.js — Lógica do Montador (Transições e Logomarcas)
+ * montador.js  Lgica do Montador (Transies e Logomarcas)
  * Apollo Studio Web UI
  */
 
-// ── Estado
+//  Estado
 const state = {
     videos: [],          // [{path, nome, duracao}]
     formato: 'vertical',
@@ -14,18 +14,18 @@ const state = {
 };
 let cacheDebounceTimer = null;
 
-// ── Init
+//  Init
 document.addEventListener('DOMContentLoaded', () => {
     carregarCache();
 });
 
-// ════════════════════════════════════════════════════
-// SELEÇÃO DE VÍDEOS
-// ════════════════════════════════════════════════════
+// 
+// SELEO DE VDEOS
+// 
 async function adicionarVideos() {
-    // Usa o browse_file do servidor mas em loop para simular seleção múltipla
+    // Usa o browse_file do servidor mas em loop para simular seleo mltipla
     // Primeiro pede quantos e depois abre seletor para cada um
-    // Estratégia: abrir seletor 1x por clique, usuário pode clicar várias vezes
+    // Estratgia: abrir seletor 1x por clique, usurio pode clicar vrias vezes
     try {
         const r = await fetch('https://api.apolloedit.com/api/browse_file?type=file');
         const d = await r.json();
@@ -33,16 +33,16 @@ async function adicionarVideos() {
             const caminho = d.path;
             // Evita duplicatas
             if (state.videos.some(v => v.path === caminho)) {
-                showToast('⚠️ Este vídeo já está na lista.', 'warn');
+                showToast(' Este vdeo j est na lista.', 'warn');
                 return;
             }
             const nome = caminho.split(/[/\\]/).pop();
             state.videos.push({ path: caminho, nome });
             renderVideoList();
-            showToast(`✅ Vídeo adicionado: ${nome}`, 'ok');
+            showToast(` Vdeo adicionado: ${nome}`, 'ok');
         }
     } catch(e) {
-        showToast('❌ Erro ao abrir seletor de arquivo', 'err');
+        showToast(' Erro ao abrir seletor de arquivo', 'err');
     }
 }
 
@@ -53,14 +53,14 @@ function renderVideoList() {
 
     countBadge.textContent = state.videos.length;
 
-    // Remove itens antigos (mas mantém o empty-drop)
+    // Remove itens antigos (mas mantm o empty-drop)
     Array.from(list.children).forEach(c => {
         if (c.id !== 'empty-drop') c.remove();
     });
 
     if (state.videos.length === 0) {
         empty.style.display = 'flex';
-        updateStatus('Aguardando seleção de vídeos...');
+        updateStatus('Aguardando seleo de vdeos...');
         return;
     }
 
@@ -70,12 +70,12 @@ function renderVideoList() {
         const item = document.createElement('div');
         item.className = 'video-item';
         item.innerHTML = `
-            <div class="video-thumb" id="thumb-${idx}">🎞️</div>
+            <div class="video-thumb" id="thumb-${idx}"></div>
             <div class="video-info">
                 <div class="video-name" title="${escHtml(v.path)}">${escHtml(v.nome)}</div>
                 <div class="video-meta">${escHtml(v.path)}</div>
             </div>
-            <button class="video-remove" onclick="removerVideo(${idx})" title="Remover da lista">✕</button>
+            <button class="video-remove" onclick="removerVideo(${idx})" title="Remover da lista"></button>
         `;
         list.appendChild(item);
 
@@ -83,7 +83,7 @@ function renderVideoList() {
         carregarThumb(idx, v.path);
     });
 
-    updateStatus(`${state.videos.length} vídeo(s) selecionado(s). Pronto para processar.`);
+    updateStatus(`${state.videos.length} vdeo(s) selecionado(s). Pronto para processar.`);
 }
 
 async function carregarThumb(idx, videoPath) {
@@ -109,34 +109,34 @@ function removerVideo(idx) {
 
 function limparSelecao() {
     if (state.videos.length === 0) return;
-    if (!confirm(`Remover todos os ${state.videos.length} vídeo(s) da lista?`)) return;
+    if (!confirm(`Remover todos os ${state.videos.length} vdeo(s) da lista?`)) return;
     state.videos = [];
     renderVideoList();
 }
 
-// ════════════════════════════════════════════════════
+// 
 // FORMATO
-// ════════════════════════════════════════════════════
+// 
 function setFormato(fmt) {
     state.formato = fmt;
     document.getElementById('fmt-v').classList.toggle('active', fmt === 'vertical');
     document.getElementById('fmt-h').classList.toggle('active', fmt === 'horizontal');
 }
 
-// ════════════════════════════════════════════════════
-// CHECKBOXES DE SEQUÊNCIA
-// ════════════════════════════════════════════════════
+// 
+// CHECKBOXES DE SEQUNCIA
+// 
 function toggleCheck(elId, stateKey) {
     const el = document.getElementById(elId);
     el.classList.toggle('checked');
     const isChecked = el.classList.contains('checked');
-    el.querySelector('.check-box').textContent = isChecked ? '✓' : '';
+    el.querySelector('.check-box').textContent = isChecked ? '' : '';
     state[stateKey] = isChecked;
 }
 
-// ════════════════════════════════════════════════════
-// PASTAS — Browse + Cache
-// ════════════════════════════════════════════════════
+// 
+// PASTAS  Browse + Cache
+// 
 async function browsePasta(inputId) {
     try {
         const r = await fetch('https://api.apolloedit.com/api/browse_file?type=folder');
@@ -145,7 +145,7 @@ async function browsePasta(inputId) {
             document.getElementById(inputId).value = d.path;
             salvarCacheDebounce();
         }
-    } catch(e) { showToast('❌ Erro ao abrir seletor', 'err'); }
+    } catch(e) { showToast(' Erro ao abrir seletor', 'err'); }
 }
 
 async function carregarCache() {
@@ -181,9 +181,9 @@ async function salvarCache() {
     } catch(e) {}
 }
 
-// ════════════════════════════════════════════════════
+// 
 // VERIFICAR PASTAS
-// ════════════════════════════════════════════════════
+// 
 async function verificarPastas() {
     const ids = ['pasta_trans_h','pasta_trans_v','pasta_cta_h','pasta_cta_v','pasta_logo_h','pasta_logo_v'];
     const params = new URLSearchParams();
@@ -196,37 +196,37 @@ async function verificarPastas() {
         const r = await fetch('https://api.apolloedit.com/api/montador/verificar_pastas?' + params.toString());
         const d = await r.json();
         if (!d.success) {
-            info.innerHTML = '<span class="pi-err">❌ Erro ao verificar pastas.</span>';
+            info.innerHTML = '<span class="pi-err"> Erro ao verificar pastas.</span>';
             return;
         }
         let html = '';
         for (const [key, p] of Object.entries(d.pastas)) {
             if (p.status === 'ok') {
-                html += `<div class="pi-ok">✅ ${p.label}: ${p.count} arquivo(s)</div>`;
+                html += `<div class="pi-ok"> ${p.label}: ${p.count} arquivo(s)</div>`;
             } else if (p.status === 'vazia') {
-                html += `<div class="pi-vaz">⚠️ ${p.label}: pasta vazia (0 mp4s)</div>`;
+                html += `<div class="pi-vaz"> ${p.label}: pasta vazia (0 mp4s)</div>`;
             } else if (p.status === 'nao_encontrada') {
-                html += `<div class="pi-err">❌ ${p.label}: pasta não encontrada</div>`;
+                html += `<div class="pi-err"> ${p.label}: pasta no encontrada</div>`;
             } else {
-                html += `<div class="pi-nop">⚪ ${p.label}: não configurada</div>`;
+                html += `<div class="pi-nop"> ${p.label}: no configurada</div>`;
             }
         }
         info.innerHTML = html || '<span style="color:var(--muted)">Nenhuma pasta configurada.</span>';
     } catch(e) {
-        info.innerHTML = '<span class="pi-err">❌ Erro de conexão com o servidor.</span>';
+        info.innerHTML = '<span class="pi-err"> Erro de conexo com o servidor.</span>';
     }
 }
 
-// ════════════════════════════════════════════════════
+// 
 // PROCESSAMENTO
-// ════════════════════════════════════════════════════
+// 
 async function processarVideos() {
     if (state.videos.length === 0) {
-        showToast('⚠️ Selecione pelo menos um vídeo!', 'warn');
+        showToast(' Selecione pelo menos um vdeo!', 'warn');
         return;
     }
     if (!state.usar_transicao && !state.usar_cta && !state.usar_logomarca) {
-        showToast('⚠️ Marque pelo menos uma opção da sequência!', 'warn');
+        showToast(' Marque pelo menos uma opo da sequncia!', 'warn');
         return;
     }
 
@@ -249,11 +249,11 @@ async function processarVideos() {
 
     // UI de loading
     document.getElementById('btn-processar').disabled = true;
-    document.getElementById('status-badge').textContent = '🔄 Processando...';
+    document.getElementById('status-badge').textContent = ' Processando...';
     document.getElementById('status-badge').style.color = '#06b6d4';
     updateStatus('Iniciando processamento...');
     clearLog();
-    appendLog('🚀 Enviando requisição ao servidor...');
+    appendLog(' Enviando requisio ao servidor...');
     document.getElementById('progress-fill').style.width = '5%';
 
     state.processando = true;
@@ -266,12 +266,12 @@ async function processarVideos() {
         });
 
         if (!r.ok) {
-            appendLog(`❌ Erro HTTP: ${r.status}`, 'le');
+            appendLog(` Erro HTTP: ${r.status}`, 'le');
             finalizarProcessamento(false);
             return;
         }
 
-        // Lê o stream SSE
+        // L o stream SSE
         const reader = r.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -292,13 +292,13 @@ async function processarVideos() {
                     // Classifica a linha
                     let cls = '';
                     const ml = msg.toLowerCase();
-                    if (ml.includes('❌') || ml.includes('erro') || ml.includes('falha')) cls = 'le';
-                    else if (ml.includes('✅') || ml.includes('conclu') || ml.includes('sucesso')) cls = 'lo';
-                    else if (ml.includes('⚠') || ml.includes('aviso')) cls = 'lw';
+                    if (ml.includes('') || ml.includes('erro') || ml.includes('falha')) cls = 'le';
+                    else if (ml.includes('') || ml.includes('conclu') || ml.includes('sucesso')) cls = 'lo';
+                    else if (ml.includes('') || ml.includes('aviso')) cls = 'lw';
                     appendLog(msg, cls);
 
                     // Update status da linha
-                    updateStatus(msg.replace(/[🚀🎬✅❌⚠️📎✓⚙️]/g, '').trim());
+                    updateStatus(msg.replace(/[]/g, '').trim());
                     // Update progress bar via polling
                     atualizarProgresso();
                 }
@@ -306,7 +306,7 @@ async function processarVideos() {
         }
         finalizarProcessamento(true);
     } catch(e) {
-        appendLog(`❌ Erro de conexão: ${e}`, 'le');
+        appendLog(` Erro de conexo: ${e}`, 'le');
         finalizarProcessamento(false);
     }
 }
@@ -325,28 +325,28 @@ function finalizarProcessamento(sucesso) {
     state.processando = false;
     document.getElementById('btn-processar').disabled = false;
     document.getElementById('progress-fill').style.width = sucesso ? '100%' : '0%';
-    document.getElementById('status-badge').textContent = sucesso ? '✅ Concluído' : '❌ Erro';
+    document.getElementById('status-badge').textContent = sucesso ? ' Concludo' : ' Erro';
     document.getElementById('status-badge').style.color = sucesso ? '#10b981' : '#ef4444';
     if (sucesso) {
-        updateStatus(`✅ Processamento concluído com sucesso!`);
+        updateStatus(` Processamento concludo com sucesso!`);
         if (window.apolloTransferOS) {
             window.apolloTransferOS.addItem('video', 'lote_processado.mp4', 'Montador de Clipes', null, { url: '/test.mp4' });
         }
-        showToast('✅ Vídeos processados e enviados ao Bagageiro!', 'ok');
+        showToast(' Vdeos processados e enviados ao Bagageiro!', 'ok');
     } else {
-        updateStatus('❌ Houve erros durante o processamento. Verifique o log.');
-        showToast('❌ Erros durante o processamento.', 'err');
+        updateStatus(' Houve erros durante o processamento. Verifique o log.');
+        showToast(' Erros durante o processamento.', 'err');
     }
-    // Reseta badge após 5s
+    // Reseta badge aps 5s
     setTimeout(() => {
         document.getElementById('status-badge').textContent = 'Pronto';
         document.getElementById('status-badge').style.color = '';
     }, 5000);
 }
 
-// ════════════════════════════════════════════════════
+// 
 // LOG
-// ════════════════════════════════════════════════════
+// 
 function appendLog(msg, cls = '') {
     const body = document.getElementById('log-body');
     // Remove placeholder
@@ -369,9 +369,9 @@ function limparLog() {
     clearLog();
 }
 
-// ════════════════════════════════════════════════════
-// UTILITÁRIOS
-// ════════════════════════════════════════════════════
+// 
+// UTILITRIOS
+// 
 function updateStatus(msg) {
     document.getElementById('status-line').textContent = msg;
 }

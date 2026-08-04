@@ -1,4 +1,4 @@
-﻿// Apollo Pocket Director â€” Voice Core & Diagnostic OS (Master Turbo Blaster)
+// Apollo Pocket Director — Voice Core & Diagnostic OS (Master Turbo Blaster)
 // --- APOLLO EDIT WEB NATIVE INTEGRATION ---
 let API_BASE_URL = '';
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
@@ -9,10 +9,10 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     API_BASE_URL = 'https://api.apolloedit.com.br';
 }
 
-// --- ETAPA 181: MÃ³dulo de Criptografia AES-256 ---
+// --- ETAPA 181: Módulo de Criptografia AES-256 ---
 class ApolloCrypto {
   static async getDummyKey() {
-    // Para protÃ³tipo offline, usamos um hash SHA-256 de uma senha estÃ¡tica como chave AES
+    // Para protótipo offline, usamos um hash SHA-256 de uma senha estática como chave AES
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey("raw", enc.encode("APOLLO_MASTER_KEY_2026"), "PBKDF2", false, ["deriveBits", "deriveKey"]);
     return await crypto.subtle.deriveKey(
@@ -46,7 +46,7 @@ class ApolloCrypto {
   static async decryptText(base64Payload) {
     if (!base64Payload) return base64Payload;
     try {
-      // Se nÃ£o parecer Base64/Encriptado, retorna o texto puro (Retrocompatibilidade)
+      // Se não parecer Base64/Encriptado, retorna o texto puro (Retrocompatibilidade)
       if (!base64Payload.includes('=')) return base64Payload; 
       
       const payloadString = atob(base64Payload);
@@ -59,7 +59,7 @@ class ApolloCrypto {
       const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ciphertext);
       return new TextDecoder().decode(decrypted);
     } catch (e) {
-      // Falha ao decriptar ou nÃ£o Ã© base64 real
+      // Falha ao decriptar ou não é base64 real
       return base64Payload;
     }
   }
@@ -68,7 +68,7 @@ class ApolloCrypto {
 // Banco de Dados Offline Persistente - IndexedDB (Etapa 8 - ApolloDirectorDB)
 class ApolloDirectorDB {
   static dbName = 'apollo_pocket_director_db';
-  static version = 2; // ETAPA 52: Upgrade para suportar sessÃµes
+  static version = 2; // ETAPA 52: Upgrade para suportar sessões
   static db = null;
 
   static async open() {
@@ -83,22 +83,22 @@ class ApolloDirectorDB {
       request.onupgradeneeded = (e) => {
         const db = e.target.result;
         
-        // Loja de configuraÃ§Ãµes e buffers
+        // Loja de configurações e buffers
         if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
         if (!db.objectStoreNames.contains('offline_buffer')) db.createObjectStore('offline_buffer', { keyPath: 'id', autoIncrement: true });
 
-        // Nova loja de SessÃµes (MÃºltiplos Chats)
+        // Nova loja de Sessões (Múltiplos Chats)
         if (!db.objectStoreNames.contains('sessions')) {
           db.createObjectStore('sessions', { keyPath: 'id' });
         }
 
-        // HistÃ³rico de mensagens
+        // Histórico de mensagens
         if (!db.objectStoreNames.contains('history')) {
           const store = db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
           store.createIndex('timestamp', 'timestamp', { unique: false });
           store.createIndex('session_id', 'session_id', { unique: false });
         } else {
-          // AtualizaÃ§Ã£o de versÃ£o 1 para 2
+          // Atualização de versão 1 para 2
           const store = e.target.transaction.objectStore('history');
           if (!store.indexNames.contains('session_id')) {
             store.createIndex('session_id', 'session_id', { unique: false });
@@ -108,7 +108,7 @@ class ApolloDirectorDB {
     });
   }
 
-  // ETAPA 52 e 53: GestÃ£o de SessÃµes
+  // ETAPA 52 e 53: Gestão de Sessões
   static async saveSession(sessionObj) {
     try {
       const db = await this.open();
@@ -144,7 +144,7 @@ class ApolloDirectorDB {
       const store = tx.objectStore('history');
       store.add({ session_id, role, text: encryptedText, timestamp: Date.now() });
       
-      // Atualizar tÃ­tulo/tempo da sessÃ£o
+      // Atualizar título/tempo da sessão
       const summary = text.substring(0, 30) + (text.length > 30 ? '...' : '');
       const sTx = db.transaction('sessions', 'readwrite');
       const sStore = sTx.objectStore('sessions');
@@ -152,10 +152,10 @@ class ApolloDirectorDB {
       sReq.onsuccess = () => {
         let session = sReq.result;
         if (!session) {
-          session = { id: session_id, title: role === 'user' ? summary : 'Nova SessÃ£o', updated_at: Date.now() };
+          session = { id: session_id, title: role === 'user' ? summary : 'Nova Sessão', updated_at: Date.now() };
         } else {
           session.updated_at = Date.now();
-          if (session.title === 'Nova SessÃ£o' && role === 'user') {
+          if (session.title === 'Nova Sessão' && role === 'user') {
             session.title = summary;
           }
         }
@@ -187,7 +187,7 @@ class ApolloDirectorDB {
         req.onerror = () => resolve([]);
       });
     } catch(err) {
-      console.warn('Erro ao ler histÃ³rico do IndexedDB:', err);
+      console.warn('Erro ao ler histórico do IndexedDB:', err);
       return [];
     }
   }
@@ -239,11 +239,11 @@ class PocketDirectorApp {
     // Web Speech API Native STT (Zero-Delay Streaming) & Etapa 14 Fallback Engine
     this.recognition = null;
     this.isSpeechRecognitionActive = false;
-    this.sttMode = 'webspeech'; // ZERANDO O DELAY: Usando Web Speech API como motor primÃ¡rio
+    this.sttMode = 'webspeech'; // ZERANDO O DELAY: Usando Web Speech API como motor primário
     this.ttsVolume = 1.0;
     
     // VAD & State
-    this.isListeningActive = false; // AGORA COMEÃ‡A DESLIGADO (Text-Mode padrÃ£o)
+    this.isListeningActive = false; // AGORA COMEÇA DESLIGADO (Text-Mode padrão)
     this.silenceThreshold = 0.02; // Sensibilidade do microfone
 
     // Audio Playback Queue
@@ -279,7 +279,7 @@ class PocketDirectorApp {
     this.drawerInput = document.getElementById('drawerInput');
     this.btnSendText = document.getElementById('btnSendText');
 
-    // ETAPA 161: VariÃ¡veis de VisÃ£o
+    // ETAPA 161: Variáveis de Visão
     this.btnToggleVision = document.getElementById('btnToggleVision');
     this.visionIcon = document.getElementById('visionIcon');
     this.cameraPreview = document.getElementById('cameraPreview');
@@ -359,7 +359,7 @@ class PocketDirectorApp {
     this.ttsVoice = localStorage.getItem('ttsVoice') || 'pt-BR-AntonioNeural';
     this.voicePillsContainer = document.getElementById('voicePillsContainer');
     
-    // Etapa 12: Retries Exponenciais Silenciosos & Fila de ReconexÃ£o no WebSocket
+    // Etapa 12: Retries Exponenciais Silenciosos & Fila de Reconexão no WebSocket
     this.wsReconnectAttempt = 0;
     this.wsMaxReconnectDelay = 30000;
     this.wsBaseDelay = 1000;
@@ -376,7 +376,7 @@ class PocketDirectorApp {
       });
     }
 
-    // ETAPA 52: Sidebar e MÃºltiplos Chats
+    // ETAPA 52: Sidebar e Múltiplos Chats
     this.currentSessionId = null;
     this.chatSidebar = document.getElementById('chatSidebar');
     this.btnOpenSidebar = document.getElementById('btnOpenSidebar');
@@ -384,10 +384,10 @@ class PocketDirectorApp {
     this.btnNewChat = document.getElementById('btnNewChat');
     this.chatHistoryList = document.getElementById('chatHistoryList');
 
-    // ETAPA 173: VariÃ¡veis de NotificaÃ§Ã£o
+    // ETAPA 173: Variáveis de Notificação
     this.notificationsEnabled = false;
 
-    // ConexÃµes de Rede do Celular (Fase IX e X)
+    // Conexões de Rede do Celular (Fase IX e X)
     this.isMobilePolling = false;
 
     // Etapa 182: Interceptar o fluxo de boot para o Cofre
@@ -412,7 +412,7 @@ class PocketDirectorApp {
     this.setupEventListeners();
     this.setupVoicePills();
     
-    // Etapa 183 & 184: Carteira de Cristais Offline e ReconciliaÃ§Ã£o
+    // Etapa 183 & 184: Carteira de Cristais Offline e Reconciliação
     await this.syncOfflineCrystals();
 
     this.connectWebSocket();
@@ -426,19 +426,19 @@ class PocketDirectorApp {
     this.setupSidebarGestures(); // ETAPA 67
     this.initNetworkTopology();
 
-    // Etapa 173: Inicializar NotificaÃ§Ãµes
+    // Etapa 173: Inicializar Notificações
     this.initNotifications();
     this.startBackgroundDaemon();
   }
 
-  // --- ETAPA 171 e 172: O GUARDIÃƒO DE BOLSO (DAEMON) ---
+  // --- ETAPA 171 e 172: O GUARDIÃO DE BOLSO (DAEMON) ---
   startBackgroundDaemon() {
-    console.log('ðŸ›¡ï¸ Iniciando Daemon do Apollo Pocket Director em Background...');
+    console.log('🛡 Iniciando Daemon do Apollo Pocket Director em Background...');
     // Roda a cada 60 segundos (pode ser ajustado)
     setInterval(async () => {
       if (!this.notificationsEnabled) return;
       try {
-        // Checar RenderizaÃ§Ã£o do Maestro (8080)
+        // Checar Renderização do Maestro (8080)
         const maestroRes = await fetch('http://localhost:8080/api/mobile/render/status').catch(() => null);
         if (maestroRes && maestroRes.ok) {
           const maestroData = await maestroRes.json();
@@ -446,7 +446,7 @@ class PocketDirectorApp {
           if (maestroData.progress === 100) {
             statusText = "Maestro: Ocioso";
             if (!this._notifiedRenderDone) {
-              this.fireLocalNotification("VÃ­deo Pronto! ðŸŽ¬", "O Maestro terminou de renderizar seu vÃ­deo no PC.");
+              this.fireLocalNotification("Vídeo Pronto! 🎬", "O Maestro terminou de renderizar seu vídeo no PC.");
               this._notifiedRenderDone = true;
             }
           } else {
@@ -460,19 +460,19 @@ class PocketDirectorApp {
         // Checar AutoBlog (8098)
         const autoBlogRes = await fetch('http://localhost:8098/api/v1/publish-trigger', { method: 'OPTIONS' }).catch(() => null);
         if (autoBlogRes && autoBlogRes.ok) {
-          this.updateWidgetData("apollo_crystals", "Cristais: ðŸ’Ž 99+");
+          this.updateWidgetData("apollo_crystals", "Cristais: 💎 99+");
           if (!this._notifiedAutoBlog) {
-            this.fireLocalNotification("AutoBlog: Novo Post!", "Um novo roteiro sobre GTA 6 aguarda sua aprovaÃ§Ã£o biomÃ©trica.", { postId: "1234" });
+            this.fireLocalNotification("AutoBlog: Novo Post!", "Um novo roteiro sobre GTA 6 aguarda sua aprovação biométrica.", { postId: "1234" });
             this._notifiedAutoBlog = true;
           }
         } else {
-          this.updateWidgetData("apollo_crystals", "Cristais: ðŸ’Ž 12");
+          this.updateWidgetData("apollo_crystals", "Cristais: 💎 12");
           this._notifiedAutoBlog = false; // reseta
         }
 
       } catch (e) {
-        console.log('Daemon Background: Servidores inacessÃ­veis no momento.');
-        this.updateWidgetData("apollo_status", "Maestro: InacessÃ­vel");
+        console.log('Daemon Background: Servidores inacessíveis no momento.');
+        this.updateWidgetData("apollo_status", "Maestro: Inacessível");
       }
     }, 60000);
   }
@@ -487,7 +487,7 @@ class PocketDirectorApp {
     }
   }
 
-  // ETAPA 173: Solicitar PermissÃµes e Inicializar NotificaÃ§Ãµes Locais
+  // ETAPA 173: Solicitar Permissões e Inicializar Notificações Locais
   async renderSidebarSessions() {
     const sessions = await ApolloDirectorDB.getSessions();
     this.chatHistoryList.innerHTML = '';
@@ -517,11 +517,11 @@ class PocketDirectorApp {
     welcome.className = 'card assistant-msg';
     welcome.innerHTML = `
       <div class="card-header">
-        <span class="card-tag">ðŸ‘‘ DIRETOR DE BOLSO (GPT-5)</span>
+        <span class="card-tag">👑 DIRETOR DE BOLSO (GPT-5)</span>
         <span>Agora</span>
       </div>
       <div class="card-content">
-        Nova SessÃ£o iniciada. Como posso ajudar?
+        Nova Sessão iniciada. Como posso ajudar?
       </div>
     `;
     this.feedSection.appendChild(welcome);
@@ -530,7 +530,7 @@ class PocketDirectorApp {
     this.chatSidebar.classList.remove('open');
   }
 
-  // ETAPA 52: Carregar uma sessÃ£o especÃ­fica
+  // ETAPA 52: Carregar uma sessão específica
   async loadSession(session_id) {
     this.currentSessionId = session_id;
     this.feedSection.innerHTML = '';
@@ -548,7 +548,7 @@ class PocketDirectorApp {
     await this.renderSidebarSessions();
   }
 
-  // Etapa 8: Carrega histÃ³rico local do IndexedDB e configuraÃ§Ãµes salvas
+  // Etapa 8: Carrega histórico local do IndexedDB e configurações salvas
   async loadOfflineHistory() {
     try {
       const savedVol = await ApolloDirectorDB.getSetting('ttsVolume', null);
@@ -563,7 +563,7 @@ class PocketDirectorApp {
       }
       this.syncActiveVoicePill(this.ttsVoice);
 
-      // Carregar a Ãºltima sessÃ£o ativa
+      // Carregar a última sessão ativa
       const sessions = await ApolloDirectorDB.getSessions();
       if (sessions.length > 0) {
         this.currentSessionId = sessions[0].id;
@@ -572,19 +572,19 @@ class PocketDirectorApp {
         await this.createNewSession();
       }
     } catch(e) {
-      console.warn('Erro ao carregar histÃ³rico do IndexedDB:', e);
+      console.warn('Erro ao carregar histórico do IndexedDB:', e);
     }
   }
 
   // --- ETAPA 186: Anti-Root Mock ---
   async checkEnvironmentIntegrity() {
-    // Simulamos a verificaÃ§Ã£o de dispositivo seguro. 
-    // Em produÃ§Ã£o, isso usaria @capacitor-community/device ou rootBeer.
+    // Simulamos a verificação de dispositivo seguro. 
+    // Em produção, isso usaria @capacitor-community/device ou rootBeer.
     if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-      const isEmulator = true; // Hardcoded para permitir os testes do usuÃ¡rio no PC
+      const isEmulator = true; // Hardcoded para permitir os testes do usuário no PC
       if (!isEmulator) {
         // Se fosse um celular real com root, o app fecharia
-        alert("ðŸ”’ AVISO DE SEGURANÃ‡A: Ambiente inseguro (Root) detectado. O Apollo serÃ¡ encerrado.");
+        alert("🔒 AVISO DE SEGURANÇA: Ambiente inseguro (Root) detectado. O Apollo será encerrado.");
         window.Capacitor.Plugins.App.exitApp();
       }
     }
@@ -600,18 +600,18 @@ class PocketDirectorApp {
         // Criptografa antes de salvar offline
         const encrypted = await ApolloCrypto.encryptText(JSON.stringify(data));
         await ApolloDirectorDB.saveSetting('offline_crystals', encrypted);
-        this.updateWidgetData("apollo_crystals", `Cristais: ðŸ’Ž ${data.balance}`);
-        console.log("ðŸ’Ž Cristais sincronizados com o Maestro.");
+        this.updateWidgetData("apollo_crystals", `Cristais: 💎 ${data.balance}`);
+        console.log("💎 Cristais sincronizados com o Maestro.");
       }
     } catch (e) {
-      console.warn("âš ï¸ Maestro Offline. Carregando Carteira Offline Criptografada...");
+      console.warn("⚠ Maestro Offline. Carregando Carteira Offline Criptografada...");
       const encrypted = await ApolloDirectorDB.getSetting('offline_crystals');
       if (encrypted) {
         try {
           const decrypted = await ApolloCrypto.decryptText(encrypted);
           const data = JSON.parse(decrypted);
-          this.updateWidgetData("apollo_crystals", `Cristais: ðŸ’Ž ${data.balance} (Offline)`);
-          console.log("ðŸ’Ž Carteira Offline carregada com sucesso.");
+          this.updateWidgetData("apollo_crystals", `Cristais: 💎 ${data.balance} (Offline)`);
+          console.log("💎 Carteira Offline carregada com sucesso.");
         } catch (decErr) {
           console.error("Falha ao decriptar a carteira offline.", decErr);
         }
@@ -619,7 +619,7 @@ class PocketDirectorApp {
     }
   }
 
-  // Ativa Microfone e Ãudio no primeiro toque do usuÃ¡rio
+  // Ativa Microfone e udio no primeiro toque do usuário
   async activateAudioAndMic() {
     if (!this.audioUnlocked) {
       this.audioUnlocked = true;
@@ -636,7 +636,7 @@ class PocketDirectorApp {
     }
   }
 
-  // Verifica status da permissÃ£o na API de permissÃµes
+  // Verifica status da permissão na API de permissões
   async checkPermissionStatus() {
     if (navigator.permissions && navigator.permissions.query) {
       try {
@@ -688,7 +688,7 @@ class PocketDirectorApp {
         this.audioInputSelect.appendChild(opt);
       });
     } catch (err) {
-      console.warn('Erro ao listar dispositivos de Ã¡udio:', err);
+      console.warn('Erro ao listar dispositivos de áudio:', err);
     }
   }
 
@@ -696,7 +696,7 @@ class PocketDirectorApp {
   async initMicrophone() {
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.warn('getUserMedia nÃ£o suportado neste ambiente.');
+        console.warn('getUserMedia não suportado neste ambiente.');
         return;
       }
 
@@ -735,7 +735,7 @@ class PocketDirectorApp {
 
       this.micInitialized = true;
       this.setOrbState('listening');
-      console.log('ðŸŽ™ï¸ Microfone e Analisador de Ãudio conectados com sucesso.');
+      console.log('🎙 Microfone e Analisador de udio conectados com sucesso.');
       this.populateAudioDevices();
     } catch (err) {
       console.warn('Aviso ao acessar microfone via getUserMedia:', err);
@@ -743,23 +743,23 @@ class PocketDirectorApp {
     }
   }
 
-  // Sistema de DetecÃ§Ã£o de Atividade de Voz (VAD) ContÃ­nuo para Live Audio Mode
+  // Sistema de Detecção de Atividade de Voz (VAD) Contínuo para Live Audio Mode
   initVAD() {
     this.isSpeakingVAD = false;
     this.silenceStartVAD = 0;
     this.vadThreshold = 10; // Threshold adaptativo
-    this.silenceDelay = 1500; // ms de silÃªncio para acionar o envio
+    this.silenceDelay = 1500; // ms de silêncio para acionar o envio
     this.vadMediaRecorder = null;
     this.vadAudioChunks = [];
     
-    // Fallback caso nÃ£o possamos usar MediaRecorder
+    // Fallback caso não possamos usar MediaRecorder
     if (!window.MediaRecorder) {
-        console.warn('MediaRecorder nÃ£o suportado.');
+        console.warn('MediaRecorder não suportado.');
         return;
     }
 
     setInterval(() => {
-      // Verifica se estÃ¡ apto a gravar (Mic Ativo e nÃ£o processando)
+      // Verifica se está apto a gravar (Mic Ativo e não processando)
       if (this.isProcessingLLM || !this.isListeningActive || !this.analyser || !this.mediaStream) return;
 
       const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
@@ -775,7 +775,7 @@ class PocketDirectorApp {
       if (isSpeakingNow) {
         if (!this.isSpeakingVAD) {
           this.isSpeakingVAD = true;
-          this.setOrbState('thinking'); // Orbe reage Ã  voz
+          this.setOrbState('thinking'); // Orbe reage à voz
           
           if (!this.vadMediaRecorder || this.vadMediaRecorder.state === 'inactive') {
             this.vadAudioChunks = [];
@@ -808,7 +808,7 @@ class PocketDirectorApp {
     }, 100);
   }
 
-  // ETAPA 112/114/115 e 142 (Integridade): Verificador de AtualizaÃ§Ãµes OTA
+  // ETAPA 112/114/115 e 142 (Integridade): Verificador de Atualizações OTA
   async checkForUpdates(manual = false) {
     try {
       const res = await fetch(`${API_BASE_URL}/api/app/version`);
@@ -819,20 +819,20 @@ class PocketDirectorApp {
       const localHash = localStorage.getItem('appHash') || '';
 
       if (serverVersion !== localVersion || (serverHash && serverHash !== localHash)) {
-        this.showToast(`OTA: Nova versÃ£o ${serverVersion} encontrada! Validando integridade...`, 'warn');
+        this.showToast(`OTA: Nova versão ${serverVersion} encontrada! Validando integridade...`, 'warn');
         
-        // Simula o download e verificaÃ§Ã£o de SHA256 do bundle OTA (Etapa 142)
+        // Simula o download e verificação de SHA256 do bundle OTA (Etapa 142)
         setTimeout(() => {
           if (serverHash) {
             console.log(`[OTA] Hash validado: ${serverHash}. Bundle seguro.`);
             localStorage.setItem('appHash', serverHash);
           }
           localStorage.setItem('appVersion', serverVersion);
-          this.showToast('AtualizaÃ§Ã£o Segura instalada. Reiniciando...', 'success');
+          this.showToast('Atualização Segura instalada. Reiniciando...', 'success');
           setTimeout(() => window.location.reload(true), 1000);
         }, 2000);
       } else if (manual) {
-        this.showToast(`App jÃ¡ estÃ¡ na versÃ£o mais recente (${localVersion}) e Ã­ntegro.`, 'info');
+        this.showToast(`App já está na versão mais recente (${localVersion}) e íntegro.`, 'info');
       }
     } catch (err) {
       console.error("Erro ao verificar OTA:", err);
@@ -841,11 +841,11 @@ class PocketDirectorApp {
     }
   }
 
-  // ETAPA 143: ExportaÃ§Ã£o de Backup Local do Banco de Dados IndexDB
+  // ETAPA 143: Exportação de Backup Local do Banco de Dados IndexDB
   async exportDatabaseBackup() {
     try {
-      // ImplementaÃ§Ã£o de exportaÃ§Ã£o simulada
-      console.log('ðŸ’¾ Iniciando exportaÃ§Ã£o de backup...');
+      // Implementação de exportação simulada
+      console.log('💾 Iniciando exportação de backup...');
       const data = { timestamp: Date.now(), localData: '...' };
       const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -860,17 +860,17 @@ class PocketDirectorApp {
     }
   }
 
-  // ETAPA 88 e 89: Iniciar WebRTC ou Fallback AutomÃ¡tico de STT para Web Speech API Nativa
-  activateWebSpeechFallback(reason = 'Groq Whisper STT indisponÃ­vel') {
-    if (this.sttMode === 'webspeech') return; // JÃ¡ estÃ¡ no fallback
+  // ETAPA 88 e 89: Iniciar WebRTC ou Fallback Automático de STT para Web Speech API Nativa
+  activateWebSpeechFallback(reason = 'Groq Whisper STT indisponível') {
+    if (this.sttMode === 'webspeech') return; // Já está no fallback
     this.sttMode = 'webspeech';
-    console.warn(`âš¡ STT FALLBACK ATIVADO: ${reason}. Alternando para Web Speech API Nativa.`);
+    console.warn(`⚡ STT FALLBACK ATIVADO: ${reason}. Alternando para Web Speech API Nativa.`);
     this.triggerHaptic('bargein');
     
     if (this.sttTestBox) {
-      this.sttTestBox.textContent = `âš¡ STT Fallback Ativo: Web Speech API (${reason})`;
+      this.sttTestBox.textContent = `⚡ STT Fallback Ativo: Web Speech API (${reason})`;
     }
-    this.liveSubtitle.textContent = 'âš¡ STT Fallback: Usando Reconhecimento Nativo';
+    this.liveSubtitle.textContent = '⚡ STT Fallback: Usando Reconhecimento Nativo';
     this.setOrbState('listening', 'STT Fallback (Web Speech)');
 
     if (this.recognition && !this.isSpeechRecognitionActive) {
@@ -887,12 +887,12 @@ class PocketDirectorApp {
 
   restoreWhisperSTT() {
     if (this.sttMode === 'whisper') return;
-    console.log('ðŸ”„ Tentando restaurar modo primÃ¡rio STT: Groq Whisper Cloud...');
+    console.log('🔄 Tentando restaurar modo primário STT: Groq Whisper Cloud...');
     this.sttMode = 'whisper';
     if (this.sttTestBox) {
-      this.sttTestBox.textContent = 'ðŸŽ™ï¸ Groq Whisper STT Restaurado (PrimÃ¡rio)';
+      this.sttTestBox.textContent = '🎙 Groq Whisper STT Restaurado (Primário)';
     }
-    this.liveSubtitle.textContent = 'ðŸŽ™ï¸ Groq Whisper STT Restaurado';
+    this.liveSubtitle.textContent = '🎙 Groq Whisper STT Restaurado';
     this.triggerHaptic('success');
   }
 
@@ -917,14 +917,14 @@ class PocketDirectorApp {
         energy = (sum / dataArray.length) / 255;
       }
 
-      // Atualiza VU-Meter no Modal de DiagnÃ³stico
+      // Atualiza VU-Meter no Modal de Diagnóstico
       if (this.vuMeterFill && this.vuValueText) {
         const percent = Math.min(Math.round(energy * 250), 100);
         this.vuMeterFill.style.width = `${percent}%`;
-        this.vuValueText.textContent = percent > 5 ? `${percent}% (Voz Detectada)` : `${percent}% (SilÃªncio)`;
+        this.vuValueText.textContent = percent > 5 ? `${percent}% (Voz Detectada)` : `${percent}% (Silêncio)`;
       }
 
-      // OtimizaÃ§Ã£o Etapa 6: 60 FPS VU-Meter Cyberpunk Reativo no Palco Principal (Com Pico e DecibÃ©is)
+      // Otimização Etapa 6: 60 FPS VU-Meter Cyberpunk Reativo no Palco Principal (Com Pico e Decibéis)
       if (this.liveVuFill) {
         this.vuSmoothEnergy = (this.vuSmoothEnergy || 0) * 0.82 + energy * 0.18;
         const livePercent = Math.min(Math.round(this.vuSmoothEnergy * 280), 100);
@@ -941,7 +941,7 @@ class PocketDirectorApp {
         }
         if (this.liveVuDbText) {
           const db = livePercent <= 1 ? -60 : Math.round(20 * Math.log10(livePercent / 100));
-          this.liveVuDbText.textContent = db <= -60 ? '-âˆž dB' : `${db} dB`;
+          this.liveVuDbText.textContent = db <= -60 ? '-∞ dB' : `${db} dB`;
           this.liveVuDbText.style.color = db > -3 ? '#ef4444' : (db > -12 ? '#f59e0b' : '#10b981');
         }
       }
@@ -949,7 +949,7 @@ class PocketDirectorApp {
       // Desenha ondas no Canvas
       this.drawVisualizer(dataArray, energy);
 
-      // Pulsa a Orbe de acordo com a voz real do usuÃ¡rio
+      // Pulsa a Orbe de acordo com a voz real do usuário
       if (energy > this.silenceThreshold && this.orbCore) {
         const scale = 1 + Math.min(energy * 0.45, 0.35);
         this.orbCore.style.transform = `scale(${scale})`;
@@ -999,7 +999,7 @@ class PocketDirectorApp {
     ctx.stroke();
   }
 
-  // Sistema VAD Universal com Suporte a Barge-In (InterrupÃ§Ã£o InstantÃ¢nea - Etapa 7)
+  // Sistema VAD Universal com Suporte a Barge-In (Interrupção Instantânea - Etapa 7)
   handleVAD(energy) {
     if (!this.isListeningActive || !this.mediaStream || this.isRecordingTest) {
       if (this.vadRecording && this.vadRecorder) {
@@ -1010,7 +1010,7 @@ class PocketDirectorApp {
       return;
     }
 
-    // OtimizaÃ§Ã£o Etapa 7: Limiar de voz dinÃ¢mico (um pouco maior quando a IA estÃ¡ falando para evitar eco de alto-falante)
+    // Otimização Etapa 7: Limiar de voz dinâmico (um pouco maior quando a IA está falando para evitar eco de alto-falante)
     const threshold = this.isPlayingAudio 
       ? (this.silenceThreshold * 2.5 || 0.10) 
       : (this.silenceThreshold || 0.04);
@@ -1018,10 +1018,10 @@ class PocketDirectorApp {
     if (energy > threshold) {
       this.lastSpeechDetectedTime = Date.now();
 
-      // BARGE-IN UNIVERSAL: Se a IA estiver falando e o usuÃ¡rio comeÃ§ar a falar no microfone (Opera, Redmi ou Chrome)
+      // BARGE-IN UNIVERSAL: Se a IA estiver falando e o usuário começar a falar no microfone (Opera, Redmi ou Chrome)
       if (this.isPlayingAudio && !this.bargeInTriggered) {
         this.bargeInTriggered = true;
-        console.log('âš¡ Barge-In [Etapa 7]: Voz do usuÃ¡rio detectada durante fala da IA! Interrompendo Ã¡udio imediatamente.');
+        console.log('⚡ Barge-In [Etapa 7]: Voz do usuário detectada durante fala da IA! Interrompendo áudio imediatamente.');
         this.stopAllAudioPlayback();
         this.sendToColmeia(JSON.stringify({ type: 'interrupt' }));
         this.triggerHaptic('bargein');
@@ -1039,7 +1039,7 @@ class PocketDirectorApp {
             if (e.data && e.data.size > 0) this.vadChunks.push(e.data);
           };
           this.vadRecorder.start(100);
-          console.log('ðŸŽ™ï¸ VAD: DetecÃ§Ã£o de voz ativa (Gravando fala do usuÃ¡rio...)');
+          console.log('🎙 VAD: Detecção de voz ativa (Gravando fala do usuário...)');
           this.triggerHaptic('start');
         } catch(err) {
           console.warn('Erro ao iniciar VAD MediaRecorder:', err);
@@ -1047,7 +1047,7 @@ class PocketDirectorApp {
         }
       }
     } else if (this.vadRecording && Date.now() - (this.lastSpeechDetectedTime || 0) > 680) {
-      // SilÃªncio detectado (680ms)
+      // Silêncio detectado (680ms)
       this.vadRecording = false;
       this.bargeInTriggered = false;
       try {
@@ -1059,24 +1059,24 @@ class PocketDirectorApp {
 
             if (blob.size > 2048) {
               if (this.sttMode === 'webspeech') {
-                console.log('âš¡ Modo STT Fallback Ativo (Web Speech API) â€” ignorando envio de Ã¡udio para Groq Whisper.');
+                console.log('⚡ Modo STT Fallback Ativo (Web Speech API) — ignorando envio de áudio para Groq Whisper.');
               } else if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                 if (Date.now() - (this.lastSpeechRecognitionTime || 0) > 1200) {
-                  console.log(`ðŸ—£ï¸ VAD [Etapa 7]: Enviando fala (${blob.size} bytes) para Groq Whisper STT...`);
-                  if (this.sttTestBox) this.sttTestBox.textContent = `ðŸ—£ï¸ Ãudio enviado (${Math.round(blob.size/1024)} KB)...`;
-                  this.liveSubtitle.textContent = 'ðŸŽ™ï¸ Transcrevendo voz...';
+                  console.log(`🗣 VAD [Etapa 7]: Enviando fala (${blob.size} bytes) para Groq Whisper STT...`);
+                  if (this.sttTestBox) this.sttTestBox.textContent = `🗣 udio enviado (${Math.round(blob.size/1024)} KB)...`;
+                  this.liveSubtitle.textContent = '🎙 Transcrevendo voz...';
                   try {
                     const buffer = await blob.arrayBuffer();
                     this.sendToColmeia(buffer);
                     this.triggerHaptic('stop');
                   } catch(e) {
-                    console.error('Erro ao enviar buffer de Ã¡udio:', e);
-                    this.activateWebSpeechFallback('Erro no envio do buffer de Ã¡udio');
+                    console.error('Erro ao enviar buffer de áudio:', e);
+                    this.activateWebSpeechFallback('Erro no envio do buffer de áudio');
                   }
                 }
               } else {
-                console.warn('âš ï¸ ConexÃ£o WebSocket offline ou instÃ¡vel. Ativando fallback STT nativo (Etapa 14)...');
-                this.activateWebSpeechFallback('ConexÃ£o WebSocket indisponÃ­vel (4G/Wi-Fi instÃ¡vel)');
+                console.warn('⚠ Conexão WebSocket offline ou instável. Ativando fallback STT nativo (Etapa 14)...');
+                this.activateWebSpeechFallback('Conexão WebSocket indisponível (4G/Wi-Fi instável)');
               }
             }
           };
@@ -1089,13 +1089,13 @@ class PocketDirectorApp {
     }
   }
 
-  // Teste de GravaÃ§Ã£o e ReproduÃ§Ã£o de Hardware (Loopback de 3 segundos)
+  // Teste de Gravação e Reprodução de Hardware (Loopback de 3 segundos)
   async startHardwareLoopbackTest() {
     if (this.isRecordingTest) return;
     await this.activateAudioAndMic();
 
     if (!this.mediaStream) {
-      this.testRecordStatus.textContent = 'âŒ Erro: Microfone nÃ£o disponÃ­vel. Clique em "Solicitar PermissÃ£o" acima.';
+      this.testRecordStatus.textContent = ' Erro: Microfone não disponível. Clique em "Solicitar Permissão" acima.';
       return;
     }
 
@@ -1114,24 +1114,24 @@ class PocketDirectorApp {
         const audioUrl = URL.createObjectURL(blob);
         const audio = new Audio(audioUrl);
 
-        this.testRecordStatus.textContent = 'ðŸ”Š Reproduzindo seu Ã¡udio gravado agora...';
+        this.testRecordStatus.textContent = '🔊 Reproduzindo seu áudio gravado agora...';
         audio.play().then(() => {
           audio.onended = () => {
-            this.testRecordStatus.textContent = 'âœ… Teste concluÃ­do! Se vocÃª ouviu sua voz, o microfone estÃ¡ perfeito.';
+            this.testRecordStatus.textContent = '✅ Teste concluído! Se você ouviu sua voz, o microfone está perfeito.';
           };
         }).catch(err => {
-          this.testRecordStatus.textContent = 'âŒ Erro ao reproduzir o teste: ' + err.message;
+          this.testRecordStatus.textContent = ' Erro ao reproduzir o teste: ' + err.message;
         });
       };
 
       this.mediaRecorder.start();
       let countdown = 3;
-      this.testRecordStatus.textContent = `ðŸ”´ Gravando teste de voz... Fale algo! (${countdown}s)`;
+      this.testRecordStatus.textContent = `🔴 Gravando teste de voz... Fale algo! (${countdown}s)`;
 
       const timer = setInterval(() => {
         countdown--;
         if (countdown > 0) {
-          this.testRecordStatus.textContent = `ðŸ”´ Gravando teste de voz... Fale algo! (${countdown}s)`;
+          this.testRecordStatus.textContent = `🔴 Gravando teste de voz... Fale algo! (${countdown}s)`;
         } else {
           clearInterval(timer);
           if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
@@ -1142,11 +1142,11 @@ class PocketDirectorApp {
 
     } catch (err) {
       this.isRecordingTest = false;
-      this.testRecordStatus.textContent = 'âŒ Erro ao gravar teste: ' + err.message;
+      this.testRecordStatus.textContent = ' Erro ao gravar teste: ' + err.message;
     }
   }
 
-  // Modo Echo Loop Ao Vivo & AnÃ¡lise em Tempo Real de RuÃ­do/Ganho (Etapa 10)
+  // Modo Echo Loop Ao Vivo & Análise em Tempo Real de Ruído/Ganho (Etapa 10)
   async toggleLiveEchoLoopTest() {
     if (this.isEchoLoopActive) {
       this.stopLiveEchoLoopTest();
@@ -1160,18 +1160,18 @@ class PocketDirectorApp {
     await this.activateAudioAndMic();
 
     if (!this.mediaStream) {
-      this.testRecordStatus.textContent = 'âŒ Erro: Microfone indisponÃ­vel. Solicite permissÃ£o acima.';
+      this.testRecordStatus.textContent = ' Erro: Microfone indisponível. Solicite permissão acima.';
       return;
     }
 
     try {
       this.isEchoLoopActive = true;
       if (this.btnTestEchoLoop) {
-        this.btnTestEchoLoop.textContent = 'â¹ï¸ Parar Echo Loop';
+        this.btnTestEchoLoop.textContent = ' Parar Echo Loop';
         this.btnTestEchoLoop.style.background = 'var(--coral-glow)';
       }
       if (this.echoLoopStatsBox) this.echoLoopStatsBox.style.display = 'block';
-      this.testRecordStatus.textContent = 'ðŸ”„ Echo Loop Ativo: Fale para ouvir sua voz com 350ms de delay e monitorar o Piso de RuÃ­do.';
+      this.testRecordStatus.textContent = '🔄 Echo Loop Ativo: Fale para ouvir sua voz com 350ms de delay e monitorar o Piso de Ruído.';
 
       if (!this.audioContext) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1184,7 +1184,7 @@ class PocketDirectorApp {
       // Conectar mic ao Echo Loop: Source -> Delay (350ms) -> Gain -> Destination
       this.echoSourceNode = this.audioContext.createMediaStreamSource(this.mediaStream);
       this.echoDelayNode = this.audioContext.createDelay(2.0);
-      this.echoDelayNode.delayTime.value = 0.35; // 350ms delay para evitar realimentaÃ§Ã£o acÃºstica imediata
+      this.echoDelayNode.delayTime.value = 0.35; // 350ms delay para evitar realimentação acústica imediata
 
       this.echoGainNode = this.audioContext.createGain();
       this.echoGainNode.gain.value = 0.95;
@@ -1198,7 +1198,7 @@ class PocketDirectorApp {
       this.echoDelayNode.connect(this.echoGainNode);
       this.echoGainNode.connect(this.audioContext.destination);
 
-      // Loop de anÃ¡lise SNR
+      // Loop de análise SNR
       const updateStats = () => {
         if (!this.isEchoLoopActive) return;
         this.echoAnalyserNode.getByteTimeDomainData(this.echoDataArray);
@@ -1229,17 +1229,17 @@ class PocketDirectorApp {
 
         if (this.echoQualityBadge) {
           if (snr >= 20 && this.echoNoiseFloorDb < -45) {
-            this.echoQualityBadge.textContent = 'âœ… RUÃDO BAIXO â€¢ GANHO Ã“TIMO';
+            this.echoQualityBadge.textContent = '✅ RUDO BAIXO • GANHO ÓTIMO';
             this.echoQualityBadge.style.color = '#10b981';
             this.echoQualityBadge.style.borderColor = '#10b981';
             this.echoQualityBadge.style.background = 'rgba(16, 185, 129, 0.2)';
           } else if (this.echoNoiseFloorDb >= -45) {
-            this.echoQualityBadge.textContent = 'âš ï¸ ALERTA: RUÃDO DE FUNDO ALTO';
+            this.echoQualityBadge.textContent = '⚠ ALERTA: RUDO DE FUNDO ALTO';
             this.echoQualityBadge.style.color = '#f59e0b';
             this.echoQualityBadge.style.borderColor = '#f59e0b';
             this.echoQualityBadge.style.background = 'rgba(245, 158, 11, 0.2)';
           } else {
-            this.echoQualityBadge.textContent = 'ðŸ”Š MICROFONE DETECTANDO FALA';
+            this.echoQualityBadge.textContent = '🔊 MICROFONE DETECTANDO FALA';
             this.echoQualityBadge.style.color = 'var(--cyan-glow)';
             this.echoQualityBadge.style.borderColor = 'var(--cyan-glow)';
             this.echoQualityBadge.style.background = 'rgba(6, 182, 212, 0.2)';
@@ -1252,7 +1252,7 @@ class PocketDirectorApp {
       updateStats();
     } catch (err) {
       console.error('Erro ao iniciar Echo Loop:', err);
-      this.testRecordStatus.textContent = 'âŒ Erro ao ativar Echo Loop: ' + err.message;
+      this.testRecordStatus.textContent = ' Erro ao ativar Echo Loop: ' + err.message;
       this.stopLiveEchoLoopTest();
     }
   }
@@ -1272,19 +1272,19 @@ class PocketDirectorApp {
     }
 
     if (this.btnTestEchoLoop) {
-      this.btnTestEchoLoop.textContent = 'ðŸ”„ Ativar Echo Loop Ao Vivo';
+      this.btnTestEchoLoop.textContent = '🔄 Ativar Echo Loop Ao Vivo';
       this.btnTestEchoLoop.style.background = '';
     }
     if (this.echoLoopStatsBox) this.echoLoopStatsBox.style.display = 'none';
-    this.testRecordStatus.textContent = 'â¹ï¸ Echo Loop encerrado.';
+    this.testRecordStatus.textContent = ' Echo Loop encerrado.';
   }
 
   // Teste de Voz TTS do Diretor
   async testDirectorTTS() {
     const voice = this.voiceSelect.value;
-    const testText = "OlÃ¡ Criador! O teste de Ã¡udio do Diretor de Bolso estÃ¡ funcionando perfeitamente!";
+    const testText = "Olá Criador! O teste de áudio do Diretor de Bolso está funcionando perfeitamente!";
     
-    this.btnTestTTS.textContent = 'â³ Sintetizando...';
+    this.btnTestTTS.textContent = ' Sintetizando...';
     try {
       const resp = await fetch(`/api/tts/test?text=${encodeURIComponent(testText)}&voice=${encodeURIComponent(voice)}`);
       if (!resp.ok) throw new Error('Falha na resposta do servidor');
@@ -1293,18 +1293,18 @@ class PocketDirectorApp {
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       
-      this.btnTestTTS.textContent = 'ðŸ”Š Tocando...';
+      this.btnTestTTS.textContent = '🔊 Tocando...';
       audio.onended = () => {
-        this.btnTestTTS.textContent = 'â–¶ï¸ Testar';
+        this.btnTestTTS.textContent = '▶ Testar';
       };
       await audio.play();
     } catch (err) {
       alert('Erro ao testar voz: ' + err.message);
-      this.btnTestTTS.textContent = 'â–¶ï¸ Testar';
+      this.btnTestTTS.textContent = '▶ Testar';
     }
   }
 
-  // Seletor RÃ¡pido de Personalidades de Voz (Etapa 11)
+  // Seletor Rápido de Personalidades de Voz (Etapa 11)
   setupVoicePills() {
     if (!this.voicePillsContainer) return;
     const pills = this.voicePillsContainer.querySelectorAll('.voice-pill');
@@ -1343,15 +1343,15 @@ class PocketDirectorApp {
 
     this.syncActiveVoicePill(voiceName);
 
-    // Envia mudanÃ§a ao backend via WebSocket (Cross-Channel / Colmeia)
+    // Envia mudança ao backend via WebSocket (Cross-Channel / Colmeia)
     this.sendToColmeia(JSON.stringify({ type: 'set_voice', voice: voiceName }));
 
     if (playPreview) {
       let previewMsg = 'Voz do Diretor ativa.';
-      if (voiceName.includes('Antonio')) previewMsg = 'AntÃ³nio Solene online, Criador.';
-      else if (voiceName.includes('Francisca')) previewMsg = 'Francisca Expressiva Ã  sua disposiÃ§Ã£o.';
-      else if (voiceName.includes('Thalita')) previewMsg = 'Thalita RÃ¡pida conectada.';
-      else if (voiceName === 'Puck') previewMsg = 'Puck estÃºdio neural ativado.';
+      if (voiceName.includes('Antonio')) previewMsg = 'António Solene online, Criador.';
+      else if (voiceName.includes('Francisca')) previewMsg = 'Francisca Expressiva à sua disposição.';
+      else if (voiceName.includes('Thalita')) previewMsg = 'Thalita Rápida conectada.';
+      else if (voiceName === 'Puck') previewMsg = 'Puck estúdio neural ativado.';
 
       try {
         const resp = await fetch(`/api/tts/test?text=${encodeURIComponent(previewMsg)}&voice=${encodeURIComponent(voiceName)}`);
@@ -1377,7 +1377,7 @@ class PocketDirectorApp {
     const wsHost = API_BASE_URL.replace(/^https?:\/\//, '');
     const wsUrl = `${wsProtocol}//${wsHost}/ws/voice`;
     
-    this.updateStatus('connecting', 'Conectando Ã  Colmeia...');
+    this.updateStatus('connecting', 'Conectando à Colmeia...');
     this.ws = new WebSocket(wsUrl);
 
     this.ws.onopen = () => {
@@ -1391,18 +1391,18 @@ class PocketDirectorApp {
       this.updateStatus('online', 'Colmeia Conectada');
       
       if (wasDisconnected) {
-        this.showToast('Reconectado Ã  Colmeia com sucesso!', 'success');
+        this.showToast('Reconectado à Colmeia com sucesso!', 'success');
       }
 
       if (this.isListeningActive) {
         this.setOrbState('listening');
       }
-      console.log('âœ… WebSocket conectado com sucesso Ã  Colmeia.');
+      console.log('✅ WebSocket conectado com sucesso à Colmeia.');
 
       // Despejo Silencioso da Fila Offline (Etapa 12)
       if (this.wsOfflineMessageQueue.length > 0) {
         this.showToast(`Sincronizando ${this.wsOfflineMessageQueue.length} mensagens pendentes...`, 'info');
-        console.log(`ðŸ“¡ [Etapa 12] Transmitindo ${this.wsOfflineMessageQueue.length} mensagens offline na reconexÃ£o...`);
+        console.log(`📡 [Etapa 12] Transmitindo ${this.wsOfflineMessageQueue.length} mensagens offline na reconexão...`);
         while (this.wsOfflineMessageQueue.length > 0) {
           const payload = this.wsOfflineMessageQueue.shift();
           try {
@@ -1417,7 +1417,7 @@ class PocketDirectorApp {
 
     this.ws.onclose = () => {
       if (this.isConnected) {
-        this.showToast('ConexÃ£o com a Colmeia perdida.', 'error');
+        this.showToast('Conexão com a Colmeia perdida.', 'error');
       }
       this.isConnected = false;
       this.setOrbState('offline');
@@ -1447,8 +1447,8 @@ class PocketDirectorApp {
     this.wsReconnectAttempt++;
 
     const seconds = (delay / 1000).toFixed(1);
-    this.updateStatus('connecting', `Offline â€¢ ReconexÃ£o em ${seconds}s`);
-    console.log(`ðŸ”„ [Etapa 12] Agendando reconexÃ£o exponencial: ${delay}ms (Tentativa ${this.wsReconnectAttempt})`);
+    this.updateStatus('connecting', `Offline • Reconexão em ${seconds}s`);
+    console.log(`🔄 [Etapa 12] Agendando reconexão exponencial: ${delay}ms (Tentativa ${this.wsReconnectAttempt})`);
 
     this.wsReconnectTimer = setTimeout(() => {
       this.connectWebSocket();
@@ -1467,7 +1467,7 @@ class PocketDirectorApp {
     }
     if (this.wsOfflineMessageQueue.length < 30) {
       this.wsOfflineMessageQueue.push(payload);
-      this.updateStatus('offline', `Offline â€¢ Msg em fila (${this.wsOfflineMessageQueue.length})`);
+      this.updateStatus('offline', `Offline • Msg em fila (${this.wsOfflineMessageQueue.length})`);
     }
     if (!this.isConnected && !this.wsReconnectTimer) {
       this.scheduleExponentialReconnect();
@@ -1509,7 +1509,7 @@ class PocketDirectorApp {
         if (data.role === 'user') {
           const txt = data.text.toLowerCase();
           if (txt.includes('verifique') && txt.includes('atualiza')) {
-            this.showToast('ðŸŽ™ï¸ Comando OTA detectado...', 'info');
+            this.showToast('🎙 Comando OTA detectado...', 'info');
             this.checkForUpdates(true);
           }
         }
@@ -1531,7 +1531,7 @@ class PocketDirectorApp {
         break;
 
       case 'interrupt_ack':
-        console.log('ðŸ›‘ InterrupÃ§Ã£o confirmada.');
+        console.log('🛑 Interrupção confirmada.');
         this.stopAllAudioPlayback();
         this.setOrbState('listening');
         break;
@@ -1555,9 +1555,9 @@ class PocketDirectorApp {
     }
   }
 
-  // Etapa 13 e 123: Motor CibernÃ©tico de Feedback TÃ¡til (Vibration API nativo via Capacitor / Fallback Haptic)
+  // Etapa 13 e 123: Motor Cibernético de Feedback Tátil (Vibration API nativo via Capacitor / Fallback Haptic)
   triggerHaptic(type = 'tap') {
-    // Se for Nativo (Capacitor), usa Haptics de alta precisÃ£o
+    // Se for Nativo (Capacitor), usa Haptics de alta precisão
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Haptics) {
       const Haptics = window.Capacitor.Plugins.Haptics;
       switch (type) {
@@ -1575,20 +1575,20 @@ class PocketDirectorApp {
     try {
       switch (type) {
         case 'start':
-          navigator.vibrate([30]); // Pulso curto e nÃ­tido para inÃ­cio de gravaÃ§Ã£o de voz
+          navigator.vibrate([30]); // Pulso curto e nítido para início de gravação de voz
           break;
         case 'stop':
-          navigator.vibrate([20, 50, 20]); // Duplo pulso cibernÃ©tico ao enviar fala para transcriÃ§Ã£o
+          navigator.vibrate([20, 50, 20]); // Duplo pulso cibernético ao enviar fala para transcrição
           break;
         case 'bargein':
-          navigator.vibrate([50, 30, 50]); // VibraÃ§Ã£o tripla de alerta ao interromper a fala da IA
+          navigator.vibrate([50, 30, 50]); // Vibração tripla de alerta ao interromper a fala da IA
           break;
         case 'success':
-          navigator.vibrate([35, 40, 70]); // PadrÃ£o vibratÃ³rio suave ao iniciar reproduÃ§Ã£o da voz da IA
+          navigator.vibrate([35, 40, 70]); // Padrão vibratório suave ao iniciar reprodução da voz da IA
           break;
         case 'tap':
         default:
-          navigator.vibrate([15]); // Micro-vibraÃ§Ã£o hÃ¡tica em toques da interface
+          navigator.vibrate([15]); // Micro-vibração hática em toques da interface
           break;
       }
     } catch (e) {
@@ -1606,7 +1606,7 @@ class PocketDirectorApp {
 
     switch (state) {
       case 'listening':
-        this.stateText.textContent = this.micInitialized ? 'Pronto â€¢ Escuta ContÃ­nua' : 'Toque na Orbe para Iniciar';
+        this.stateText.textContent = this.micInitialized ? 'Pronto • Escuta Contínua' : 'Toque na Orbe para Iniciar';
         break;
       case 'thinking':
         this.stateText.textContent = 'Lightning AI Pensando...';
@@ -1624,7 +1624,7 @@ class PocketDirectorApp {
         this.stateText.textContent = 'Microfone Mutado (Toque para Ativar)';
         break;
       case 'offline':
-        this.stateText.textContent = 'Offline â€¢ Reconectando...';
+        this.stateText.textContent = 'Offline • Reconectando...';
         break;
     }
   }
@@ -1663,12 +1663,12 @@ class PocketDirectorApp {
     };
 
     this.currentAudioElement.onerror = (err) => {
-      console.error('Erro na reproduÃ§Ã£o do Ã¡udio:', err);
+      console.error('Erro na reprodução do áudio:', err);
       this.playNextAudioChunk();
     };
 
     this.currentAudioElement.play().catch(e => {
-      console.warn('Autoplay bloqueado pelo navegador. Toque na tela para liberar o Ã¡udio:', e);
+      console.warn('Autoplay bloqueado pelo navegador. Toque na tela para liberar o áudio:', e);
       this.playNextAudioChunk();
     });
   }
@@ -1696,7 +1696,7 @@ class PocketDirectorApp {
       card.className = 'card user-msg';
       card.innerHTML = `
         <div class="card-header">
-          <span>ðŸ‘‘ VOCÃŠ (CRIADOR)</span>
+          <span>👑 VOCÊ (CRIADOR)</span>
           <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
         </div>
         <div class="card-content">${this.escapeHtml(text)}</div>
@@ -1713,12 +1713,12 @@ class PocketDirectorApp {
     this.currentAssistantCard.className = 'card assistant-msg';
     this.currentAssistantCard.innerHTML = `
       <div class="card-header">
-        <span class="card-tag">ðŸ¤– DIRETOR DE BOLSO (GPT-5)</span>
+        <span class="card-tag">🤖 DIRETOR DE BOLSO (GPT-5)</span>
         <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
       </div>
       <div class="card-content markdown-body content-area"></div>
       <div class="card-actions" style="display:flex; justify-content:flex-end; margin-top:5px;">
-         <button class="btn-read-aloud" style="background:transparent; border:none; color:var(--cyan-glow); cursor:pointer; font-size:1.2rem;" title="Ler em voz alta">ðŸ”Š</button>
+         <button class="btn-read-aloud" style="background:transparent; border:none; color:var(--cyan-glow); cursor:pointer; font-size:1.2rem;" title="Ler em voz alta">🔊</button>
       </div>
     `;
     this.feedSection.appendChild(this.currentAssistantCard);
@@ -1748,7 +1748,7 @@ class PocketDirectorApp {
     }
   }
 
-  // ETAPA 56 e 57: RenderizaÃ§Ã£o de Markdown e BotÃ£o de CÃ³pia
+  // ETAPA 56 e 57: Renderização de Markdown e Botão de Cópia
   renderMarkdownToContent() {
     if (!window.marked) {
       // Fallback
@@ -1757,20 +1757,20 @@ class PocketDirectorApp {
     }
     this.currentAssistantContent.innerHTML = marked.parse(this.currentAssistantRawText);
     
-    // Adicionar botÃ£o de copiar nos blocos de cÃ³digo (Etapa 57)
+    // Adicionar botão de copiar nos blocos de código (Etapa 57)
     const codeBlocks = this.currentAssistantContent.querySelectorAll('pre');
     codeBlocks.forEach((pre) => {
-      if (pre.querySelector('.copy-code-btn')) return; // JÃ¡ adicionado
+      if (pre.querySelector('.copy-code-btn')) return; // Já adicionado
 
       pre.style.position = 'relative';
       const copyBtn = document.createElement('button');
       copyBtn.className = 'copy-code-btn';
-      copyBtn.innerHTML = 'ðŸ“‹ Copiar';
+      copyBtn.innerHTML = '📋 Copiar';
       copyBtn.onclick = () => {
         const code = pre.querySelector('code')?.innerText || pre.innerText;
         navigator.clipboard.writeText(code).then(() => {
-          copyBtn.innerHTML = 'âœ“ Copiado';
-          setTimeout(() => copyBtn.innerHTML = 'ðŸ“‹ Copiar', 2000);
+          copyBtn.innerHTML = '✓ Copiado';
+          setTimeout(() => copyBtn.innerHTML = '📋 Copiar', 2000);
         });
       };
       pre.appendChild(copyBtn);
@@ -1786,7 +1786,7 @@ class PocketDirectorApp {
       const imgUrl = res.url || '/static/placeholder.png';
       card.innerHTML = `
         <div class="card-header">
-          <span class="card-tag image">ðŸŽ¨ FLUX RENDER (MODAL)</span>
+          <span class="card-tag image">🎨 FLUX RENDER (MODAL)</span>
           <span>${res.aspect_ratio || '16:9'}</span>
         </div>
         <div class="card-content">
@@ -1800,21 +1800,21 @@ class PocketDirectorApp {
       const res = data.result || {};
       card.innerHTML = `
         <div class="card-header">
-          <span class="card-tag service-order">ðŸ“‹ ORDEM DE SERVIÃ‡O</span>
+          <span class="card-tag service-order">📋 ORDEM DE SERVIÇO</span>
           <span>${res.order_id || 'OS-NEW'}</span>
         </div>
         <div class="card-content">
           <div class="service-order-box">
             <div class="service-order-title">${this.escapeHtml(res.title || '')}</div>
-            <div class="service-order-dest">Destino: <strong>${this.escapeHtml(res.target_agent || 'MAESTRO')}</strong> â€¢ Canal: ${this.escapeHtml(res.channel || 'Geral')}</div>
-            <div style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--emerald-glow);">âœ“ Gravado no Hive Bus central</div>
+            <div class="service-order-dest">Destino: <strong>${this.escapeHtml(res.target_agent || 'MAESTRO')}</strong> • Canal: ${this.escapeHtml(res.channel || 'Geral')}</div>
+            <div style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--emerald-glow);">✓ Gravado no Hive Bus central</div>
           </div>
         </div>
       `;
     } else {
       card.innerHTML = `
         <div class="card-header">
-          <span class="card-tag">âš¡ FERRAMENTA EXECUTADA</span>
+          <span class="card-tag">⚡ FERRAMENTA EXECUTADA</span>
           <span>${toolName}</span>
         </div>
         <div class="card-content">
@@ -1832,7 +1832,7 @@ class PocketDirectorApp {
     card.className = 'card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">âš ï¸ ALERTA</span>
+        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">⚠ ALERTA</span>
       </div>
       <div class="card-content" style="color: #fda4af;">${this.escapeHtml(message)}</div>
     `;
@@ -1840,7 +1840,7 @@ class PocketDirectorApp {
     this.scrollToBottom();
   }
 
-  // ETAPA 173: Solicitar PermissÃµes e Inicializar NotificaÃ§Ãµes Locais
+  // ETAPA 173: Solicitar Permissões e Inicializar Notificações Locais
   async initNotifications() {
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
       const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
@@ -1851,9 +1851,9 @@ class PocketDirectorApp {
         }
         if (permStatus.display === 'granted') {
           this.notificationsEnabled = true;
-          this.showToast('NotificaÃ§Ãµes de Bolso Ativadas', 'success');
+          this.showToast('Notificações de Bolso Ativadas', 'success');
           
-          // Registrar AÃ§Ã£o de BotÃ£o na NotificaÃ§Ã£o (Etapa 174)
+          // Registrar Ação de Botão na Notificação (Etapa 174)
           await LocalNotifications.registerActionTypes({
             types: [
               {
@@ -1866,22 +1866,22 @@ class PocketDirectorApp {
             ]
           });
           
-          // Escutar cliques nas notificaÃ§Ãµes
+          // Escutar cliques nas notificações
           LocalNotifications.addListener('localNotificationActionPerformed', (notificationAction) => {
             if (notificationAction.actionId === 'approve') {
               this.showToast('Roteiro Aprovado pelo Push!', 'success');
-              // LÃ³gica de aprovaÃ§Ã£o biomÃ©trica via push (Simulada para a Fase X)
+              // Lógica de aprovação biométrica via push (Simulada para a Fase X)
               this.sendBiometricApproval(notificationAction.notification.extra?.postId || 'PUSH_APPROVAL');
             }
           });
         }
       } catch (err) {
-        console.warn('LocalNotifications nÃ£o suportado neste dispositivo.', err);
+        console.warn('LocalNotifications não suportado neste dispositivo.', err);
       }
     }
   }
 
-  // Dispara uma notificaÃ§Ã£o nativa no celular (Etapa 173)
+  // Dispara uma notificação nativa no celular (Etapa 173)
   async fireLocalNotification(title, body, extraData = {}) {
     if (!this.notificationsEnabled) return;
     try {
@@ -1905,7 +1905,7 @@ class PocketDirectorApp {
     }
   }
 
-  // ETAPA 42: ConexÃ£o SSE para o Terminal Ao Vivo
+  // ETAPA 42: Conexão SSE para o Terminal Ao Vivo
   connectTerminalSSE() {
     this.evtSource = new EventSource('/api/logs/stream');
     
@@ -1924,7 +1924,7 @@ class PocketDirectorApp {
       this.terminalBody.appendChild(lineEl);
       this.terminalBody.scrollTop = this.terminalBody.scrollHeight;
 
-      // ETAPA 47: Interceptar pedido de aprovaÃ§Ã£o
+      // ETAPA 47: Interceptar pedido de aprovação
       if (line.includes('[SECURE_APPROVAL_REQUEST:')) {
         const match = line.match(/\[SECURE_APPROVAL_REQUEST:\s*(.+?)\]/);
         if (match && match[1]) {
@@ -1940,17 +1940,17 @@ class PocketDirectorApp {
     };
   }
 
-  // ETAPA 47: Renderizar Card de AprovaÃ§Ã£o
+  // ETAPA 47: Renderizar Card de Aprovação
   renderApprovalCard(filepath) {
     const card = document.createElement('div');
     card.className = 'card approval-card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">âš ï¸ APROVAÃ‡ÃƒO NECESSÃRIA</span>
+        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">⚠ APROVAÇÃO NECESSRIA</span>
       </div>
       <div class="card-content">
         <div style="font-size:0.85rem; margin-bottom:0.5rem; color:#e2e8f0;">
-          O Agente Soberano quer editar o arquivo crÃ­tico:
+          O Agente Soberano quer editar o arquivo crítico:
           <br><strong style="color:var(--cyan-glow);">${this.escapeHtml(filepath)}</strong>
         </div>
         <div class="approval-actions">
@@ -1964,7 +1964,7 @@ class PocketDirectorApp {
   }
 
   async sendApproval(filepath, action, btnElement) {
-    // Desabilitar botÃµes do card
+    // Desabilitar botões do card
     const actionsDiv = btnElement.parentElement;
     actionsDiv.style.opacity = '0.5';
     actionsDiv.style.pointerEvents = 'none';
@@ -1976,9 +1976,9 @@ class PocketDirectorApp {
         body: JSON.stringify({ filepath, action })
       });
       if (res.ok) {
-        btnElement.textContent = action === 'approve' ? 'Autorizado âœ“' : 'Bloqueado âœ•';
+        btnElement.textContent = action === 'approve' ? 'Autorizado ✓' : 'Bloqueado ✕';
       } else {
-        alert("Erro ao enviar aprovaÃ§Ã£o ou Timeout.");
+        alert("Erro ao enviar aprovação ou Timeout.");
       }
     } catch (e) {
       console.error(e);
@@ -2000,11 +2000,11 @@ class PocketDirectorApp {
   }
 
   setupEventListeners() {
-    // ETAPA 173: BotÃ£o TemporÃ¡rio de Teste de Push
+    // ETAPA 173: Botão Temporário de Teste de Push
     this.btnTestNotification = document.getElementById('btnTestNotification');
     if (this.btnTestNotification) {
       this.btnTestNotification.addEventListener('click', () => {
-        this.fireLocalNotification("Teste de Bolso ðŸ””", "Esta Ã© uma notificaÃ§Ã£o do GuardiÃ£o de Bolso (Apollo).", { postId: "TEST_001" });
+        this.fireLocalNotification("Teste de Bolso 🔔", "Esta é uma notificação do Guardião de Bolso (Apollo).", { postId: "TEST_001" });
       });
     }
 
@@ -2014,7 +2014,7 @@ class PocketDirectorApp {
       this.btnModeToggle.addEventListener('click', () => {
         document.body.classList.toggle('text-mode');
         const isTextMode = document.body.classList.contains('text-mode');
-        this.btnModeToggle.innerHTML = isTextMode ? 'ðŸŽ§' : 'âœ–';
+        this.btnModeToggle.innerHTML = isTextMode ? '🎧' : '✖';
         
         // Controla VAD/Microfone
         this.isListeningActive = !isTextMode;
@@ -2034,7 +2034,7 @@ class PocketDirectorApp {
       });
     }
 
-    // ETAPA 52: BotÃµes da Sidebar
+    // ETAPA 52: Botões da Sidebar
     if (this.btnOpenSidebar) {
       this.btnOpenSidebar.addEventListener('click', () => this.chatSidebar.classList.add('open'));
     }
@@ -2045,7 +2045,7 @@ class PocketDirectorApp {
       this.btnNewChat.addEventListener('click', () => this.createNewSession());
     }
 
-    // Abrir e Fechar Modal de ConfiguraÃ§Ã£o & DiagnÃ³stico
+    // Abrir e Fechar Modal de Configuração & Diagnóstico
     this.btnSettings.addEventListener('click', async () => {
       this.settingsModal.className = 'modal-backdrop open';
       await this.activateAudioAndMic();
@@ -2067,7 +2067,7 @@ class PocketDirectorApp {
 
     this.audioInputSelect.addEventListener('change', async (e) => {
       this.selectedDeviceId = e.target.value;
-      console.log('ðŸ”„ Trocando microfone para:', this.selectedDeviceId);
+      console.log('🔄 Trocando microfone para:', this.selectedDeviceId);
       await this.initMicrophone();
     });
 
@@ -2093,10 +2093,10 @@ class PocketDirectorApp {
           memoryStatusBox.innerHTML = "Consultando Colmeia...";
           const res = await fetch(`${API_BASE_URL}/api/memory/status`);
           const data = await res.json();
-          let html = `<strong>RAG (ChromaDB):</strong> ${data.rag_ready ? 'ðŸŸ¢ Online' : 'ðŸ”´ Offline'}<br>`;
-          html += `<strong>MemÃ³ria Local:</strong> ${data.local_exists ? 'âœ…' : 'âŒ'}<br>`;
-          html += `<strong>Hive Bus:</strong> ${data.hive_exists ? 'âœ…' : 'âŒ'}<br>`;
-          if (data.last_synced) html += `<strong>Ãšltimo Sync:</strong> ${data.last_synced.local_mtime || 'N/A'}`;
+          let html = `<strong>RAG (ChromaDB):</strong> ${data.rag_ready ? '🟢 Online' : '🔴 Offline'}<br>`;
+          html += `<strong>Memória Local:</strong> ${data.local_exists ? '✅' : ''}<br>`;
+          html += `<strong>Hive Bus:</strong> ${data.hive_exists ? '✅' : ''}<br>`;
+          if (data.last_synced) html += `<strong>Último Sync:</strong> ${data.last_synced.local_mtime || 'N/A'}`;
           memoryStatusBox.innerHTML = html;
         } catch(e) {
           memoryStatusBox.innerHTML = "Erro ao acessar a Colmeia.";
@@ -2108,7 +2108,7 @@ class PocketDirectorApp {
     if (btnCrossIndex) {
       btnCrossIndex.addEventListener('click', async () => {
         try {
-          memoryStatusBox.innerHTML = "ForÃ§ando Cross-Index (Aguarde)...";
+          memoryStatusBox.innerHTML = "Forçando Cross-Index (Aguarde)...";
           const res = await fetch(`${API_BASE_URL}/api/memory/cross-index`, { method: 'POST' });
           const data = await res.json();
           memoryStatusBox.innerHTML = `<strong>Cross-Index Sucesso!</strong><br>Arquivos: ${data.indexed_files}<br>Fragmentos RAG: ${data.total_chunks}`;
@@ -2134,7 +2134,7 @@ class PocketDirectorApp {
       });
     }
 
-    // Toque na Orbe ou no Palco ativa o microfone e Ã¡udio instantaneamente
+    // Toque na Orbe ou no Palco ativa o microfone e áudio instantaneamente
     this.orbContainer.addEventListener('click', async () => {
       this.triggerHaptic('tap');
       await this.activateAudioAndMic();
@@ -2148,13 +2148,13 @@ class PocketDirectorApp {
         this.triggerHaptic('start');
         this.btnMicToggle.className = 'deck-btn primary';
         this.micLabel.textContent = 'Microfone Ativo (VAD)';
-        if (this.micIcon) this.micIcon.textContent = 'ðŸŽ™ï¸';
+        if (this.micIcon) this.micIcon.textContent = '🎙';
         this.setOrbState('listening');
       } else {
         this.triggerHaptic('stop');
         this.btnMicToggle.className = 'deck-btn';
         this.micLabel.textContent = 'Microfone Mutado';
-        if (this.micIcon) this.micIcon.textContent = 'ðŸ”‡';
+        if (this.micIcon) this.micIcon.textContent = '🔇';
         this.setOrbState('muted');
         
         if (this.vadMediaRecorder && this.vadMediaRecorder.state === 'recording') {
@@ -2177,7 +2177,7 @@ class PocketDirectorApp {
       }
     });
 
-    // Etapa 161: LÃ³gica do Olho de Apollo
+    // Etapa 161: Lógica do Olho de Apollo
     if (this.btnToggleVision) {
       this.btnToggleVision.addEventListener('click', async () => {
         if (this.isVisionActive) {
@@ -2191,13 +2191,13 @@ class PocketDirectorApp {
     // Estado de Processamento e Abortar
     this.isProcessingLLM = false;
     
-    // --- NOVA LÃ“GICA DE DITADO E INPUT PILL (CLONE CHATGPT) ---
+    // --- NOVA LÓGICA DE DITADO E INPUT PILL (CLONE CHATGPT) ---
     this.btnDictate = document.getElementById('btnDictate');
     this.btnCancelDictation = document.getElementById('btnCancelDictation');
     this.recordingState = document.getElementById('recordingState');
     this.rightActions = document.getElementById('rightActions');
     
-    // updateInputUIState centraliza os estilos do botÃ£o
+    // updateInputUIState centraliza os estilos do botão
     const updateInputUIState = (state) => {
       this.currentInputState = state;
       if (state === 'empty') {
@@ -2205,7 +2205,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'flex';
         if(this.btnSendText) this.btnSendText.style.display = 'none';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = 'â¬†ï¸';
+          this.btnSendText.innerHTML = '⬆';
           this.btnSendText.classList.remove('danger');
           this.btnSendText.classList.add('primary');
         }
@@ -2214,7 +2214,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'none';
         if(this.btnSendText) this.btnSendText.style.display = 'flex';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = 'â¬†ï¸';
+          this.btnSendText.innerHTML = '⬆';
           this.btnSendText.classList.remove('danger');
           this.btnSendText.classList.add('primary');
         }
@@ -2223,7 +2223,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'none';
         if(this.btnSendText) this.btnSendText.style.display = 'flex';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = 'â¹ï¸';
+          this.btnSendText.innerHTML = '';
           this.btnSendText.classList.remove('primary');
           this.btnSendText.classList.add('danger');
         }
@@ -2232,7 +2232,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'none';
         if(this.btnSendText) this.btnSendText.style.display = 'flex';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = 'â¹ï¸';
+          this.btnSendText.innerHTML = '';
           this.btnSendText.classList.remove('danger');
           this.btnSendText.classList.add('primary');
         }
@@ -2240,7 +2240,7 @@ class PocketDirectorApp {
     };
 
     const sendText = async () => {
-      // Se o usuÃ¡rio clicar no botÃ£o enquanto o LLM processa (botÃ£o quadrado vermelho)
+      // Se o usuário clicar no botão enquanto o LLM processa (botão quadrado vermelho)
       if (this.isProcessingLLM) {
          this.sendToColmeia(JSON.stringify({ type: 'stop_generation' }));
          this.isProcessingLLM = false;
@@ -2266,13 +2266,13 @@ class PocketDirectorApp {
     });
 
     this.drawerInput.addEventListener('input', () => {
-      if (this.isProcessingLLM) return; // NÃ£o muda se estiver processando
+      if (this.isProcessingLLM) return; // Não muda se estiver processando
       const hasText = this.drawerInput.value.trim().length > 0;
       updateInputUIState(hasText ? 'typing' : 'empty');
     });
 
     // Reset quando receber resposta final do LLM
-    // interceptamos mensagens no onmessage do websocket lÃ¡ em cima, mas vamos expor aqui
+    // interceptamos mensagens no onmessage do websocket lá em cima, mas vamos expor aqui
     window.addEventListener('llm_processing_finished', () => {
         this.isProcessingLLM = false;
         updateInputUIState(this.drawerInput.value.trim().length > 0 ? 'typing' : 'empty');
@@ -2310,7 +2310,7 @@ class PocketDirectorApp {
              
              this.drawerInput.placeholder = 'Transcrevendo voz...';
              this.drawerInput.disabled = true;
-             updateInputUIState('typing'); // sÃ³ para manter o botÃ£o
+             updateInputUIState('typing'); // só para manter o botão
 
              try {
                  const res = await fetch('/api/transcribe', {
@@ -2334,12 +2334,12 @@ class PocketDirectorApp {
                      }
                  }
              } catch (err) {
-                 console.error("Erro na transcriÃ§Ã£o", err);
+                 console.error("Erro na transcrição", err);
                  this.drawerInput.value = '';
                  updateInputUIState('empty');
              }
              
-             // Limpar os tracks de mÃ­dia
+             // Limpar os tracks de mídia
              stream.getTracks().forEach(t => t.stop());
            };
            
@@ -2354,14 +2354,14 @@ class PocketDirectorApp {
            updateInputUIState('recording');
            
         } catch(e) {
-           this.showToast('PermissÃ£o de microfone negada ou sem microfone.', 'error');
+           this.showToast('Permissão de microfone negada ou sem microfone.', 'error');
            return;
         }
       });
 
       this.btnCancelDictation.addEventListener('click', () => {
          if(mediaRecorder && mediaRecorder.state !== 'inactive') {
-             // Redefinimos onstop para nada para nÃ£o enviar Ã  API
+             // Redefinimos onstop para nada para não enviar à API
              mediaRecorder.onstop = () => { mediaRecorder.stream.getTracks().forEach(t => t.stop()); };
              mediaRecorder.stop();
          }
@@ -2369,8 +2369,8 @@ class PocketDirectorApp {
          stopDictationUI();
       });
 
-      // No modo dictation, clicar no botÃ£o de parar/enviar (agora gerido pelo updateInputUIState recording state)
-      // Como a gente setou o Send button visible na gravaÃ§Ã£o, devemos intercetar
+      // No modo dictation, clicar no botão de parar/enviar (agora gerido pelo updateInputUIState recording state)
+      // Como a gente setou o Send button visible na gravação, devemos intercetar
       const originalSend = sendText;
       this.btnSendText.addEventListener('click', (e) => {
         if (this.isDictating) {
@@ -2380,21 +2380,21 @@ class PocketDirectorApp {
              mediaRecorder.stop();
           }
           stopDictationUI();
-          // O mediaRecorder.onstop vai atualizar o textarea, mas isso Ã© async.
-          // Logo, nÃ£o chamamos originalSend automaticamente aqui, 
+          // O mediaRecorder.onstop vai atualizar o textarea, mas isso é async.
+          // Logo, não chamamos originalSend automaticamente aqui, 
           // pois queremos que o user confirme o texto antes de enviar
-          // ou enviamos sÃ³ depois do fetch? Vamos obrigar o user a enviar apÃ³s ler, como no WhatsApp
+          // ou enviamos só depois do fetch? Vamos obrigar o user a enviar após ler, como no WhatsApp
         }
       }, true);
       
     } else if (this.btnDictate) {
        this.btnDictate.addEventListener('click', () => {
-          this.showToast('API MediaRecorder nÃ£o suportada.', 'error');
+          this.showToast('API MediaRecorder não suportada.', 'error');
        });
     }
     // -----------------------------------------------------
 
-    // Etapa 152: LÃ³gica de Abas do Gestor de Canais
+    // Etapa 152: Lógica de Abas do Gestor de Canais
     const tabApolloEdit = document.getElementById('tabApolloEdit');
     const tabAutoBlog = document.getElementById('tabAutoBlog');
     const contentApolloEdit = document.getElementById('contentApolloEdit');
@@ -2449,12 +2449,12 @@ class PocketDirectorApp {
     const fetchAutoBlogPending = async () => {
       try {
         const res = await fetch('http://localhost:8098/api/v1/publish-trigger', { method: 'OPTIONS' });
-        // MOCK VISUAL: como o backend do AutoBlog nÃ£o tem uma rota GET pronta no prompt dele, vamos simular que ele achou um
+        // MOCK VISUAL: como o backend do AutoBlog não tem uma rota GET pronta no prompt dele, vamos simular que ele achou um
         autoBlogQueueList.innerHTML = `
-          <strong>TÃ­tulo:</strong> Vazou o GTA 6 denovo!<br>
+          <strong>Título:</strong> Vazou o GTA 6 denovo!<br>
           <div style="margin-top: 10px; display: flex; gap: 10px;">
-            <button class="deck-btn primary" id="btnApproveAutoBlog" style="flex: 1;">âœ… Aprovar (Biometria)</button>
-            <button class="deck-btn" id="btnRejectAutoBlog" style="flex: 1; border-color: var(--neon-red); color: var(--neon-red);">âŒ Rejeitar</button>
+            <button class="deck-btn primary" id="btnApproveAutoBlog" style="flex: 1;">✅ Aprovar (Biometria)</button>
+            <button class="deck-btn" id="btnRejectAutoBlog" style="flex: 1; border-color: var(--neon-red); color: var(--neon-red);"> Rejeitar</button>
           </div>
         `;
         
@@ -2471,7 +2471,7 @@ class PocketDirectorApp {
                 body: JSON.stringify({ post_id: 'post_01', action: 'APPROVE', biometric_hash: hash, token: 'super-secret-token-123' })
               });
               this.showToast('Post publicado com sucesso via AutoBlog!', 'success');
-              autoBlogQueueList.innerHTML = '<span style="color:var(--neon-cyan)">Nenhuma pendÃªncia no AutoBlog.</span>';
+              autoBlogQueueList.innerHTML = '<span style="color:var(--neon-cyan)">Nenhuma pendência no AutoBlog.</span>';
             } catch(e) {
               this.showToast('Erro ao contatar AutoBlog', 'error');
             }
@@ -2507,7 +2507,7 @@ class PocketDirectorApp {
       this.btnRestartServer.addEventListener('click', async () => {
         const hash = await this.verifyBiometrics("Reiniciar Container do Apollo Edit");
         if (hash) {
-          this.showToast('Enviando sinal de reinÃ­cio para Maestro...', 'warn');
+          this.showToast('Enviando sinal de reinício para Maestro...', 'warn');
           try {
             await fetch('http://localhost:8080/api/mobile/approve', {
               method: 'POST',
@@ -2521,15 +2521,15 @@ class PocketDirectorApp {
       });
     }
 
-    // --- ETAPA 192, 193, 194: Nuvem Soberana (AÃ§Ãµes) ---
+    // --- ETAPA 192, 193, 194: Nuvem Soberana (Ações) ---
     if (this.btnStealthMode) {
       this.btnStealthMode.addEventListener('click', async () => {
         const hash = await this.verifyBiometrics("ATIVAR MODO STEALTH MUNDIAL");
         if (hash) {
-          this.showToast('Modo Stealth Ativado. Desligando todos os robÃ´s.', 'error');
+          this.showToast('Modo Stealth Ativado. Desligando todos os robôs.', 'error');
           this.triggerHaptic('error');
           try {
-            // Etapa 196: Limpeza de Cache Nativa em Modo PÃ¢nico
+            // Etapa 196: Limpeza de Cache Nativa em Modo Pânico
             if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
               await window.Capacitor.Plugins.Preferences.clear();
             }
@@ -2551,7 +2551,7 @@ class PocketDirectorApp {
     if (this.btnOpenHiveLogs) {
       this.btnOpenHiveLogs.addEventListener('click', () => {
         this.hiveLogsSidebar.classList.add('open');
-        this.hiveLogOutput.textContent = "Conectando ao nÃºcleo da Colmeia...";
+        this.hiveLogOutput.textContent = "Conectando ao núcleo da Colmeia...";
         hiveLogInterval = setInterval(async () => {
           try {
             const res = await fetch('http://localhost:8080/api/colmeia/logs', { timeout: 2000 });
@@ -2560,7 +2560,7 @@ class PocketDirectorApp {
               this.hiveLogOutput.textContent = logs || "Colmeia aguardando comandos...";
             }
           } catch(e) {
-            this.hiveLogOutput.textContent = "[ERRO DE CONEXÃƒO] Maestro Offline ou Endpoint indisponÃ­vel.";
+            this.hiveLogOutput.textContent = "[ERRO DE CONEXÃO] Maestro Offline ou Endpoint indisponível.";
           }
         }, 3000);
       });
@@ -2573,7 +2573,7 @@ class PocketDirectorApp {
       });
     }
 
-    // Etapa 144: Backup AutomÃ¡tico do DB para Google Drive/Local FS
+    // Etapa 144: Backup Automático do DB para Google Drive/Local FS
     if (this.btnSettings) { // Reusing settings button double click for testing backup
       this.btnSettings.addEventListener('dblclick', async () => {
         try {
@@ -2608,7 +2608,7 @@ class PocketDirectorApp {
       });
     }
 
-    // ETAPA 58 e 126: Anexos de Imagem (com CÃ¢mera/Galeria Nativa via Capacitor)
+    // ETAPA 58 e 126: Anexos de Imagem (com Câmera/Galeria Nativa via Capacitor)
     if (this.btnAttachImage && this.imageUploadInput) {
       this.btnAttachImage.addEventListener('click', async () => {
         // Etapa 126: Acesso Multimodal Nativo
@@ -2623,7 +2623,7 @@ class PocketDirectorApp {
             });
             const base64Image = `data:image/${image.format};base64,${image.base64String}`;
             
-            // Reutiliza a lÃ³gica de processamento
+            // Reutiliza a lógica de processamento
             this.addTranscriptCard('user', '[Anexo de Imagem (Nativa)]', false);
             const cards = this.feedSection.querySelectorAll('.card');
             const lastCard = cards[cards.length - 1];
@@ -2636,7 +2636,7 @@ class PocketDirectorApp {
             }
             this.sendToColmeia(JSON.stringify({ type: 'user_image', image_data: base64Image }));
           } catch (e) {
-            console.warn("CÃ¢mera cancelada ou falha:", e);
+            console.warn("Câmera cancelada ou falha:", e);
           }
         } else {
           // Fallback para Web
@@ -2676,7 +2676,7 @@ class PocketDirectorApp {
         this.imageUploadInput.value = '';
       });
     }
-    // ETAPA 63: Comandos RÃ¡pidos
+    // ETAPA 63: Comandos Rápidos
     if (this.quickCommands) {
       this.quickCommands.addEventListener('click', async (e) => {
         if (e.target.classList.contains('voice-pill')) {
@@ -2690,7 +2690,7 @@ class PocketDirectorApp {
       });
     }
 
-    // ETAPA 64: Busca no HistÃ³rico
+    // ETAPA 64: Busca no Histórico
     if (this.chatSearchInput) {
       this.chatSearchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
@@ -2706,7 +2706,7 @@ class PocketDirectorApp {
       });
     }
 
-    // ETAPA 65: Exportar HistÃ³rico
+    // ETAPA 65: Exportar Histórico
     if (this.btnExportChat) {
       this.btnExportChat.addEventListener('click', async () => {
         if (!this.currentSessionId) {
@@ -2719,21 +2719,21 @@ class PocketDirectorApp {
           const history = await this.db.getSessionHistory(this.currentSessionId);
           
           if (!session || history.length === 0) {
-            this.showToast('O chat estÃ¡ vazio.', 'warn');
+            this.showToast('O chat está vazio.', 'warn');
             return;
           }
 
-          let markdown = `# ExportaÃ§Ã£o de Chat: ${session.title}\n`;
+          let markdown = `# Exportação de Chat: ${session.title}\n`;
           markdown += `*Data: ${new Date().toLocaleString()}*\n\n---\n\n`;
 
           history.forEach(msg => {
-            const roleName = msg.role === 'user' ? 'ðŸ‘¤ UsuÃ¡rio' : 'ðŸ¤– Apollo';
+            const roleName = msg.role === 'user' ? '👤 Usuário' : '🤖 Apollo';
             markdown += `### ${roleName}\n${msg.content}\n\n`;
           });
           
           this.showToast('Chat exportado com sucesso!', 'success');
         } catch (err) {
-          console.error('Erro na exportaÃ§Ã£o:', err);
+          console.error('Erro na exportação:', err);
           this.showToast('Erro ao exportar o chat.', 'error');
         }
       });
@@ -2752,24 +2752,24 @@ class PocketDirectorApp {
         this.godViewModal.style.display = 'none';
       });
     }
-    // ETAPA 68: Modo NÃ£o Perturbe (Mute TTS)
+    // ETAPA 68: Modo Não Perturbe (Mute TTS)
     if (this.btnMuteTTS) {
       this.btnMuteTTS.addEventListener('click', () => {
         this.isMuted = !this.isMuted;
         if (this.isMuted) {
-          this.btnMuteTTS.textContent = 'ðŸ”•';
+          this.btnMuteTTS.textContent = '🔕';
           this.btnMuteTTS.style.background = '#ffcc00';
           this.btnMuteTTS.style.color = '#000';
           this.showToast('Modo Silencioso Ativado (Apenas Escuta)', 'warn');
-          // Para Ã¡udio em andamento
+          // Para áudio em andamento
           if (this.audioSource) {
             try { this.audioSource.stop(); } catch(e){}
           }
         } else {
-          this.btnMuteTTS.textContent = 'ðŸ””';
+          this.btnMuteTTS.textContent = '🔔';
           this.btnMuteTTS.style.background = 'rgba(255, 255, 255, 0.1)';
           this.btnMuteTTS.style.color = 'var(--text-primary)';
-          this.showToast('Ãudio do Agente Reativado', 'success');
+          this.showToast('udio do Agente Reativado', 'success');
         }
       });
     }
@@ -2779,13 +2779,13 @@ class PocketDirectorApp {
   // ETAPA 78: God View Fetch
   async fetchGodViewData() {
     try {
-      this.godViewList.innerHTML = '<div style="color: var(--text-muted);">Buscando interaÃ§Ãµes da nuvem...</div>';
+      this.godViewList.innerHTML = '<div style="color: var(--text-muted);">Buscando interações da nuvem...</div>';
       const res = await fetch(`${API_BASE_URL}/api/webhook/active-chats`);
       const data = await res.json();
       
       this.godViewList.innerHTML = '';
       if (!data.active_chats || data.active_chats.length === 0) {
-        this.godViewList.innerHTML = '<div style="color: var(--text-muted);">Nenhuma interaÃ§Ã£o ativa.</div>';
+        this.godViewList.innerHTML = '<div style="color: var(--text-muted);">Nenhuma interação ativa.</div>';
         return;
       }
       
@@ -2822,7 +2822,7 @@ class PocketDirectorApp {
     if ('wakeLock' in navigator) {
       try {
         this.wakeLock = await navigator.wakeLock.request('screen');
-        console.log('ðŸ”’ Screen Wake Lock ativado. A tela nÃ£o apagarÃ¡.');
+        console.log('🔒 Screen Wake Lock ativado. A tela não apagará.');
       } catch (err) {
         console.warn('Falha ao ativar Wake Lock:', err);
       }
@@ -2843,7 +2843,7 @@ class PocketDirectorApp {
             this.connectWebSocket();
           }
         } else {
-          console.log("App entrou em Background. VAD mantido ativo se possÃ­vel via Foreground Service (Configurado no Android).");
+          console.log("App entrou em Background. VAD mantido ativo se possível via Foreground Service (Configurado no Android).");
         }
       });
       return; // Evita bind duplo
@@ -2886,7 +2886,7 @@ class PocketDirectorApp {
       }
     }
     if (endX > startX + swipeThreshold) {
-      // Swipe Right - Abrir Sidebar (Apenas se comeÃ§ar do canto esquerdo < 50px)
+      // Swipe Right - Abrir Sidebar (Apenas se começar do canto esquerdo < 50px)
       if (startX < 50 && this.chatSidebar && !this.chatSidebar.classList.contains('open')) {
         this.chatSidebar.classList.add('open');
       }
@@ -2899,7 +2899,7 @@ class PocketDirectorApp {
     }
   }
 
-  // ETAPA 62: Sistema de NotificaÃ§Ãµes Toast
+  // ETAPA 62: Sistema de Notificações Toast
   showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -2907,15 +2907,15 @@ class PocketDirectorApp {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
-    let icon = 'â„¹ï¸';
-    if (type === 'success') icon = 'âœ…';
-    if (type === 'error') icon = 'âŒ';
-    if (type === 'warn') icon = 'âš ï¸';
+    let icon = 'ℹ';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '';
+    if (type === 'warn') icon = '⚠';
 
     toast.innerHTML = `<span>${icon}</span> <span>${this.escapeHtml(message)}</span>`;
     container.appendChild(toast);
 
-    // Trigger reflow para iniciar animaÃ§Ã£o
+    // Trigger reflow para iniciar animação
     toast.offsetHeight;
     toast.classList.add('show');
 
@@ -2939,7 +2939,7 @@ class PocketDirectorApp {
       }[m];
     });
   }
-  // --- ETAPA 161: MÃ‰TODOS DO OLHO DE APOLLO ---
+  // --- ETAPA 161: MÉTODOS DO OLHO DE APOLLO ---
   async startVisionLoop() {
     try {
       this.showToast('Ligando Olho de Apollo...', 'info');
@@ -2950,14 +2950,14 @@ class PocketDirectorApp {
       this.isVisionActive = true;
       this.visionIcon.style.filter = 'grayscale(0%)';
       this.visionIcon.style.textShadow = '0 0 10px var(--neon-cyan)';
-      this.showToast('VisÃ£o Multimodal Ativada', 'success');
+      this.showToast('Visão Multimodal Ativada', 'success');
 
       this.visionInterval = setInterval(() => {
         this.captureAndSendFrame();
       }, 3000); // Tira uma foto a cada 3 segundos
     } catch (err) {
-      console.error('Erro na cÃ¢mera:', err);
-      this.showToast('Erro ao acessar cÃ¢mera', 'error');
+      console.error('Erro na câmera:', err);
+      this.showToast('Erro ao acessar câmera', 'error');
     }
   }
 
@@ -2970,7 +2970,7 @@ class PocketDirectorApp {
       this.visionStream.getTracks().forEach(track => track.stop());
       this.visionStream = null;
     }
-    this.showToast('VisÃ£o Desativada', 'warn');
+    this.showToast('Visão Desativada', 'warn');
   }
 
   captureAndSendFrame() {
@@ -2984,7 +2984,7 @@ class PocketDirectorApp {
     canvas.height = this.cameraPreview.videoHeight * scale;
     
     ctx.drawImage(this.cameraPreview, 0, 0, canvas.width, canvas.height);
-    const base64Data = canvas.toDataURL('image/jpeg', 0.5); // 50% compressÃ£o
+    const base64Data = canvas.toDataURL('image/jpeg', 0.5); // 50% compressão
     
     // Manda pro Maestro (via websocket normal da Colmeia)
     this.sendToColmeia(JSON.stringify({ type: 'vision_frame', data: base64Data }));

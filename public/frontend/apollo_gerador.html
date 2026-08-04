@@ -79,7 +79,7 @@
             height: calc(100vh - 90px);
         }
 
-        /* INVENTÁRIO DE CRISTAIS (ESQUERDA) */
+        /* INVENTRIO DE CRISTAIS (ESQUERDA) */
         .inventory-panel {
             flex: 0 0 350px;
             background: var(--bg-panel);
@@ -149,7 +149,7 @@
         .rarity-epico { border-color: #8A2BE2; color: #8A2BE2; }
         .rarity-lendario { border-color: #FFD700; color: #FFD700; }
 
-        /* AREA DE GERAÇÃO (CENTRO) */
+        /* AREA DE GERAO (CENTRO) */
         .generator-panel {
             flex: 1;
             display: flex;
@@ -226,7 +226,7 @@
             border-color: var(--border-neon);
         }
 
-        /* CUSTO E BOTÃO RENDER */
+        /* CUSTO E BOTO RENDER */
         .cost-panel {
             background: var(--bg-panel);
             border: 1px solid var(--border-gold);
@@ -282,7 +282,7 @@
             cursor: not-allowed;
         }
 
-        /* OPÇÃO BURST */
+        /* OPO BURST */
         .burst-toggle {
             display: flex;
             align-items: center;
@@ -325,7 +325,7 @@
     <!-- MAIN -->
     <div class="main-container">
         
-        <!-- INVENTÁRIO -->
+        <!-- INVENTRIO -->
         <div class="inventory-panel">
             <div class="inventory-title">Seus Cristais de API</div>
             
@@ -390,14 +390,14 @@
             <div class="drop-zone" id="drop-zone">
                 <div class="drop-prompt" id="drop-prompt">
                     <i class="fa-solid fa-cubes"></i>
-                    <h2>O Forno Mágico</h2>
-                    <p>Arraste e solte seus Cristais de API aqui para montar sua Geração</p>
+                    <h2>O Forno Mgico</h2>
+                    <p>Arraste e solte seus Cristais de API aqui para montar sua Gerao</p>
                 </div>
                 <div class="slotted-crystals" id="slotted-crystals">
                     <!-- Cristais arrastados aparecem aqui -->
                 </div>
                 
-                <textarea class="prompt-input" id="prompt-input" placeholder="Digite o comando para a sua criação... (Ex: Um carro cyberpunk acelerando na chuva)" rows="3" style="display:none; position:absolute; bottom:20px; z-index:5;"></textarea>
+                <textarea class="prompt-input" id="prompt-input" placeholder="Digite o comando para a sua criao... (Ex: Um carro cyberpunk acelerando na chuva)" rows="3" style="display:none; position:absolute; bottom:20px; z-index:5;"></textarea>
             </div>
 
             <!-- PAINEL DE CUSTO -->
@@ -408,7 +408,7 @@
                         <span id="cost-crystals"><i class="fa-solid fa-box-open" style="font-size:14px;"></i> 0 Unidades</span>
                     </div>
                     <div class="cost-item cost-fuel">
-                        Custo de Processamento (Combustível)
+                        Custo de Processamento (Combustvel)
                         <span id="cost-fuel"><i class="fa-solid fa-gas-pump" style="font-size:14px;"></i> 0</span>
                     </div>
                     <div class="cost-item">
@@ -416,7 +416,7 @@
                             <input type="checkbox" id="burst-mode">
                             <div>
                                 <strong style="color:var(--border-gold); display:block;">Ativar Burst (T4/NVENC)</strong>
-                                + 200 Combustível (Renderiza 4x mais rápido)
+                                + 200 Combustvel (Renderiza 4x mais rpido)
                             </div>
                         </label>
                     </div>
@@ -431,7 +431,7 @@
     </div>
 
     <script>
-        // Lógica de Drag and Drop e Cálculo de Custo Gamificado
+        // Lgica de Drag and Drop e Clculo de Custo Gamificado
         const draggables = document.querySelectorAll('.crystal-item');
         const dropZone = document.getElementById('drop-zone');
         const slottedContainer = document.getElementById('slotted-crystals');
@@ -524,15 +524,15 @@
             updateCost(0, 0); // Re-calcula apenas pra somar/subtrair os 200 do Burst
         });
 
-        // Ação do Botão
+        // Ao do Boto
         renderBtn.addEventListener('click', () => {
             if(promptInput.value.trim() === '') {
-                alert("Por favor, digite o prompt de comando para a geração.");
+                alert("Por favor, digite o prompt de comando para a gerao.");
                 return;
             }
             renderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Forjando...';
             setTimeout(() => {
-                alert(`Geração Concluída!\nForam consumidas ${currentCostCrystals} Unidades de IA do seu Inventário e descontados ${currentCostFuel + (burstMode.checked?200:0)} de Combustível da sua conta.`);
+                alert(`Gerao Concluda!\nForam consumidas ${currentCostCrystals} Unidades de IA do seu Inventrio e descontados ${currentCostFuel + (burstMode.checked?200:0)} de Combustvel da sua conta.`);
                 renderBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Forjar';
             }, 2000);
         });

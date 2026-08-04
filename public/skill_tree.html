@@ -174,7 +174,7 @@
             </div>
             <div>
                 <h1 class="orbitron text-2xl font-bold text-white tracking-wide">LEVEL GLOBAL: <span class="text-blue-400">12</span></h1>
-                <p class="text-slate-400 text-sm font-semibold mt-1">Soma de Edição + Carro + Avatar</p>
+                <p class="text-slate-400 text-sm font-semibold mt-1">Soma de Edio + Carro + Avatar</p>
             </div>
         </div>
         <div class="h-10 w-px bg-slate-700"></div>
@@ -182,13 +182,13 @@
             <div class="points-badge orbitron" id="skillPointsDisplay">
                 3 SKILL POINTS
             </div>
-            <p class="text-xs text-slate-400 mt-2 text-center">Disponíveis para alocar</p>
+            <p class="text-xs text-slate-400 mt-2 text-center">Disponveis para alocar</p>
         </div>
     </div>
 
     <!-- UI Overlay: Legend -->
     <div class="hud-overlay bottom-right">
-        <h3 class="bangers text-xl mb-3 text-white">RAMIFICAÇÕES DO SISTEMA</h3>
+        <h3 class="bangers text-xl mb-3 text-white">RAMIFICAES DO SISTEMA</h3>
         <ul class="space-y-2 text-sm font-semibold">
             <li class="flex items-center gap-2 text-emerald-400"><i class="fas fa-user-ninja w-5"></i> O Avatar (RPG)</li>
             <li class="flex items-center gap-2 text-violet-400"><i class="fas fa-film w-5"></i> O Produtor (SaaS)</li>
@@ -217,7 +217,7 @@
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full" id="tt-branch">Branch</span>
             </div>
         </div>
-        <p class="text-slate-300 text-sm mb-3" id="tt-desc">Descrição do que essa skill maravilhosa faz.</p>
+        <p class="text-slate-300 text-sm mb-3" id="tt-desc">Descrio do que essa skill maravilhosa faz.</p>
         <div class="bg-slate-900 rounded p-2 text-xs font-mono text-slate-400 border border-slate-700">
             <span class="text-slate-200">Custo:</span> <span id="tt-cost">1</span> Skill Point<br>
             <span class="text-slate-200">Status:</span> <span id="tt-status" class="font-bold">Bloqueado</span>
@@ -257,25 +257,25 @@
 
         // Tree Data Structure
         const treeData = [
-            { id: 'root', x: 600, y: 700, icon: 'fa-brain', title: 'O Mente Mestra', desc: 'Sua base na Apollo. Você controla o ecossistema.', branch: 'root', cost: 0, status: 'active', req: [] },
+            { id: 'root', x: 600, y: 700, icon: 'fa-brain', title: 'O Mente Mestra', desc: 'Sua base na Apollo. Voc controla o ecossistema.', branch: 'root', cost: 0, status: 'active', req: [] },
             
             // Branch: O PRODUTOR (Editor / Middle / Violet)
-            { id: 'prod_1', x: 600, y: 550, icon: 'fa-bolt', title: 'Mecânica Fluida', desc: 'Reduz o consumo de Gasolina em renders em 5%.', branch: 'editor', cost: 1, status: 'locked', req: ['root'] },
+            { id: 'prod_1', x: 600, y: 550, icon: 'fa-bolt', title: 'Mecnica Fluida', desc: 'Reduz o consumo de Gasolina em renders em 5%.', branch: 'editor', cost: 1, status: 'locked', req: ['root'] },
             { id: 'prod_2', x: 600, y: 400, icon: 'fa-server', title: 'Acesso Direto H100', desc: 'Pula a fila de processamento na nuvem para GPUs premium.', branch: 'editor', cost: 1, status: 'locked', req: ['prod_1'] },
-            { id: 'prod_3a', x: 500, y: 250, icon: 'fa-gem', title: 'Mineração Oculta', desc: 'Ganha 15 Cristais automaticamente a cada renovação mensal.', branch: 'editor', cost: 1, status: 'locked', req: ['prod_2'] },
-            { id: 'prod_3b', x: 700, y: 250, icon: 'fa-microchip', title: 'Bypass Corporativo', desc: '1 geração NanoBanana v2 grátis por dia.', branch: 'editor', cost: 2, status: 'locked', req: ['prod_2'] },
+            { id: 'prod_3a', x: 500, y: 250, icon: 'fa-gem', title: 'Minerao Oculta', desc: 'Ganha 15 Cristais automaticamente a cada renovao mensal.', branch: 'editor', cost: 1, status: 'locked', req: ['prod_2'] },
+            { id: 'prod_3b', x: 700, y: 250, icon: 'fa-microchip', title: 'Bypass Corporativo', desc: '1 gerao NanoBanana v2 grtis por dia.', branch: 'editor', cost: 2, status: 'locked', req: ['prod_2'] },
 
             // Branch: O AVATAR (RPG / Left / Emerald)
-            { id: 'ava_1', x: 400, y: 600, icon: 'fa-eye', title: 'Olho Biônico', desc: '20% mais chance de encontrar Baús de Dados no RPG.', branch: 'avatar', cost: 1, status: 'locked', req: ['root'] },
-            { id: 'ava_2', x: 250, y: 500, icon: 'fa-fist-raised', title: 'Força Bruta Cripto', desc: 'Dano dobrado contra os chefões "Algoritmos Censores".', branch: 'avatar', cost: 1, status: 'locked', req: ['ava_1'] },
-            { id: 'ava_3', x: 150, y: 350, icon: 'fa-mask', title: 'Camuflagem Digital', desc: 'Ignora debuffs de lentidão nas dungeons profundas.', branch: 'avatar', cost: 1, status: 'locked', req: ['ava_2'] },
-            { id: 'ava_4', x: 250, y: 200, icon: 'fa-crown', title: 'Mercenário VIP', desc: 'Seu Avatar pode ser alugado por outros. Rende % offline.', branch: 'avatar', cost: 2, status: 'locked', req: ['ava_2', 'ava_3'] },
+            { id: 'ava_1', x: 400, y: 600, icon: 'fa-eye', title: 'Olho Binico', desc: '20% mais chance de encontrar Bas de Dados no RPG.', branch: 'avatar', cost: 1, status: 'locked', req: ['root'] },
+            { id: 'ava_2', x: 250, y: 500, icon: 'fa-fist-raised', title: 'Fora Bruta Cripto', desc: 'Dano dobrado contra os chefes "Algoritmos Censores".', branch: 'avatar', cost: 1, status: 'locked', req: ['ava_1'] },
+            { id: 'ava_3', x: 150, y: 350, icon: 'fa-mask', title: 'Camuflagem Digital', desc: 'Ignora debuffs de lentido nas dungeons profundas.', branch: 'avatar', cost: 1, status: 'locked', req: ['ava_2'] },
+            { id: 'ava_4', x: 250, y: 200, icon: 'fa-crown', title: 'Mercenrio VIP', desc: 'Seu Avatar pode ser alugado por outros. Rende % offline.', branch: 'avatar', cost: 2, status: 'locked', req: ['ava_2', 'ava_3'] },
 
             // Branch: O PILOTO (Corrida / Right / Amber)
             { id: 'car_1', x: 800, y: 600, icon: 'fa-tachometer-alt', title: 'Overclock de Motor', desc: 'Aumenta a velocidade final (Top Speed) nas retas em 10%.', branch: 'car', cost: 1, status: 'locked', req: ['root'] },
-            { id: 'car_2', x: 950, y: 500, icon: 'fa-magnet', title: 'Chassi Eletromagnético', desc: 'Aumenta o raio de coleta de Apollo Coins na pista em 50%.', branch: 'car', cost: 1, status: 'locked', req: ['car_1'] },
-            { id: 'car_3', x: 1050, y: 350, icon: 'fa-virus', title: 'Míssil DDoS', desc: 'Desbloqueia a arma DDoS nas corridas, cegando oponentes.', branch: 'car', cost: 1, status: 'locked', req: ['car_2'] },
-            { id: 'car_4', x: 950, y: 200, icon: 'fa-trophy', title: 'Liga dos Campeões', desc: 'Desbloqueia os Torneios Semanais valendo NFTs de Peças Reais.', branch: 'car', cost: 2, status: 'locked', req: ['car_2', 'car_3'] },
+            { id: 'car_2', x: 950, y: 500, icon: 'fa-magnet', title: 'Chassi Eletromagntico', desc: 'Aumenta o raio de coleta de Apollo Coins na pista em 50%.', branch: 'car', cost: 1, status: 'locked', req: ['car_1'] },
+            { id: 'car_3', x: 1050, y: 350, icon: 'fa-virus', title: 'Mssil DDoS', desc: 'Desbloqueia a arma DDoS nas corridas, cegando oponentes.', branch: 'car', cost: 1, status: 'locked', req: ['car_2'] },
+            { id: 'car_4', x: 950, y: 200, icon: 'fa-trophy', title: 'Liga dos Campees', desc: 'Desbloqueia os Torneios Semanais valendo NFTs de Peas Reais.', branch: 'car', cost: 2, status: 'locked', req: ['car_2', 'car_3'] },
         ];
 
         const svg = document.getElementById('lines-svg');
@@ -378,7 +378,7 @@
 
             const statusEl = document.getElementById('tt-status');
             if(node.status === 'active') { statusEl.innerText = 'Ativado'; statusEl.style.color = '#10b981'; }
-            else if(node.status === 'purchasable') { statusEl.innerText = 'Desbloqueável (Clique para comprar)'; statusEl.style.color = '#f59e0b'; }
+            else if(node.status === 'purchasable') { statusEl.innerText = 'Desbloquevel (Clique para comprar)'; statusEl.style.color = '#f59e0b'; }
             else { statusEl.innerText = 'Bloqueado (Falta requisito ou pontos)'; statusEl.style.color = '#ef4444'; }
 
             tooltip.classList.add('visible');

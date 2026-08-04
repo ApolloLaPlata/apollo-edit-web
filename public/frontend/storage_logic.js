@@ -1,42 +1,42 @@
 /**
- * Apollo Garagem HD — Storage Logic v2.0
- * Sistema Híbrido: Auto-Tags + Álbuns Manuais + Filtros Inteligentes
+ * Apollo Garagem HD  Storage Logic v2.0
+ * Sistema Hbrido: Auto-Tags + lbuns Manuais + Filtros Inteligentes
  *
  * Arquitetura:
- * - Armazenamento é FLAT (todos os arquivos num único array).
+ * - Armazenamento  FLAT (todos os arquivos num nico array).
  * - Cada arquivo recebe AUTO-TAGS na entrada (photo, video, audio, config, ia, template).
- * - Os "filtros" da sidebar são consultas sobre essas tags — não movem nenhum arquivo.
- * - Álbuns manuais guardam apenas REFERÊNCIAS (IDs) dos arquivos — sem duplicação.
+ * - Os "filtros" da sidebar so consultas sobre essas tags  no movem nenhum arquivo.
+ * - lbuns manuais guardam apenas REFERNCIAS (IDs) dos arquivos  sem duplicao.
  */
 
-// ─────────────────────────────────────────────────────
+// 
 // 1. ESTADO GLOBAL
-// ─────────────────────────────────────────────────────
+// 
 const GaragemState = {
     allFiles: [],          // Array plano (fonte da verdade)
-    albums: [],            // Álbuns manuais [{id, name, fileIds[]}]
+    albums: [],            // lbuns manuais [{id, name, fileIds[]}]
     activeFilter: 'all',   // 'all' | 'photo' | 'video' | 'audio' | 'config' | 'ia'
-    activeAlbum: null,     // id do álbum ativo (null = sem álbum)
+    activeAlbum: null,     // id do lbum ativo (null = sem lbum)
     searchQuery: '',
     viewMode: 'grid',      // 'grid' | 'list'
     selectedIds: new Set(),
     ctxTargetId: null,     // ID do arquivo do menu de contexto
 };
 
-// ─────────────────────────────────────────────────────
+// 
 // 2. AUTO-TAGGER
-// Detecta o tipo baseado na extensão do arquivo
-// ─────────────────────────────────────────────────────
+// Detecta o tipo baseado na extenso do arquivo
+// 
 const TYPE_MAP = {
     // Fotos
     photo: ['jpg','jpeg','png','gif','webp','bmp','tiff','svg','ico','heic','avif'],
-    // Vídeos
+    // Vdeos
     video: ['mp4','mov','avi','mkv','webm','flv','wmv','m4v','3gp'],
-    // Áudios
+    // udios
     audio: ['mp3','wav','ogg','flac','aac','m4a','opus','wma'],
-    // Configurações/Dados
+    // Configuraes/Dados
     config: ['json','yaml','yml','xml','toml','ini','cfg','conf','csv'],
-    // Templates (monolíticos Apollo)
+    // Templates (monolticos Apollo)
     template: ['apollotemplate','apollotmpl','zip'],
 };
 
@@ -53,9 +53,9 @@ function autoTagBatch(filename, isIAGenerated = false) {
     return autoTag(filename);
 }
 
-// ─────────────────────────────────────────────────────
+// 
 // 3. DADOS MOCK (substituir por chamadas Supabase)
-// ─────────────────────────────────────────────────────
+// 
 function loadMockData() {
     const raw = [
         { id: '1', name: 'hero_banner_final.jpg',             size: '2.4 MB',  isCustom: false, iaGenerated: false, createdAt: '2026-06-01' },
@@ -78,20 +78,20 @@ function loadMockData() {
         type: autoTagBatch(f.name, f.iaGenerated),
     }));
 
-    // Álbuns iniciais de exemplo
+    // lbuns iniciais de exemplo
     GaragemState.albums = [
         { id: 'a1', name: 'Projeto Carro 2024', fileIds: ['1', '3', '7'] },
         { id: 'a2', name: 'Recursos de Shorts', fileIds: ['4', '5', '10'] },
     ];
 }
 
-// ─────────────────────────────────────────────────────
-// 4. MOTOR DE FILTRO (não move arquivos — apenas filtra)
-// ─────────────────────────────────────────────────────
+// 
+// 4. MOTOR DE FILTRO (no move arquivos  apenas filtra)
+// 
 function getFilteredFiles() {
     let files = [...GaragemState.allFiles];
 
-    // Filtro de álbum manual
+    // Filtro de lbum manual
     if (GaragemState.activeAlbum) {
         const album = GaragemState.albums.find(a => a.id === GaragemState.activeAlbum);
         if (album) files = files.filter(f => album.fileIds.includes(f.id));
@@ -111,9 +111,9 @@ function getFilteredFiles() {
     return files;
 }
 
-// ─────────────────────────────────────────────────────
-// 5. AÇÕES DO USUÁRIO (filtros + álbuns)
-// ─────────────────────────────────────────────────────
+// 
+// 5. AES DO USURIO (filtros + lbuns)
+// 
 function setFilter(filter, chipEl) {
     GaragemState.activeFilter = filter;
     GaragemState.activeAlbum = null;
@@ -123,11 +123,11 @@ function setFilter(filter, chipEl) {
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     if (chipEl) chipEl.classList.add('active');
 
-    // Desativa álbuns
+    // Desativa lbuns
     document.querySelectorAll('.album-item').forEach(a => a.classList.remove('active'));
 
     // Atualiza breadcrumb e barra de filtro ativo
-    const labels = { all: 'Tudo', photo: '📷 Fotos', video: '🎬 Vídeos', audio: '🎵 Áudios', config: '⚙️ Configurações', ia: '✨ Gerações I.A.' };
+    const labels = { all: 'Tudo', photo: ' Fotos', video: ' Vdeos', audio: ' udios', config: ' Configuraes', ia: ' Geraes I.A.' };
     document.getElementById('bc-current').textContent = labels[filter] || filter;
 
     const filterBar = document.getElementById('active-filter-bar');
@@ -152,19 +152,19 @@ function setAlbum(albumId) {
     });
 
     const album = GaragemState.albums.find(a => a.id === albumId);
-    document.getElementById('bc-current').textContent = `📁 ${album?.name || albumId}`;
+    document.getElementById('bc-current').textContent = ` ${album?.name || albumId}`;
     document.getElementById('active-filter-bar').classList.add('hidden');
 
     renderGrid();
 }
 
 function createAlbum() {
-    const name = prompt('Nome do novo Álbum:');
+    const name = prompt('Nome do novo lbum:');
     if (!name?.trim()) return;
     const album = { id: `a_${Date.now()}`, name: name.trim(), fileIds: [] };
     GaragemState.albums.push(album);
     renderAlbumList();
-    showToast(`📁 Álbum "${name}" criado!`);
+    showToast(` lbum "${name}" criado!`);
 }
 
 function searchFiles(q) {
@@ -179,9 +179,9 @@ function setView(mode) {
     renderGrid();
 }
 
-// ─────────────────────────────────────────────────────
-// 6. RENDERIZAÇÃO
-// ─────────────────────────────────────────────────────
+// 
+// 6. RENDERIZAO
+// 
 const TYPE_ICONS = {
     photo:    'fa-image',
     video:    'fa-film',
@@ -191,7 +191,7 @@ const TYPE_ICONS = {
     template: 'fa-box-open',
 };
 const TYPE_LABELS = {
-    photo: 'Foto', video: 'Vídeo', audio: 'Áudio',
+    photo: 'Foto', video: 'Vdeo', audio: 'udio',
     config: 'Config', ia: 'I.A.', template: 'Template',
 };
 
@@ -210,7 +210,7 @@ function renderGrid() {
             <div class="empty-state">
                 <i class="fas fa-box-open"></i>
                 <h3>Nenhum arquivo aqui</h3>
-                <p>${GaragemState.searchQuery ? 'Nenhum resultado para "' + GaragemState.searchQuery + '".' : 'Mova arquivos da Bagagem ou gere mídias com o Apollo Flow.'}</p>
+                <p>${GaragemState.searchQuery ? 'Nenhum resultado para "' + GaragemState.searchQuery + '".' : 'Mova arquivos da Bagagem ou gere mdias com o Apollo Flow.'}</p>
             </div>`;
         return;
     }
@@ -255,7 +255,7 @@ function renderGrid() {
                 <div class="file-size">${file.size}</div>`;
         }
 
-        // Click: seleção (multi com Ctrl)
+        // Click: seleo (multi com Ctrl)
         card.addEventListener('click', (e) => {
             if (!e.ctrlKey && !e.metaKey) GaragemState.selectedIds.clear();
             if (GaragemState.selectedIds.has(file.id)) {
@@ -317,9 +317,9 @@ function updateSelectionStatus() {
         n === 0 ? 'Nenhum item selecionado' : `${n} item${n !== 1 ? 's' : ''} selecionado${n !== 1 ? 's' : ''}`;
 }
 
-// ─────────────────────────────────────────────────────
+// 
 // 7. CONTEXT MENU
-// ─────────────────────────────────────────────────────
+// 
 function showCtxMenu(x, y) {
     const menu = document.getElementById('ctx-menu');
     menu.style.left = `${Math.min(x, window.innerWidth - 200)}px`;
@@ -329,9 +329,9 @@ function showCtxMenu(x, y) {
 
 function hideCtxMenu() { document.getElementById('ctx-menu').classList.remove('visible'); }
 
-function ctxOpen() { showToast('📂 Abrindo arquivo...'); hideCtxMenu(); }
-function ctxSendEditor() { showToast('🎬 Enviado para o Editor!'); hideCtxMenu(); }
-function ctxDownload() { showToast('⬇️ Download iniciado!'); hideCtxMenu(); }
+function ctxOpen() { showToast(' Abrindo arquivo...'); hideCtxMenu(); }
+function ctxSendEditor() { showToast(' Enviado para o Editor!'); hideCtxMenu(); }
+function ctxDownload() { showToast(' Download iniciado!'); hideCtxMenu(); }
 function ctxRename() {
     const file = GaragemState.allFiles.find(f => f.id === GaragemState.ctxTargetId);
     const newName = prompt('Renomear para:', file?.name || '');
@@ -340,7 +340,7 @@ function ctxRename() {
         file.type = autoTagBatch(newName.trim(), file.iaGenerated);
         renderGrid();
         updateCounts();
-        showToast(`✏️ Renomeado para "${newName}"`);
+        showToast(` Renomeado para "${newName}"`);
     }
     hideCtxMenu();
 }
@@ -348,39 +348,39 @@ function ctxRename() {
 function ctxAddToAlbum() {
     if (GaragemState.albums.length === 0) { createAlbum(); hideCtxMenu(); return; }
     const names = GaragemState.albums.map((a, i) => `${i + 1}. ${a.name}`).join('\n');
-    const idx = parseInt(prompt(`Adicionar ao álbum:\n${names}\n\nDigite o número:`)) - 1;
+    const idx = parseInt(prompt(`Adicionar ao lbum:\n${names}\n\nDigite o nmero:`)) - 1;
     if (idx >= 0 && idx < GaragemState.albums.length) {
         const album = GaragemState.albums[idx];
         GaragemState.selectedIds.forEach(id => {
             if (!album.fileIds.includes(id)) album.fileIds.push(id);
         });
         renderAlbumList();
-        showToast(`📁 Adicionado ao álbum "${album.name}"!`);
+        showToast(` Adicionado ao lbum "${album.name}"!`);
     }
     hideCtxMenu();
 }
 
 function ctxDelete() {
-    if (!confirm(`Excluir ${GaragemState.selectedIds.size} item(ns)? Esta ação não pode ser desfeita.`)) {
+    if (!confirm(`Excluir ${GaragemState.selectedIds.size} item(ns)? Esta ao no pode ser desfeita.`)) {
         hideCtxMenu(); return;
     }
     GaragemState.allFiles = GaragemState.allFiles.filter(f => !GaragemState.selectedIds.has(f.id));
     GaragemState.albums.forEach(a => { a.fileIds = a.fileIds.filter(id => !GaragemState.selectedIds.has(id)); });
     GaragemState.selectedIds.clear();
     renderGrid(); renderAlbumList(); updateCounts(); updateSelectionStatus();
-    showToast('🗑️ Arquivos excluídos.');
+    showToast(' Arquivos excludos.');
     hideCtxMenu();
 }
 
 function albumCtx(e, albumId) {
     e.preventDefault();
-    const action = prompt(`Álbum: "${GaragemState.albums.find(a => a.id === albumId)?.name}"\n\n1. Renomear\n2. Excluir\n\nDigite o número:`);
+    const action = prompt(`lbum: "${GaragemState.albums.find(a => a.id === albumId)?.name}"\n\n1. Renomear\n2. Excluir\n\nDigite o nmero:`);
     if (action === '1') {
         const album = GaragemState.albums.find(a => a.id === albumId);
         const newName = prompt('Novo nome:', album?.name);
         if (newName?.trim()) { album.name = newName.trim(); renderAlbumList(); }
     } else if (action === '2') {
-        if (confirm('Excluir este álbum? Os arquivos NÃO serão deletados.')) {
+        if (confirm('Excluir este lbum? Os arquivos NO sero deletados.')) {
             GaragemState.albums = GaragemState.albums.filter(a => a.id !== albumId);
             if (GaragemState.activeAlbum === albumId) { GaragemState.activeAlbum = null; }
             renderAlbumList(); renderGrid(); updateCounts();
@@ -388,22 +388,22 @@ function albumCtx(e, albumId) {
     }
 }
 
-// ─────────────────────────────────────────────────────
-// 8. AÇÕES DE TOOLBAR
-// ─────────────────────────────────────────────────────
+// 
+// 8. AES DE TOOLBAR
+// 
 function deleteSelected() {
     if (GaragemState.selectedIds.size === 0) { showToast('Selecione arquivos primeiro.'); return; }
     ctxDelete();
 }
 
 function uploadFromBagagem() {
-    // Futura integração: abre modal da Bagagem para mover arquivos
-    showToast('💼 Abrindo Bagagem para transferência...');
+    // Futura integrao: abre modal da Bagagem para mover arquivos
+    showToast(' Abrindo Bagagem para transferncia...');
 }
 
-// ─────────────────────────────────────────────────────
+// 
 // 9. TOAST
-// ─────────────────────────────────────────────────────
+// 
 function showToast(msg) {
     let t = document.getElementById('garagem-toast');
     if (!t) {
@@ -418,11 +418,11 @@ function showToast(msg) {
     t._to = setTimeout(() => { t.style.opacity = '0'; }, 3500);
 }
 
-// ─────────────────────────────────────────────────────
+// 
 // 10. BOOT
-// ─────────────────────────────────────────────────────
+// 
 document.addEventListener('DOMContentLoaded', () => {
-    // Só inicializa na página Garagem
+    // S inicializa na pgina Garagem
     if (!document.getElementById('file-grid')) return;
 
     loadMockData();

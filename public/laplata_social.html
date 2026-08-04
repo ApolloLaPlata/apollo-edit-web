@@ -352,7 +352,7 @@
         
         <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
             <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
-                <span style="font-size:2.5rem;">📱</span> SOCIAL POSTS & CARROSSEL
+                <span style="font-size:2.5rem;"></span> SOCIAL POSTS & CARROSSEL
             </h3>
             <p style="color: #94a3b8; margin-top: 5px;">Crie imagens de alto engajamento para Instagram, LinkedIn e Facebook com textos injetados nativamente via IA.</p>
         </div>
@@ -364,8 +364,8 @@
                 
                 <!-- Modo -->
                 <div class="toggle-group" id="mode-toggle">
-                    <button class="toggle-btn active" data-mode="single">🖼️ Post Único</button>
-                    <button class="toggle-btn" data-mode="carousel">📚 Carrossel</button>
+                    <button class="toggle-btn active" data-mode="single"> Post nico</button>
+                    <button class="toggle-btn" data-mode="carousel"> Carrossel</button>
                 </div>
 
                 <!-- Formato -->
@@ -386,12 +386,12 @@
 
                 <div class="input-group">
                     <label>Estilo Visual Global</label>
-                    <input type="text" id="s-style" placeholder="Ex: Fotografia realista, alta qualidade..." value="Fotografia realista, alta qualidade, iluminação de estúdio">
+                    <input type="text" id="s-style" placeholder="Ex: Fotografia realista, alta qualidade..." value="Fotografia realista, alta qualidade, iluminao de estdio">
                 </div>
 
                 <hr style="border-color: #334155; margin: 5px 0;">
 
-                <!-- MODO: POST ÚNICO -->
+                <!-- MODO: POST NICO -->
                 <div id="panel-single" style="display: flex; flex-direction: column; gap: 15px;">
                     <div class="input-group">
                         <label>Contexto da Postagem</label>
@@ -399,36 +399,36 @@
                     </div>
                     <div class="input-group">
                         <label>Texto na Imagem (Overlay)</label>
-                        <input type="text" id="s-overlay" placeholder="Ex: NOVIDADE NA ÁREA!">
+                        <input type="text" id="s-overlay" placeholder="Ex: NOVIDADE NA REA!">
                     </div>
-                    <button class="btn-action" id="btn-generate-single">⚡ Gerar Postagem</button>
+                    <button class="btn-action" id="btn-generate-single"> Gerar Postagem</button>
                 </div>
 
                 <!-- MODO: CARROSSEL -->
                 <div id="panel-carousel" style="display: none; flex-direction: column; gap: 15px;">
                     <div class="input-group">
-                        <label>Tópico do Carrossel</label>
+                        <label>Tpico do Carrossel</label>
                         <textarea id="c-topic" rows="3" placeholder="Ex: 5 dicas para melhorar a produtividade no home office..."></textarea>
                     </div>
                     <div class="input-group">
                         <label style="display:flex; justify-content:space-between;">
-                            <span>Número de Slides</span>
+                            <span>Nmero de Slides</span>
                             <span id="c-slide-val" style="color:#10b981;">5</span>
                         </label>
                         <input type="range" id="c-slide-count" min="2" max="10" value="5" style="accent-color: #10b981;">
                     </div>
-                    <button class="btn-action" id="btn-generate-script">✨ Gerar Roteiro do Carrossel</button>
+                    <button class="btn-action" id="btn-generate-script"> Gerar Roteiro do Carrossel</button>
                 </div>
 
                 <hr style="border-color: #334155; margin: 5px 0;">
 
-                <!-- GERAÇÃO DE LEGENDA (COPY) -->
-                <button class="btn-action btn-secondary" id="btn-generate-caption">💬 Gerar Legenda (Copy)</button>
+                <!-- GERAO DE LEGENDA (COPY) -->
+                <button class="btn-action btn-secondary" id="btn-generate-caption"> Gerar Legenda (Copy)</button>
                 
                 <div class="caption-area" id="caption-area">
                     <div class="caption-header">
                         Legenda Gerada
-                        <button class="btn-copy" id="btn-copy-caption">📋 Copiar</button>
+                        <button class="btn-copy" id="btn-copy-caption"> Copiar</button>
                     </div>
                     <textarea id="caption-text" readonly></textarea>
                 </div>
@@ -447,7 +447,7 @@
                 <!-- SINGLE POST VIEWER -->
                 <div class="single-viewer" id="viewer-single">
                     <div class="placeholder-text" id="placeholder-single">
-                        <div style="font-size: 4rem; opacity: 0.5;">🖼️</div>
+                        <div style="font-size: 4rem; opacity: 0.5;"></div>
                         <div>
                             <strong style="color: white; font-size: 1.2rem; display:block;">Preview da Postagem</strong>
                             Preencha o contexto e clique em Gerar.
@@ -456,7 +456,7 @@
                     <div class="result-wrapper" id="result-single">
                         <img id="img-single" src="" alt="Postagem Gerada">
                         <div class="overlay-tools">
-                            <button class="tool-btn" id="btn-download-single">📥 Baixar</button>
+                            <button class="tool-btn" id="btn-download-single"> Baixar</button>
                         </div>
                     </div>
                 </div>
@@ -467,13 +467,13 @@
                         <h3 style="color:white; margin:0; font-size:1.1rem;">Slides do Carrossel</h3>
                         <div style="display:flex; gap:10px;">
                             <button class="btn-action btn-secondary" style="padding: 8px 12px; font-size:0.8rem;" id="btn-add-slide">+ Slide</button>
-                            <button class="btn-action" style="padding: 8px 12px; font-size:0.8rem;" id="btn-generate-all">🖼️ Gerar Todas as Imagens</button>
+                            <button class="btn-action" style="padding: 8px 12px; font-size:0.8rem;" id="btn-generate-all"> Gerar Todas as Imagens</button>
                         </div>
                     </div>
                     <div class="slide-list" id="slide-list">
                         <div class="placeholder-text" style="margin-top: 50px;">
-                            <div style="font-size: 4rem; opacity: 0.5;">📚</div>
-                            <div>Descreva um tópico e clique em "Gerar Roteiro" para começar.</div>
+                            <div style="font-size: 4rem; opacity: 0.5;"></div>
+                            <div>Descreva um tpico e clique em "Gerar Roteiro" para comear.</div>
                         </div>
                     </div>
                 </div>
@@ -494,17 +494,17 @@
                 </div>
                 <div class="input-group">
                     <label>Prompt da Imagem (Fundo)</label>
-                    <textarea class="sl-prompt" rows="2" placeholder="Descrição da cena..."></textarea>
+                    <textarea class="sl-prompt" rows="2" placeholder="Descrio da cena..."></textarea>
                 </div>
                 <div class="sl-error" style="color:#ef4444; font-size:0.75rem; display:none;"></div>
             </div>
             <div class="slide-preview">
                 <div class="slide-img-box">
-                    <span class="sl-icon">🖼️</span>
+                    <span class="sl-icon"></span>
                     <div class="sl-spinner spinner" style="display:none; width:20px; height:20px; border-width:2px; margin:0;"></div>
                     <img class="sl-img" src="" style="display:none;">
                 </div>
-                <button class="btn-remove-slide">🗑️ Remover</button>
+                <button class="btn-remove-slide"> Remover</button>
             </div>
         </div>
     </template>

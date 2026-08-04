@@ -6,7 +6,7 @@ window.ApolloAlert = function(msg) {
         alert(msg);
     }
 };
-// scripts_logic.js - Lógica para a Aba de Roteiros
+// scripts_logic.js - Lgica para a Aba de Roteiros
 
 let scriptsProfiles = [];
 let activeScriptsProfileId = '';
@@ -79,7 +79,7 @@ async function loadAIModels() {
                     const estimatedCost = ((m.input_price_per_1m * 0.002) + (m.output_price_per_1m * 0.002)).toFixed(4); // Rough estimate for a script in $
                     const marginCost = (parseFloat(estimatedCost) * 1.3).toFixed(4); // 30% margin
                     const gasCost = Math.ceil(parseFloat(marginCost) * 100); // converting cents to gas
-                    opt.textContent = `🧠 ${m.provider} - ${m.model_id} (Est. Custo: ~${gasCost || 1} Gas)`;
+                    opt.textContent = ` ${m.provider} - ${m.model_id} (Est. Custo: ~${gasCost || 1} Gas)`;
                     select.appendChild(opt);
                 }
             });
@@ -97,7 +97,7 @@ function renderScriptsProfileSelect() {
     const select = document.getElementById('scripts-profile-select');
     if (!select) return;
     
-    select.innerHTML = '<option value="">Sem perfil específico (Genérico)</option>';
+    select.innerHTML = '<option value="">Sem perfil especfico (Genrico)</option>';
     
     scriptsProfiles.forEach(p => {
         const option = document.createElement('option');
@@ -165,7 +165,7 @@ function saveScriptsProfile() {
     
     const name = nameInput.value.trim();
     if (!name) {
-        window.ApolloAlert("O nome do perfil é obrigatório.");
+        window.ApolloAlert("O nome do perfil  obrigatrio.");
         return;
     }
     
@@ -201,7 +201,7 @@ function renderScriptsProfiles() {
             <div style="text-align: center; padding: 24px 16px; border: 2px dashed #444; border-radius: 8px; color: #94a3b8;">
                 <i class="fas fa-users fa-2x" style="margin-bottom: 8px; opacity: 0.5;"></i>
                 <p style="font-size: 14px; margin: 0;">Nenhum perfil cadastrado.</p>
-                <p style="font-size: 12px; margin: 4px 0 0 0;">Crie um perfil para gerar roteiros mais autênticos.</p>
+                <p style="font-size: 12px; margin: 4px 0 0 0;">Crie um perfil para gerar roteiros mais autnticos.</p>
             </div>
         `;
         return;
@@ -277,9 +277,9 @@ async function handleGenerateScriptCustom() {
     if (profileId) {
         const p = scriptsProfiles.find(x => x.id === profileId);
         if (p) {
-            profileContext = `Perfil: ${p.name}\nDescrição: ${p.description || ''}\n`;
+            profileContext = `Perfil: ${p.name}\nDescrio: ${p.description || ''}\n`;
             if (p.files && p.files.length > 0) {
-                profileContext += `\n--- MATERIAIS DE REFERÊNCIA (Para clonar o estilo) ---\n`;
+                profileContext += `\n--- MATERIAIS DE REFERNCIA (Para clonar o estilo) ---\n`;
                 p.files.forEach(f => {
                     profileContext += `\nArquivo: ${f.name}\n${f.content}\n`;
                 });
@@ -289,34 +289,34 @@ async function handleGenerateScriptCustom() {
     
     let tonePrompt = '';
     if (tone === 'perfil') {
-        tonePrompt = profileId ? 'Use EXATAMENTE o tom de voz e estilo demonstrados nos textos de referência do perfil.' : 'Use um tom natural e engajador.';
+        tonePrompt = profileId ? 'Use EXATAMENTE o tom de voz e estilo demonstrados nos textos de referncia do perfil.' : 'Use um tom natural e engajador.';
     } else {
         const tones = {
-            'sarcastico': 'Use um tom Sarcástico e Irônico: Faça piadas ácidas, deboche da situação (quando apropriado), use humor inteligente e não tenha medo de ser um pouco cínico.',
-            'comedia': 'Use um tom de Humor e Comédia: Faça o espectador rir, use analogias engraçadas, exagere nas reações e mantenha a energia lá em cima.',
-            'agressivo': 'Use um tom Agressivo e Polêmico: Seja incisivo, direto, critique sem dó, mostre indignação e não tenha papas na língua. Fale verdades duras.',
-            'serio': 'Use um tom Sério e Jornalístico: Focado nos fatos, imparcial, com linguagem formal, credibilidade e análise profunda.',
-            'descontraido': 'Use um tom Descontraído e Bate-papo: Como se estivesse conversando com um amigo no bar. Use gírias leves, seja muito próximo do público e relaxado.',
-            'inspirador': 'Use um tom Inspirador e Motivacional: Focado em superação, lições de vida, energia positiva e em fazer o espectador se sentir capaz de tudo.'
+            'sarcastico': 'Use um tom Sarcstico e Irnico: Faa piadas cidas, deboche da situao (quando apropriado), use humor inteligente e no tenha medo de ser um pouco cnico.',
+            'comedia': 'Use um tom de Humor e Comdia: Faa o espectador rir, use analogias engraadas, exagere nas reaes e mantenha a energia l em cima.',
+            'agressivo': 'Use um tom Agressivo e Polmico: Seja incisivo, direto, critique sem d, mostre indignao e no tenha papas na lngua. Fale verdades duras.',
+            'serio': 'Use um tom Srio e Jornalstico: Focado nos fatos, imparcial, com linguagem formal, credibilidade e anlise profunda.',
+            'descontraido': 'Use um tom Descontrado e Bate-papo: Como se estivesse conversando com um amigo no bar. Use grias leves, seja muito prximo do pblico e relaxado.',
+            'inspirador': 'Use um tom Inspirador e Motivacional: Focado em superao, lies de vida, energia positiva e em fazer o espectador se sentir capaz de tudo.'
         };
         tonePrompt = tones[tone] || tones['serio'];
     }
     
     let modalityPrompt = '';
     const modalities = {
-        'longo': 'Formato: Vídeo Longo Padrão (8 a 12 minutos). Estrutura: Gancho forte inicial, introdução do tema, desenvolvimento aprofundado com exemplos, e chamada para ação (CTA) no final.',
-        'curto': 'Formato: Vídeo Curto (3 a 5 minutos). Estrutura: Gancho rápido, direto ao ponto, sem enrolação, desenvolvimento focado no essencial, e CTA rápido.',
-        'shorts': 'Formato: Shorts/TikTok/Reels (até 60 segundos). Estrutura: Gancho ABSURDO nos primeiros 3 segundos, ritmo frenético, sem enrolação, frases curtas, e CTA rápido no final.',
-        'corte': 'Formato: Corte Estilo Podcast (1 a 3 minutos). Estrutura: Inicia no meio de um raciocínio forte ou polêmico, desenvolve o argumento principal, e termina com uma reflexão ou punchline.',
-        'documentario': 'Formato: Documentário/Ensaio de Vídeo. Estrutura: Tom investigativo, narrativa envolvente, contexto histórico ou aprofundado, divisão em capítulos ou atos, e conclusão reflexiva.',
-        'noticias': 'Formato: Notícias/Jornalismo. Estrutura: Manchete impactante, resumo do fato (o que, quem, quando, onde, por que), desdobramentos, e encerramento.',
-        'review': 'Formato: Review de Produto. Estrutura: Gancho sobre o produto, unboxing ou primeiras impressões, prós e contras detalhados, veredito final e CTA de compra.',
-        'tutorial': 'Formato: Tutorial / Passo a Passo. Estrutura: Explicação do problema, os passos lógicos e claros para resolver, dicas extras e CTA.',
-        'storytelling': 'Formato: Storytelling / Relato Pessoal. Estrutura: O estado inicial (situação problema), o evento incitante, a jornada/luta, o clímax e a resolução/lição aprendida.'
+        'longo': 'Formato: Vdeo Longo Padro (8 a 12 minutos). Estrutura: Gancho forte inicial, introduo do tema, desenvolvimento aprofundado com exemplos, e chamada para ao (CTA) no final.',
+        'curto': 'Formato: Vdeo Curto (3 a 5 minutos). Estrutura: Gancho rpido, direto ao ponto, sem enrolao, desenvolvimento focado no essencial, e CTA rpido.',
+        'shorts': 'Formato: Shorts/TikTok/Reels (at 60 segundos). Estrutura: Gancho ABSURDO nos primeiros 3 segundos, ritmo frentico, sem enrolao, frases curtas, e CTA rpido no final.',
+        'corte': 'Formato: Corte Estilo Podcast (1 a 3 minutos). Estrutura: Inicia no meio de um raciocnio forte ou polmico, desenvolve o argumento principal, e termina com uma reflexo ou punchline.',
+        'documentario': 'Formato: Documentrio/Ensaio de Vdeo. Estrutura: Tom investigativo, narrativa envolvente, contexto histrico ou aprofundado, diviso em captulos ou atos, e concluso reflexiva.',
+        'noticias': 'Formato: Notcias/Jornalismo. Estrutura: Manchete impactante, resumo do fato (o que, quem, quando, onde, por que), desdobramentos, e encerramento.',
+        'review': 'Formato: Review de Produto. Estrutura: Gancho sobre o produto, unboxing ou primeiras impresses, prs e contras detalhados, veredito final e CTA de compra.',
+        'tutorial': 'Formato: Tutorial / Passo a Passo. Estrutura: Explicao do problema, os passos lgicos e claros para resolver, dicas extras e CTA.',
+        'storytelling': 'Formato: Storytelling / Relato Pessoal. Estrutura: O estado inicial (situao problema), o evento incitante, a jornada/luta, o clmax e a resoluo/lio aprendida.'
     };
     modalityPrompt = modalities[modality] || modalities['longo'];
     
-    const finalInstructions = `Tema/Instruções Gerais: ${topic}\n\nREGRAS DE FORMATAÇÃO E TOM DE VOZ:\n- ${modalityPrompt}\n- ${tonePrompt}\n\nCrie o roteiro baseando-se estritamente nestas diretrizes. Inclua rubricas visuais (ex: [Corta para B-roll de...]) se apropriado.`;
+    const finalInstructions = `Tema/Instrues Gerais: ${topic}\n\nREGRAS DE FORMATAO E TOM DE VOZ:\n- ${modalityPrompt}\n- ${tonePrompt}\n\nCrie o roteiro baseando-se estritamente nestas diretrizes. Inclua rubricas visuais (ex: [Corta para B-roll de...]) se apropriado.`;
 
     try {
         const engineSelect = document.getElementById('scripts-ai-engine');

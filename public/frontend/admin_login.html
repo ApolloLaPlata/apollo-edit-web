@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Redirecionando...</title>
     <script>
-        // O cache do navegador ainda estava tentando jogar o usuÃ¡rio para a pÃ¡gina de login.
-        // Como o usuÃ¡rio nÃ£o quer senha localmente, esta pÃ¡gina serve como um "trampolim"
-        // para consertar o cache e devolver o usuÃ¡rio para a Ã¡rea admin.
+        // O cache do navegador ainda estava tentando jogar o usuário para a página de login.
+        // Como o usuário não quer senha localmente, esta página serve como um "trampolim"
+        // para consertar o cache e devolver o usuário para a área admin.
         
         // 1. Plantar um token falso no localStorage para acalmar o script antigo (caso ele ainda rode)
         localStorage.setItem('apollo_admin_token', 'bypass_token_local_dev');

@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // --- REFERÊNCIAS ---
+    // --- REFERNCIAS ---
     btnAddRef.addEventListener('click', () => { if (!isGenerating) refFileInput.click(); });
 
     refFileInput.addEventListener('change', (e) => {
@@ -165,16 +165,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 referenceImages.push(b64);
                 renderRefs();
                 playClick();
-                showToast('Colado', 'Imagem carregada do Inventário!', 'success');
+                showToast('Colado', 'Imagem carregada do Inventrio!', 'success');
             } else {
                 playError();
-                showToast('Aviso', 'O inventário está vazio!', 'system');
+                showToast('Aviso', 'O inventrio est vazio!', 'system');
             }
         });
     }
 
     function renderRefs() {
-        // Remove todos os items criados (mantém só o botão de add)
+        // Remove todos os items criados (mantm s o boto de add)
         document.querySelectorAll('.ref-gallery .ref-item:not(.ref-add)').forEach(el => el.remove());
         
         referenceImages.forEach((img64, idx) => {
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         crossFormatBar.style.display = 'flex';
         const target = layout === '16:9' ? '9:16' : '16:9';
         const label = target === '16:9' ? 'Horizontal (16:9)' : 'Vertical (9:16)';
-        btnCrossFormat.innerText = `Gerar Versão ${label}`;
+        btnCrossFormat.innerText = `Gerar Verso ${label}`;
     }
 
     btnCrossFormat.addEventListener('click', async () => {
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await startGenerationLogic("Convertendo Formato...");
     });
 
-    // --- GERAÇÃO CORE ---
+    // --- GERAO CORE ---
     btnGenerate.addEventListener('click', async () => {
         playClick();
         await startGenerationLogic("Renderizando Design...");
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function startGenerationLogic(loadingMsg) {
         if (mode === 'structured') {
             if (!inTitle.value.trim() && !inBg.value.trim()) {
-                showToast('Erro', 'Preencha o Título ou Fundo.', 'system'); return;
+                showToast('Erro', 'Preencha o Ttulo ou Fundo.', 'system'); return;
             }
         } else {
             if (!inCustom.value.trim()) {
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const db = await window.laplataDB.openDB();
         const currencies = await window.laplataDB.getCurrencies(db);
         if (currencies.gasolina < 1) {
-            if (window.apolloNotifications) window.apolloNotifications.add("Sem Combustível", "Você precisa de Gasolina para gerar imagens.", "error");
+            if (window.apolloNotifications) window.apolloNotifications.add("Sem Combustvel", "Voc precisa de Gasolina para gerar imagens.", "error");
             if (window.apolloSFX) window.apolloSFX.play('error');
             if (window.apolloCopilot) window.apolloCopilot.react("low_gas");
             return;
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadingOverlay.style.display = 'flex';
         loadingText.innerText = loadingMsg;
         editOverlay.style.display = 'none';
-        overlayTools.style.display = 'none'; // Esconde ferramentas durante geração
+        overlayTools.style.display = 'none'; // Esconde ferramentas durante gerao
 
         // CSS Ajuste
         const isHoriz = layout === '16:9';
@@ -290,13 +290,13 @@ Ensure the text is extremely clear and placed where it does not obscure the main
             }
 
             // Vamos usar o motor base `laplata_ai.js` `generateImage`
-            // Note: O laplata_ai original aceita apenas a primeira imagem de referência base64
+            // Note: O laplata_ai original aceita apenas a primeira imagem de referncia base64
             const refBase64 = referenceImages.length > 0 ? referenceImages[0] : null;
             
             const finalSettings = {
                 ...settings,
                 aspectRatio: layout,
-                sceneContext: "" // Zera para não conflitar
+                sceneContext: "" // Zera para no conflitar
             };
 
             const resultBase64 = await window.laplataSettings.executeWithKeyRotation(async (apiKey) => {
@@ -313,12 +313,12 @@ Ensure the text is extremely clear and placed where it does not obscure the main
             await window.laplataDB.updateCurrency(db, 'gasolina', -1);
             window.laplataDB.updateTopNav(db);
 
-            // Adicionar progresso à missão
+            // Adicionar progresso  misso
             if (window.apolloQuests) window.apolloQuests.addProgress('image');
             if (window.apolloCopilot && Math.random() > 0.5) window.apolloCopilot.react("generate_success");
 
             playSuccess();
-            showToast('Design Concluído', 'Sua miniatura está pronta!', 'success');
+            showToast('Design Concludo', 'Sua miniatura est pronta!', 'success');
             
             // Salva na Galeria
             await window.laplataDB.gallery.save({
@@ -373,19 +373,19 @@ Ensure the text is extremely clear and placed where it does not obscure the main
         editInstruction.value = '';
     });
 
-    // Edição via Inpainting / Edit Prompt
+    // Edio via Inpainting / Edit Prompt
     btnApplyEdit.addEventListener('click', async () => {
         const text = editInstruction.value.trim();
         if (!text || !generatedResult) return;
 
         playClick();
         editOverlay.style.display = 'none';
-        loadingText.innerText = "Aplicando magia de edição...";
+        loadingText.innerText = "Aplicando magia de edio...";
         loadingOverlay.style.display = 'flex';
         isGenerating = true;
 
         try {
-            // Em laplata_ai.js temos a função `editImage` que recebe base64 + instrução
+            // Em laplata_ai.js temos a funo `editImage` que recebe base64 + instruo
             const resultBase64 = await window.laplataSettings.executeWithKeyRotation(async (apiKey) => {
                 return await window.laplataAI.editImage(apiKey, generatedResult.imageUrl, text);
             });
@@ -394,9 +394,9 @@ Ensure the text is extremely clear and placed where it does not obscure the main
             generatedResult.imageUrl = resultBase64;
 
             playSuccess();
-            showToast('Editado!', 'Modificações aplicadas.', 'success');
+            showToast('Editado!', 'Modificaes aplicadas.', 'success');
 
-            // Salva na galeria a versão editada
+            // Salva na galeria a verso editada
             await window.laplataDB.gallery.save({
                 id: crypto.randomUUID(),
                 prompt: `[Editado Thumb: ${text}]`,
@@ -407,7 +407,7 @@ Ensure the text is extremely clear and placed where it does not obscure the main
 
         } catch (e) {
             console.error(e);
-            showToast('Falha na Edição', e.message, 'system');
+            showToast('Falha na Edio', e.message, 'system');
             playError();
         } finally {
             isGenerating = false;
@@ -425,7 +425,7 @@ Ensure the text is extremely clear and placed where it does not obscure the main
         isGenerating = true;
 
         try {
-            // Analisador de Visão para extrair o prompt
+            // Analisador de Viso para extrair o prompt
             const result = await window.laplataSettings.executeWithKeyRotation(async (apiKey) => {
                 const { GoogleGenAI } = await import('https://esm.sh/@google/genai@0.1.2');
                 const ai = new GoogleGenAI({ apiKey });
@@ -449,7 +449,7 @@ Ensure the text is extremely clear and placed where it does not obscure the main
             // Vai para a aba Custom e preenche
             document.querySelector('[data-mode="custom"]').click();
             inCustom.value = result;
-            showToast('Prompt Extraído', 'Prompt copiado para a aba Livre!', 'success');
+            showToast('Prompt Extrado', 'Prompt copiado para a aba Livre!', 'success');
             playSuccess();
 
         } catch (e) {

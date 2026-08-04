@@ -1,6 +1,6 @@
 /**
  * Apollo La Plata - Motor de IA Vanilla JS
- * Tradução do geminiService.ts e imageGenerator.ts
+ * Traduo do geminiService.ts e imageGenerator.ts
  * Utiliza o SDK oficial do Google injetado via ESM (esm.sh) para manter 100% de compatibilidade
  */
 
@@ -72,19 +72,19 @@ window.laplataAI = {};
 
         const makeVowelsFlexible = (str) => {
             return str
-                .replace(/[aáàãâä]/gi, '[aáàãâäAÁÀÃÂÄaA]')
-                .replace(/[eéèêë]/gi, '[eéèêëEÉÈÊËeE]')
-                .replace(/[iíìîï]/gi, '[iíìîïIÍÌÎÏiI]')
-                .replace(/[oóòõôö]/gi, '[oóòõôöOÓÒÕÔÖoO]')
-                .replace(/[uúùûü]/gi, '[uúùûüUÚÙÛÜuU]')
-                .replace(/[cç]/gi, '[cçCÇ]');
+                .replace(/[a]/gi, '[aAaA]')
+                .replace(/[e]/gi, '[eEeE]')
+                .replace(/[i]/gi, '[iIiI]')
+                .replace(/[o]/gi, '[oOoO]')
+                .replace(/[u]/gi, '[uUuU]')
+                .replace(/[c]/gi, '[cC]');
         };
 
         const finalRegexParts = regexStrParts.map(p => makeVowelsFlexible(p));
         return new RegExp(`(^|[\\s.,!?;:"'({\\[\\-])(#?(?:${finalRegexParts.join('|')}))(?=[\\s.,!?;:"')}\\]]|$)`, 'gi');
     };
 
-    // --- GERAÇÃO DE IMAGEM ---
+    // --- GERAO DE IMAGEM ---
     window.laplataAI.generateImage = async function(apiKey, prompt, characters, settings, referenceImage = null) {
         // Carrega o SDK dinamicamente via ESM para rodar no Vanilla JS sem bundler
         const { GoogleGenAI, HarmCategory, HarmBlockThreshold } = await import('https://esm.sh/@google/genai@0.1.2');
@@ -193,7 +193,7 @@ window.laplataAI = {};
         };
 
         try {
-            console.log("Iniciando geração com Gemini SDK...", { model: settings.modelId });
+            console.log("Iniciando gerao com Gemini SDK...", { model: settings.modelId });
             const response = await ai.models.generateContent({
                 model: settings.modelId,
                 contents: [{ role: "user", parts }],
@@ -211,13 +211,13 @@ window.laplataAI = {};
                     }
                 }
             }
-            throw new Error("Nenhuma imagem retornada (possível bloqueio de segurança silencioso).");
+            throw new Error("Nenhuma imagem retornada (possvel bloqueio de segurana silencioso).");
         } catch (e) {
             throw e;
         }
     };
 
-    // --- EXPANSÃO E DESCRIÇÃO DE TEXTO ---
+    // --- EXPANSO E DESCRIO DE TEXTO ---
     window.laplataAI.generateText = async function(apiKey, prompt, settings, systemInstruction = "") {
         const { GoogleGenAI } = await import('https://esm.sh/@google/genai@0.1.2');
         const ai = new GoogleGenAI({ apiKey });
@@ -249,7 +249,7 @@ window.laplataAI = {};
         return await window.laplataAI.generateText(apiKey, `Short Description: ${shortDescription}\n\nExpand this into a detailed visual prompt:`, settings, systemInstruction);
     };
 
-    // --- EDIÇÃO DE IMAGEM ---
+    // --- EDIO DE IMAGEM ---
     window.laplataAI.editImage = async function(apiKey, base64Image, instruction) {
         const { GoogleGenAI } = await import('https://esm.sh/@google/genai@0.1.2');
         const ai = new GoogleGenAI({ apiKey });
@@ -272,7 +272,7 @@ window.laplataAI = {};
                     }
                 }
             }
-            throw new Error("Falha na edição da imagem.");
+            throw new Error("Falha na edio da imagem.");
         } catch (e) {
             throw e;
         }

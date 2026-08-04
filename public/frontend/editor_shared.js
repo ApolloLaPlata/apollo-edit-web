@@ -1,8 +1,8 @@
 // editor_shared.js
-// Contém funções globais para todos os editores (Etapas 16, 19 e 20)
+// Contm funes globais para todos os editores (Etapas 16, 19 e 20)
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Etapa 19: Botão Global de Voltar ao Hub
+    // Etapa 19: Boto Global de Voltar ao Hub
     const header = document.querySelector('header');
     if (header) {
         const btnHub = document.createElement('button');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnHub.style.backgroundColor = '#1a1a1a';
         btnHub.style.border = '1px solid #444';
         btnHub.style.marginRight = '15px';
-        btnHub.innerHTML = '⬅ Voltar ao Hub';
+        btnHub.innerHTML = ' Voltar ao Hub';
         btnHub.onclick = () => window.location.href = 'hub.html';
         
         header.insertBefore(btnHub, header.firstChild);
@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.ctrlKey && e.key === 'z') {
             e.preventDefault();
             window.showToast("Desfazer (Undo) acionado!", "#888");
-            // A lógica de splice nos arrays de camadas entraria aqui
+            // A lgica de splice nos arrays de camadas entraria aqui
         }
-        // Barra de Espaço (Play/Pause genérico)
+        // Barra de Espao (Play/Pause genrico)
         if (e.key === ' ' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
             e.preventDefault();
             const btnPlay = document.getElementById('btn-play');
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Criação Dinâmica do Modal de Atalhos (Cheat Sheet)
+    // Criao Dinmica do Modal de Atalhos (Cheat Sheet)
     function toggleHotkeyModal() {
         let modal = document.getElementById('hotkey-modal');
         if (modal) {
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.backdropFilter = 'blur(10px)';
 
         modal.innerHTML = `
-            <h2 style="color: #00ffcc; margin-bottom: 20px; text-align: center;">⌨️ Atalhos do Apollo</h2>
+            <h2 style="color: #00ffcc; margin-bottom: 20px; text-align: center;"> Atalhos do Apollo</h2>
             <ul style="list-style: none; padding: 0; line-height: 2;">
                 <li style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 5px;">
                     <span>Salvar Rascunho</span> <strong style="color: #6b21a8;">Ctrl + S</strong>
@@ -116,10 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>Enviar para Bagageiro</span> <strong style="color: #6b21a8;">Ctrl + E</strong>
                 </li>
                 <li style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 5px 0;">
-                    <span>Desfazer Ação</span> <strong style="color: #6b21a8;">Ctrl + Z</strong>
+                    <span>Desfazer Ao</span> <strong style="color: #6b21a8;">Ctrl + Z</strong>
                 </li>
                 <li style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 5px 0;">
-                    <span>Play / Pause</span> <strong style="color: #6b21a8;">Espaço</strong>
+                    <span>Play / Pause</span> <strong style="color: #6b21a8;">Espao</strong>
                 </li>
                 <li style="display: flex; justify-content: space-between; padding-top: 5px;">
                     <span>Ajuda de Atalhos</span> <strong style="color: #6b21a8;">Shift + ?</strong>
@@ -142,6 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', escListener);
     }
 
-    // O HUD de Transferência agora é 100% gerenciado nativamente pelo transfer_hud.js
-    // Nenhuma injeção de DOM simulada é necessária aqui.
+    // O HUD de Transferncia agora  100% gerenciado nativamente pelo transfer_hud.js
+    // Nenhuma injeo de DOM simulada  necessria aqui.
 });

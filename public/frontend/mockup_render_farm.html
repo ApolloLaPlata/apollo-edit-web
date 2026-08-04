@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mockup Mecânica: Render Farm Simutânea</title>
+    <title>Mockup Mecnica: Render Farm Simutnea</title>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -16,7 +16,7 @@
             justify-content: center;
         }
 
-        /* O item arrastável que simula uma Receita ou Vídeo */
+        /* O item arrastvel que simula uma Receita ou Vdeo */
         .draggable-item {
             width: 150px;
             height: 150px;
@@ -163,33 +163,33 @@
 </head>
 <body>
 
-    <!-- A Mídia sendo arrastada -->
+    <!-- A Mdia sendo arrastada -->
     <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-        <h2 style="font-family: 'Bangers'; letter-spacing: 1px;">Área de Transferência</h2>
+        <h2 style="font-family: 'Bangers'; letter-spacing: 1px;">rea de Transferncia</h2>
         <div class="draggable-item" draggable="true" id="receita-item">
             RECEITA VIRAL
         </div>
         <p style="color: #94A3B8; text-align: center; font-size: 0.8rem; max-width: 200px;">
-            Arraste esta caixa para os slots ao lado para ver a mecânica em ação.
+            Arraste esta caixa para os slots ao lado para ver a mecnica em ao.
         </p>
     </div>
 
-    <!-- O Painel da Fábrica -->
+    <!-- O Painel da Fbrica -->
     <div class="render-farm-panel">
-        <h2 class="rf-title">Fábrica de Vídeos</h2>
+        <h2 class="rf-title">Fbrica de Vdeos</h2>
 
         <!-- Slot 1: Desbloqueado -->
         <div class="rf-slot unlocked" id="slot-1">
             <div class="slot-content">
                 <span class="slot-title" style="color: #3B82F6;">Linha de Montagem 1</span>
-                <span style="font-size: 0.8rem; color: #cbd5e1;">Aguardando missão...</span>
+                <span style="font-size: 0.8rem; color: #cbd5e1;">Aguardando misso...</span>
             </div>
         </div>
 
         <!-- Slot 2: Bloqueado (Conta Free) -->
         <div class="rf-slot locked" id="slot-2">
             <span class="pro-badge">PRO</span>
-            <span class="lock-icon">🔒</span>
+            <span class="lock-icon"></span>
             <div class="slot-content">
                 <span class="slot-title">Linha de Montagem 2</span>
                 <span style="font-size: 0.8rem;">Atualize para desbloquear</span>
@@ -199,7 +199,7 @@
         <!-- Slot 3: Bloqueado (Conta Free) -->
         <div class="rf-slot locked" id="slot-3">
             <span class="pro-badge">PRO</span>
-            <span class="lock-icon">🔒</span>
+            <span class="lock-icon"></span>
             <div class="slot-content">
                 <span class="slot-title">Linha de Montagem 3</span>
                 <span style="font-size: 0.8rem;">Atualize para desbloquear</span>
@@ -230,7 +230,7 @@
             
             // Drag Over (passando por cima)
             slot.addEventListener('dragover', (e) => {
-                e.preventDefault(); // Necessário para permitir o drop
+                e.preventDefault(); // Necessrio para permitir o drop
                 
                 if (slot.classList.contains('unlocked')) {
                     slot.classList.add('drag-over-valid');
@@ -252,12 +252,12 @@
                 slot.classList.remove('drag-over-invalid');
 
                 if (slot.classList.contains('locked')) {
-                    // Feedback de Erro: Tremidinha e Alerta de Monetização
+                    // Feedback de Erro: Tremidinha e Alerta de Monetizao
                     slot.style.transform = 'translateX(-10px)';
                     setTimeout(() => slot.style.transform = 'translateX(10px)', 50);
                     setTimeout(() => slot.style.transform = 'translateX(-10px)', 100);
                     setTimeout(() => slot.style.transform = 'translateX(0)', 150);
-                    alert("⚠️ Assine o plano APOLLO PRO para renderizar múltiplos vídeos simultaneamente!");
+                    alert(" Assine o plano APOLLO PRO para renderizar mltiplos vdeos simultaneamente!");
                     return;
                 }
 
@@ -269,7 +269,7 @@
         });
 
         function startRenderMission(slot) {
-            // Impede iniciar se já estiver rolando
+            // Impede iniciar se j estiver rolando
             if (slot.querySelector('.progress-track')) return;
 
             const content = slot.querySelector('.slot-content');
@@ -286,18 +286,18 @@
             
             let progress = 0;
             
-            // Simulação de etapas (Mecânica viva)
+            // Simulao de etapas (Mecnica viva)
             const interval = setInterval(() => {
                 progress += 5;
                 fill.style.width = `${progress}%`;
 
                 if(progress === 30) status.innerText = 'Buscando Imagens de Fundo...';
-                if(progress === 60) status.innerText = 'Sintetizando Narração (TTS)...';
-                if(progress === 85) status.innerText = 'Renderizando Vídeo...';
+                if(progress === 60) status.innerText = 'Sintetizando Narrao (TTS)...';
+                if(progress === 85) status.innerText = 'Renderizando Vdeo...';
 
                 if (progress >= 100) {
                     clearInterval(interval);
-                    status.innerText = '✅ VÍDEO CONCLUÍDO!';
+                    status.innerText = ' VDEO CONCLUDO!';
                     status.style.color = '#F59E0B';
                 }
             }, 300);

@@ -195,7 +195,7 @@
 
         .sidebar-content.active { display: block; }
 
-        /* Inventário / Categorias */
+        /* Inventrio / Categorias */
         .inventory-category {
             margin-bottom: 25px;
             border: 1px solid #331f4e;
@@ -268,14 +268,14 @@
 </head>
 <body>
 
-    <!-- TOP HEADER PADRÃO APOLLO -->
+    <!-- TOP HEADER PADRO APOLLO -->
     <header style="padding: 10px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #331f4e; background: #11091e; z-index: 100;">
         <div style="display: flex; align-items: center; gap: 20px;">
-            <a href="hub.html" style="text-decoration: none; color: #f59e0b; font-family: 'Bangers'; font-size: 2.5rem; text-shadow: 2px 2px 0 #000;">🎬 APOLLO <span style="color:#fff;">EDIT</span></a>
+            <a href="hub.html" style="text-decoration: none; color: #f59e0b; font-family: 'Bangers'; font-size: 2.5rem; text-shadow: 2px 2px 0 #000;"> APOLLO <span style="color:#fff;">EDIT</span></a>
             <span style="background: #331f4e; padding: 5px 15px; border-radius: 12px; font-family: 'Orbitron'; font-weight: bold; font-size: 0.9rem;">DIRETOR DE I.A</span>
         </div>
         <div style="display: flex; align-items: center;">
-            <div class="notification-bell alert" title="Atenção Necessária: Produção Pausada!" onclick="alert('IA: Terminamos o Roteiro! Por favor, revise para continuarmos.')">🔔</div>
+            <div class="notification-bell alert" title="Ateno Necessria: Produo Pausada!" onclick="alert('IA: Terminamos o Roteiro! Por favor, revise para continuarmos.')"></div>
             <div class="user-widget" style="display: flex; gap: 10px; align-items: center;">
                 <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
             </div>
@@ -314,10 +314,10 @@
                 <div class="chat-message ai">
                     <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
                     <div class="message-bubble">
-                        <strong>Diretor IA:</strong> Olá, Piloto! Vi que você quer criar um Vídeo Vertical de Notícias sobre Criptomoedas.<br><br>
-                        📊 <strong>Orçamento Estimado:</strong><br>
-                        Para um vídeo de 1 minuto, precisaremos de 10 Imagens e 1 Vídeo/Voz principal. Estimo um custo de <strong>35 Créditos</strong>.<br><br>
-                        👉 <strong>Ação Necessária:</strong> Vá na aba lateral de <strong>CONFIGURAÇÕES</strong>. Arraste as suas IAs favoritas (do Inventário) para os Slots da Equipe e confirme o pagamento para iniciarmos a produção automática!
+                        <strong>Diretor IA:</strong> Ol, Piloto! Vi que voc quer criar um Vdeo Vertical de Notcias sobre Criptomoedas.<br><br>
+                         <strong>Oramento Estimado:</strong><br>
+                        Para um vdeo de 1 minuto, precisaremos de 10 Imagens e 1 Vdeo/Voz principal. Estimo um custo de <strong>35 Crditos</strong>.<br><br>
+                         <strong>Ao Necessria:</strong> V na aba lateral de <strong>CONFIGURAES</strong>. Arraste as suas IAs favoritas (do Inventrio) para os Slots da Equipe e confirme o pagamento para iniciarmos a produo automtica!
                     </div>
                 </div>
 
@@ -331,23 +331,23 @@
             
         </main>
 
-        <!-- PAINEL LATERAL DIREITO: CONFIGURAÇÕES -->
+        <!-- PAINEL LATERAL DIREITO: CONFIGURAES -->
         <aside class="right-sidebar">
             <div class="sidebar-tabs">
-                <div class="sidebar-tab active" id="tab-btn-config" ondragover="switchTabOnDrag(event, 'config')" onclick="switchTab('config')">⚙️ CONFIGURAÇÕES</div>
-                <div class="sidebar-tab" id="tab-btn-action" style="display: none; background: #c026d3; color: white; border-color: #facc15;" onclick="switchTab('action')">🎯 CONTROLE</div>
+                <div class="sidebar-tab active" id="tab-btn-config" ondragover="switchTabOnDrag(event, 'config')" onclick="switchTab('config')"> CONFIGURAES</div>
+                <div class="sidebar-tab" id="tab-btn-action" style="display: none; background: #c026d3; color: white; border-color: #facc15;" onclick="switchTab('action')"> CONTROLE</div>
             </div>
 
-            <!-- ABA 1: CONFIGURAÇÕES (CONSTRUTOR DE PIPELINE) -->
+            <!-- ABA 1: CONFIGURAES (CONSTRUTOR DE PIPELINE) -->
             <div class="sidebar-content active" id="tab-content-config">
                 
                 <div class="setting-row">
-                    <label>Título do Projeto</label>
-                    <input type="text" value="Notícias Cripto Dia 14">
+                    <label>Ttulo do Projeto</label>
+                    <input type="text" value="Notcias Cripto Dia 14">
                 </div>
 
                 <div class="setting-row">
-                    <label>Formato do Vídeo</label>
+                    <label>Formato do Vdeo</label>
                     <select style="width: 100%; background: #11091e; border: 1px solid #331f4e; color: #fff; padding: 10px; border-radius: 6px; font-family: 'Inter', sans-serif;">
                         <option value="vertical">Vertical (9:16) - TikTok/Reels</option>
                         <option value="horizontal">Horizontal (16:9) - YouTube</option>
@@ -356,32 +356,32 @@
                 </div>
                 
                 <div id="dynamic-ai-requirements" style="margin-top: 20px;">
-                    <!-- A IA injetará os slots necessários aqui dinamicamente -->
+                    <!-- A IA injetar os slots necessrios aqui dinamicamente -->
                     <div style="text-align: center; color: #64748b; font-family: 'Nunito', sans-serif; padding: 20px; font-style: italic;">
-                        Aguardando você passar as informações no chat para que a IA monte a Equipe de Produção necessária...
+                        Aguardando voc passar as informaes no chat para que a IA monte a Equipe de Produo necessria...
                     </div>
                 </div>
 
                 <div class="budget-display">
                     <div style="font-family: 'Inter'; font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">Custo Total Estimado</div>
-                    <div class="cost">-- Créditos</div>
+                    <div class="cost">-- Crditos</div>
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-direction: column;">
                     <button class="btn primary" id="btn-confirm-budget" style="width: 100%;" disabled onclick="iniciarProducao()">CONFIRMAR E PAGAR</button>
-                    <button class="btn secondary outline" id="btn-save-draft" style="width: 100%;" onclick="salvarRascunho()">💾 SALVAR RASCUNHO</button>
+                    <button class="btn secondary outline" id="btn-save-draft" style="width: 100%;" onclick="salvarRascunho()"> SALVAR RASCUNHO</button>
                 </div>
             </div>
 
-            <!-- ABA 3: CONTROLE (MESA DE DECISÃO) -->
+            <!-- ABA 3: CONTROLE (MESA DE DECISO) -->
             <div class="sidebar-content" id="tab-content-action">
-                <h3 style="font-family: 'Orbitron'; color: #facc15; margin-bottom: 20px; border-bottom: 1px solid #331f4e; padding-bottom: 10px;">Aguardando Decisão</h3>
-                <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 20px;">A IA concluiu a etapa atual. Revise o material e escolha uma ação para continuar.</p>
+                <h3 style="font-family: 'Orbitron'; color: #facc15; margin-bottom: 20px; border-bottom: 1px solid #331f4e; padding-bottom: 10px;">Aguardando Deciso</h3>
+                <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 20px;">A IA concluiu a etapa atual. Revise o material e escolha uma ao para continuar.</p>
 
                 <div style="display: flex; gap: 15px; flex-direction: column;">
-                    <button class="btn primary" style="width: 100%; box-shadow: 0 6px 0 #047857;" onclick="aprovarEtapa()">✅ APROVAR E CONTINUAR</button>
-                    <button class="btn yellow" style="width: 100%;" onclick="solicitarAlteracao()">✏️ SOLICITAR ALTERAÇÃO</button>
-                    <button class="btn danger outline" style="width: 100%; margin-top: 20px;" onclick="pausarProducao()">⏸️ PAUSAR E SALVAR</button>
+                    <button class="btn primary" style="width: 100%; box-shadow: 0 6px 0 #047857;" onclick="aprovarEtapa()"> APROVAR E CONTINUAR</button>
+                    <button class="btn yellow" style="width: 100%;" onclick="solicitarAlteracao()"> SOLICITAR ALTERAO</button>
+                    <button class="btn danger outline" style="width: 100%; margin-top: 20px;" onclick="pausarProducao()"> PAUSAR E SALVAR</button>
                 </div>
             </div>
 
@@ -389,9 +389,9 @@
 
     </div>
 
-    <!-- SCRIPT DE LÓGICA DAS ABAS E CONSTRUTOR DE PIPELINE -->
+    <!-- SCRIPT DE LGICA DAS ABAS E CONSTRUTOR DE PIPELINE -->
     <script>
-        // Lógica das Abas
+        // Lgica das Abas
         function switchTab(tabName) {
             document.getElementById('tab-btn-config').classList.remove('active');
             document.getElementById('tab-btn-action').classList.remove('active');
@@ -402,7 +402,7 @@
             document.getElementById('tab-content-' + tabName).classList.add('active');
         }
 
-        // Trocar de aba se o usuário segurar um item arrastado em cima do botão da aba por 500ms
+        // Trocar de aba se o usurio segurar um item arrastado em cima do boto da aba por 500ms
         let dragHoverTimer;
         function switchTabOnDrag(e, tabName) {
             e.preventDefault();
@@ -414,7 +414,7 @@
             }
         }
 
-        // Variáveis de estado do Pipeline Builder
+        // Variveis de estado do Pipeline Builder
         let slotsData = { roteiro: null, arte: null, voz: null };
         let draggedElementId = null;
         let clearConfigTimer = null;
@@ -456,9 +456,9 @@
         const draggables = document.querySelectorAll('.quadradinho-item');
         draggables.forEach(item => makeDraggable(item));
 
-        // (Removida a lógica de side panel, pois ele não existe mais)
+        // (Removida a lgica de side panel, pois ele no existe mais)
 
-        // Configuração da Mesa (Timeline)
+        // Configurao da Mesa (Timeline)
         const timelineDropZone = document.getElementById('drop-zone-timeline');
         timelineDropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -493,7 +493,7 @@
             }
 
             if(!isProject) {
-                alert("A Mesa só aceita Projetos (Receitas ou Rascunhos). Para alocar IAs, arraste-as para os Slots nas Configurações.");
+                alert("A Mesa s aceita Projetos (Receitas ou Rascunhos). Para alocar IAs, arraste-as para os Slots nas Configuraes.");
                 return;
             }
             
@@ -513,16 +513,16 @@
             if(htmlContent.includes('RASCUNHO') || htmlContent.includes('Save State')) {
                 const state = JSON.parse(stateData);
                 restaurarRascunho(state);
-                alert("Retomando Orçamento do Rascunho!");
+                alert("Retomando Oramento do Rascunho!");
                 switchTab('config');
             } else {
                 iniciarProducao(true);
             }
         });
 
-        // ======= LÓGICA DO MENU DINÂMICO E CONVERSA DA IA =======
+        // ======= LGICA DO MENU DINMICO E CONVERSA DA IA =======
 
-        let currentChannelId = "diretor_central"; // Variável que pode ser alterada para chats menores
+        let currentChannelId = "diretor_central"; // Varivel que pode ser alterada para chats menores
 
         async function simularRespostaIA() {
             const input = document.getElementById('chat-input');
@@ -585,11 +585,11 @@
                         actions.forEach(act => {
                             if (act.action === "create_budget") {
                                 renderizarNecessidadesDaIA([
-                                    { id: 'slot-roteiro', tipo: 'roteiro', nomeReq: 'Roteirista', icone: '📝', custo: act.budget_data.slot_roteiro || 10 },
-                                    { id: 'slot-arte', tipo: 'arte', nomeReq: 'Diretor de Arte', icone: '🎨', custo: act.budget_data.slot_arte || 10 },
-                                    { id: 'slot-voz', tipo: 'voz', nomeReq: 'Locutor', icone: '🎙️', custo: act.budget_data.slot_voz || 15 }
+                                    { id: 'slot-roteiro', tipo: 'roteiro', nomeReq: 'Roteirista', icone: '', custo: act.budget_data.slot_roteiro || 10 },
+                                    { id: 'slot-arte', tipo: 'arte', nomeReq: 'Diretor de Arte', icone: '', custo: act.budget_data.slot_arte || 10 },
+                                    { id: 'slot-voz', tipo: 'voz', nomeReq: 'Locutor', icone: '', custo: act.budget_data.slot_voz || 15 }
                                 ]);
-                                // Força abrir a aba de configuração se receber orçamento
+                                // Fora abrir a aba de configurao se receber oramento
                                 switchTab('config');
                             }
                             if (act.action === "navigate") {
@@ -601,7 +601,7 @@
                     chat.innerHTML += `
                         <div class="chat-message ai">
                             <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
-                            <div class="message-bubble" style="color:#ef4444;">Erro do Cérebro: ${result.message}</div>
+                            <div class="message-bubble" style="color:#ef4444;">Erro do Crebro: ${result.message}</div>
                         </div>
                     `;
                 }
@@ -612,7 +612,7 @@
                 chat.innerHTML += `
                     <div class="chat-message ai">
                         <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
-                        <div class="message-bubble" style="color:#ef4444;">Falha de comunicação com o Servidor Python.</div>
+                        <div class="message-bubble" style="color:#ef4444;">Falha de comunicao com o Servidor Python.</div>
                     </div>
                 `;
             }
@@ -622,8 +622,8 @@
         function renderizarNecessidadesDaIA(requisitos) {
             const container = document.getElementById('dynamic-ai-requirements');
             container.innerHTML = `
-                <h3 style="font-family: 'Orbitron'; color: #818cf8; margin-top: 10px; border-bottom: 1px solid #331f4e; padding-bottom: 10px;">Equipe de Produção (I.A)</h3>
-                <p style="color: #64748b; font-size: 0.8rem; text-align: center; margin-bottom: 15px;">Arraste suas IAs da Área de Transferência (HUD flutuante) para preencher os cargos gerados pela Inteligência Artificial.</p>
+                <h3 style="font-family: 'Orbitron'; color: #818cf8; margin-top: 10px; border-bottom: 1px solid #331f4e; padding-bottom: 10px;">Equipe de Produo (I.A)</h3>
+                <p style="color: #64748b; font-size: 0.8rem; text-align: center; margin-bottom: 15px;">Arraste suas IAs da rea de Transferncia (HUD flutuante) para preencher os cargos gerados pela Inteligncia Artificial.</p>
             `;
 
             slotsData = {};
@@ -642,7 +642,7 @@
                 `;
                 container.appendChild(slot);
                 
-                // Configura Drag & Drop para este slot específico
+                // Configura Drag & Drop para este slot especfico
                 setupSlotDropEvents(slot, req.tipo, req.custo, req.nomeReq);
             });
             
@@ -672,7 +672,7 @@
                 
                 if (payload && payload.source === 'hud') {
                     if (payload.isProject || payload.type === 'projeto') {
-                        alert("Apenas Tokens de IA podem ser alocados nestes espaços da equipe. Projetos vão para a Timeline (Mesa).");
+                        alert("Apenas Tokens de IA podem ser alocados nestes espaos da equipe. Projetos vo para a Timeline (Mesa).");
                         return;
                     }
                     itemType = payload.type; 
@@ -680,20 +680,20 @@
                     icon = payload.icon;
                     creditosAtuais = parseInt(payload.badge) || 0;
                 } else {
-                    alert("Por favor, abra o seu HUD (🎒 Área de Transferência / 🤖 IAs) no canto da tela e arraste a Inteligência Artificial diretamente de lá!");
+                    alert("Por favor, abra o seu HUD ( rea de Transferncia /  IAs) no canto da tela e arraste a Inteligncia Artificial diretamente de l!");
                     return;
                 }
                 
-                // Valida se o tipo da IA bate com o tipo exigido pelo slot (verificação inclusiva de substrings, ex: roteiro in slot-roteiro)
+                // Valida se o tipo da IA bate com o tipo exigido pelo slot (verificao inclusiva de substrings, ex: roteiro in slot-roteiro)
                 if(!itemType.includes(requiredType) && !requiredType.includes(itemType)) {
-                    alert(`Erro! Esse requisito precisa de uma IA do tipo "${requiredType}". Você arrastou uma IA do tipo "${itemType}".`);
+                    alert(`Erro! Esse requisito precisa de uma IA do tipo "${requiredType}". Voc arrastou uma IA do tipo "${itemType}".`);
                     return;
                 }
 
                 if(creditosAtuais >= custoDaOperacao) {
                     let restantes = creditosAtuais - custoDaOperacao;
                     
-                    // Debita os créditos no HUD
+                    // Debita os crditos no HUD
                     let items = window.apolloTransferOS.getItems(payload.folder);
                     let itemToUpdate = items.find(i => i.id === payload.id);
                     if (itemToUpdate) {
@@ -726,7 +726,7 @@
                     verificarOrcamento();
 
                 } else {
-                    alert(`ERRO ESTRATÉGICO:\n\nCusto exigido: ${custoDaOperacao} créditos.\nSeu saldo nesta IA: ${creditosAtuais} créditos.\n\nPor favor, compre mais quadradinhos desta IA no Mercado!`);
+                    alert(`ERRO ESTRATGICO:\n\nCusto exigido: ${custoDaOperacao} crditos.\nSeu saldo nesta IA: ${creditosAtuais} crditos.\n\nPor favor, compre mais quadradinhos desta IA no Mercado!`);
                 }
             });
         }
@@ -744,12 +744,12 @@
             }
 
             if(totalSlots > 0 && totalFilled === totalSlots) {
-                document.querySelector('.budget-display .cost').innerText = totalCost + " Créditos";
+                document.querySelector('.budget-display .cost').innerText = totalCost + " Crditos";
                 const btn = document.getElementById('btn-confirm-budget');
                 btn.disabled = false;
                 btn.classList.add('pulse');
             } else {
-                document.querySelector('.budget-display .cost').innerText = "-- Créditos";
+                document.querySelector('.budget-display .cost').innerText = "-- Crditos";
                 const btn = document.getElementById('btn-confirm-budget');
                 btn.disabled = true;
                 btn.classList.remove('pulse');
@@ -764,13 +764,13 @@
             btn.style.background = "";
             btn.style.borderColor = "";
             btn.classList.remove('pulse');
-            document.querySelector('.budget-display .cost').innerText = "-- Créditos";
+            document.querySelector('.budget-display .cost').innerText = "-- Crditos";
 
             const reqContainer = document.getElementById('dynamic-ai-requirements');
             if (reqContainer) {
                 reqContainer.innerHTML = `
                     <div style="text-align: center; color: #64748b; font-family: 'Nunito', sans-serif; padding: 20px; font-style: italic;">
-                        Aguardando você passar as informações no chat para que a IA monte a Equipe de Produção necessária...
+                        Aguardando voc passar as informaes no chat para que a IA monte a Equipe de Produo necessria...
                     </div>
                 `;
             }
@@ -804,12 +804,12 @@
             dropZone.classList.add('empty-state');
             dropZone.style.borderStyle = 'dashed';
             salvarEstadoAtual();
-            alert('Produção Abortada. A linha do tempo foi encerrada.');
+            alert('Produo Abortada. A linha do tempo foi encerrada.');
         }
 
         function iniciarProducao(isResume = false) {
             const btn = document.getElementById('btn-confirm-budget');
-            btn.innerHTML = "PAGAMENTO CONFIRMADO ✓";
+            btn.innerHTML = "PAGAMENTO CONFIRMADO ";
             btn.style.background = "#10b981";
             btn.style.borderColor = "#047857";
             
@@ -820,14 +820,14 @@
             dropZone.innerHTML = `
                 <div class="mission-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                     <div>
-                        <h3 style="font-family: 'Bangers'; font-size: 1.8rem; margin: 0; color: #10b981;">🚀 PRODUÇÃO INICIADA!</h3>
-                        <div style="color: #94a3b8; font-size: 0.9rem;">Receita Criada. O Robô está trabalhando...</div>
+                        <h3 style="font-family: 'Bangers'; font-size: 1.8rem; margin: 0; color: #10b981;"> PRODUO INICIADA!</h3>
+                        <div style="color: #94a3b8; font-size: 0.9rem;">Receita Criada. O Rob est trabalhando...</div>
                     </div>
-                    <div><button class="btn danger outline mini" onclick="abortarProducao()">🛑 ABORTAR</button></div>
+                    <div><button class="btn danger outline mini" onclick="abortarProducao()"> ABORTAR</button></div>
                 </div>
                 <div class="mission-stepper">
                     <div class="stepper-item active">
-                        <div class="step-circle" style="border-color: #f59e0b; color: #f59e0b; animation: pulseActive 1.5s infinite alternate;">📝</div>
+                        <div class="step-circle" style="border-color: #f59e0b; color: #f59e0b; animation: pulseActive 1.5s infinite alternate;"></div>
                         <div class="step-label">Roteiro</div>
                     </div>
                     <div class="stepper-item pending">
@@ -847,8 +847,8 @@
                 <div class="chat-message ai" style="margin-top: 20px;">
                     <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
                     <div class="message-bubble" style="border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);">
-                        <strong>Diretor IA:</strong> Perfeito! Os créditos foram descontados e a sua <strong>[Receita]</strong> foi gerada nos bastidores.<br><br>
-                        Assim que a primeira etapa (Roteiro) terminar, o sino de notificação vai piscar lá no topo para você revisar o texto!
+                        <strong>Diretor IA:</strong> Perfeito! Os crditos foram descontados e a sua <strong>[Receita]</strong> foi gerada nos bastidores.<br><br>
+                        Assim que a primeira etapa (Roteiro) terminar, o sino de notificao vai piscar l no topo para voc revisar o texto!
                     </div>
                 </div>
             `;
@@ -860,8 +860,8 @@
                     items.unshift({
                         id: 'item_' + Date.now() + '_' + Math.floor(Math.random()*1000),
                         type: 'projeto',
-                        title: '[RECEITA] Notícias Cripto',
-                        subtitle: 'Produção Paga e Liberada',
+                        title: '[RECEITA] Notcias Cripto',
+                        subtitle: 'Produo Paga e Liberada',
                         thumbnail: null,
                         data: { state: slotsData },
                         timestamp: Date.now()
@@ -875,11 +875,11 @@
             
             salvarEstadoAtual();
             
-            // Depois de 2 segundos, limpa as configurações para ele poder criar um novo
+            // Depois de 2 segundos, limpa as configuraes para ele poder criar um novo
             clearTimeout(clearConfigTimer);
             clearConfigTimer = setTimeout(limparConfiguracoes, 2000);
             
-            // Simula a parada semi-automática do Roteiro após 6 segundos
+            // Simula a parada semi-automtica do Roteiro aps 6 segundos
             clearTimeout(simularParadaTimer);
             simularParadaTimer = setTimeout(simularParadaSemiAutomatica, 6000);
         }
@@ -891,8 +891,8 @@
                 <div class="chat-message ai" style="margin-top: 20px;">
                     <div class="avatar-chat"><img src="assets/mascote.png" alt="IA"></div>
                     <div class="message-bubble" style="border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);">
-                        <strong>Diretor IA:</strong> O Roteiro está pronto e anexado para a sua revisão! Como estamos no modo Semi-Automático, a produção foi pausada.<br><br>
-                        O que você quer fazer? Use a aba de Controle para decidir ou digite as alterações aqui.
+                        <strong>Diretor IA:</strong> O Roteiro est pronto e anexado para a sua reviso! Como estamos no modo Semi-Automtico, a produo foi pausada.<br><br>
+                        O que voc quer fazer? Use a aba de Controle para decidir ou digite as alteraes aqui.
                     </div>
                 </div>
             `;
@@ -910,7 +910,7 @@
             chat.innerHTML += `
                 <div class="chat-message user">
                     <div class="avatar-chat"><img src="assets/user-avatar.png" alt="User"></div>
-                    <div class="message-bubble">Aprovado! Pode iniciar a geração das imagens.</div>
+                    <div class="message-bubble">Aprovado! Pode iniciar a gerao das imagens.</div>
                 </div>
             `;
             chat.scrollTop = chat.scrollHeight;
@@ -923,7 +923,7 @@
             const timeline = document.getElementById('drop-zone-timeline');
             timeline.querySelector('.stepper-item:nth-child(1)').classList.remove('active');
             timeline.querySelector('.stepper-item:nth-child(1)').classList.add('completed');
-            timeline.querySelector('.stepper-item:nth-child(1) .step-circle').innerHTML = '✓';
+            timeline.querySelector('.stepper-item:nth-child(1) .step-circle').innerHTML = '';
             timeline.querySelector('.stepper-item:nth-child(1) .step-circle').style.animation = '';
 
             timeline.querySelector('.stepper-item:nth-child(2)').classList.remove('pending');
@@ -942,7 +942,7 @@
         function pausarProducao() {
             clearTimeout(clearConfigTimer);
             clearTimeout(simularParadaTimer);
-            alert("Produção Pausada. Receita atualizada no Inventário com status 'Pausado em: Roteiro'.");
+            alert("Produo Pausada. Receita atualizada no Inventrio com status 'Pausado em: Roteiro'.");
             
             // Oculta a aba de Controle e Timeline
             document.getElementById('tab-btn-action').style.display = 'none';
@@ -979,8 +979,8 @@
                 items.unshift({
                     id: 'item_' + Date.now() + '_' + Math.floor(Math.random()*1000),
                     type: 'projeto',
-                    title: '[RASCUNHO] Vídeo Cripto',
-                    subtitle: 'Faltam IAs para fechar orçamento',
+                    title: '[RASCUNHO] Vdeo Cripto',
+                    subtitle: 'Faltam IAs para fechar oramento',
                     thumbnail: null,
                     data: { state: slotsData },
                     timestamp: Date.now()
@@ -992,7 +992,7 @@
             }
             
             limparConfiguracoes();
-            alert("Rascunho Salvo com sucesso na sua Área de Transferência! Quando você comprar ou ganhar mais IAs, arraste o rascunho de lá para a Mesa (Timeline) para retomar o Orçamento.");
+            alert("Rascunho Salvo com sucesso na sua rea de Transferncia! Quando voc comprar ou ganhar mais IAs, arraste o rascunho de l para a Mesa (Timeline) para retomar o Oramento.");
             salvarEstadoAtual();
         }
 

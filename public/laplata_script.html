@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apollo Sala de Roteiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Bangers&family=Nunito:wght@400;800&display=swap" rel="stylesheet">
-    <!-- JSZip via CDN para funcionalidade de Exportação -->
+    <!-- JSZip via CDN para funcionalidade de Exportao -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         .layout-container {
@@ -111,7 +111,7 @@
         .ref-upload:hover { border-color: #8b5cf6; }
         .ref-upload img { max-height: 150px; border-radius: 8px; display: none; }
         
-        /* BOTÕES DE AÇÃO */
+        /* BOTES DE AO */
         .btn-action {
             width: 100%;
             padding: 16px;
@@ -249,9 +249,9 @@
         
         <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
             <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
-                <span style="font-size:2.5rem;">📖</span> SALA DE ROTEIRO
+                <span style="font-size:2.5rem;"></span> SALA DE ROTEIRO
             </h3>
-            <p style="color: #94a3b8; margin-top: 5px;">Converta textos em prompts, extraia estilos de imagens e prepare exportações para vídeo.</p>
+            <p style="color: #94a3b8; margin-top: 5px;">Converta textos em prompts, extraia estilos de imagens e prepare exportaes para vdeo.</p>
         </div>
 
         <div class="layout-container">
@@ -260,68 +260,68 @@
             <div class="left-panel">
                 
                 <div class="tabs">
-                    <button class="tab-btn active" data-target="tab-enhancer">✨<br>Refinador</button>
-                    <button class="tab-btn" data-target="tab-script">📜<br>Roteiro</button>
-                    <button class="tab-btn" data-target="tab-style">👁️<br>Estilos</button>
-                    <button class="tab-btn" data-target="tab-motion">🎬<br>Animador</button>
-                    <button class="tab-btn" data-target="tab-veo" style="color:#a5b4fc;">📥<br>Exportar VEO</button>
+                    <button class="tab-btn active" data-target="tab-enhancer"><br>Refinador</button>
+                    <button class="tab-btn" data-target="tab-script"><br>Roteiro</button>
+                    <button class="tab-btn" data-target="tab-style"><br>Estilos</button>
+                    <button class="tab-btn" data-target="tab-motion"><br>Animador</button>
+                    <button class="tab-btn" data-target="tab-veo" style="color:#a5b4fc;"><br>Exportar VEO</button>
                 </div>
 
-                <!-- CONTEÚDO DAS ABAS -->
+                <!-- CONTEDO DAS ABAS -->
                 
                 <!-- ABA 1: Refinador -->
                 <div id="tab-enhancer" class="tab-content active">
                     <div class="input-group" style="flex-grow: 1;">
                         <label>1. Conceito / Ideia Base</label>
-                        <textarea id="enhancer-prompt" placeholder="Ex: Um cavaleiro lutando contra um dragão na chuva..." style="min-height: 100px;"></textarea>
+                        <textarea id="enhancer-prompt" placeholder="Ex: Um cavaleiro lutando contra um drago na chuva..." style="min-height: 100px;"></textarea>
                     </div>
                     <div class="input-group">
                         <label>2. Estilo Visual (Opcional)</label>
-                        <textarea id="enhancer-style" placeholder="Ex: Cyberpunk Neon, Pintura a Óleo..." style="min-height: 60px;"></textarea>
+                        <textarea id="enhancer-style" placeholder="Ex: Cyberpunk Neon, Pintura a leo..." style="min-height: 60px;"></textarea>
                     </div>
-                    <button class="btn-action" id="btn-run-enhancer">✨ Mesclar Estilo & Gerar Prompt</button>
+                    <button class="btn-action" id="btn-run-enhancer"> Mesclar Estilo & Gerar Prompt</button>
                 </div>
 
                 <!-- ABA 2: Roteiro (Quebrador de Texto) -->
                 <div id="tab-script" class="tab-content">
                     <div class="input-group" style="flex-grow: 1;">
-                        <label>Texto Narrativo / História do Livro</label>
-                        <textarea id="script-text" placeholder="Cole aqui um parágrafo da sua história. A IA criará cenas e identificará as tags." style="min-height: 180px;"></textarea>
+                        <label>Texto Narrativo / Histria do Livro</label>
+                        <textarea id="script-text" placeholder="Cole aqui um pargrafo da sua histria. A IA criar cenas e identificar as tags." style="min-height: 180px;"></textarea>
                     </div>
                     <div class="input-group">
                         <label>Estilo Global para as Cenas</label>
                         <input type="text" id="script-style" placeholder="Ex: Fantasia, HDR...">
                     </div>
-                    <button class="btn-action" id="btn-run-script">📜 Converter em Lista de Prompts</button>
+                    <button class="btn-action" id="btn-run-script"> Converter em Lista de Prompts</button>
                 </div>
 
                 <!-- ABA 3: Estilos -->
                 <div id="tab-style" class="tab-content">
-                    <p style="color: #94a3b8; font-size: 0.85rem;">Faça upload de uma imagem para a IA analisar e extrair o estilo de arte, iluminação e traço (ignorando a pessoa em si).</p>
+                    <p style="color: #94a3b8; font-size: 0.85rem;">Faa upload de uma imagem para a IA analisar e extrair o estilo de arte, iluminao e trao (ignorando a pessoa em si).</p>
                     <div class="ref-upload" id="style-dropzone">
-                        <span id="style-placeholder" style="font-size:3rem; opacity:0.5;">🖼️</span>
+                        <span id="style-placeholder" style="font-size:3rem; opacity:0.5;"></span>
                         <span style="color:#64748b; margin-top:10px;">Clique ou Arraste a Imagem</span>
                         <img id="style-preview">
                         <button class="btn-remove-ref" id="btn-remove-style" style="top:10px; right:10px; padding:5px; font-size:12px;">X</button>
                         <input type="file" id="style-file" accept="image/*" style="display: none;">
                     </div>
-                    <button class="btn-action" id="btn-run-style" disabled>👁️ Extrair Estilo Visual</button>
+                    <button class="btn-action" id="btn-run-style" disabled> Extrair Estilo Visual</button>
                 </div>
 
                 <!-- ABA 4: Animador -->
                 <div id="tab-motion" class="tab-content">
-                    <p style="color: #94a3b8; font-size: 0.85rem;">Cole prompts de imagem (um por linha) para a IA reescrevê-los como prompts de VÍDEO ANIMADO com instruções de câmera.</p>
+                    <p style="color: #94a3b8; font-size: 0.85rem;">Cole prompts de imagem (um por linha) para a IA reescrev-los como prompts de VDEO ANIMADO com instrues de cmera.</p>
                     <div class="input-group" style="flex-grow: 1;">
                         <label>Lista de Prompts (Img) - Um por linha</label>
                         <textarea id="motion-prompts" placeholder="#Heroi parado na chuva\nCarro futurista voando..." style="min-height: 200px; font-family: monospace;"></textarea>
                     </div>
-                    <button class="btn-action" id="btn-run-motion">🎬 Gerar Prompts de Animação</button>
+                    <button class="btn-action" id="btn-run-motion"> Gerar Prompts de Animao</button>
                 </div>
 
                 <!-- ABA 5: VEO -->
                 <div id="tab-veo" class="tab-content">
                     <div style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); padding: 15px; border-radius: 8px; color: #a5b4fc; font-size: 0.85rem;">
-                        <strong>Auto VEO Anti-Censura:</strong> Cole os prompts da sua história contendo tags reais (ex: <code>#Lula</code>). A IA trocará por <code>#Personagem1</code>, escreverá um prompt genérico, e fará o Download do ZIP contendo a Foto Guia que será lida pela Extensão VEO.
+                        <strong>Auto VEO Anti-Censura:</strong> Cole os prompts da sua histria contendo tags reais (ex: <code>#Lula</code>). A IA trocar por <code>#Personagem1</code>, escrever um prompt genrico, e far o Download do ZIP contendo a Foto Guia que ser lida pela Extenso VEO.
                     </div>
                     <div class="input-group" style="flex-grow: 1; margin-top: 10px;">
                         <label>Prompts de Cena com Tags</label>
@@ -329,14 +329,14 @@
                     </div>
                     
                     <div class="custom-check checked" id="check-veo-video">
-                        <div class="check-box">✔</div>
+                        <div class="check-box"></div>
                         <div style="display: flex; flex-direction: column;">
-                            <strong style="color:white; font-size: 0.9rem;">Gerar Prompts de Vídeo Extra</strong>
-                            <span style="font-size: 0.7rem; color: #94a3b8;">Também gera versão de animação no ZIP</span>
+                            <strong style="color:white; font-size: 0.9rem;">Gerar Prompts de Vdeo Extra</strong>
+                            <span style="font-size: 0.7rem; color: #94a3b8;">Tambm gera verso de animao no ZIP</span>
                         </div>
                     </div>
 
-                    <button class="btn-action btn-veo" id="btn-run-veo">📥 Processar & Baixar ZIP</button>
+                    <button class="btn-action btn-veo" id="btn-run-veo"> Processar & Baixar ZIP</button>
                 </div>
 
             </div>
@@ -345,7 +345,7 @@
             <div class="right-panel">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 style="color: white; margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
-                        <span>📝</span> Resultado Gerado
+                        <span></span> Resultado Gerado
                     </h3>
                     <div id="output-loading" class="loading-text" style="display: none;">
                         <div class="spinner"></div> Processando IA... <span id="output-progress" style="font-size:0.8rem; margin-left:5px;"></span>
@@ -354,8 +354,8 @@
 
                 <div class="result-box" id="result-box">
                     <div style="opacity: 0.3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 15px;">
-                        <span style="font-size: 3rem;">🤖</span>
-                        <span id="result-placeholder-text">Aguardando instruções na Sala de Roteiro...</span>
+                        <span style="font-size: 3rem;"></span>
+                        <span id="result-placeholder-text">Aguardando instrues na Sala de Roteiro...</span>
                     </div>
                 </div>
                 

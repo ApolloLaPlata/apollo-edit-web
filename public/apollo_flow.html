@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Flow — Estúdio de Geração I.A.</title>
-    <meta name="description" content="Gere imagens e vídeos com IA em lote usando múltiplos motores: Flux, Hailuo, LTX-Video, WAN2.2 e mais.">
+    <title>Apollo Flow  Estdio de Gerao I.A.</title>
+    <meta name="description" content="Gere imagens e vdeos com IA em lote usando mltiplos motores: Flux, Hailuo, LTX-Video, WAN2.2 e mais.">
     <script src="laplata_ai.js"></script>
     <script>
         if (window.self !== window.top) {
@@ -26,10 +26,10 @@
             </a>
             <div class="flow-mode-tabs">
                 <button class="mode-tab active" id="tab-studio" onclick="switchMode('studio')">
-                    <i class="fas fa-layer-group"></i> Estúdio em Lote
+                    <i class="fas fa-layer-group"></i> Estdio em Lote
                 </button>
                 <button class="mode-tab" id="tab-quickgen" onclick="switchMode('quickgen')">
-                    <i class="fas fa-bolt"></i> Geração Rápida
+                    <i class="fas fa-bolt"></i> Gerao Rpida
                 </button>
             </div>
         </div>
@@ -47,22 +47,22 @@
         </div>
     </header>
 
-    <!-- ====================== MODO: ESTÚDIO EM LOTE ====================== -->
+    <!-- ====================== MODO: ESTDIO EM LOTE ====================== -->
     <div id="mode-studio" class="flow-studio-layout">
 
         <!-- PAINEL ESQUERDO: RECEITA DO FLOW -->
         <aside class="flow-sidebar">
             <div class="sidebar-section">
                 <h3 class="sidebar-title">
-                    <i class="fas fa-dna"></i> Consistência de Personagem
+                    <i class="fas fa-dna"></i> Consistncia de Personagem
                 </h3>
                 <div class="reference-uploader" id="reference-zone" onclick="document.getElementById('ref-img-input').click()">
                     <div class="reference-placeholder" id="ref-placeholder">
                         <i class="fas fa-user-circle"></i>
-                        <span>Clique para adicionar imagem de referência</span>
-                        <small>O personagem será mantido em todas as cenas</small>
+                        <span>Clique para adicionar imagem de referncia</span>
+                        <small>O personagem ser mantido em todas as cenas</small>
                     </div>
-                    <img id="ref-preview" src="" alt="Referência" style="display:none;">
+                    <img id="ref-preview" src="" alt="Referncia" style="display:none;">
                     <input type="file" id="ref-img-input" accept="image/*" style="display:none" onchange="handleRefUpload(event)">
                 </div>
                 <div class="character-strength-row">
@@ -76,13 +76,13 @@
 
             <div class="sidebar-section">
                 <div class="section-header-row">
-                    <h3 class="sidebar-title"><i class="fas fa-film"></i> Sequência de Cenas</h3>
+                    <h3 class="sidebar-title"><i class="fas fa-film"></i> Sequncia de Cenas</h3>
                     <button class="btn-add-scene" onclick="addScene()">
                         <i class="fas fa-plus"></i> Cena
                     </button>
                 </div>
                 <div id="scenes-container" class="scenes-list">
-                    <!-- Cenas dinâmicas -->
+                    <!-- Cenas dinmicas -->
                 </div>
             </div>
 
@@ -90,26 +90,26 @@
                 <h3 class="sidebar-title"><i class="fas fa-sliders-h"></i> Config Global</h3>
                 <div class="global-config-grid">
                     <div class="config-item">
-                        <label>Variações por Cena</label>
+                        <label>Variaes por Cena</label>
                         <div class="number-stepper">
-                            <button onclick="changeVariations(-1)">−</button>
+                            <button onclick="changeVariations(-1)"></button>
                             <span id="variations-val">2</span>
                             <button onclick="changeVariations(1)">+</button>
                         </div>
                     </div>
                     <div class="config-item">
-                        <label>Proporção</label>
+                        <label>Proporo</label>
                         <select id="global-ratio">
                             <option value="1:1">1:1 Quadrado</option>
                             <option value="16:9" selected>16:9 Widescreen</option>
                             <option value="9:16">9:16 Vertical</option>
-                            <option value="4:3">4:3 Clássico</option>
+                            <option value="4:3">4:3 Clssico</option>
                         </select>
                     </div>
                     <div class="config-item full-width">
                         <label>Estilo Visual Global</label>
                         <div class="style-chips" id="style-chips">
-                            <span class="style-chip active" onclick="toggleStyle(this)">Cinematográfico</span>
+                            <span class="style-chip active" onclick="toggleStyle(this)">Cinematogrfico</span>
                             <span class="style-chip" onclick="toggleStyle(this)">Anime</span>
                             <span class="style-chip" onclick="toggleStyle(this)">Fotorrealista</span>
                             <span class="style-chip" onclick="toggleStyle(this)">Pixel Art</span>
@@ -120,13 +120,13 @@
                 </div>
             </div>
 
-            <!-- BOTÃO PRINCIPAL -->
+            <!-- BOTO PRINCIPAL -->
             <div class="sidebar-section ignite-section">
                 <button class="btn-ignite" id="ignite-btn" onclick="igniteFlow()">
                     <div class="ignite-glow"></div>
                     <i class="fas fa-fire"></i>
                     <span>Ignite Flow</span>
-                    <small id="ignite-cost-label">Custo: — Cristais</small>
+                    <small id="ignite-cost-label">Custo:  Cristais</small>
                 </button>
                 <div class="presets-row">
                     <button class="btn-preset" onclick="savePreset()"><i class="fas fa-save"></i> Salvar Preset</button>
@@ -172,62 +172,62 @@
                     <div class="empty-icon">
                         <i class="fas fa-wand-magic-sparkles"></i>
                     </div>
-                    <h2>Seu Estúdio Aguarda</h2>
-                    <p>Configure as cenas na esquerda e pressione <strong>Ignite Flow</strong> para começar a geração em lote com múltiplos motores de I.A.</p>
+                    <h2>Seu Estdio Aguarda</h2>
+                    <p>Configure as cenas na esquerda e pressione <strong>Ignite Flow</strong> para comear a gerao em lote com mltiplos motores de I.A.</p>
                     <div class="supported-engines">
-                        <span class="engine-badge flux">⚡ Flux</span>
-                        <span class="engine-badge hailuo">🌊 Hailuo</span>
-                        <span class="engine-badge ltx">🎬 LTX-Video</span>
-                        <span class="engine-badge wan">🔥 WAN2.2</span>
-                        <span class="engine-badge kling">✨ Kling</span>
+                        <span class="engine-badge flux"> Flux</span>
+                        <span class="engine-badge hailuo"> Hailuo</span>
+                        <span class="engine-badge ltx"> LTX-Video</span>
+                        <span class="engine-badge wan"> WAN2.2</span>
+                        <span class="engine-badge kling"> Kling</span>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- ====================== MODO: GERAÇÃO RÁPIDA ====================== -->
+    <!-- ====================== MODO: GERAO RPIDA ====================== -->
     <div id="mode-quickgen" class="quickgen-layout" style="display:none;">
         <div class="quickgen-container">
             <div class="quickgen-panel">
-                <h2 class="quickgen-title"><i class="fas fa-bolt"></i> Geração Rápida</h2>
+                <h2 class="quickgen-title"><i class="fas fa-bolt"></i> Gerao Rpida</h2>
 
                 <!-- Engine Selector -->
                 <div class="engine-selector-grid" id="qg-engines">
                     <div class="engine-card active" data-engine="flux" onclick="selectQuickEngine(this)">
-                        <div class="engine-icon">⚡</div>
+                        <div class="engine-icon"></div>
                         <div class="engine-name">Flux 1.1</div>
                         <div class="engine-type">Imagem</div>
                         <div class="engine-cost"><i class="fas fa-gem"></i> 1</div>
                     </div>
                     <div class="engine-card" data-engine="flux-pro" onclick="selectQuickEngine(this)">
-                        <div class="engine-icon">⚡</div>
+                        <div class="engine-icon"></div>
                         <div class="engine-name">Flux Pro</div>
                         <div class="engine-type">Imagem</div>
                         <div class="engine-cost"><i class="fas fa-gem"></i> 3</div>
                     </div>
                     <div class="engine-card" data-engine="hailuo" onclick="selectQuickEngine(this)">
-                        <div class="engine-icon">🌊</div>
+                        <div class="engine-icon"></div>
                         <div class="engine-name">Hailuo</div>
-                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-type">Vdeo</div>
                         <div class="engine-cost"><i class="fas fa-gem"></i> 5</div>
                     </div>
                     <div class="engine-card" data-engine="ltx" onclick="selectQuickEngine(this)">
-                        <div class="engine-icon">🎬</div>
+                        <div class="engine-icon"></div>
                         <div class="engine-name">LTX-Video</div>
-                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-type">Vdeo</div>
                         <div class="engine-cost"><i class="fas fa-gem"></i> 4</div>
                     </div>
                     <div class="engine-card" data-engine="wan" onclick="selectQuickEngine(this)">
-                        <div class="engine-icon">🔥</div>
+                        <div class="engine-icon"></div>
                         <div class="engine-name">WAN 2.2</div>
-                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-type">Vdeo</div>
                         <div class="engine-cost"><i class="fas fa-gem"></i> 6</div>
                     </div>
                     <div class="engine-card" data-engine="kling" onclick="selectQuickEngine(this)">
-                        <div class="engine-icon">✨</div>
+                        <div class="engine-icon"></div>
                         <div class="engine-name">Kling</div>
-                        <div class="engine-type">Vídeo</div>
+                        <div class="engine-type">Vdeo</div>
                         <div class="engine-cost"><i class="fas fa-gem"></i> 5</div>
                     </div>
                 </div>
@@ -245,7 +245,7 @@
                         <i class="fas fa-image"></i> Clique para adicionar imagem inicial
                         <input type="file" id="img2vid-input" accept="image/*" style="display:none">
                     </div>
-                    <textarea id="qg-prompt" placeholder="Descreva a cena que você quer criar... Ex: 'Um piloto de Fórmula 1 sai do carro vitoriosa em câmera lenta com confetes dourados caindo.'"></textarea>
+                    <textarea id="qg-prompt" placeholder="Descreva a cena que voc quer criar... Ex: 'Um piloto de Frmula 1 sai do carro vitoriosa em cmera lenta com confetes dourados caindo.'"></textarea>
                     <div class="qg-prompt-footer">
                         <button class="btn-enhance" onclick="enhancePrompt()"><i class="fas fa-magic"></i> Melhorar Prompt com I.A.</button>
                         <div class="qg-params">
@@ -255,7 +255,7 @@
                                 <option value="9:16">9:16</option>
                             </select>
                             <select id="qg-quality">
-                                <option value="fast">Rápido</option>
+                                <option value="fast">Rpido</option>
                                 <option value="balanced" selected>Balanceado</option>
                                 <option value="quality">Alta Qualidade</option>
                             </select>
@@ -274,7 +274,7 @@
             <div class="quickgen-result-panel" id="qg-result-panel">
                 <div class="qg-result-placeholder" id="qg-placeholder">
                     <i class="fas fa-image"></i>
-                    <p>O resultado aparecerá aqui</p>
+                    <p>O resultado aparecer aqui</p>
                 </div>
                 <div id="qg-result-content" style="display:none;">
                     <div class="qg-result-media-wrap">
@@ -294,7 +294,7 @@
                         <span id="qg-meta-seed"></span>
                     </div>
                     <button class="btn-variations" onclick="generateVariations()">
-                        <i class="fas fa-clone"></i> Gerar 4 Variações deste
+                        <i class="fas fa-clone"></i> Gerar 4 Variaes deste
                     </button>
                 </div>
             </div>
@@ -311,7 +311,7 @@
             </div>
             <div class="modal-sidebar">
                 <div class="modal-meta">
-                    <h3 id="modal-title">Cena 1 — Variação 1</h3>
+                    <h3 id="modal-title">Cena 1  Variao 1</h3>
                     <div class="modal-tags">
                         <span class="modal-tag" id="modal-engine-tag"></span>
                         <span class="modal-tag" id="modal-type-tag"></span>
@@ -332,21 +332,21 @@
                         <i class="fas fa-download"></i> Download
                     </button>
                     <button class="btn-modal-action" onclick="useAsReferenceModal()">
-                        <i class="fas fa-user-circle"></i> Usar como Referência de Personagem
+                        <i class="fas fa-user-circle"></i> Usar como Referncia de Personagem
                     </button>
                 </div>
                 <div class="modal-upscale">
                     <label>Upscale</label>
                     <div class="upscale-options">
-                        <button class="upscale-btn" onclick="upscaleResult(2)">2×</button>
-                        <button class="upscale-btn" onclick="upscaleResult(4)">4×</button>
+                        <button class="upscale-btn" onclick="upscaleResult(2)">2</button>
+                        <button class="upscale-btn" onclick="upscaleResult(4)">4</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TOAST de notificação -->
+    <!-- TOAST de notificao -->
     <div id="flow-toast" class="flow-toast"></div>
 
     <!-- SCRIPTS -->

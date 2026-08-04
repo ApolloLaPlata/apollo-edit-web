@@ -4,10 +4,10 @@ html
 <link href="../global_style.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Apollo Edit — Fila Autônoma</title>
+<title>Apollo Edit  Fila Autnoma</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <style>
-        /* ─────────────── RESET & BASE ─────────────── */
+        /*  RESET & BASE  */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --bg:        #0a0a12;
@@ -34,7 +34,7 @@ html
             overflow: hidden;
         }
 
-        /* ─────────────── HEADER ─────────────── */
+        /*  HEADER  */
         header {
             height: var(--header-h);
             background: linear-gradient(90deg, #0e0e20 0%, #160d30 100%);
@@ -78,7 +78,7 @@ html
         .dot.running { background: var(--success); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-        /* ─────────────── TOOLBAR ─────────────── */
+        /*  TOOLBAR  */
         .toolbar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -108,7 +108,7 @@ html
         .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
         .toolbar-sep { width: 1px; background: var(--border); height: 24px; margin: 0 4px; }
 
-        /* ─────────────── MAIN LAYOUT ─────────────── */
+        /*  MAIN LAYOUT  */
         .main {
             flex: 1;
             display: flex;
@@ -118,7 +118,7 @@ html
             gap: 12px;
         }
 
-        /* ─────────────── TABS ─────────────── */
+        /*  TABS  */
         .tabs { display: flex; gap: 4px; flex-shrink: 0; }
         .tab-btn {
             padding: 8px 18px; border-radius: 8px 8px 0 0;
@@ -131,7 +131,7 @@ html
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-        /* ─────────────── TABLE AREA ─────────────── */
+        /*  TABLE AREA  */
         .table-area {
             background: var(--card);
             border: 1px solid var(--border);
@@ -178,7 +178,7 @@ html
         td .mini-btn:hover { border-color: var(--accent); color: var(--text); }
         td .mini-btn.del:hover { border-color: var(--danger); color: var(--danger); }
 
-        /* ─────────────── STATUS BADGES ─────────────── */
+        /*  STATUS BADGES  */
         .badge {
             display: inline-block; padding: 3px 10px; border-radius: 20px;
             font-size: 11px; font-weight: 700; white-space: nowrap;
@@ -189,7 +189,7 @@ html
         .badge.erro      { background: rgba(239,68,68,.2);  color: var(--danger); }
         .badge.cancelado { background: rgba(249,115,22,.15); color: var(--warn); }
 
-        /* ─────────────── CONTROLS ROW ─────────────── */
+        /*  CONTROLS ROW  */
         .controls-row {
             display: flex;
             align-items: center;
@@ -239,7 +239,7 @@ html
         }
         .toggle.on::after { left: 18px; }
 
-        /* ─────────────── LOG TERMINAL ─────────────── */
+        /*  LOG TERMINAL  */
         .log-section {
             background: #050510;
             border: 1px solid var(--border);
@@ -276,7 +276,7 @@ html
         .log-body .log-ok  { color: #86efac; }
         .log-body .log-warn { color: #fde68a; }
 
-        /* ─────────────── MODAL ─────────────── */
+        /*  MODAL  */
         .modal-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,.75);
@@ -315,7 +315,7 @@ html
         .form-group textarea { resize: vertical; min-height: 80px; }
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
 
-        /* ─────────────── STATS BAR ─────────────── */
+        /*  STATS BAR  */
         .stats-bar {
             display: flex; gap: 16px; align-items: center; flex-shrink: 0;
             padding: 0 2px;
@@ -327,7 +327,7 @@ html
         .stat.ok .val    { color: var(--success); }
         .stat.err .val   { color: var(--danger); }
 
-        /* ─────────────── EMPTY STATE ─────────────── */
+        /*  EMPTY STATE  */
         .empty-state {
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; gap: 12px; padding: 60px 0;
@@ -337,7 +337,7 @@ html
         .empty-state h3 { font-size: 15px; font-weight: 600; }
         .empty-state p { font-size: 13px; text-align: center; max-width: 360px; line-height: 1.6; }
 
-        /* ─────────────── HOTFOLDER PANEL ─────────────── */
+        /*  HOTFOLDER PANEL  */
         .hotfolder-panel {
             display: flex; align-items: center; gap: 10px;
             background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.2);
@@ -359,20 +359,20 @@ html
 <div id="global-3d-bg"></div>
  HEADER 
 <header style="padding: 10px 30px; margin-bottom: 20px; display: flex; align-items: center; border-bottom: 1px solid var(--border);">
- Logo e Créditos 
+ Logo e Crditos 
 <div class="top-nav" style="flex-grow: 1; display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
 <a href="hub.html" style="text-decoration: none;">
 <div class="main-logo"><span>APOLLO</span> EDIT WEB</div>
 </a>
-<span class="badge" data-i18n="fila.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">Fila Autônoma</span>
+<span class="badge" data-i18n="fila.title_badge" style="background: rgba(124,58,237,.2); color: #9B59B6; padding: 4px 8px; border-radius: 4px;">Fila Autnoma</span>
 <div class="credits-badge" style="margin-left: 20px; display: flex; align-items: center;">
 <span class="gas-icon"></span>
-<strong data-i18n="common.loading" id="user-credits">Carregando...</strong> <span data-i18n="common.gasoline">Gasolina</span>
+<strong data-i18n="common.loading" id="user-credits">Carregando...</strong><span data-i18n="common.gasoline">Gasolina</span>
 </div>
 </div>
 <div class="user-widget" id="user-widget" style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
 <div class="user-info" style="text-align: right; display: flex; flex-direction: column;">
-<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usuário Pro</span>
+<span class="user-name" data-i18n="header.user_pro" id="user-name" style="font-size: 14px; font-weight: bold; color: #fff;">Usurio Pro</span>
 </div>
 <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #FFD32A;"></div>
 </div>
@@ -382,27 +382,27 @@ html
 </div>
  TOOLBAR 
 <div class="toolbar">
-<button class="btn primary" id="btn-add" onclick="openModalAdd()">➕ Adicionar Projeto</button>
-<button class="btn" id="btn-lote" onclick="openModalLote()">📦 Adicionar em Lote</button>
+<button class="btn primary" id="btn-add" onclick="openModalAdd()"> Adicionar Projeto</button>
+<button class="btn" id="btn-lote" onclick="openModalLote()"> Adicionar em Lote</button>
 <div class="toolbar-sep"></div>
-<button class="btn" id="btn-up" onclick="moverItem(-1)" title="Mover para cima">⬆️ Subir</button>
-<button class="btn" id="btn-down" onclick="moverItem(1)" title="Mover para baixo">⬇️ Descer</button>
-<button class="btn danger" id="btn-rm" onclick="removerSelecionado()">🗑️ Remover</button>
-<button class="btn" onclick="limparConcluidos()">🧹 Limpar Concluídos</button>
+<button class="btn" id="btn-up" onclick="moverItem(-1)" title="Mover para cima"> Subir</button>
+<button class="btn" id="btn-down" onclick="moverItem(1)" title="Mover para baixo"> Descer</button>
+<button class="btn danger" id="btn-rm" onclick="removerSelecionado()"> Remover</button>
+<button class="btn" onclick="limparConcluidos()"> Limpar Concludos</button>
 <div class="toolbar-sep"></div>
 <div class="stats-bar">
-<div class="stat total">📋 Total: <span class="val" id="stat-total">0</span></div>
-<div class="stat pend">⏳ Pendentes: <span class="val" id="stat-pend">0</span></div>
-<div class="stat ok">✅ OK: <span class="val" id="stat-ok">0</span></div>
-<div class="stat err">❌ Erros: <span class="val" id="stat-err">0</span></div>
+<div class="stat total"> Total: <span class="val" id="stat-total">0</span></div>
+<div class="stat pend"> Pendentes: <span class="val" id="stat-pend">0</span></div>
+<div class="stat ok"> OK: <span class="val" id="stat-ok">0</span></div>
+<div class="stat err"> Erros: <span class="val" id="stat-err">0</span></div>
 </div>
 </div>
  MAIN CONTENT 
 <div class="main">
  TABS 
 <div class="tabs">
-<button class="tab-btn active" id="tab-short-btn" onclick="switchTab('short')">🎬 Modo Short (Lotes Individuais)</button>
-<button class="tab-btn" id="tab-filme-btn" onclick="switchTab('filme')">🎥 Modo Filme (Composição)</button>
+<button class="tab-btn active" id="tab-short-btn" onclick="switchTab('short')"> Modo Short (Lotes Individuais)</button>
+<button class="tab-btn" id="tab-filme-btn" onclick="switchTab('filme')"> Modo Filme (Composio)</button>
 </div>
  TAB SHORT 
 <div class="tab-content active" id="tab-short">
@@ -410,20 +410,20 @@ html
 <div class="queue-table-wrap" id="table-wrap">
  Tabela ou empty state 
 <div class="empty-state" id="empty-state">
-<div class="icon">🤖</div>
+<div class="icon"></div>
 <h3>Nenhum projeto na fila</h3>
-<p>Clique em <strong>➕ Adicionar Projeto</strong> para enfileirar um projeto, ou use <strong>📦 Lote</strong> para adicionar múltiplos áudios de uma vez.</p>
+<p>Clique em <strong> Adicionar Projeto</strong> para enfileirar um projeto, ou use <strong> Lote</strong> para adicionar mltiplos udios de uma vez.</p>
 </div>
 <table id="queue-table" style="display:none">
 <thead>
 <tr>
 <th>#</th>
 <th>Nome do Projeto</th>
-<th>Áudio</th>
+<th>udio</th>
 <th>Perfil de Canal</th>
 <th>Status</th>
 <th>Tempo</th>
-<th>Ações</th>
+<th>Aes</th>
 </tr>
 </thead>
 <tbody id="queue-tbody"></tbody>
@@ -436,25 +436,25 @@ html
 <div class="table-area">
 <div class="queue-table-wrap">
 <div class="empty-state">
-<div class="icon">🎥</div>
-<h3>Modo Filme — Em desenvolvimento</h3>
-<p>Este modo permite encadear blocos sequenciais que serão concatenados num único vídeo final. Use o Modo Short para renderizar projetos individuais por enquanto.</p>
+<div class="icon"></div>
+<h3>Modo Filme  Em desenvolvimento</h3>
+<p>Este modo permite encadear blocos sequenciais que sero concatenados num nico vdeo final. Use o Modo Short para renderizar projetos individuais por enquanto.</p>
 </div>
 </div>
 </div>
 </div>
- CONTROLES DE EXECUÇÃO 
+ CONTROLES DE EXECUO 
 <div class="controls-row">
 <div class="main-btns">
-<button class="btn-iniciar" id="btn-iniciar" onclick="iniciarFila()">▶ INICIAR FILA</button>
-<button class="btn-parar" disabled="" id="btn-parar" onclick="pararFila()">⏸ PARAR</button>
+<button class="btn-iniciar" id="btn-iniciar" onclick="iniciarFila()"> INICIAR FILA</button>
+<button class="btn-parar" disabled="" id="btn-parar" onclick="pararFila()"> PARAR</button>
 </div>
 <div class="progress-wrap">
 <div class="progress-bar-bg">
 <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
 </div>
 <div class="progress-text">
-<span id="progress-label">Aguardando início...</span>
+<span id="progress-label">Aguardando incio...</span>
 <span id="eta-label"></span>
 </div>
 </div>
@@ -465,22 +465,22 @@ html
 </label>
 <label class="switch-label">
 <div class="toggle" id="toggle-hotfolder" onclick="openHotfolderPanel()"></div>
-<span>🤖 Piloto Automático (Hot-Folder)</span>
+<span> Piloto Automtico (Hot-Folder)</span>
 </label>
 </div>
 </div>
  HOTFOLDER PANEL (hidden by default) 
 <div class="hotfolder-panel" id="hotfolder-panel" style="display:none;">
-        🗂️ <strong style="color:var(--gold)">Pasta Monitorada:</strong>
+         <strong style="color:var(--gold)">Pasta Monitorada:</strong>
 <input id="hotfolder-path" placeholder="Ex: C:\Audios\Fila\" readonly="" type="text"/>
-<button class="btn" onclick="browsePastaHotfolder()">📁 Selecionar</button>
-<button class="btn success" id="btn-hf-ativar" onclick="ativarHotfolder()">✅ Ativar</button>
-<button class="btn danger" id="btn-hf-parar" onclick="desativarHotfolder()" style="display:none">⏹ Parar</button>
+<button class="btn" onclick="browsePastaHotfolder()"> Selecionar</button>
+<button class="btn success" id="btn-hf-ativar" onclick="ativarHotfolder()"> Ativar</button>
+<button class="btn danger" id="btn-hf-parar" onclick="desativarHotfolder()" style="display:none"> Parar</button>
 </div>
  LOG TERMINAL 
 <div class="log-section">
 <div class="log-header">
-            📟 Terminal da Fila
+             Terminal da Fila
             <button class="mini-btn" onclick="limparLog()" style="padding:2px 8px;border-radius:4px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:10px;">Limpar</button>
 </div>
 <div class="log-body" id="log-body">
@@ -491,82 +491,82 @@ html
  MODAL: ADICIONAR PROJETO 
 <div class="modal-overlay" id="modal-add">
 <div class="modal">
-<h2>➕ Adicionar Projeto à Fila</h2>
+<h2> Adicionar Projeto  Fila</h2>
 <div class="form-group">
 <label>Nome do Projeto (opcional)</label>
-<input id="f-nome" placeholder="Ex: Vídeo Canal Principal" type="text"/>
+<input id="f-nome" placeholder="Ex: Vdeo Canal Principal" type="text"/>
 </div>
 <div class="form-group">
-<label>🎵 Áudio Principal *</label>
+<label> udio Principal *</label>
 <div class="input-row">
 <input id="f-audio" placeholder="C:\Audios\narracao.mp3" type="text"/>
-<button class="btn" onclick="browseFile('f-audio','file')">📁</button>
+<button class="btn" onclick="browseFile('f-audio','file')"></button>
 </div>
 </div>
 <div class="form-group">
-<label>📂 Pasta de Saída</label>
+<label> Pasta de Sada</label>
 <div class="input-row">
 <input id="f-saida" placeholder="C:\Videos\Output" type="text"/>
-<button class="btn" onclick="browseFile('f-saida','folder')">📁</button>
+<button class="btn" onclick="browseFile('f-saida','folder')"></button>
 </div>
 </div>
 <div class="form-group">
-<label>🎶 Música de Fundo (opcional)</label>
+<label> Msica de Fundo (opcional)</label>
 <div class="input-row">
 <input id="f-musica" placeholder="C:\Musicas\fundo.mp3" type="text"/>
-<button class="btn" onclick="browseFile('f-musica','file')">📁</button>
+<button class="btn" onclick="browseFile('f-musica','file')"></button>
 </div>
 </div>
 <div class="form-group">
-<label>🎬 Perfil de Canal (Diretor)</label>
+<label> Perfil de Canal (Diretor)</label>
 <select id="f-perfil">
-<option value="">(Nenhum — usar padrão)</option>
+<option value="">(Nenhum  usar padro)</option>
 </select>
 </div>
 <div class="form-group">
-<label>📝 Roteiro (opcional)</label>
+<label> Roteiro (opcional)</label>
 <textarea id="f-roteiro" placeholder="Cole o roteiro aqui, ou deixe em branco para gerar automaticamente..."></textarea>
 </div>
 <div class="modal-actions">
-<button class="btn" onclick="closeModal('modal-add')">✖ Cancelar</button>
-<button class="btn success" onclick="confirmarAdd()">✅ Adicionar à Fila</button>
+<button class="btn" onclick="closeModal('modal-add')"> Cancelar</button>
+<button class="btn success" onclick="confirmarAdd()"> Adicionar  Fila</button>
 </div>
 </div>
 </div>
  MODAL: ADICIONAR EM LOTE 
 <div class="modal-overlay" id="modal-lote">
 <div class="modal">
-<h2>📦 Adicionar em Lote</h2>
-<p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Informe múltiplos caminhos de áudio (um por linha) e uma pasta de saída comum.</p>
+<h2> Adicionar em Lote</h2>
+<p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Informe mltiplos caminhos de udio (um por linha) e uma pasta de sada comum.</p>
 <div class="form-group">
-<label>🎵 Caminhos dos Áudios (um por linha)</label>
+<label> Caminhos dos udios (um por linha)</label>
 <textarea id="lote-audios" placeholder="C:\Audio\arquivo1.mp3
 C:\Audio\arquivo2.mp3
 ..." rows="6"></textarea>
 </div>
 <div class="form-group">
-<label>📂 Pasta de Saída</label>
+<label> Pasta de Sada</label>
 <div class="input-row">
 <input id="lote-saida" placeholder="C:\Videos\Output" type="text"/>
-<button class="btn" onclick="browseFile('lote-saida','folder')">📁</button>
+<button class="btn" onclick="browseFile('lote-saida','folder')"></button>
 </div>
 </div>
 <div class="form-group">
-<label>🎬 Perfil de Canal (aplicado a todos)</label>
+<label> Perfil de Canal (aplicado a todos)</label>
 <select id="lote-perfil">
-<option value="">(Nenhum — usar padrão)</option>
+<option value="">(Nenhum  usar padro)</option>
 </select>
 </div>
 <div class="modal-actions">
-<button class="btn" onclick="closeModal('modal-lote')">✖ Cancelar</button>
-<button class="btn success" onclick="confirmarLote()">✅ Enfileirar Lote</button>
+<button class="btn" onclick="closeModal('modal-lote')"> Cancelar</button>
+<button class="btn success" onclick="confirmarLote()"> Enfileirar Lote</button>
 </div>
 </div>
 </div>
 <script src="../fila.js?v=1"></script>
  I18N Loader 
 <script src="../i18n_loader.js"></script>
- Supabase SDK e Autenticação 
+ Supabase SDK e Autenticao 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../auth.js"></script>
 <script src="../bg_parallax.js"></script>

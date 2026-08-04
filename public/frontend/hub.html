@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit Pro — Workspace</title>
+    <title>Apollo Edit Pro  Workspace</title>
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="stylesheet" href="global_style.css?v=2">
     <link rel="stylesheet" href="racer_loading.css">
@@ -28,38 +28,38 @@
             <div class="main-logo" style="margin: 0; font-size: 1.5rem;"><span>APOLLO</span> EDIT</div>
             
             <button class="btn" style="background: rgba(0,0,0,0.5); border: 1px dashed var(--btn-purple); border-radius: 8px; padding: 8px 15px; font-weight: bold; color: #fff; cursor: pointer; transition: 0.2s;" onclick="openChannelModal()" onmouseover="this.style.background='var(--btn-purple)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">
-                📺 <span id="lbl_active_channel" style="color: #fff;">Selecionar Canal (Workspace)</span> ▾
+                 <span id="lbl_active_channel" style="color: #fff;">Selecionar Canal (Workspace)</span> 
             </button>
         </div>
         
            <div class="user-widget" style="display: flex; gap: 15px; align-items: center;">
             <select id="lang-selector" onchange="setLanguage(this.value)" style="background: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; height: 35px;">
-                <option value="pt">🇧🇷 PT</option>
-                <option value="en">🇺🇸 EN</option>
-                <option value="es">🇪🇸 ES</option>
+                <option value="pt"> PT</option>
+                <option value="en"> EN</option>
+                <option value="es"> ES</option>
             </select>
             
             <div class="economy-hud" style="display: flex; gap: 10px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 12px; border: 1px solid #333;">
                 <div class="stat-badge" title="Chips de LLM">
-                    <span style="color: #9B59B6; font-weight: bold;">🧠 <span id="hud-chips">0</span></span>
+                    <span style="color: #9B59B6; font-weight: bold;"> <span id="hud-chips">0</span></span>
                 </div>
                 <div class="stat-badge" title="Placas de GPU">
-                    <span style="color: #2ecc71; font-weight: bold;">🖥️ <span id="hud-gpus">0</span></span>
+                    <span style="color: #2ecc71; font-weight: bold;"> <span id="hud-gpus">0</span></span>
                 </div>
                 <div class="stat-badge" title="Cristais API">
-                    <span style="color: #00d2ff; font-weight: bold;">💎 <span id="hud-cristais">0</span></span>
+                    <span style="color: #00d2ff; font-weight: bold;"> <span id="hud-cristais">0</span></span>
                 </div>
                 <div class="stat-badge" title="Apollo Coins">
-                    <span style="color: #ffd700; font-weight: bold;">🪙 <span id="hud-coins">0</span></span>
+                    <span style="color: #ffd700; font-weight: bold;"> <span id="hud-coins">0</span></span>
                 </div>
                 <div class="stat-badge" title="Gasolina" style="display:flex; align-items:center; gap:5px;">
-                    <span style="color: #ff4757; font-weight: bold;">⛽ <span id="hud-gas">100</span></span>
+                    <span style="color: #ff4757; font-weight: bold;"> <span id="hud-gas">100</span></span>
                     <button class="btn yellow mini" style="font-size: 10px; padding: 2px 6px;" onclick="if(window.adSystem) window.adSystem.show(25)">+ Ads</button>
                 </div>
             </div>
 
             <script>
-                // O economy_store.js disparará este evento sempre que os valores mudarem
+                // O economy_store.js disparar este evento sempre que os valores mudarem
                 window.addEventListener('apollo_economy_updated', (e) => {
                     const state = e.detail;
                     document.getElementById('hud-cristais').innerText = state.cristais;
@@ -74,14 +74,14 @@
                     if (elXp) elXp.innerText = state.xp + ' XP';
                 });
                 
-                // Animação de Level Up
+                // Animao de Level Up
                 window.addEventListener('apollo_level_up', (e) => {
                     if (window.showToast) {
-                        window.showToast(`🎉 LEVEL UP! Você alcançou o Nível ${e.detail.level}!`, 'success');
+                        window.showToast(` LEVEL UP! Voc alcanou o Nvel ${e.detail.level}!`, 'success');
                     }
                 });
             </script>
-            <a href="#" onclick="window.parent.openAppTab('perfil.html', '👤 Perfil', true)" style="text-decoration: none; color: inherit;">
+            <a href="#" onclick="window.parent.openAppTab('perfil.html', ' Perfil', true)" style="text-decoration: none; color: inherit;">
                 <div class="avatar-container" style="display:flex; align-items:center; gap:10px; cursor: pointer; transition: transform 0.2s; position:relative;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     <div id="hud-level" style="position:absolute; top:-8px; left:-8px; background:var(--btn-red); color:#fff; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:8px; border:2px solid #000; z-index:10; box-shadow:0 2px 0 var(--border-dark);">LV.1</div>
                     <div class="avatar" style="width:40px; height:40px; border-radius:50%; background-image:url('assets/ruby_mascot.png'); background-size: cover; border:2px solid #FFD32A;"></div>
@@ -96,18 +96,18 @@
 
     <div class="editor-layout">
         
-        <!-- SIDEBAR (Inventário & Equipamentos) -->
+        <!-- SIDEBAR (Inventrio & Equipamentos) -->
         <aside class="side-panel">
             <div class="ad-slot">
-                <span>[ESPAÇO PUBLICITÁRIO - 300x250]</span>
+                <span>[ESPAO PUBLICITRIO - 300x250]</span>
             </div>
 
-            <div class="section-title">👤 Equipe & Perfil</div>
+            <div class="section-title"> Equipe & Perfil</div>
             
             <div class="rpg-item-grid" style="margin-bottom: 20px;">
-                <a href="#" onclick="window.parent.openAppTab('perfil.html', '👤 Perfil', true)" class="rpg-item legendary" style="border-color: var(--btn-purple);">
+                <a href="#" onclick="window.parent.openAppTab('perfil.html', ' Perfil', true)" class="rpg-item legendary" style="border-color: var(--btn-purple);">
                     <div class="rpg-item-icon" style="background-image: url('assets/ruby_gear.png'); background-size: cover;"></div>
-                    <span class="rpg-item-name">Vestiário</span>
+                    <span class="rpg-item-name">Vestirio</span>
                 </a>
                 
                 <a href="#" onclick="window.parent.openAppTab('copilotos.html', 'Copilotos', true)" class="rpg-item epic" style="border-color: var(--btn-green);">
@@ -118,42 +118,42 @@
 
 
 
-            <div class="section-title" style="color:#a78bfa;">🌊 Geração I.A.</div>
+            <div class="section-title" style="color:#a78bfa;"> Gerao I.A.</div>
 
             <div class="rpg-item-grid">
-                <a href="#" onclick="window.parent.openAppTab('apollo_flow.html', '🌊 Apollo Flow', true)" class="rpg-item legendary" style="border-color: #a78bfa; grid-column: 1/-1;">
-                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; width: auto; padding: 2px 10px;">✨ NOVO</div>
+                <a href="#" onclick="window.parent.openAppTab('apollo_flow.html', ' Apollo Flow', true)" class="rpg-item legendary" style="border-color: #a78bfa; grid-column: 1/-1;">
+                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; width: auto; padding: 2px 10px;"> NOVO</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(260deg);"></div>
-                    <span class="rpg-item-name">🌊 Apollo Flow — Gerador de Lote</span>
+                    <span class="rpg-item-name"> Apollo Flow  Gerador de Lote</span>
                 </a>
                 <a href="#" onclick="window.parent.openAppTab('laplata_creator.html', 'Laplata', true)" class="rpg-item rare" style="border-color: #3b82f6;">
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(180deg);"></div>
-                    <span class="rpg-item-name">🧪 Laplata Creator</span>
+                    <span class="rpg-item-name"> Laplata Creator</span>
                 </a>
                 <a href="#" onclick="window.parent.openAppTab('lightning_test_suite.html', 'Lightning Test', true)" class="rpg-item legendary" style="border-color: #ef4444;">
-                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; width: auto; padding: 2px 10px;">☁️ NUVEM</div>
+                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; width: auto; padding: 2px 10px;"> NUVEM</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(300deg);"></div>
-                    <span class="rpg-item-name">⚡ Lightning Test Suite</span>
+                    <span class="rpg-item-name"> Lightning Test Suite</span>
                 </a>
                 <a href="#" onclick="window.parent.openAppTab('apollo_chat_lab.html', 'Chat AI', true)" class="rpg-item legendary" style="border-color: #0ea5e9;">
-                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#0ea5e9,#3b82f6); color:#fff; width: auto; padding: 2px 10px;">🤖 CHATBOT</div>
+                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#0ea5e9,#3b82f6); color:#fff; width: auto; padding: 2px 10px;"> CHATBOT</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(120deg);"></div>
-                    <span class="rpg-item-name">💬 Chat AI (Conta 1)</span>
+                    <span class="rpg-item-name"> Chat AI (Conta 1)</span>
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('modal_ai_studio.html', '🎨 Modal AI Studio', true)" class="rpg-item legendary" style="border-color: #00d2ff; grid-column: 1/-1;">
-                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#00d2ff,#7c3aed); color:#fff; width: auto; padding: 2px 10px;">🖼️ FLUX + 🎬 LTX + 🎤 WHISPER</div>
+                <a href="#" onclick="window.parent.openAppTab('modal_ai_studio.html', ' Modal AI Studio', true)" class="rpg-item legendary" style="border-color: #00d2ff; grid-column: 1/-1;">
+                    <div class="rpg-item-level" style="background: linear-gradient(135deg,#00d2ff,#7c3aed); color:#fff; width: auto; padding: 2px 10px;"> FLUX +  LTX +  WHISPER</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(180deg) saturate(2);"></div>
-                    <span class="rpg-item-name">🚀 Modal AI Studio — Geração de Imagem & Vídeo</span>
+                    <span class="rpg-item-name"> Modal AI Studio  Gerao de Imagem & Vdeo</span>
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('explore_feed.html', '🌐 Apollo Explore', true)" class="rpg-item legendary" style="border-color: #ec4899; grid-column: 1/-1;">
+                <a href="#" onclick="window.parent.openAppTab('explore_feed.html', ' Apollo Explore', true)" class="rpg-item legendary" style="border-color: #ec4899; grid-column: 1/-1;">
                     <div class="rpg-item-level" style="background: linear-gradient(135deg,#ec4899,#f43f5e); color:#fff; width: auto; padding: 2px 10px;">COMUNIDADE</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png'); filter: hue-rotate(320deg) saturate(2);"></div>
-                    <span class="rpg-item-name">🌐 Apollo Explore — Feed Social de Criações</span>
+                    <span class="rpg-item-name"> Apollo Explore  Feed Social de Criaes</span>
                 </a>
             </div>
 
 
-            <div class="section-title">🔧 Equipamentos</div>
+            <div class="section-title"> Equipamentos</div>
             
             <div class="rpg-item-grid">
                 <a href="#" onclick="window.parent.openAppTab('ferramentas.html', 'Ferramentas', true)" class="rpg-item rare">
@@ -179,7 +179,7 @@
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
                     <span class="rpg-item-name">Audio Normalizer</span>
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('autoblog_admin.html', '🤖 Auto Blog CMS', true)" class="rpg-item legendary" style="border-color: #f59e0b; box-shadow: 0 0 15px rgba(245,158,11,0.2);">
+                <a href="#" onclick="window.parent.openAppTab('autoblog_admin.html', ' Auto Blog CMS', true)" class="rpg-item legendary" style="border-color: #f59e0b; box-shadow: 0 0 15px rgba(245,158,11,0.2);">
                     <div class="rpg-item-level" style="background: #b45309;">Lv.CMS</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png'); filter: hue-rotate(20deg);"></div>
                     <span class="rpg-item-name">Auto Blog Central</span>
@@ -193,89 +193,89 @@
             
         </aside>
 
-        <!-- MAIN STAGE (Mapa de Missões) -->
+        <!-- MAIN STAGE (Mapa de Misses) -->
         <main class="main-stage">
             
             <!-- COFRE DE MOEDAS (MICRO-ECONOMIA) -->
             <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
                 <div style="flex: 1; background: rgba(0,0,0,0.5); border: 2px solid #555; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;">⛽ TEMPO RENDER</div>
+                    <div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;"> TEMPO RENDER</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: var(--btn-green); font-family: 'Nunito', sans-serif;">120 Min</div>
                 </div>
 
                 <div style="flex: 1; background: rgba(0,0,0,0.5); border: 2px solid #9B59B6; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;">💎 CRISTAIS</div>
+                    <div style="font-family: 'Bangers', cursive; font-size: 1.5rem; color: #fff;"> CRISTAIS</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: #e0b0ff; font-family: 'Nunito', sans-serif;">12</div>
                 </div>
             </div>
 
-            <!-- GACHA / ROLETA DIÁRIA -->
+            <!-- GACHA / ROLETA DIRIA -->
             <div style="background: linear-gradient(45deg, #1e0b3b, #4a196e); border: 3px solid #9B59B6; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(155,89,182,0.4);">
                 <div>
-                    <h2 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #FFD32A; margin: 0; letter-spacing: 2px;">🎰 ROLETA DA SORTE</h2>
-                    <p style="color: #cbd5e1; margin: 5px 0 0 0; font-size: 1.1rem;">Assista um anúncio para girar e ganhar Peças Premium ou Minutos de Render!</p>
+                    <h2 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #FFD32A; margin: 0; letter-spacing: 2px;"> ROLETA DA SORTE</h2>
+                    <p style="color: #cbd5e1; margin: 5px 0 0 0; font-size: 1.1rem;">Assista um anncio para girar e ganhar Peas Premium ou Minutos de Render!</p>
                 </div>
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <button class="btn" style="background: linear-gradient(90deg, #f59e0b, #d97706); border-color: #b45309; font-size: 1.2rem; padding: 15px; width: 50%;" onclick="window.parent.openAppTab('roleta.html', '🎡 Roleta', true)">
-                        🎡 ROLETA
+                    <button class="btn" style="background: linear-gradient(90deg, #f59e0b, #d97706); border-color: #b45309; font-size: 1.2rem; padding: 15px; width: 50%;" onclick="window.parent.openAppTab('roleta.html', ' Roleta', true)">
+                         ROLETA
                     </button>
-                    <button class="btn" style="background: linear-gradient(90deg, #ff0055, #990033); border-color: #660022; font-size: 1.2rem; padding: 15px; width: 50%;" onclick="window.parent.openAppTab('cassino.html', '🎰 Cassino', true)">
-                        🎰 CASSINO
+                    <button class="btn" style="background: linear-gradient(90deg, #ff0055, #990033); border-color: #660022; font-size: 1.2rem; padding: 15px; width: 50%;" onclick="window.parent.openAppTab('cassino.html', ' Cassino', true)">
+                         CASSINO
                     </button>
                 </div>
                 <div>
-                    <button class="btn" style="background: linear-gradient(90deg, #8b5cf6, #00f0ff); border-color: #00f0ff; color: #000; font-weight: bold; font-size: 1rem; padding: 10px 20px; width: 100%;" onclick="if(window.parent.showLoadingRush) window.parent.showLoadingRush('Simulando Renderização 8K', 15000);">
-                        🛠️ Testar Nova Tela de Carregamento (Oficina Rush MAX)
+                    <button class="btn" style="background: linear-gradient(90deg, #8b5cf6, #00f0ff); border-color: #00f0ff; color: #000; font-weight: bold; font-size: 1rem; padding: 10px 20px; width: 100%;" onclick="if(window.parent.showLoadingRush) window.parent.showLoadingRush('Simulando Renderizao 8K', 15000);">
+                         Testar Nova Tela de Carregamento (Oficina Rush MAX)
                     </button>
                 </div>
             </div>
 
-            <!-- 📺 OUTDOOR DE PROMOÇÕES (CAROUSEL) -->
+            <!--  OUTDOOR DE PROMOES (CAROUSEL) -->
             <div class="promo-carousel">
                 <div class="promo-tag">NOVIDADES</div>
                 <div class="promo-track">
                     <span class="promo-text">
-                        🏎️ Nova API Nano Banana Disponível no Sistema! &nbsp;&nbsp;|&nbsp;&nbsp;
-                        ⛽ Oferta de Fim de Semana: Compre 1.000L de Gasolina e Ganhe o Dobro! &nbsp;&nbsp;|&nbsp;&nbsp;
-                        👾 <a href="#">Entre na Comunidade VIP no Discord! Participe dos Torneios.</a>
+                         Nova API Nano Banana Disponvel no Sistema! &nbsp;&nbsp;|&nbsp;&nbsp;
+                         Oferta de Fim de Semana: Compre 1.000L de Gasolina e Ganhe o Dobro! &nbsp;&nbsp;|&nbsp;&nbsp;
+                         <a href="#">Entre na Comunidade VIP no Discord! Participe dos Torneios.</a>
                     </span>
                 </div>
             </div>
 
-            <!-- 🤖 SUPER BANNER ANIMADO DE I.A. E PUBLICIDADE -->
+            <!--  SUPER BANNER ANIMADO DE I.A. E PUBLICIDADE -->
             <div class="ai-super-banner">
                 <div class="banner-track">
                     <!-- Slide 1: A IA -->
                     <div class="banner-slide">
                         <div class="ai-chat-area">
                             <h2>Diretor de IA</h2>
-                            <p>Eu sou a sua I.A. Faço o roteiro, monto o vídeo e publico. Tudo no automático!</p>
-                            <button class="btn yellow" style="font-size: 1.5rem;" onclick="demoRacingLoader('premium')">CONVERSAR COM IA 🤖</button>
+                            <p>Eu sou a sua I.A. Fao o roteiro, monto o vdeo e publico. Tudo no automtico!</p>
+                            <button class="btn yellow" style="font-size: 1.5rem;" onclick="demoRacingLoader('premium')">CONVERSAR COM IA </button>
                         </div>
                         <img src="assets/ruby_mascot.png" alt="Apollo Mascote" class="ai-mascot">
                     </div>
                     <!-- Slide 2: Propaganda -->
                     <div class="banner-slide" style="background: linear-gradient(90deg, #b91c1c, #7f1d1d); justify-content: center; text-align: center;">
-                        <h2 style="color: #fff; font-family: 'Bangers', cursive; font-size: 3rem; margin-bottom: 10px;">OFERTA RELÂMPAGO! ⚡</h2>
+                        <h2 style="color: #fff; font-family: 'Bangers', cursive; font-size: 3rem; margin-bottom: 10px;">OFERTA RELMPAGO! </h2>
                         <p style="color: #facc15; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Ganhe 500 Litros de Gasolina ao assinar a Newsletter VIP.</p>
                         <button class="btn" style="background: #000; color: #fff; border-color: #fff;">RESGATAR AGORA</button>
                     </div>
-                    <!-- Slide 3: Geração Mágica Flutuante -->
+                    <!-- Slide 3: Gerao Mgica Flutuante -->
                     <div class="banner-slide" style="background: linear-gradient(90deg, #1d4ed8, #1e3a8a); align-items: center; padding: 0 40px; gap: 30px;">
-                        <div style="font-size: 5rem; animation: float 3s infinite;">🔮</div>
+                        <div style="font-size: 5rem; animation: float 3s infinite;"></div>
                         <div>
-                            <h2 style="color: #60a5fa; font-family: 'Bangers', cursive; font-size: 2.5rem;">Criação Instantânea</h2>
-                            <p style="color: #fff; font-size: 1.2rem; font-weight: bold;">Arraste suas referências aqui e eu gero um vídeo baseado nelas.</p>
+                            <h2 style="color: #60a5fa; font-family: 'Bangers', cursive; font-size: 2.5rem;">Criao Instantnea</h2>
+                            <p style="color: #fff; font-size: 1.2rem; font-weight: bold;">Arraste suas referncias aqui e eu gero um vdeo baseado nelas.</p>
                             <div class="ai-input-box" style="margin-top: 15px;">
                                 <input type="text" placeholder="Cole a URL ou jogue sua ideia aqui..." style="width: 400px;"/>
-                                <button class="btn primary" onclick="demoRacingLoader('premium')">GERAR MAGIA ✨</button>
+                                <button class="btn primary" onclick="demoRacingLoader('premium')">GERAR MAGIA </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="section-title" style="color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5);">📈 Painel Corporativo (Diretoria)</div>
+            <div class="section-title" style="color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5);"> Painel Corporativo (Diretoria)</div>
             
             <div class="rpg-item-grid mb-8">
                 <a href="#" onclick="window.parent.openAppTab('admin_financeiro.html', 'Admin_Financeiro', true)" class="rpg-item legendary" style="border-color: #10b981; box-shadow: 0 0 15px rgba(16,185,129,0.2);">
@@ -291,7 +291,7 @@
                 </a>
             </div>
             
-            <div class="section-title" style="color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.5);">💎 Economia Livre (Mercado P2P)</div>
+            <div class="section-title" style="color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.5);"> Economia Livre (Mercado P2P)</div>
             
             <div class="rpg-item-grid mb-8">
                 <a href="#" onclick="window.parent.openAppTab('mercado_p2p.html', 'Mercado', true)" class="rpg-item legendary" style="border-color: #3b82f6; box-shadow: 0 0 15px rgba(59,130,246,0.2);">
@@ -301,20 +301,20 @@
                 </a>
             </div>
             
-            <div class="section-title">⚔️ Missões Principais (Criação)</div>
+            <div class="section-title"> Misses Principais (Criao)</div>
             
             <div class="rpg-item-grid">
                 
                 <a href="#" onclick="window.parent.openAppTab('agencia_copilotos.html', 'Copilotos', true)" class="rpg-item legendary" style="border-color: #8b5cf6;">
                     <div class="rpg-item-level" style="background: #8b5cf6;">Lv.Talento</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/ruby_mascot.png'); filter: hue-rotate(280deg); background-size: cover;"></div>
-                    <span class="rpg-item-name">Agência Copilotos</span>
+                    <span class="rpg-item-name">Agncia Copilotos</span>
                 </a>
                 
                 <a href="#" onclick="window.parent.openAppTab('editor_freecut.html', 'FreeCut', true)" class="rpg-item legendary">
                     <div class="rpg-item-level">Lv.Max</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/ruby_panels.png'); background-size: cover;"></div>
-                    <span class="rpg-item-name">Editor de Vídeo</span>
+                    <span class="rpg-item-name">Editor de Vdeo</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('montador.html', 'Montador', true)" class="rpg-item epic">
@@ -326,7 +326,7 @@
                 <a href="#" onclick="window.parent.openAppTab('musica.html', 'Musica', true)" class="rpg-item legendary">
                     <div class="rpg-item-level">Lv.10</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/ruby_icons.png'); background-size: cover;"></div>
-                    <span class="rpg-item-name">Fábrica Musical</span>
+                    <span class="rpg-item-name">Fbrica Musical</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('podcast.html', 'Podcast', true)" class="rpg-item epic">
@@ -337,14 +337,14 @@
 
             </div>
 
-            <div class="section-title">📰 Central de Notícias</div>
+            <div class="section-title"> Central de Notcias</div>
             
             <div class="rpg-item-grid">
 
                 <a href="#" onclick="window.parent.openAppTab('noticias_strategy.html', 'Noticias_Strategy', true)" class="rpg-item legendary" style="border-color: #E67E22;">
                     <div class="rpg-item-level">Lv.5</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png'); filter: hue-rotate(15deg);"></div>
-                    <span class="rpg-item-name">Estratégia do Canal</span>
+                    <span class="rpg-item-name">Estratgia do Canal</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('noticias_dashboard.html', 'Noticias_Dashboard', true)" class="rpg-item epic" style="border-color: #3498DB;">
@@ -362,7 +362,7 @@
                 <a href="#" onclick="window.parent.openAppTab('noticias_news.html', 'Noticias_News', true)" class="rpg-item legendary" style="border-color: #E74C3C;">
                     <div class="rpg-item-level">Lv.20</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(340deg);"></div>
-                    <span class="rpg-item-name">Caçador de Notícias</span>
+                    <span class="rpg-item-name">Caador de Notcias</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('noticias_scripts.html', 'Noticias_Scripts', true)" class="rpg-item epic" style="border-color: #9B59B6;">
@@ -374,7 +374,7 @@
                 <a href="#" onclick="window.parent.openAppTab('noticias_miner.html', 'Noticias_Miner', true)" class="rpg-item epic" style="border-color: #9B59B6;">
                     <div class="rpg-item-level">Lv.22</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(280deg);"></div>
-                    <span class="rpg-item-name">Mineração Viral</span>
+                    <span class="rpg-item-name">Minerao Viral</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('noticias_radar.html', 'Noticias_Radar', true)" class="rpg-item rare" style="border-color: #F1C40F;">
@@ -386,7 +386,7 @@
                 <a href="#" onclick="window.parent.openAppTab('noticias_studio.html', 'Noticias_Studio', true)" class="rpg-item epic" style="border-color: #1ABC9C;">
                     <div class="rpg-item-level">Lv.18</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(180deg);"></div>
-                    <span class="rpg-item-name">Estúdio de Imagens</span>
+                    <span class="rpg-item-name">Estdio de Imagens</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('noticias_channel.html', 'Noticias_Channel', true)" class="rpg-item common" style="border-color: #95A5A6;">
@@ -410,13 +410,13 @@
                 <a href="#" onclick="window.parent.openAppTab('noticias_history.html', 'Noticias_History', true)" class="rpg-item common" style="border-color: #BDC3C7;">
                     <div class="rpg-item-level">Lv.5</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: grayscale(80%);"></div>
-                    <span class="rpg-item-name">Histórico</span>
+                    <span class="rpg-item-name">Histrico</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('noticias_settings.html', 'Noticias_Settings', true)" class="rpg-item rare" style="border-color: #7F8C8D;">
                     <div class="rpg-item-level">Lv.1</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png'); filter: grayscale(50%);"></div>
-                    <span class="rpg-item-name">Configurações</span>
+                    <span class="rpg-item-name">Configuraes</span>
                 </a>
             </div>
 
@@ -424,7 +424,7 @@
                 <span>[BANNER 728x90 ADSENSE]</span>
             </div>
 
-            <div class="section-title">🔮 Magias de IA & Áudio</div>
+            <div class="section-title"> Magias de IA & udio</div>
 
             <div class="rpg-item-grid">
                 <a href="#" onclick="window.parent.openAppTab('tts.html', 'Tts', true)" class="rpg-item legendary">
@@ -442,7 +442,7 @@
                 <a href="#" onclick="window.parent.openAppTab('narrador.html', 'Narrador', true)" class="rpg-item epic">
                     <div class="rpg-item-level">Lv.22</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
-                    <span class="rpg-item-name">Avatar Mágico</span>
+                    <span class="rpg-item-name">Avatar Mgico</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('legendas.html', 'Legendas', true)" class="rpg-item rare">
@@ -452,7 +452,7 @@
                 </a>
             </div>
 
-            <div class="section-title" style="color: #9B59B6; text-shadow: 0 0 10px rgba(155,89,182,0.5);">🚀 Ferramentas La Plata (IA)</div>
+            <div class="section-title" style="color: #9B59B6; text-shadow: 0 0 10px rgba(155,89,182,0.5);"> Ferramentas La Plata (IA)</div>
             
             <div class="rpg-item-grid">
                 <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html?tool=prompt', 'Ferramenta_Laplata?Tool=Prompt', true)" class="rpg-item rpg-item-laplata">
@@ -476,19 +476,19 @@
                 <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html?tool=mineracao', 'Ferramenta_Laplata?Tool=Mineracao', true)" class="rpg-item rpg-item-laplata">
                     <div class="rpg-item-level laplata-level">Lv.3</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
-                    <span class="rpg-item-name">Mineração Viral</span>
+                    <span class="rpg-item-name">Minerao Viral</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html?tool=titulos', 'Ferramenta_Laplata?Tool=Titulos', true)" class="rpg-item rpg-item-laplata">
                     <div class="rpg-item-level laplata-level">Lv.2</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
-                    <span class="rpg-item-name">Gerador de Títulos</span>
+                    <span class="rpg-item-name">Gerador de Ttulos</span>
                 </a>
                 
                 <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html?tool=descricoes', 'Ferramenta_Laplata?Tool=Descricoes', true)" class="rpg-item rpg-item-laplata">
                     <div class="rpg-item-level laplata-level">Lv.2</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
-                    <span class="rpg-item-name">Gerador Descrições</span>
+                    <span class="rpg-item-name">Gerador Descries</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html?tool=gerador_imagem', 'Ferramenta_Laplata?Tool=Gerador_Imagem', true)" class="rpg-item rpg-item-laplata">
@@ -500,37 +500,37 @@
                 <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html?tool=tendencias', 'Ferramenta_Laplata?Tool=Tendencias', true)" class="rpg-item rpg-item-laplata">
                     <div class="rpg-item-level laplata-level">Lv.3</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(270deg);"></div>
-                    <span class="rpg-item-name">Tendências</span>
+                    <span class="rpg-item-name">Tendncias</span>
                 </a>
             </div>
 
-            <div class="section-title" style="color: #F1C40F; text-shadow: 0 0 10px rgba(241,196,15,0.5);">🌟 Ecossistema La Plata (Novo)</div>
+            <div class="section-title" style="color: #F1C40F; text-shadow: 0 0 10px rgba(241,196,15,0.5);"> Ecossistema La Plata (Novo)</div>
             
             <div class="rpg-item-grid">
-                <!-- Gamificação -->
+                <!-- Gamificao -->
                 <a href="#" onclick="window.parent.openAppTab('skill_tree.html', 'Skill_Tree', true)" class="rpg-item legendary" style="border-color: #facc15; box-shadow: 0 0 15px rgba(250,204,21,0.4);">
                     <div class="rpg-item-level" style="background: #eab308; color: #000;">Lv.???</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png'); filter: hue-rotate(50deg);"></div>
-                    <span class="rpg-item-name">Árvore de Habilidades</span>
+                    <span class="rpg-item-name">rvore de Habilidades</span>
                 </a>
 
                 <!-- Principais -->
                 <a href="#" onclick="window.parent.openAppTab('laplata_jobs.html', 'Laplata_Jobs', true)" class="rpg-item legendary" style="border-color: #E74C3C;">
                     <div class="rpg-item-level">Lv.Max</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_timeline.png'); filter: hue-rotate(340deg);"></div>
-                    <span class="rpg-item-name">Auto Execução</span>
+                    <span class="rpg-item-name">Auto Execuo</span>
                 </a>
                 
                 <a href="#" onclick="window.parent.openAppTab('laplata_creator.html', 'Laplata_Creator', true)" class="rpg-item epic" style="border-color: #9B59B6;">
                     <div class="rpg-item-level">Lv.15</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(280deg);"></div>
-                    <span class="rpg-item-name">Laboratório</span>
+                    <span class="rpg-item-name">Laboratrio</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('laplata_studio.html', 'Laplata_Studio', true)" class="rpg-item epic" style="border-color: #3498DB;">
                     <div class="rpg-item-level">Lv.20</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png'); filter: hue-rotate(200deg);"></div>
-                    <span class="rpg-item-name">Estúdio de Imagens</span>
+                    <span class="rpg-item-name">Estdio de Imagens</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('laplata_roster.html', 'Laplata_Roster', true)" class="rpg-item rare" style="border-color: #2ECC71;">
@@ -545,7 +545,7 @@
                     <span class="rpg-item-name">Galeria</span>
                 </a>
                 
-                <!-- Secundárias -->
+                <!-- Secundrias -->
                 <a href="#" onclick="window.parent.openAppTab('laplata_script.html', 'Laplata_Script', true)" class="rpg-item common">
                     <div class="rpg-item-level">Lv.5</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
@@ -555,7 +555,7 @@
                 <a href="#" onclick="window.parent.openAppTab('laplata_videodirector.html', 'Laplata_Videodirector', true)" class="rpg-item common">
                     <div class="rpg-item-level">Lv.5</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
-                    <span class="rpg-item-name">Diretor de Vídeo</span>
+                    <span class="rpg-item-name">Diretor de Vdeo</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('laplata_thumbnail.html', 'Laplata_Thumbnail', true)" class="rpg-item common">
@@ -577,7 +577,7 @@
                 </a>
             </div>
 
-            <div class="section-title">🛠️ Canivete Suíço (Mini-Tools)</div>
+            <div class="section-title"> Canivete Suo (Mini-Tools)</div>
 
             <div class="rpg-item-grid">
                 <a href="#" onclick="window.parent.openAppTab('ferramentas.html?tool=redimensionar', 'Ferramentas?Tool=Redimensionar', true)" class="rpg-item common">
@@ -595,7 +595,7 @@
                 <a href="#" onclick="window.parent.openAppTab('ferramentas.html?tool=remover_audio', 'Ferramentas?Tool=Remover_Audio', true)" class="rpg-item common">
                     <div class="rpg-item-level">Lv.1</div>
                     <div class="rpg-item-icon" style="background-image: url('assets/bg_generic_garage.png');"></div>
-                    <span class="rpg-item-name">Mute Vídeo</span>
+                    <span class="rpg-item-name">Mute Vdeo</span>
                 </a>
 
                 <a href="#" onclick="window.parent.openAppTab('ferramentas.html?tool=ajustar_brilho_contraste', 'Ferramentas?Tool=Ajustar_Brilho_Contraste', true)" class="rpg-item rare">
@@ -629,87 +629,87 @@
                 </a>
             </div>
 
-            <div class="section-title">🏰 Construções & Sistema</div>
+            <div class="section-title"> Construes & Sistema</div>
 
             <div class="tool-grid">
 
-                <a href="#" onclick="window.parent.openAppTab('estudio_multimidia.html', '🎬 Estúdio Multimídia', true)" class="tool-card" style="border-color: #8b5cf6;">
+                <a href="#" onclick="window.parent.openAppTab('estudio_multimidia.html', ' Estdio Multimdia', true)" class="tool-card" style="border-color: #8b5cf6;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #8b5cf6;">🎬 ESTÚDIO IA MULTIMÍDIA</h3>
-                        <p>DALL-E 4 Ultra e Nano Banana v2. Síntese mágica de imagens e vídeos usando Roteador Cognitivo.</p>
+                        <h3 style="color: #8b5cf6;"> ESTDIO IA MULTIMDIA</h3>
+                        <p>DALL-E 4 Ultra e Nano Banana v2. Sntese mgica de imagens e vdeos usando Roteador Cognitivo.</p>
                     </div>
                     <div class="badge-tag new" style="background: #ec4899;">PRO</div>
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('editor_imagem.html', '🎨 Image Editor', true)" class="tool-card" style="border-color: #f43f5e;">
+                <a href="#" onclick="window.parent.openAppTab('editor_imagem.html', ' Image Editor', true)" class="tool-card" style="border-color: #f43f5e;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #f43f5e;">🎨 APOLLO IMAGE EDITOR</h3>
+                        <h3 style="color: #f43f5e;"> APOLLO IMAGE EDITOR</h3>
                         <p>O primeiro editor de imagem nativo da Apollo, com camadas e popups ganchos.</p>
                     </div>
                     <div class="badge-tag new" style="background: #e11d48;">Livre</div>
                 </a>
                 
-                <a href="#" onclick="window.parent.openAppTab('editor_audio.html', '🎙️ Audio Editor', true)" class="tool-card" style="border-color: #3b82f6;">
+                <a href="#" onclick="window.parent.openAppTab('editor_audio.html', ' Audio Editor', true)" class="tool-card" style="border-color: #3b82f6;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #3b82f6;">🎙️ APOLLO AUDIO EDITOR</h3>
-                        <p>Edição de áudio multiplex profissional e tratamento acústico com I.A.</p>
+                        <h3 style="color: #3b82f6;"> APOLLO AUDIO EDITOR</h3>
+                        <p>Edio de udio multiplex profissional e tratamento acstico com I.A.</p>
                     </div>
                     <div class="badge-tag new" style="background: #2563eb;">Pro</div>
                 </a>
                 
-                <a href="#" onclick="window.parent.openAppTab('editor_texto.html', '✍️ O Roteirista', true)" class="tool-card" style="border-color: #10b981;">
+                <a href="#" onclick="window.parent.openAppTab('editor_texto.html', ' O Roteirista', true)" class="tool-card" style="border-color: #10b981;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #10b981;">✍️ O ROTEIRISTA I.A.</h3>
-                        <p>Escreva o roteiro de milhões dos seus vídeos antes da produção.</p>
+                        <h3 style="color: #10b981;"> O ROTEIRISTA I.A.</h3>
+                        <p>Escreva o roteiro de milhes dos seus vdeos antes da produo.</p>
                     </div>
                     <div class="badge-tag new" style="background: #059669;">Livre</div>
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('gerador_musica.html', '🎹 Gerador de Música', true)" class="tool-card" style="border-color: #fbbf24;">
+                <a href="#" onclick="window.parent.openAppTab('gerador_musica.html', ' Gerador de Msica', true)" class="tool-card" style="border-color: #fbbf24;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #fbbf24;">🎹 GERADOR DE MÚSICA</h3>
-                        <p>Gere músicas completas e batidas incríveis com I.A. baseada em prompts.</p>
+                        <h3 style="color: #fbbf24;"> GERADOR DE MSICA</h3>
+                        <p>Gere msicas completas e batidas incrveis com I.A. baseada em prompts.</p>
                     </div>
                     <div class="badge-tag new" style="background: #f59e0b;">Novo</div>
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('editor_daw.html', '🎧 Apollo D.A.W.', true)" class="tool-card" style="border-color: #38bdf8;">
+                <a href="#" onclick="window.parent.openAppTab('editor_daw.html', ' Apollo D.A.W.', true)" class="tool-card" style="border-color: #38bdf8;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #38bdf8;">🎧 APOLLO D.A.W.</h3>
-                        <p>A D.A.W. completa nativa para mixagem e masterização dos seus hits.</p>
+                        <h3 style="color: #38bdf8;"> APOLLO D.A.W.</h3>
+                        <p>A D.A.W. completa nativa para mixagem e masterizao dos seus hits.</p>
                     </div>
                     <div class="badge-tag new" style="background: #0ea5e9;">Novo</div>
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('editor_freecut.html', '🎬 Apollo FreeCut', true)" class="tool-card" style="border-color: #ec4899;">
+                <a href="#" onclick="window.parent.openAppTab('editor_freecut.html', ' Apollo FreeCut', true)" class="tool-card" style="border-color: #ec4899;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #ec4899;">🎬 APOLLO FREECUT</h3>
-                        <p>Editor de vídeo avançado Open Source para cortes de precisão e efeitos na timeline.</p>
+                        <h3 style="color: #ec4899;"> APOLLO FREECUT</h3>
+                        <p>Editor de vdeo avanado Open Source para cortes de preciso e efeitos na timeline.</p>
                     </div>
                     <div class="badge-tag new" style="background: #ec4899;">Novo</div>
                 </a>
                 
-                <a href="#" onclick="window.parent.openAppTab('removedor_fundo.html', '✂️ Remover BG', true)" class="tool-card" style="border-color: #a855f7;">
+                <a href="#" onclick="window.parent.openAppTab('removedor_fundo.html', ' Remover BG', true)" class="tool-card" style="border-color: #a855f7;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
-                        <h3 style="color: #a855f7;">✂️ REMOVE BG I.A.</h3>
+                        <h3 style="color: #a855f7;"> REMOVE BG I.A.</h3>
                         <p>Remove o fundo das suas imagens em segundos com a nossa rede neural.</p>
                     </div>
                     <div class="badge-tag new" style="background: #9333ea;">Novo</div>
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('mercado.html', '🛒 Mercado P2P', true)" class="tool-card" style="border-color: #00f0ff;">
+                <a href="#" onclick="window.parent.openAppTab('mercado.html', ' Mercado P2P', true)" class="tool-card" style="border-color: #00f0ff;">
                     <div class="card-bg" style="background-image: url('assets/bg_timeline.png');"></div>
                     <div class="card-content">
                         <h3 style="color: #00f0ff;">MERCADO P2P</h3>
-                        <p>Venda Prompts, Peças e Compre Pacotes de Geração com Desconto.</p>
+                        <p>Venda Prompts, Peas e Compre Pacotes de Gerao com Desconto.</p>
                     </div>
                     <div class="badge-tag new" style="background: #e11d48;">$$$</div>
                 </a>
@@ -717,17 +717,17 @@
                 <a href="#" onclick="window.parent.openAppTab('index.html', 'Index', true)" class="tool-card">
                     <div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
                     <div class="card-content">
-                        <h3 data-i18n="main.node_studio">Estúdio Node</h3>
-                        <p data-i18n="main.node_studio_desc">Crie fluxos de trabalho visuais com nós conectáveis.</p>
+                        <h3 data-i18n="main.node_studio">Estdio Node</h3>
+                        <p data-i18n="main.node_studio_desc">Crie fluxos de trabalho visuais com ns conectveis.</p>
                     </div>
                     <div class="badge-tag new">Novo</div>
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('fila.html', '🎬 Fila', true)" class="tool-card">
+                <a href="#" onclick="window.parent.openAppTab('fila.html', ' Fila', true)" class="tool-card">
                     <div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
                     <div class="card-content">
                         <h3 data-i18n="main.render_queue">Fila de Render</h3>
-                        <p data-i18n="main.render_queue_desc">Gerencie os vídeos enviados para o Render Farm.</p>
+                        <p data-i18n="main.render_queue_desc">Gerencie os vdeos enviados para o Render Farm.</p>
                     </div>
                     <div class="badge-tag free">Livre</div>
                 </a>
@@ -736,7 +736,7 @@
                     <div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
                     <div class="card-content">
                         <h3 data-i18n="main.analytics">DEXboard</h3>
-                        <p data-i18n="main.analytics_desc">Estatísticas, Custos e Armazenamento S3.</p>
+                        <p data-i18n="main.analytics_desc">Estatsticas, Custos e Armazenamento S3.</p>
                     </div>
                 </a>
 
@@ -744,7 +744,7 @@
                     <div class="card-bg" style="background-image: url('assets/bg_generic_garage.png');"></div>
                     <div class="card-content">
                         <h3 data-i18n="main.api_keys">Chaves API</h3>
-                        <p data-i18n="main.api_keys_desc">Configurações do cofre BYOK para rodar grátis.</p>
+                        <p data-i18n="main.api_keys_desc">Configuraes do cofre BYOK para rodar grtis.</p>
                     </div>
                 </a>
             </div>
@@ -752,330 +752,330 @@
         
         
             <div id="dev-mode-pages" class="section-title" style="margin-top: 50px; border-top: 2px solid #4a2b6e; padding-top: 20px;">
-                🗄️ TODAS AS PÁGINAS (DEV MODE)
+                 TODAS AS PGINAS (DEV MODE)
             </div>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Acesso rápido a todos os arquivos HTML para o planejamento de design (Basta clicar para abrir na aba).</p>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Acesso rpido a todos os arquivos HTML para o planejamento de design (Basta clicar para abrir na aba).</p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 50px;">
 
-                <a href="#" onclick="window.parent.openAppTab('admin.html', '📄 Admin', true)" 
+                <a href="#" onclick="window.parent.openAppTab('admin.html', ' Admin', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> admin.html
+                    <span style="color: #9B59B6;"></span> admin.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('admin_login.html', '📄 Admin Login', true)" 
+                <a href="#" onclick="window.parent.openAppTab('admin_login.html', ' Admin Login', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> admin_login.html
+                    <span style="color: #9B59B6;"></span> admin_login.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('apollo_os.html', '📄 Apollo Os', true)" 
+                <a href="#" onclick="window.parent.openAppTab('apollo_os.html', ' Apollo Os', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> apollo_os.html
-                </a>
-
-                <a href="#" onclick="window.parent.openAppTab('chat_ia.html', '📄 Chat Ia', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> chat_ia.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('config.html', '📄 Config', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> config.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('copilotos.html', '📄 Copilotos', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> copilotos.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('dashboard.html', '📄 Dashboard', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> dashboard.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('diretor.html', '📄 Diretor', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> diretor.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('dublagem.html', '📄 Dublagem', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> dublagem.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('editor_audio.html', '📄 Editor Audio', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> editor_audio.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('editor_audiomass.html', '📄 Editor Audiomass', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> editor_audiomass.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('editor_daw.html', '🎹 Editor Daw', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">🎹</span> editor_daw.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('editor_freecut.html', '🎬 Editor FreeCut', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">🎬</span> editor_freecut.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('estudio_multimidia.html', '📄 Estudio Multimidia', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> estudio_multimidia.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('editor_imagem.html', '📄 Editor Imagem', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> editor_imagem.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('editor_texto.html', '📄 Editor Texto', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> editor_texto.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('estudio_dublagem.html', '📄 Estudio Dublagem', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> estudio_dublagem.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html', '📄 Ferramenta Laplata', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> ferramenta_laplata.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('ferramentas.html', '📄 Ferramentas', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> ferramentas.html
-                </a>
-                <a href="#" onclick="window.parent.openAppTab('fila.html', '📄 Fila', true)" 
-                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> fila.html
+                    <span style="color: #9B59B6;"></span> apollo_os.html
                 </a>
 
-                <a href="#" onclick="window.parent.openAppTab('gerador_musica.html', '📄 Gerador Musica', true)" 
+                <a href="#" onclick="window.parent.openAppTab('chat_ia.html', ' Chat Ia', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> gerador_musica.html
+                    <span style="color: #9B59B6;"></span> chat_ia.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('hub.html', '📄 Hub', true)" 
+                <a href="#" onclick="window.parent.openAppTab('config.html', ' Config', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> hub.html
+                    <span style="color: #9B59B6;"></span> config.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('hub_backup_pre_rearch.html', '📄 Hub Backup Pre Rearch', true)" 
+                <a href="#" onclick="window.parent.openAppTab('copilotos.html', ' Copilotos', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> hub_backup_pre_rearch.html
+                    <span style="color: #9B59B6;"></span> copilotos.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('hub_broken_2.html', '📄 Hub Broken 2', true)" 
+                <a href="#" onclick="window.parent.openAppTab('dashboard.html', ' Dashboard', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> hub_broken_2.html
+                    <span style="color: #9B59B6;"></span> dashboard.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('index.html', '📄 Index', true)" 
+                <a href="#" onclick="window.parent.openAppTab('diretor.html', ' Diretor', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> index.html
+                    <span style="color: #9B59B6;"></span> diretor.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('la_plata.html', '📄 La Plata', true)" 
+                <a href="#" onclick="window.parent.openAppTab('dublagem.html', ' Dublagem', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> la_plata.html
+                    <span style="color: #9B59B6;"></span> dublagem.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_creator.html', '📄 Laplata Creator', true)" 
+                <a href="#" onclick="window.parent.openAppTab('editor_audio.html', ' Editor Audio', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_creator.html
+                    <span style="color: #9B59B6;"></span> editor_audio.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_gallery.html', '📄 Laplata Gallery', true)" 
+                <a href="#" onclick="window.parent.openAppTab('editor_audiomass.html', ' Editor Audiomass', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_gallery.html
+                    <span style="color: #9B59B6;"></span> editor_audiomass.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_jobs.html', '📄 Laplata Jobs', true)" 
+                <a href="#" onclick="window.parent.openAppTab('editor_daw.html', ' Editor Daw', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_jobs.html
+                    <span style="color: #9B59B6;"></span> editor_daw.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_roster.html', '📄 Laplata Roster', true)" 
+                <a href="#" onclick="window.parent.openAppTab('editor_freecut.html', ' Editor FreeCut', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_roster.html
+                    <span style="color: #9B59B6;"></span> editor_freecut.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_script.html', '📄 Laplata Script', true)" 
+                <a href="#" onclick="window.parent.openAppTab('estudio_multimidia.html', ' Estudio Multimidia', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_script.html
+                    <span style="color: #9B59B6;"></span> estudio_multimidia.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_social.html', '📄 Laplata Social', true)" 
+                <a href="#" onclick="window.parent.openAppTab('editor_imagem.html', ' Editor Imagem', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_social.html
+                    <span style="color: #9B59B6;"></span> editor_imagem.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_studio.html', '📄 Laplata Studio', true)" 
+                <a href="#" onclick="window.parent.openAppTab('editor_texto.html', ' Editor Texto', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_studio.html
+                    <span style="color: #9B59B6;"></span> editor_texto.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_thumbnail.html', '📄 Laplata Thumbnail', true)" 
+                <a href="#" onclick="window.parent.openAppTab('estudio_dublagem.html', ' Estudio Dublagem', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_thumbnail.html
+                    <span style="color: #9B59B6;"></span> estudio_dublagem.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('laplata_videodirector.html', '📄 Laplata Videodirector', true)" 
+                <a href="#" onclick="window.parent.openAppTab('ferramenta_laplata.html', ' Ferramenta Laplata', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> laplata_videodirector.html
+                    <span style="color: #9B59B6;"></span> ferramenta_laplata.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('leaderboard.html', '📄 Leaderboard', true)" 
+                <a href="#" onclick="window.parent.openAppTab('ferramentas.html', ' Ferramentas', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> leaderboard.html
+                    <span style="color: #9B59B6;"></span> ferramentas.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('legendas.html', '📄 Legendas', true)" 
+                <a href="#" onclick="window.parent.openAppTab('fila.html', ' Fila', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> legendas.html
+                    <span style="color: #9B59B6;"></span> fila.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('login.html', '📄 Login', true)" 
+
+                <a href="#" onclick="window.parent.openAppTab('gerador_musica.html', ' Gerador Musica', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> login.html
+                    <span style="color: #9B59B6;"></span> gerador_musica.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('mercado.html', '📄 Mercado', true)" 
+                <a href="#" onclick="window.parent.openAppTab('hub.html', ' Hub', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> mercado.html
+                    <span style="color: #9B59B6;"></span> hub.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('midia.html', '📄 Midia', true)" 
+                <a href="#" onclick="window.parent.openAppTab('hub_backup_pre_rearch.html', ' Hub Backup Pre Rearch', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> midia.html
+                    <span style="color: #9B59B6;"></span> hub_backup_pre_rearch.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('minigame_match3.html', '📄 Minigame Match3', true)" 
+                <a href="#" onclick="window.parent.openAppTab('hub_broken_2.html', ' Hub Broken 2', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> minigame_match3.html
+                    <span style="color: #9B59B6;"></span> hub_broken_2.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('mockup_render_farm.html', '📄 Mockup Render Farm', true)" 
+                <a href="#" onclick="window.parent.openAppTab('index.html', ' Index', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> mockup_render_farm.html
+                    <span style="color: #9B59B6;"></span> index.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('montador.html', '📄 Montador', true)" 
+                <a href="#" onclick="window.parent.openAppTab('la_plata.html', ' La Plata', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> montador.html
+                    <span style="color: #9B59B6;"></span> la_plata.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('musica.html', '📄 Musica', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_creator.html', ' Laplata Creator', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> musica.html
+                    <span style="color: #9B59B6;"></span> laplata_creator.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('narrador.html', '📄 Narrador', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_gallery.html', ' Laplata Gallery', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> narrador.html
+                    <span style="color: #9B59B6;"></span> laplata_gallery.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias.html', '📄 Noticias', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_jobs.html', ' Laplata Jobs', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias.html
+                    <span style="color: #9B59B6;"></span> laplata_jobs.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_analytics.html', '📄 Noticias Analytics', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_roster.html', ' Laplata Roster', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_analytics.html
+                    <span style="color: #9B59B6;"></span> laplata_roster.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_autopilot.html', '📄 Noticias Autopilot', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_script.html', ' Laplata Script', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_autopilot.html
+                    <span style="color: #9B59B6;"></span> laplata_script.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_channel.html', '📄 Noticias Channel', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_social.html', ' Laplata Social', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_channel.html
+                    <span style="color: #9B59B6;"></span> laplata_social.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_dashboard.html', '📄 Noticias Dashboard', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_studio.html', ' Laplata Studio', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_dashboard.html
+                    <span style="color: #9B59B6;"></span> laplata_studio.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_history.html', '📄 Noticias History', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_thumbnail.html', ' Laplata Thumbnail', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_history.html
+                    <span style="color: #9B59B6;"></span> laplata_thumbnail.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_images.html', '📄 Noticias Images', true)" 
+                <a href="#" onclick="window.parent.openAppTab('laplata_videodirector.html', ' Laplata Videodirector', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_images.html
+                    <span style="color: #9B59B6;"></span> laplata_videodirector.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_miner.html', '📄 Noticias Miner', true)" 
+                <a href="#" onclick="window.parent.openAppTab('leaderboard.html', ' Leaderboard', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_miner.html
+                    <span style="color: #9B59B6;"></span> leaderboard.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_monitor.html', '📄 Noticias Monitor', true)" 
+                <a href="#" onclick="window.parent.openAppTab('legendas.html', ' Legendas', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_monitor.html
+                    <span style="color: #9B59B6;"></span> legendas.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_news.html', '📄 Noticias News', true)" 
+                <a href="#" onclick="window.parent.openAppTab('login.html', ' Login', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_news.html
+                    <span style="color: #9B59B6;"></span> login.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_radar.html', '📄 Noticias Radar', true)" 
+                <a href="#" onclick="window.parent.openAppTab('mercado.html', ' Mercado', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_radar.html
+                    <span style="color: #9B59B6;"></span> mercado.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_scripts.html', '📄 Noticias Scripts', true)" 
+                <a href="#" onclick="window.parent.openAppTab('midia.html', ' Midia', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_scripts.html
+                    <span style="color: #9B59B6;"></span> midia.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_settings.html', '📄 Noticias Settings', true)" 
+                <a href="#" onclick="window.parent.openAppTab('minigame_match3.html', ' Minigame Match3', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_settings.html
+                    <span style="color: #9B59B6;"></span> minigame_match3.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_strategy.html', '📄 Noticias Strategy', true)" 
+                <a href="#" onclick="window.parent.openAppTab('mockup_render_farm.html', ' Mockup Render Farm', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_strategy.html
+                    <span style="color: #9B59B6;"></span> mockup_render_farm.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_studio.html', '📄 Noticias Studio', true)" 
+                <a href="#" onclick="window.parent.openAppTab('montador.html', ' Montador', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_studio.html
+                    <span style="color: #9B59B6;"></span> montador.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('noticias_timeline.html', '📄 Noticias Timeline', true)" 
+                <a href="#" onclick="window.parent.openAppTab('musica.html', ' Musica', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> noticias_timeline.html
+                    <span style="color: #9B59B6;"></span> musica.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('oficina.html', '📄 Oficina', true)" 
+                <a href="#" onclick="window.parent.openAppTab('narrador.html', ' Narrador', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> oficina.html
+                    <span style="color: #9B59B6;"></span> narrador.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('perfil.html', '📄 Perfil', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias.html', ' Noticias', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> perfil.html
+                    <span style="color: #9B59B6;"></span> noticias.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('plugin_viewer.html', '📄 Plugin Viewer', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_analytics.html', ' Noticias Analytics', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> plugin_viewer.html
+                    <span style="color: #9B59B6;"></span> noticias_analytics.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('podcast.html', '📄 Podcast', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_autopilot.html', ' Noticias Autopilot', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> podcast.html
+                    <span style="color: #9B59B6;"></span> noticias_autopilot.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('recovered_hub.html', '📄 Recovered Hub', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_channel.html', ' Noticias Channel', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> recovered_hub.html
+                    <span style="color: #9B59B6;"></span> noticias_channel.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('removedor_fundo.html', '📄 Removedor Fundo', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_dashboard.html', ' Noticias Dashboard', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> removedor_fundo.html
+                    <span style="color: #9B59B6;"></span> noticias_dashboard.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('setup_canal.html', '📄 Setup Canal', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_history.html', ' Noticias History', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> setup_canal.html
+                    <span style="color: #9B59B6;"></span> noticias_history.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('storyboard.html', '📄 Storyboard', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_images.html', ' Noticias Images', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> storyboard.html
+                    <span style="color: #9B59B6;"></span> noticias_images.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('tanque.html', '📄 Tanque', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_miner.html', ' Noticias Miner', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> tanque.html
+                    <span style="color: #9B59B6;"></span> noticias_miner.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('teleprompter.html', '📄 Teleprompter', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_monitor.html', ' Noticias Monitor', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> teleprompter.html
+                    <span style="color: #9B59B6;"></span> noticias_monitor.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('timeline.html', '📄 Timeline', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_news.html', ' Noticias News', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> timeline.html
+                    <span style="color: #9B59B6;"></span> noticias_news.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('tts.html', '📄 Tts', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_radar.html', ' Noticias Radar', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> tts.html
+                    <span style="color: #9B59B6;"></span> noticias_radar.html
                 </a>
-                <a href="#" onclick="window.parent.openAppTab('volume.html', '📄 Volume', true)" 
+                <a href="#" onclick="window.parent.openAppTab('noticias_scripts.html', ' Noticias Scripts', true)" 
                    style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #9B59B6;">📄</span> volume.html
+                    <span style="color: #9B59B6;"></span> noticias_scripts.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('noticias_settings.html', ' Noticias Settings', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> noticias_settings.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('noticias_strategy.html', ' Noticias Strategy', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> noticias_strategy.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('noticias_studio.html', ' Noticias Studio', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> noticias_studio.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('noticias_timeline.html', ' Noticias Timeline', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> noticias_timeline.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('oficina.html', ' Oficina', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> oficina.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('perfil.html', ' Perfil', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> perfil.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('plugin_viewer.html', ' Plugin Viewer', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> plugin_viewer.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('podcast.html', ' Podcast', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> podcast.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('recovered_hub.html', ' Recovered Hub', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> recovered_hub.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('removedor_fundo.html', ' Removedor Fundo', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> removedor_fundo.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('setup_canal.html', ' Setup Canal', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> setup_canal.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('storyboard.html', ' Storyboard', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> storyboard.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('tanque.html', ' Tanque', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> tanque.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('teleprompter.html', ' Teleprompter', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> teleprompter.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('timeline.html', ' Timeline', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> timeline.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('tts.html', ' Tts', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> tts.html
+                </a>
+                <a href="#" onclick="window.parent.openAppTab('volume.html', ' Volume', true)" 
+                   style="background: rgba(20, 15, 30, 0.8); border: 1px solid #4a2b6e; color: #cbd5e1; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #9B59B6;"></span> volume.html
                 </a>
             </div>
         </main>
 
     </div>
 
-    <!-- FASE 35: Modal de Seleção de Canais -->
+    <!-- FASE 35: Modal de Seleo de Canais -->
     <div id="channel-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
         <div style="background: #1e1e1e; padding: 30px; border-radius: 16px; border: 2px solid #444; width: 500px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative;">
-            <button onclick="closeChannelModal()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer;">✖</button>
+            <button onclick="closeChannelModal()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #888; font-size: 1.5rem; cursor: pointer;"></button>
             
             <h2 style="margin-top: 0; color: #fff; margin-bottom: 20px; display:flex; align-items:center; gap:10px;">
-                📺 Gerenciador de Canais
+                 Gerenciador de Canais
             </h2>
-            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Selecione o canal para isolar as mídias, histórico e customizar as cores da interface (Theme Tinting).</p>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Selecione o canal para isolar as mdias, histrico e customizar as cores da interface (Theme Tinting).</p>
             
             <div id="channels-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px; max-height: 250px; overflow-y: auto; padding-right:10px;">
                 <!-- Preenchido via JS -->
             </div>
             
             <div style="border-top: 1px solid #333; padding-top: 20px;">
-                <h4 style="margin-top:0; color:#ddd; margin-bottom:10px;">➕ Adicionar Novo Canal</h4>
+                <h4 style="margin-top:0; color:#ddd; margin-bottom:10px;"> Adicionar Novo Canal</h4>
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
                     <input type="text" id="new-channel-name" placeholder="Ex: Curiosidades Sombrias" style="flex:1; padding:10px; border-radius:6px; border:1px solid #555; background:#111; color:#fff;">
                     <input type="color" id="new-channel-color" value="#E74C3C" style="width:40px; height:40px; border:none; border-radius:6px; padding:0; cursor:pointer;">
@@ -1091,7 +1091,7 @@
     <script src="video_ad_modal.js"></script>
     <script src="transfer_hud.js?v=11"></script>
 
-    <!-- Supabase SDK e Autenticação -->
+    <!-- Supabase SDK e Autenticao -->
     <script>
         function openUploadModal() {
             document.getElementById('upload-modal').style.display = 'flex';
@@ -1104,7 +1104,7 @@
             document.getElementById('file-input').value = '';
         }
 
-        // Fase 13: Interações do Perfil Dropdown
+        // Fase 13: Interaes do Perfil Dropdown
         function toggleProfileMenu() {
             const menu = document.getElementById('profile-dropdown');
             menu.classList.toggle('active');
@@ -1114,20 +1114,20 @@
         function spinDailyRoulette() {
             const btn = document.getElementById('btn-gacha-hub');
             btn.disabled = true;
-            btn.innerText = "⏳ Assistindo Ad (15s)...";
+            btn.innerText = " Assistindo Ad (15s)...";
             
             setTimeout(() => {
                 const prizes = [
-                    "🎟️ Ticket: 5 Minutos de Renderização Grátis",
-                    "📦 Peça Cosmética: Roda de Ouro",
-                    "💎 3 Cristais Premium",
-                    "⛽ 200 Litros de Gasolina"
+                    " Ticket: 5 Minutos de Renderizao Grtis",
+                    " Pea Cosmtica: Roda de Ouro",
+                    " 3 Cristais Premium",
+                    " 200 Litros de Gasolina"
                 ];
                 const prize = prizes[Math.floor(Math.random() * prizes.length)];
                 
-                alert(`🎉 PARABÉNS! Você girou a roleta e ganhou:\n\n${prize}\n\nSeu prêmio foi adicionado ao seu Inventário (Mock).`);
+                alert(` PARABNS! Voc girou a roleta e ganhou:\n\n${prize}\n\nSeu prmio foi adicionado ao seu Inventrio (Mock).`);
                 
-                btn.innerText = "✅ VOLTE AMANHÃ";
+                btn.innerText = " VOLTE AMANH";
                 // Keep it disabled to simulate daily spin
             }, 3000);
         }
@@ -1177,7 +1177,7 @@
                             <div style="width:20px; height:20px; border-radius:4px; background:${ch.color}; box-shadow: 0 0 10px ${ch.color};"></div>
                             <span style="color:#fff; font-weight:bold;">${ch.name}</span>
                         </div>
-                        ${isActive ? '<span style="color:#10B981; font-size:12px; font-weight:bold;">✓ ATIVO</span>' : ''}
+                        ${isActive ? '<span style="color:#10B981; font-size:12px; font-weight:bold;"> ATIVO</span>' : ''}
                     </div>
                 `;
             });
@@ -1232,7 +1232,7 @@
                 return;
             }
 
-            statusText.innerText = 'Iniciando Missão de Upload...';
+            statusText.innerText = 'Iniciando Misso de Upload...';
             statusText.style.color = '#fff';
 
             try {
@@ -1248,7 +1248,7 @@
                     throw new Error('Erro: ' + data.error);
                 }
 
-                statusText.innerText = 'Permissão concedida. Upando...';
+                statusText.innerText = 'Permisso concedida. Upando...';
                 progressContainer.style.display = 'block';
 
                 const xhr = new XMLHttpRequest();
@@ -1265,7 +1265,7 @@
 
                 xhr.onload = function() {
                     if (xhr.status === 200 || xhr.status === 201) {
-                        statusText.innerText = '✅ Upload Concluído com Sucesso!';
+                        statusText.innerText = ' Upload Concludo com Sucesso!';
                         statusText.style.color = 'var(--btn-green)';
                     } else {
                         throw new Error('Falha no upload do S3.');

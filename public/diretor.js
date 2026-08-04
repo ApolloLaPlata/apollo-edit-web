@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleModoRitmo();
 });
 
-// -- FUNÇÕES DE MODO / TOGGLE --
+// -- FUNES DE MODO / TOGGLE --
 function toggleMappingMode() {
     const isMapped = document.getElementById('usar_mapeamento').checked;
     const singleProfileBox = document.getElementById('single_profile_box');
@@ -49,7 +49,7 @@ function toggleModoRitmo() {
     if (modo === 'lipsync') {
         if(inputAudio) inputAudio.disabled = true;
         if(btnProcurarAudio) btnProcurarAudio.disabled = true;
-        // Força sincronização base a ser ativada na UI se existir
+        // Fora sincronizao base a ser ativada na UI se existir
         const syncBase = document.getElementById('sincronizar_base');
         if (syncBase) syncBase.checked = true;
     } else {
@@ -58,7 +58,7 @@ function toggleModoRitmo() {
     }
 }
 
-// -- INTEGRAÇÃO COM BACKEND --
+// -- INTEGRAO COM BACKEND --
 async function loadProfiles() {
     const select = document.getElementById('perfil_unico');
     select.innerHTML = '<option value="">Carregando perfis...</option>';
@@ -86,7 +86,7 @@ async function loadProfiles() {
     }
 }
 
-// -- PERFIS (Diretor, Estética, Legenda) --
+// -- PERFIS (Diretor, Esttica, Legenda) --
 async function _loadGenericProfiles(endpoint, selectId, defaultText) {
     const select = document.getElementById(selectId);
     if (!select) return;
@@ -143,15 +143,15 @@ async function deletarPerfilDiretor() {
 }
 
 function aplicarPerfilEstetica() {
-    logTerminal("O perfil estético será processado no backend.", "info");
+    logTerminal("O perfil esttico ser processado no backend.", "info");
 }
 
 function aplicarPerfilLegenda() {
-    logTerminal("O perfil de legenda será processado no backend.", "info");
+    logTerminal("O perfil de legenda ser processado no backend.", "info");
 }
 
 function aplicarTransicaoTemplate() {
-    logTerminal("A transição entre templates será processada no backend.", "info");
+    logTerminal("A transio entre templates ser processada no backend.", "info");
 }
 
 function limparCacheWhisper() {
@@ -165,7 +165,7 @@ function limparCacheWhisper() {
 
 async function browseFile(inputId, type = 'media') {
     try {
-        // Usar endpoint genérico browse_file (ou criar um novo no python futuramente)
+        // Usar endpoint genrico browse_file (ou criar um novo no python futuramente)
         const response = await fetch('https://api.apolloedit.com/api/browse_file', { method: 'POST' });
         const result = await response.json();
         if (result.status === 'success' && result.path) {
@@ -179,7 +179,7 @@ async function browseFile(inputId, type = 'media') {
 
 async function browseFolder(inputId) {
     try {
-        // Fallback: se o servidor não tiver browse_folder, pode falhar.
+        // Fallback: se o servidor no tiver browse_folder, pode falhar.
         const response = await fetch('https://api.apolloedit.com/api/browse_file?type=folder', { method: 'POST' });
         const result = await response.json();
         if (result.status === 'success' && result.path) {
@@ -188,15 +188,15 @@ async function browseFolder(inputId) {
             logTerminal(`Pasta selecionada: ${result.path}`, 'info');
         }
     } catch (e) {
-        logTerminal("Por favor atualize o backend para suportar seleção de pastas (browse_folder).", 'warning');
+        logTerminal("Por favor atualize o backend para suportar seleo de pastas (browse_folder).", 'warning');
     }
 }
 
-// -- VÍDEOS BASE --
+// -- VDEOS BASE --
 let videoList = [];
 
 function addVideos() {
-    // Simula seleção múltipla e adiciona na lista
+    // Simula seleo mltipla e adiciona na lista
     fetch('https://api.apolloedit.com/api/browse_file')
         .then(res => res.json())
         .then(result => {
@@ -204,7 +204,7 @@ function addVideos() {
                 if (!videoList.includes(result.path)) {
                     videoList.push(result.path);
                     renderVideoGrid();
-                    logTerminal(`Vídeo base adicionado: ${result.path.split(/[\/\\]/).pop()}`, 'info');
+                    logTerminal(`Vdeo base adicionado: ${result.path.split(/[\/\\]/).pop()}`, 'info');
                 }
             }
         });
@@ -217,26 +217,26 @@ function removeSelectedVideos() {
         videoList = videoList.filter(p => p !== path);
     });
     renderVideoGrid();
-    logTerminal(`${selected.length} vídeos removidos.`, 'warning');
+    logTerminal(`${selected.length} vdeos removidos.`, 'warning');
 }
 
 function limparTodosVideos() {
     videoList = [];
     renderVideoGrid();
-    logTerminal(`Todos os vídeos foram removidos.`, 'warning');
+    logTerminal(`Todos os vdeos foram removidos.`, 'warning');
 }
 
 function renderVideoGrid() {
     const grid = document.getElementById('video_grid');
     const badge = document.getElementById('video-count');
     
-    badge.textContent = `${videoList.length} vídeos`;
+    badge.textContent = `${videoList.length} vdeos`;
     
     if (videoList.length === 0) {
         grid.innerHTML = `
             <div class="empty-state">
-                <span class="icon">📂</span>
-                <p>Nenhum vídeo adicionado.</p>
+                <span class="icon"></span>
+                <p>Nenhum vdeo adicionado.</p>
                 <p class="sub">Arraste arquivos ou clique em Adicionar.</p>
             </div>
         `;
@@ -250,7 +250,7 @@ function renderVideoGrid() {
         div.className = 'video-item';
         div.setAttribute('data-path', path);
         
-        // Exibe um thumb vazio até o backend carregar (usando endpoint /api/thumb)
+        // Exibe um thumb vazio at o backend carregar (usando endpoint /api/thumb)
         div.innerHTML = `
             <div class="idx">${index + 1}</div>
             <img class="thumb" src="/api/thumb?path=${encodeURIComponent(path)}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAiIGhlaWdodD0iOTAiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iI2ZmZiIgZHk9Ii4zZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiPk5vIFRodW1iPC90ZXh0Pjwvc3ZnPg=='">
@@ -277,7 +277,7 @@ function moveVideoUp() {
     if (idx > 0) {
         [videoList[idx - 1], videoList[idx]] = [videoList[idx], videoList[idx - 1]];
         renderVideoGrid();
-        // Restaurar seleção
+        // Restaurar seleo
         setTimeout(() => {
             const el = document.querySelector(`.video-item[data-path="${path}"]`);
             if (el) el.classList.add('selected');
@@ -323,12 +323,12 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     const saidaDir = document.getElementById('saida_dir').value;
     
     if (!audioPath || !saidaDir) {
-        logTerminal("Erro: Selecione o Áudio Narração e a Pasta de Saída.", "error");
-        alert("Preencha as Entradas e Saídas necessárias!");
+        logTerminal("Erro: Selecione o udio Narrao e a Pasta de Sada.", "error");
+        alert("Preencha as Entradas e Sadas necessrias!");
         return;
     }
     
-    logTerminal("Iniciando requisição de Renderização em Lote...", "info");
+    logTerminal("Iniciando requisio de Renderizao em Lote...", "info");
     
     
     // Obter dados do Form
@@ -375,7 +375,7 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
         videos_base: videoList,
         sincronizar_base: document.getElementById('sincronizar_base').checked,
         base_loop_count: document.getElementById('base_loop_count').value,
-        tipo_midia_upload: document.getElementById('tipo_midia_upload') ? document.getElementById('tipo_midia_upload').value : "Fotos e Vídeos",
+        tipo_midia_upload: document.getElementById('tipo_midia_upload') ? document.getElementById('tipo_midia_upload').value : "Fotos e Vdeos",
         
         perfil_diretor: document.getElementById('perfil_diretor') ? document.getElementById('perfil_diretor').value : "",
         perfil_estetica: document.getElementById('perfil_estetica') ? document.getElementById('perfil_estetica').value : "",
@@ -391,19 +391,19 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     const payload = getPayload();
     if (!payload.audio_path || !payload.saida_dir) {
         if (payload.modo_ritmo !== 'lipsync' && !payload.audio_path) {
-            logTerminal("Erro: Selecione o Áudio Narração e a Pasta de Saída.", "error");
-            alert("Preencha as Entradas e Saídas necessárias!");
+            logTerminal("Erro: Selecione o udio Narrao e a Pasta de Sada.", "error");
+            alert("Preencha as Entradas e Sadas necessrias!");
             return;
         } else if (!payload.saida_dir) {
-            logTerminal("Erro: Selecione a Pasta de Saída.", "error");
-            alert("Preencha a Pasta de Saída!");
+            logTerminal("Erro: Selecione a Pasta de Sada.", "error");
+            alert("Preencha a Pasta de Sada!");
             return;
         }
     }
     
-    logTerminal("Iniciando requisição de Renderização em Lote...", "info");
+    logTerminal("Iniciando requisio de Renderizao em Lote...", "info");
     console.log("Payload Render:", payload);
-    logTerminal("Enviando requisição para o servidor Python...", "info");
+    logTerminal("Enviando requisio para o servidor Python...", "info");
     
     document.getElementById('btn-render-master').disabled = true;
     const text = document.getElementById('render_status_text');
@@ -417,10 +417,10 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     .then(res => res.json())
     .then(data => {
         if (data.status === 'success') {
-            logTerminal("✅ " + data.message + ` (Posição na fila: ${data.queue_position})`, "success");
+            logTerminal(" " + data.message + ` (Posio na fila: ${data.queue_position})`, "success");
             text.textContent = "Enviado para a Fila!";
         } else {
-            logTerminal("❌ Erro na requisição: " + data.message, "error");
+            logTerminal(" Erro na requisio: " + data.message, "error");
             text.textContent = "Erro!";
         }
     })
@@ -433,7 +433,7 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     });
 });
 
-// -- LÓGICA DO TANQUE DE COMBUSTÍVEL FRAGMENTADO (API MIX) --
+// -- LGICA DO TANQUE DE COMBUSTVEL FRAGMENTADO (API MIX) --
 document.addEventListener('DOMContentLoaded', () => {
     const dropzone = document.getElementById('fuel-tank-dropzone');
     const bar = document.getElementById('fuel-tank-bar');
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let tankSegments = []; // Array of { name: 'Flux', color: '#3B82F6', weight: 1 }
 
-    // Permitir drop nativo (se o transfer_hud.js não interceptar tudo globalmente)
+    // Permitir drop nativo (se o transfer_hud.js no interceptar tudo globalmente)
     dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropzone.classList.add('glow-green-target');
@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         dropzone.style.borderColor = 'rgba(255, 255, 255, 0.2)';
         
-        // Em transfer_hud.js, os blocos têm class="transfer-item" e data-type
+        // Em transfer_hud.js, os blocos tm class="transfer-item" e data-type
         const data = e.dataTransfer.getData('text/plain');
         try {
             const itemData = JSON.parse(data);
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 logTerminal('Apenas "Quadradinhos de API" podem ser colocados no Tanque.', 'warning');
             }
         } catch (err) {
-            logTerminal('Item inválido arrastado para o Tanque.', 'error');
+            logTerminal('Item invlido arrastado para o Tanque.', 'error');
         }
     });
 
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         legend.innerHTML = '';
         
         if (tankSegments.length === 0) {
-            bar.innerHTML = '<div class="fuel-empty" style="flex-grow: 1; text-align: center; color: #555; font-size: 11px; line-height: 30px; letter-spacing: 1px;">VAZIO (NECESSITA COMBUSTÍVEL)</div>';
+            bar.innerHTML = '<div class="fuel-empty" style="flex-grow: 1; text-align: center; color: #555; font-size: 11px; line-height: 30px; letter-spacing: 1px;">VAZIO (NECESSITA COMBUSTVEL)</div>';
             return;
         }
 
@@ -510,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
             legDiv.innerHTML = `
                 <div style="width:12px; height:12px; background:${seg.color}; border-radius:2px;"></div>
                 <span>${seg.name}</span>
-                <button onclick="removeTankSegment(${index})" style="background:none; border:none; color:#FF5252; cursor:pointer; font-size:10px; margin-left:3px;">✖</button>
+                <button onclick="removeTankSegment(${index})" style="background:none; border:none; color:#FF5252; cursor:pointer; font-size:10px; margin-left:3px;"></button>
             `;
             legend.appendChild(legDiv);
         });

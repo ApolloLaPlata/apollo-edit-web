@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="global_style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Auto Execução (Job Runner)</title>
+    <title>Apollo Auto Execuo (Job Runner)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Bangers&family=Nunito:wght@400;800&display=swap" rel="stylesheet">
     <style>
         .layout-container {
@@ -202,9 +202,9 @@
         
         <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
             <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
-                <span style="font-size:2.5rem;">🤖</span> AUTO EXECUÇÃO (LOTE)
+                <span style="font-size:2.5rem;"></span> AUTO EXECUO (LOTE)
             </h3>
-            <p style="color: #94a3b8; margin-top: 5px;">Cole dezenas de prompts e deixe a IA trabalhar em lote enquanto você descansa.</p>
+            <p style="color: #94a3b8; margin-top: 5px;">Cole dezenas de prompts e deixe a IA trabalhar em lote enquanto voc descansa.</p>
         </div>
 
         <div class="layout-container">
@@ -219,15 +219,15 @@
                 </div>
 
                 <button class="btn-action btn-secondary" id="btn-load-queue">
-                    📥 Carregar na Fila
+                     Carregar na Fila
                 </button>
 
                 <hr style="border-color: #334155; margin: 5px 0;">
                 
-                <h2 style="color: white; font-size: 1.1rem; margin: 0;">Configurações do Lote</h2>
+                <h2 style="color: white; font-size: 1.1rem; margin: 0;">Configuraes do Lote</h2>
 
                 <div class="input-group">
-                    <label>Proporção (Aspect Ratio)</label>
+                    <label>Proporo (Aspect Ratio)</label>
                     <select id="j-aspect">
                         <option value="16:9">16:9 (YouTube/Paisagem)</option>
                         <option value="9:16">9:16 (Shorts/Stories)</option>
@@ -238,23 +238,23 @@
 
                 <div class="toggle-btn active" id="toggle-pause-error">
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <span>🛡️</span> Pausar no Erro
+                        <span></span> Pausar no Erro
                     </div>
                     <span class="status">ON</span>
                 </div>
 
                 <div class="toggle-btn" id="toggle-continuity">
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <span>🔗</span> Usar Continuidade (História)
+                        <span></span> Usar Continuidade (Histria)
                     </div>
                     <span class="status">OFF</span>
                 </div>
 
                 <button class="btn-action" id="btn-start-batch" style="margin-top: 10px; padding: 18px; font-size: 1.2rem;">
-                    ▶️ Iniciar Automação
+                     Iniciar Automao
                 </button>
                 <button class="btn-action" id="btn-stop-batch" style="margin-top: 10px; background: #1e293b; color: #ef4444; border: 1px solid #ef4444; display: none;">
-                    ⏹️ Parar Lote
+                     Parar Lote
                 </button>
 
             </div>
@@ -262,23 +262,23 @@
             <!-- DIREITA: Fila de Tarefas -->
             <div class="right-panel">
                 <div class="queue-header">
-                    <h3 style="color:white; margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">📋 Fila de Geração</h3>
+                    <h3 style="color:white; margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;"> Fila de Gerao</h3>
                     
                     <div class="stats-badge" id="queue-stats">
-                        <span class="stat-pend">⏳ 0 Pendentes</span>
-                        <span class="stat-done">✅ 0 Concluídos</span>
-                        <span class="stat-fail">❌ 0 Falhas</span>
+                        <span class="stat-pend"> 0 Pendentes</span>
+                        <span class="stat-done"> 0 Concludos</span>
+                        <span class="stat-fail"> 0 Falhas</span>
                     </div>
 
                     <div style="display:flex; gap:10px;">
-                        <button class="btn-action btn-secondary" style="width:auto; padding:6px 12px; font-size:0.8rem;" id="btn-clear-queue">🗑️ Limpar Fila</button>
+                        <button class="btn-action btn-secondary" style="width:auto; padding:6px 12px; font-size:0.8rem;" id="btn-clear-queue"> Limpar Fila</button>
                     </div>
                 </div>
 
                 <div class="job-list" id="job-list">
                     <div class="placeholder-text" style="text-align: center; margin-top: 50px; color: #475569;" id="job-placeholder">
-                        <div style="font-size: 4rem; opacity: 0.5;">💤</div>
-                        <div style="margin-top: 10px;">A fila está vazia.<br>Cole os prompts e clique em "Carregar na Fila".</div>
+                        <div style="font-size: 4rem; opacity: 0.5;"></div>
+                        <div style="margin-top: 10px;">A fila est vazia.<br>Cole os prompts e clique em "Carregar na Fila".</div>
                     </div>
                 </div>
             </div>
@@ -302,8 +302,8 @@
             </div>
 
             <div class="job-actions">
-                <button class="job-btn btn-retry" title="Tentar Novamente">🔄 Re-fila</button>
-                <button class="job-btn btn-remove" title="Remover Tarefa">🗑️</button>
+                <button class="job-btn btn-retry" title="Tentar Novamente"> Re-fila</button>
+                <button class="job-btn btn-remove" title="Remover Tarefa"></button>
             </div>
         </div>
     </template>

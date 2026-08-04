@@ -1,12 +1,12 @@
 /**
  * APOLLO TRANSFER OS (Micro-Windows Explorer)
- * Unifica a Área de Transferência e o Bagageiro num mesmo HUD flutuante.
+ * Unifica a rea de Transferncia e o Bagageiro num mesmo HUD flutuante.
  */
 
 window.apolloTransferOS = {
     currentFolder: 'transfer', // 'transfer', 'bagageiro', ou 'ias'
     clipboard: null, // { action: 'copy'|'cut', item: object }
-    history: [], // Pilha de ações para o Undo (Ctrl+Z)
+    history: [], // Pilha de aes para o Undo (Ctrl+Z)
     selectedId: null,
 
     // Keys para o LocalStorage
@@ -79,7 +79,7 @@ window.apolloTransferOS = {
                 sourceItems = sourceItems.filter(i => i.id !== this.clipboard.item.id);
                 localStorage.setItem(sourceKey, JSON.stringify(sourceItems));
                 
-                this.clipboard = null; // Cut só cola uma vez
+                this.clipboard = null; // Cut s cola uma vez
             }
 
             if (window.showToast) window.showToast('Colado', 'success');
@@ -151,9 +151,9 @@ window.apolloTransferOS = {
     },
 
     newTextAction: function() {
-        const text = prompt("Digite um texto ou anotação rápida:");
+        const text = prompt("Digite um texto ou anotao rpida:");
         if (text && text.trim() !== '') {
-            this.addItem('text', 'Anotação', 'Texto', null, text);
+            this.addItem('text', 'Anotao', 'Texto', null, text);
         }
     },
 
@@ -190,12 +190,12 @@ window.apolloTransferOS = {
 
         const fileUrl = URL.createObjectURL(blobOrFile);
         
-        // Pula pro Bagageiro pra salvar (ou mantém na currentFolder se preferir)
-        // O usuário pediu pra cair no bagageiro. Mas a Área de Transferência (transfer) é a HUD padrão.
+        // Pula pro Bagageiro pra salvar (ou mantm na currentFolder se preferir)
+        // O usurio pediu pra cair no bagageiro. Mas a rea de Transferncia (transfer)  a HUD padro.
         this.addItem(type, filename, (blobOrFile.size / (1024*1024)).toFixed(2) + ' MB', type === 'image' ? fileUrl : null, { originalFileObj: true, url: fileUrl });
         
-        if (window.showToast) window.showToast('📥 ' + filename + ' salvo na Área de Transferência!', 'success');
-        else alert(filename + ' salvo na Área de Transferência!');
+        if (window.showToast) window.showToast(' ' + filename + ' salvo na rea de Transferncia!', 'success');
+        else alert(filename + ' salvo na rea de Transferncia!');
     },
 
     toggleMinimize: function() {
@@ -205,8 +205,8 @@ window.apolloTransferOS = {
         if (!minIcon) {
             minIcon = document.createElement('div');
             minIcon.id = 'hud-minimized-icon';
-            minIcon.innerHTML = '🎒';
-            minIcon.title = 'Abrir Área de Transferência';
+            minIcon.innerHTML = '';
+            minIcon.title = 'Abrir rea de Transferncia';
             minIcon.style.cssText = 'position: fixed; bottom: 20px; right: 20px; width: 100px; height: 100px; background: rgba(15,23,42,0.95); border: 3px solid var(--btn-purple, #8b5cf6); border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(139,92,246,0.5); z-index: 9999; transition: transform 0.2s, box-shadow 0.2s; backdrop-filter: blur(5px);';
             
             minIcon.onmouseover = () => { minIcon.style.transform = 'scale(1.1)'; minIcon.style.boxShadow = '0 0 30px rgba(139,92,246,0.8)'; };
@@ -260,7 +260,7 @@ window.apolloTransferOS = {
             });
 
             minIcon.onclick = () => {
-                if (didDrag) return; // Não clica se apenas arrastou
+                if (didDrag) return; // No clica se apenas arrastou
                 this.toggleMinimize();
             };
             document.body.appendChild(minIcon);
@@ -277,7 +277,7 @@ window.apolloTransferOS = {
         }
     },
 
-    // --- RENDERIZAÇÃO DA UI ---
+    // --- RENDERIZAO DA UI ---
     render: function() {
         const hud = document.getElementById('apollo-transfer-hud');
         if (!hud) return;
@@ -291,19 +291,19 @@ window.apolloTransferOS = {
 
         // Atualiza Labels baseados na pasta atual
         if (this.currentFolder === 'transfer') {
-            titleEl.innerHTML = '🎒 ÁREA DE BAGAGEM';
+            titleEl.innerHTML = ' REA DE BAGAGEM';
             hud.style.borderColor = 'var(--btn-purple, #8b5cf6)';
         } else if (this.currentFolder === 'bagageiro') {
-            titleEl.innerHTML = '🚘 GARAGEM (ESTOQUE)';
+            titleEl.innerHTML = ' GARAGEM (ESTOQUE)';
             hud.style.borderColor = 'var(--btn-yellow, #FFD32A)';
         } else if (this.currentFolder === 'ias') {
-            titleEl.innerHTML = '🚀 NITRO IA (MECÂNICOS)';
+            titleEl.innerHTML = ' NITRO IA (MECNICOS)';
             hud.style.borderColor = '#ef4444';
         } else if (this.currentFolder === 'fx') {
-            titleEl.innerHTML = '🔧 PEÇAS (ASSETS)';
+            titleEl.innerHTML = ' PEAS (ASSETS)';
             hud.style.borderColor = '#10b981';
         } else if (this.currentFolder === 'configs') {
-            titleEl.innerHTML = '🏎️ CHASSI (TEMPLATES)';
+            titleEl.innerHTML = ' CHASSI (TEMPLATES)';
             hud.style.borderColor = '#3b82f6';
         }
         
@@ -328,7 +328,7 @@ window.apolloTransferOS = {
         container.innerHTML = '';
 
         if (items.length === 0) {
-            container.innerHTML = '<div style="width:100%; text-align:center; padding: 20px; color: #64748b; font-family: Nunito;">Esta pasta está vazia.</div>';
+            container.innerHTML = '<div style="width:100%; text-align:center; padding: 20px; color: #64748b; font-family: Nunito;">Esta pasta est vazia.</div>';
             return;
         }
 
@@ -336,21 +336,21 @@ window.apolloTransferOS = {
         items.forEach(item => {
             const isSelected = this.selectedId === item.id;
             
-            let iconHtml = '<div class="hud-item-icon">📝</div>';
+            let iconHtml = '<div class="hud-item-icon"></div>';
             if (item.thumbnail) {
                 iconHtml = `<div class="hud-item-icon" style="background: url('${item.thumbnail}') center/cover;"></div>`;
             } else if (item.type === 'video') {
-                iconHtml = '<div class="hud-item-icon">🎥</div>';
+                iconHtml = '<div class="hud-item-icon"></div>';
             } else if (item.type === 'audio') {
-                iconHtml = '<div class="hud-item-icon">🎵</div>';
+                iconHtml = '<div class="hud-item-icon"></div>';
             } else if (item.type === 'text') {
-                iconHtml = '<div class="hud-item-icon">📰</div>';
+                iconHtml = '<div class="hud-item-icon"></div>';
             } else if (item.type === 'ai') {
-                const aiIcon = (item.data && item.data.icon) ? item.data.icon : '🤖';
+                const aiIcon = (item.data && item.data.icon) ? item.data.icon : '';
                 const badge = (item.data && item.data.badge) ? `<div style="position:absolute; top:-5px; right:-5px; background:#0ea5e9; color:white; font-size:0.6rem; padding:2px 4px; border-radius:10px; font-weight:bold;">${item.data.badge}</div>` : '';
                 iconHtml = `<div class="hud-item-icon" style="position:relative;">${aiIcon}${badge}</div>`;
             } else if (item.type === 'projeto') {
-                iconHtml = '<div class="hud-item-icon">🎬</div>';
+                iconHtml = '<div class="hud-item-icon"></div>';
             }
 
             const itemDiv = document.createElement('div');
@@ -372,7 +372,7 @@ window.apolloTransferOS = {
                     id: item.id,
                     type: item.type === 'ai' ? (item.data.type || item.type) : item.type,
                     name: item.title,
-                    icon: item.data && item.data.icon ? item.data.icon : '📝',
+                    icon: item.data && item.data.icon ? item.data.icon : '',
                     badge: item.data && item.data.badge ? item.data.badge : '',
                     isProject: item.type === 'projeto',
                     folder: this.currentFolder,
@@ -387,7 +387,7 @@ window.apolloTransferOS = {
                 document.querySelectorAll('.drop-zone-slot').forEach(sz => sz.classList.remove('drag-over'));
             });
 
-            // Evento de seleção (Click)
+            // Evento de seleo (Click)
             itemDiv.onclick = (e) => {
                 this.selectedId = item.id;
                 this.render();
@@ -397,7 +397,7 @@ window.apolloTransferOS = {
             itemDiv.ondblclick = (e) => {
                 if (item.type === 'image' || (item.type === 'file' && item.title.match(/\.(png|jpg|jpeg|webp)$/i))) {
                     const url = `photopea_wrapper.html?item_id=${item.id}`;
-                    const tabTitle = `🎨 ${item.title.substring(0, 10)}...`;
+                    const tabTitle = ` ${item.title.substring(0, 10)}...`;
                     if (window.parent && window.parent.openAppTab) {
                         window.parent.openAppTab(url, tabTitle, true);
                     } else if (window.openAppTab) {
@@ -411,7 +411,7 @@ window.apolloTransferOS = {
         });
     },
 
-    // --- INICIALIZAÇÃO E INJEÇÃO DO HTML ---
+    // --- INICIALIZAO E INJEO DO HTML ---
     init: function() {
         if (document.getElementById('apollo-transfer-hud')) return;
 
@@ -463,38 +463,38 @@ window.apolloTransferOS = {
         <div id="apollo-transfer-hud" style="resize: both; min-width: 300px; min-height: 200px; height: 450px;">
             <div id="hud-header">
                 <div class="hud-header-top">
-                    <h3 id="hud-os-title">🎒 ÁREA DE TRANSFERÊNCIA <span class="hud-count" id="hud-os-count">0</span></h3>
-                    <button onclick="apolloTransferOS.toggleMinimize()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; width:30px; height:30px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;" title="Minimizar">➖</button>
+                    <h3 id="hud-os-title"> REA DE TRANSFERNCIA <span class="hud-count" id="hud-os-count">0</span></h3>
+                    <button onclick="apolloTransferOS.toggleMinimize()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; width:30px; height:30px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;" title="Minimizar"></button>
                 </div>
                 <div class="hud-header-tabs">
                     <button id="btn-folder-transfer" onclick="apolloTransferOS.toggleFolder('transfer')" class="hud-folder-btn" style="--theme-color: #8b5cf6;">
-                        <div>🎒</div><span>BAGAGEM</span>
+                        <div></div><span>BAGAGEM</span>
                     </button>
                     <button id="btn-folder-bagageiro" onclick="apolloTransferOS.toggleFolder('bagageiro')" class="hud-folder-btn" style="--theme-color: #f59e0b;">
-                        <div>🚘</div><span>GARAGEM</span>
+                        <div></div><span>GARAGEM</span>
                     </button>
                     <button id="btn-folder-ias" onclick="apolloTransferOS.toggleFolder('ias')" class="hud-folder-btn" style="--theme-color: #ef4444;">
-                        <div>🚀</div><span>NITRO IA</span>
+                        <div></div><span>NITRO IA</span>
                     </button>
                     <button id="btn-folder-fx" onclick="apolloTransferOS.toggleFolder('fx')" class="hud-folder-btn" style="--theme-color: #10b981;">
-                        <div>🔧</div><span>PEÇAS</span>
+                        <div></div><span>PEAS</span>
                     </button>
                     <button id="btn-folder-configs" onclick="apolloTransferOS.toggleFolder('configs')" class="hud-folder-btn" style="--theme-color: #3b82f6;">
-                        <div>🏎️</div><span>CHASSI</span>
+                        <div></div><span>CHASSI</span>
                     </button>
                 </div>
             </div>
 
             <!-- OS TOOLBAR -->
             <div class="os-toolbar">
-                <button id="hud-text-btn" class="os-tool-btn" title="Novo Texto" onclick="apolloTransferOS.newTextAction()">➕</button>
-                <button id="hud-cut-btn" class="os-tool-btn" title="Arraste ou clique para Cortar (Ctrl+X)" onclick="apolloTransferOS.cutAction()">✂</button>
-                <button id="hud-copy-btn" class="os-tool-btn" title="Arraste ou clique para Copiar (Ctrl+C)" onclick="apolloTransferOS.copyAction()">📄</button>
-                <button id="hud-paste-btn" class="os-tool-btn" title="Colar (Ctrl+V)" onclick="apolloTransferOS.pasteAction()">📋</button>
-                <button id="hud-trash-btn" class="os-tool-btn" title="Arraste itens aqui ou clique para Deletar (Del)" onclick="apolloTransferOS.deleteAction()">🗑️</button>
-                <button id="hud-undo-btn" class="os-tool-btn" title="Desfazer (Ctrl+Z)" onclick="apolloTransferOS.undoAction()">↩</button>
-                <button id="hud-download-btn" class="os-tool-btn" title="Arraste ou clique para Download" onclick="apolloTransferOS.downloadAction()">⬇️</button>
-                <button id="hud-upload-btn" class="os-tool-btn upload" title="Upload de Arquivo" onclick="window.openUploadModal()">⬆️ UPLOAD</button>
+                <button id="hud-text-btn" class="os-tool-btn" title="Novo Texto" onclick="apolloTransferOS.newTextAction()"></button>
+                <button id="hud-cut-btn" class="os-tool-btn" title="Arraste ou clique para Cortar (Ctrl+X)" onclick="apolloTransferOS.cutAction()"></button>
+                <button id="hud-copy-btn" class="os-tool-btn" title="Arraste ou clique para Copiar (Ctrl+C)" onclick="apolloTransferOS.copyAction()"></button>
+                <button id="hud-paste-btn" class="os-tool-btn" title="Colar (Ctrl+V)" onclick="apolloTransferOS.pasteAction()"></button>
+                <button id="hud-trash-btn" class="os-tool-btn" title="Arraste itens aqui ou clique para Deletar (Del)" onclick="apolloTransferOS.deleteAction()"></button>
+                <button id="hud-undo-btn" class="os-tool-btn" title="Desfazer (Ctrl+Z)" onclick="apolloTransferOS.undoAction()"></button>
+                <button id="hud-download-btn" class="os-tool-btn" title="Arraste ou clique para Download" onclick="apolloTransferOS.downloadAction()"></button>
+                <button id="hud-upload-btn" class="os-tool-btn upload" title="Upload de Arquivo" onclick="window.openUploadModal()"> UPLOAD</button>
             </div>
             
             <div class="hud-body" id="hud-item-container">
@@ -502,7 +502,7 @@ window.apolloTransferOS = {
             </div>
             
             <!-- Indicador de Resize -->
-            <div style="position: absolute; bottom: 4px; right: 4px; font-size: 16px; color: rgba(255,255,255,0.4); pointer-events: none; transform: rotate(-45deg);">⇲</div>
+            <div style="position: absolute; bottom: 4px; right: 4px; font-size: 16px; color: rgba(255,255,255,0.4); pointer-events: none; transform: rotate(-45deg);"></div>
         </div>
 
         <!-- Modal Global de Upload -->
@@ -637,7 +637,7 @@ window.apolloTransferOS = {
                         // Remove from sidebar
                         const el = document.getElementById(payload.id);
                         if(el) el.remove();
-                        if (window.showToast) window.showToast('Item movido para Área de Transferência', 'success');
+                        if (window.showToast) window.showToast('Item movido para rea de Transferncia', 'success');
                     }
                 } catch(err) {}
             }
@@ -735,7 +735,7 @@ window.apolloTransferOS = {
 
         // KEYBOARD SHORTCUTS
         document.addEventListener('keydown', (e) => {
-            // Se o foco não está em inputs
+            // Se o foco no est em inputs
             if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
                 if (e.ctrlKey && e.key.toLowerCase() === 'c') { e.preventDefault(); this.copyAction(); }
                 if (e.ctrlKey && e.key.toLowerCase() === 'x') { e.preventDefault(); this.cutAction(); }
@@ -792,7 +792,7 @@ window.startS3Upload = function() {
 
         if (progress >= 100) {
             clearInterval(interval);
-            stat.innerText = "Upload Concluído!";
+            stat.innerText = "Upload Concludo!";
             stat.style.color = "var(--btn-green)";
             
             let type = 'file';
@@ -840,7 +840,7 @@ window.apolloTransferOS.receiveFile = function(file, filename) {
     return originalReceiveFile ? originalReceiveFile.call(this, file, filename) : null;
 };
 
-// --- INTERCOMUNICAÇÃO COM ENGINES EXTERNAS (Iframes) ---
+// --- INTERCOMUNICAO COM ENGINES EXTERNAS (Iframes) ---
 window.addEventListener('message', function(event) {
     const data = event.data;
     if (data && data.action === 'export_to_bagageiro') {

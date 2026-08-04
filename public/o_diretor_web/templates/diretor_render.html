@@ -2,17 +2,17 @@
 
 {% block content %}
 <div style="margin-bottom: 15px;">
-    <h2 style="font-size: 16px; margin-bottom: 2px;">O DIRETOR (Mapeamento Automático)</h2>
-    <div style="color: var(--text-muted);">Fatie a narração e aplique múltiplos perfis visuais automaticamente.</div>
+    <h2 style="font-size: 16px; margin-bottom: 2px;">O DIRETOR (Mapeamento Automtico)</h2>
+    <div style="color: var(--text-muted);">Fatie a narrao e aplique mltiplos perfis visuais automaticamente.</div>
 </div>
 
 <div class="split-layout">
     <!-- Painel Esquerdo -->
     <div class="left-panel">
         
-        <!-- 1. Entradas e Saídas -->
+        <!-- 1. Entradas e Sadas -->
         <div class="group-box">
-            <div class="group-title">1. Entradas e Saídas</div>
+            <div class="group-title">1. Entradas e Sadas</div>
             
             <div class="row" style="color: #0f0; font-weight: bold; margin-bottom: 12px;">
                 <label style="color: #0f0;">Formato:</label>
@@ -24,19 +24,19 @@
             </div>
 
             <div class="row">
-                <label style="width: 170px;">Áudio Narração (Completo):</label>
+                <label style="width: 170px;">udio Narrao (Completo):</label>
                 <input type="text" class="flex-1" id="audio_path">
                 <button type="button" onclick="browseFile('audio_path', 'audio')">ARQ</button>
             </div>
 
             <div class="row">
-                <label style="width: 170px;">Pasta de Saída:</label>
+                <label style="width: 170px;">Pasta de Sada:</label>
                 <input type="text" class="flex-1" id="output_dir">
                 <button type="button" onclick="browseDir('output_dir')">DIR</button>
             </div>
 
             <div class="row">
-                <label style="width: 170px;">Música de Fundo (Opcional):</label>
+                <label style="width: 170px;">Msica de Fundo (Opcional):</label>
                 <input type="text" class="flex-1" id="bg_music">
                 <button type="button" onclick="browseFile('bg_music', 'audio')">ARQ</button>
                 <label style="margin-left: 10px;">Vol(dB):</label>
@@ -52,13 +52,13 @@
             </div>
         </div>
 
-        <!-- 2. Legendas Karaokê Dinâmicas -->
+        <!-- 2. Legendas Karaok Dinmicas -->
         <div class="group-box">
-            <div class="group-title">2. Legendas Karaokê Dinâmicas</div>
+            <div class="group-title">2. Legendas Karaok Dinmicas</div>
             
             <div class="row" style="margin-bottom: 12px; font-weight: bold; color: #ff0;">
                 <input type="checkbox" checked id="chk_leg"> 
-                <label for="chk_leg" style="color: #ff0;">Gerar & Queimar legendas Karaokê no Master Final</label>
+                <label for="chk_leg" style="color: #ff0;">Gerar & Queimar legendas Karaok no Master Final</label>
             </div>
 
             <div class="row wrap">
@@ -72,7 +72,7 @@
             </div>
 
             <div class="row wrap">
-                <label style="width: 60px;">Posição:</label>
+                <label style="width: 60px;">Posio:</label>
                 <select style="width: 150px; margin-right: 20px;">
                     <option>meio baixo</option>
                 </select>
@@ -92,9 +92,9 @@
             </div>
         </div>
 
-        <!-- 3. Variáveis Globais -->
+        <!-- 3. Variveis Globais -->
         <div class="group-box">
-            <div class="group-title">3. Variáveis Globais (Sobrescrevem os Templates)</div>
+            <div class="group-title">3. Variveis Globais (Sobrescrevem os Templates)</div>
             
             <div class="row">
                 <label style="width: 150px;">1. Narrador (Avatar):</label>
@@ -121,11 +121,11 @@
             
             <div class="row" style="color: #0f0; margin-bottom: 8px;">
                 <input type="checkbox" checked id="chk_roteiro_grafico">
-                <label for="chk_roteiro_grafico" style="color: #0f0;">Ativar Roteiro Gráfico (Múltiplos Templates via Roteiro)</label>
+                <label for="chk_roteiro_grafico" style="color: #0f0;">Ativar Roteiro Grfico (Mltiplos Templates via Roteiro)</label>
             </div>
             
             <div class="row">
-                <label>Perfil Único (Ativo se mapeamento desligado):</label>
+                <label>Perfil nico (Ativo se mapeamento desligado):</label>
                 <select class="flex-1">
                     <option></option>
                 </select>
@@ -137,9 +137,9 @@
             </div>
         </div>
 
-        <!-- 5.1 Roteiro do Vídeo Base -->
+        <!-- 5.1 Roteiro do Vdeo Base -->
         <div class="group-box" style="flex: 1; display: flex; flex-direction: column; min-height: 150px;">
-            <div class="group-title">5.1 Roteiro do Vídeo Base (Cenas de Fundo)</div>
+            <div class="group-title">5.1 Roteiro do Vdeo Base (Cenas de Fundo)</div>
             
             <div class="row" style="color: #0f0;">
                 <input type="checkbox" checked id="chk_map_cenas">
@@ -147,16 +147,16 @@
             </div>
             
             <div style="font-size: 11px; margin-bottom: 5px;">
-                Sintaxe: Cada linha é um corte de vídeo. (Sincronizado via Whisper)<br>
-                <span style="color: var(--text-muted);">*Se desativado: Os vídeos base serão cortados igualmente pelo tamanho do áudio.</span>
+                Sintaxe: Cada linha  um corte de vdeo. (Sincronizado via Whisper)<br>
+                <span style="color: var(--text-muted);">*Se desativado: Os vdeos base sero cortados igualmente pelo tamanho do udio.</span>
             </div>
             
-            <textarea style="flex: 1; min-height: 150px; color: #ff8888; background-color: #1a0000; font-family: Consolas, monospace; margin-top: 5px; padding: 5px; border: 1px solid #444;" placeholder="Cena 1 - O carro acelera na pista&#10;Cena 2 - A polícia vem logo atrás"></textarea>
+            <textarea style="flex: 1; min-height: 150px; color: #ff8888; background-color: #1a0000; font-family: Consolas, monospace; margin-top: 5px; padding: 5px; border: 1px solid #444;" placeholder="Cena 1 - O carro acelera na pista&#10;Cena 2 - A polcia vem logo atrs"></textarea>
         </div>
         
         <!-- Terminal Embutido na esquerda (como no print do Tkinter) -->
         <div style="margin-top: 5px;">
-            <label style="color: #0ff; font-weight: bold; margin-bottom: 2px; display: block;">Terminal de Renderização</label>
+            <label style="color: #0ff; font-weight: bold; margin-bottom: 2px; display: block;">Terminal de Renderizao</label>
             <div class="terminal"></div>
         </div>
 
@@ -166,11 +166,11 @@
     <div class="right-panel">
         
         <div class="row" style="margin-bottom: 10px;">
-            <label style="font-size: 14px; font-weight: bold;">Vídeos Base</label>
+            <label style="font-size: 14px; font-weight: bold;">Vdeos Base</label>
             <input type="number" value="1" style="width: 40px; margin-left: 10px;">
             <label>Qtd. Loops (-1=Infinito):</label>
             <input type="checkbox" checked id="chk_sync" style="margin-left: 10px;">
-            <label for="chk_sync" style="color: #0f0;">Sincronizar Cortes (Padrão Dark Fácil)</label>
+            <label for="chk_sync" style="color: #0f0;">Sincronizar Cortes (Padro Dark Fcil)</label>
         </div>
 
         <div class="row">
@@ -185,10 +185,10 @@
     </div>
 </div>
 
-<!-- Botão Flutuante ou Fixo na base para CRIAR VÍDEO (Se houver espaço) -->
+<!-- Boto Flutuante ou Fixo na base para CRIAR VDEO (Se houver espao) -->
 <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 10px;">
     <button type="button" onclick="startRender()" style="width: 100%; background-color: #ff6600; color: white; font-weight: bold; font-size: 14px; padding: 10px; border: none; cursor: pointer;">
-        ▶ CRIAR VÍDEO (F9)
+         CRIAR VDEO (F9)
     </button>
 </div>
 
@@ -289,7 +289,7 @@
 
     function startRender() {
         const term = document.querySelector('.terminal');
-        term.innerHTML += `<div>[${new Date().toLocaleTimeString()}] Iniciando processo de renderização...</div>`;
+        term.innerHTML += `<div>[${new Date().toLocaleTimeString()}] Iniciando processo de renderizao...</div>`;
         term.scrollTop = term.scrollHeight;
         // Futuro: enviar dados para a API do Python
     }

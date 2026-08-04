@@ -1,6 +1,6 @@
 // auth.js - Gerenciamento de Estado e Login via Supabase
 
-// ATENÇÃO: Substitua pelos dados do seu projeto Supabase
+// ATENO: Substitua pelos dados do seu projeto Supabase
 const SUPABASE_URL = 'https://vtqzrssddtjzdzrdiplg.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_BF25laxmROr0uVsn8v_m0g_KqHembqT';
 
@@ -17,13 +17,13 @@ async function checkAuthStatus() {
 async function requireAuth() {
     const user = await checkAuthStatus();
     if (!user) {
-        // Se não tiver logado e não estiver na página de login, redireciona.
+        // Se no tiver logado e no estiver na pgina de login, redireciona.
         if (!window.location.pathname.includes('login.html')) {
             window.location.href = 'login.html';
         }
         return null;
     } else {
-        // Atualiza a interface (Avatar, Email, Créditos) se os elementos existirem
+        // Atualiza a interface (Avatar, Email, Crditos) se os elementos existirem
         const userNameEl = document.getElementById('user-name');
         if (userNameEl) {
             userNameEl.innerText = user.email.split('@')[0];
@@ -42,12 +42,12 @@ async function loadWebUserProfile() {
         const response = await fetch('https://api.apolloedit.com/api/user/profile');
         const data = await response.json();
         
-        // FASE 4: Bloqueios e Globais (Banimento e Manutenção)
+        // FASE 4: Bloqueios e Globais (Banimento e Manuteno)
         if (data.is_banned) {
             document.body.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#000; color:#fff; text-align:center; padding:20px; z-index:999999999; position:fixed; top:0; left:0; width:100vw;">
                     <h1 style="color:#ef4444; font-size:3rem; font-family:'Bangers', cursive; margin-bottom:10px;">ACESSO BLOQUEADO</h1>
-                    <p style="font-size:1.2rem; color:#aaa; max-width:500px;">Sua conta foi suspensa por violação dos termos de uso ou pendência administrativa. Entre em contato com o suporte para mais informações.</p>
+                    <p style="font-size:1.2rem; color:#aaa; max-width:500px;">Sua conta foi suspensa por violao dos termos de uso ou pendncia administrativa. Entre em contato com o suporte para mais informaes.</p>
                 </div>
             `;
             return true;
@@ -57,8 +57,8 @@ async function loadWebUserProfile() {
             if (data.module_settings.maintenance_mode === 'on' && !data.is_master) {
                 document.body.innerHTML = `
                     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#111; color:#fff; text-align:center; padding:20px; z-index:999999999; position:fixed; top:0; left:0; width:100vw;">
-                        <h1 style="color:#facc15; font-size:3rem; font-family:'Bangers', cursive; margin-bottom:10px;">🛠️ MANUTENÇÃO PROGRAMADA 🛠️</h1>
-                        <p style="font-size:1.2rem; color:#aaa; max-width:500px;">O Apollo Edit está passando por atualizações. Voltaremos em breve!</p>
+                        <h1 style="color:#facc15; font-size:3rem; font-family:'Bangers', cursive; margin-bottom:10px;"> MANUTENO PROGRAMADA </h1>
+                        <p style="font-size:1.2rem; color:#aaa; max-width:500px;">O Apollo Edit est passando por atualizaes. Voltaremos em breve!</p>
                     </div>
                 `;
                 return true;
@@ -78,12 +78,12 @@ async function loadWebUserProfile() {
                 banner.style.width = '100%';
                 banner.style.zIndex = '99999999';
                 banner.style.boxShadow = '0 2px 10px rgba(0,0,0,0.5)';
-                banner.innerHTML = `⚠️ <strong>AVISO GLOBAL:</strong> ${data.module_settings.global_broadcast} <span style="float:right; cursor:pointer;" onclick="this.parentElement.remove()">X</span>`;
+                banner.innerHTML = ` <strong>AVISO GLOBAL:</strong> ${data.module_settings.global_broadcast} <span style="float:right; cursor:pointer;" onclick="this.parentElement.remove()">X</span>`;
                 document.body.appendChild(banner);
             }
         }
         
-        // 1. Atualizar créditos (Gasolina) se existir o elemento no Header
+        // 1. Atualizar crditos (Gasolina) se existir o elemento no Header
         const creditsEl = document.getElementById('user-credits');
         if (creditsEl) {
             creditsEl.innerText = Number(data.credits).toLocaleString('pt-BR');
@@ -92,7 +92,7 @@ async function loadWebUserProfile() {
         // 2. Atualizar Avatar Gamificado e Ranks no Header
         const avatarContainer = document.querySelector('.avatar-container');
         
-        // Inicializar Cristais no localStorage para persistência local (mock shop)
+        // Inicializar Cristais no localStorage para persistncia local (mock shop)
         let currentCrystals = localStorage.getItem('apollo_mock_crystals');
         if (currentCrystals === null) {
             currentCrystals = data.cristais !== undefined ? data.cristais : 12;
@@ -101,14 +101,14 @@ async function loadWebUserProfile() {
             currentCrystals = parseInt(currentCrystals);
         }
 
-        // Atualiza display de cristais na página de perfil
+        // Atualiza display de cristais na pgina de perfil
         const crystalBalanceEl = document.getElementById('crystal-balance');
         if (crystalBalanceEl) {
             crystalBalanceEl.innerText = `${currentCrystals} Cristais`;
         }
 
         if (avatarContainer) {
-            // Determinar raridade do Card ou Cosmético Equipado
+            // Determinar raridade do Card ou Cosmtico Equipado
             let rarityClass = 'rarity-common';
             if (data.is_master) rarityClass = 'rarity-master';
             else if (data.is_pro) rarityClass = 'rarity-pro';
@@ -118,7 +118,7 @@ async function loadWebUserProfile() {
                 rarityClass = equippedCosmetic;
             }
             
-            // Determinar texto de Nível
+            // Determinar texto de Nvel
             let userLevel = data.level || 15;
             
             // Remover avatar antigo se existir, e inserir o RPG Card
@@ -130,7 +130,7 @@ async function loadWebUserProfile() {
                 rpgCard.style.width = '40px'; // Header size
                 rpgCard.style.height = '40px';
                 rpgCard.style.marginRight = '12px'; // align correctly
-                rpgCard.title = `${data.is_master ? 'MASTER' : (data.is_pro ? 'PRO' : 'FREE')} (Nível ${userLevel})`;
+                rpgCard.title = `${data.is_master ? 'MASTER' : (data.is_pro ? 'PRO' : 'FREE')} (Nvel ${userLevel})`;
                 
                 rpgCard.innerHTML = `
                     <div class="rpg-level-banner" style="font-size: 6px; top: -5px; padding: 0px 3px;">Lv.${userLevel}</div>
@@ -138,13 +138,13 @@ async function loadWebUserProfile() {
                     <div class="corner-badge mini hacker-badge ${data.is_hacker ? '' : 'locked'}" 
                          style="top:-4px; left:-4px; font-size:7px; width:12px; height:12px;" 
                          id="hdr-hacker-badge"
-                         title="${data.is_hacker ? 'Hacker Licenciado ⚙️' : 'Acesso Hacker Bloqueado 🔒 - Clique p/ liberar'}">
-                        ${data.is_hacker ? '⚙️' : '🔒'}
+                         title="${data.is_hacker ? 'Hacker Licenciado ' : 'Acesso Hacker Bloqueado  - Clique p/ liberar'}">
+                        ${data.is_hacker ? '' : ''}
                     </div>
                     <div class="corner-badge mini flag-badge" 
                          style="bottom:-4px; left:-4px; font-size:8px; width:12px; height:12px; background:#000; border-radius:50%;" 
-                         title="País: ${data.pais === 'BR' || !data.pais ? 'Brasil' : data.pais}">
-                        🇧🇷
+                         title="Pas: ${data.pais === 'BR' || !data.pais ? 'Brasil' : data.pais}">
+                        
                     </div>
                     <div class="corner-badge mini rank-badge" 
                          style="bottom:-4px; right:-4px; font-size:7px; width:12px; height:12px;" 
@@ -174,16 +174,16 @@ async function loadWebUserProfile() {
             let badgesHTML = '';
             
             if (data.is_hacker) {
-                badgesHTML += `<span style="background: rgba(155, 89, 182, 0.2); color: #c084fc; border: 1px solid #9B59B6; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(155, 89, 182, 0.5); margin-left: 5px; display: inline-flex; align-items: center; gap: 2px;">⚙️ HACKER</span>`;
+                badgesHTML += `<span style="background: rgba(155, 89, 182, 0.2); color: #c084fc; border: 1px solid #9B59B6; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(155, 89, 182, 0.5); margin-left: 5px; display: inline-flex; align-items: center; gap: 2px;"> HACKER</span>`;
             }
             if (data.is_pro) {
-                badgesHTML += `<span style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); margin-left: 5px; display: inline-flex; align-items: center; gap: 2px;">👑 PRO</span>`;
+                badgesHTML += `<span style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); margin-left: 5px; display: inline-flex; align-items: center; gap: 2px;"> PRO</span>`;
             }
             if (data.is_master) {
-                badgesHTML += `<span style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); margin-left: 5px; display: inline-flex; align-items: center; gap: 2px;">⚡ MASTER</span>`;
+                badgesHTML += `<span style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); margin-left: 5px; display: inline-flex; align-items: center; gap: 2px;"> MASTER</span>`;
             }
 
-            // Construir subtítulo com base no nível/tipo
+            // Construir subttulo com base no nvel/tipo
             let subtitle = 'Piloto Comum';
             if (data.is_master && data.is_hacker) subtitle = 'Hacker Master (Elite)';
             else if (data.is_master) subtitle = 'Mestre da Oficina';
@@ -198,7 +198,7 @@ async function loadWebUserProfile() {
             `;
         }
 
-        // 4. Atualizar elementos da página perfil.html se ela for a ativa
+        // 4. Atualizar elementos da pgina perfil.html se ela for a ativa
         const lblName = document.getElementById('lbl-name');
         if (lblName) {
             lblName.innerText = data.name;
@@ -206,7 +206,7 @@ async function loadWebUserProfile() {
 
         const avatarFrame = document.getElementById('avatar-frame');
         if (avatarFrame) {
-            // Determinar raridade do Card ou Cosmético Equipado
+            // Determinar raridade do Card ou Cosmtico Equipado
             let rarityClass = 'rarity-common';
             if (data.is_master) rarityClass = 'rarity-master';
             else if (data.is_pro) rarityClass = 'rarity-pro';
@@ -235,16 +235,16 @@ async function loadWebUserProfile() {
                 <div class="corner-badge hacker-badge ${data.is_hacker ? '' : 'locked'}" 
                      id="large-hacker-badge"
                      style="background: ${data.is_hacker ? 'linear-gradient(135deg, #a855f7, #6b21a8)' : 'linear-gradient(135deg, #475569, #1e293b)'}; border-radius:50%;"
-                     title="${data.is_hacker ? 'Hacker Licenciado ⚙️' : 'Acesso Hacker Bloqueado 🔒 - Clique p/ liberar'}">
-                    ${data.is_hacker ? '⚙️' : '🔒'}
+                     title="${data.is_hacker ? 'Hacker Licenciado ' : 'Acesso Hacker Bloqueado  - Clique p/ liberar'}">
+                    ${data.is_hacker ? '' : ''}
                 </div>
-                <div class="corner-badge flag-badge" style="background:#000; border-radius:50%;" title="País: Brasil">
-                    🇧🇷
+                <div class="corner-badge flag-badge" style="background:#000; border-radius:50%;" title="Pas: Brasil">
+                    
                 </div>
                 <div class="corner-badge rank-badge" title="Rank Global: ${data.rank_global || '#1'}">
                     <span>${data.rank_global || '#1'}</span>
                 </div>
-                <div class="badge-edge-right" title="Upgrade de Tier / Customizações disponíveis!" onclick="showSaaSPricingModal()">▲</div>
+                <div class="badge-edge-right" title="Upgrade de Tier / Customizaes disponveis!" onclick="showSaaSPricingModal()"></div>
             `;
             
             // Adicionar evento para badge hacker grande
@@ -260,7 +260,7 @@ async function loadWebUserProfile() {
         
         const statRows = document.querySelectorAll('.stat-row');
         statRows.forEach(row => {
-            if (row.innerHTML.includes('NÍVEL:')) {
+            if (row.innerHTML.includes('NVEL:')) {
                 let lvlName = 'Piloto Comum';
                 if (data.is_master && data.is_hacker) lvlName = '<span style="color:#c084fc;">Hacker Master</span> (Lv. Max)';
                 else if (data.is_master) lvlName = '<span style="color:#22d3ee;">Mestre da Oficina</span> (Lv. 50)';
@@ -274,10 +274,10 @@ async function loadWebUserProfile() {
             }
         });
         
-        // FASE 37: Aplicar permissões de módulos com base no cargo (Role-based access)
+        // FASE 37: Aplicar permisses de mdulos com base no cargo (Role-based access)
         applyModulePermissions(data);
 
-        return false; // Indica que não foi bloqueado
+        return false; // Indica que no foi bloqueado
     } catch (e) {
         console.error("Erro ao carregar perfil do Apollo:", e);
         return false;
@@ -322,7 +322,7 @@ function applyModulePermissions(data) {
                 if (!el.querySelector('.module-lock-icon')) {
                     const lock = document.createElement('div');
                     lock.className = 'module-lock-icon';
-                    lock.innerHTML = '🔒';
+                    lock.innerHTML = '';
                     lock.style.position = 'absolute';
                     lock.style.top = '5px';
                     lock.style.right = '5px';
@@ -458,40 +458,40 @@ function showHackerUpsellModal() {
             <div class="upsell-card">
                 <button class="upsell-close" onclick="document.getElementById('hacker-upsell-modal').style.display='none'">X</button>
                 <h2 class="upsell-title">ACESSO HACKER</h2>
-                <div class="hacker-badge-stamp">⚡ CURSO DE INFRA E AUTOMAÇÃO 💻</div>
+                <div class="hacker-badge-stamp"> CURSO DE INFRA E AUTOMAO </div>
                 <p style="font-size:1.1rem; font-weight:800; text-shadow:1px 1px 0 #000; color:#fff; margin-bottom:15px;">
-                    Quer rodar o Apollo Edit com <strong style="color:var(--btn-yellow);">CUSTO DE SERVIDOR R$ 0,00</strong> gerando áudio e vídeo ilimitado?
+                    Quer rodar o Apollo Edit com <strong style="color:var(--btn-yellow);">CUSTO DE SERVIDOR R$ 0,00</strong> gerando udio e vdeo ilimitado?
                 </p>
                 <p style="font-size:0.95rem; color:#cbd5e1; font-weight:700;">
-                    Ao adquirir nosso curso completo de R$ 400, você aprende a instalar e configurar o ecossistema local na sua máquina com Pinokio, RVC de voz e conexões BYOK!
+                    Ao adquirir nosso curso completo de R$ 400, voc aprende a instalar e configurar o ecossistema local na sua mquina com Pinokio, RVC de voz e conexes BYOK!
                 </p>
                 
                 <div class="feature-list">
                     <div class="feature-item">
-                        <span class="feature-icon">⚙️</span>
-                        <span><strong>BYOK Inteligente:</strong> Insira suas próprias chaves e gaste $0 em servidores.</span>
+                        <span class="feature-icon"></span>
+                        <span><strong>BYOK Inteligente:</strong> Insira suas prprias chaves e gaste $0 em servidores.</span>
                     </div>
                     <div class="feature-item">
-                        <span class="feature-icon">🎙️</span>
-                        <span><strong>Clonagem RVC local:</strong> Treinamento de voz e imitação perfeita de timbres.</span>
+                        <span class="feature-icon"></span>
+                        <span><strong>Clonagem RVC local:</strong> Treinamento de voz e imitao perfeita de timbres.</span>
                     </div>
                     <div class="feature-item">
-                        <span class="feature-icon">💻</span>
-                        <span><strong>Configuração Estendida:</strong> Desbloqueie roteamentos, chaves e conexões de porta locais.</span>
+                        <span class="feature-icon"></span>
+                        <span><strong>Configurao Estendida:</strong> Desbloqueie roteamentos, chaves e conexes de porta locais.</span>
                     </div>
                     <div class="feature-item">
-                        <span class="feature-icon">👑</span>
+                        <span class="feature-icon"></span>
                         <span><strong>Status na Comunidade:</strong> Ganhe a badge roxa de Hacker exclusiva no perfil e quina do avatar.</span>
                     </div>
                 </div>
                 
                 <div class="price-tag-hacker">
-                    R$ 400 <span style="font-size:1rem; color:#aaa;">(Vitalício Curso + 1 ano Status Badge)</span>
-                    <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">Renovação da badge por R$ 200/ano</div>
+                    R$ 400 <span style="font-size:1rem; color:#aaa;">(Vitalcio Curso + 1 ano Status Badge)</span>
+                    <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">Renovao da badge por R$ 200/ano</div>
                 </div>
                 
                 <button class="btn yellow" style="width:100%; font-size:1.6rem; animation: pulse 2s infinite;" onclick="buyHackerCourse()">
-                    ⚡ QUERO SER HACKER (ADQUIRIR AGORA)
+                     QUERO SER HACKER (ADQUIRIR AGORA)
                 </button>
             </div>
         `;
@@ -501,7 +501,7 @@ function showHackerUpsellModal() {
 }
 
 function buyHackerCourse() {
-    alert("🚀 Redirecionando para o Checkout de R$ 400 (Educação + Upgrade de Conta Hacker)!\n\nApós o pagamento, o sistema irá liberar as ferramentas extensas de API BYOK, roteamento e seu selo Hacker estará ativo por 1 ano.");
+    alert(" Redirecionando para o Checkout de R$ 400 (Educao + Upgrade de Conta Hacker)!\n\nAps o pagamento, o sistema ir liberar as ferramentas extensas de API BYOK, roteamento e seu selo Hacker estar ativo por 1 ano.");
     document.getElementById('hacker-upsell-modal').style.display = 'none';
 }
 
@@ -615,14 +615,14 @@ function showSaaSPricingModal() {
                 <div class="pricing-grid">
                     <!-- PRO -->
                     <div class="pricing-card pro">
-                        <h3 class="pricing-card-title">👑 PLANO PRO</h3>
-                        <div class="pricing-price">R$ 49 <span style="font-size:0.9rem; color:#aaa;">/ mês</span></div>
+                        <h3 class="pricing-card-title"> PLANO PRO</h3>
+                        <div class="pricing-price">R$ 49 <span style="font-size:0.9rem; color:#aaa;">/ ms</span></div>
                         
                         <div class="pricing-features">
-                            <div class="pricing-feature-line">✨ Borda Dourada Épica (Gold Frame)</div>
-                            <div class="pricing-feature-line">⛽ 5.000 L de Gasolina de Render</div>
-                            <div class="pricing-feature-line">🤖 Acesso total ao Diretor de IA V2</div>
-                            <div class="pricing-feature-line">⚡ Prioridade média na Fila de Render</div>
+                            <div class="pricing-feature-line"> Borda Dourada pica (Gold Frame)</div>
+                            <div class="pricing-feature-line"> 5.000 L de Gasolina de Render</div>
+                            <div class="pricing-feature-line"> Acesso total ao Diretor de IA V2</div>
+                            <div class="pricing-feature-line"> Prioridade mdia na Fila de Render</div>
                         </div>
                         
                         <button class="btn yellow" style="width:100%;" onclick="alert('Assinando Plano PRO!')">ASSINAR PRO</button>
@@ -631,14 +631,14 @@ function showSaaSPricingModal() {
                     <!-- MASTER -->
                     <div class="pricing-card master">
                         <div style="position:absolute; top:12px; right:-25px; background:#e11d48; color:#fff; font-family:'Bangers'; padding:3px 25px; transform:rotate(45deg); font-size:0.7rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.5);">DOBRO!</div>
-                        <h3 class="pricing-card-title">⚡ PLANO MASTER</h3>
-                        <div class="pricing-price">R$ 98 <span style="font-size:0.9rem; color:#aaa;">/ mês</span></div>
+                        <h3 class="pricing-card-title"> PLANO MASTER</h3>
+                        <div class="pricing-price">R$ 98 <span style="font-size:0.9rem; color:#aaa;">/ ms</span></div>
                         
                         <div class="pricing-features">
-                            <div class="pricing-feature-line">💎 Borda Neon Ciano Lendária (Legendary)</div>
-                            <div class="pricing-feature-line">⛽ 12.000 L de Gasolina de Render (O Dobro!)</div>
-                            <div class="pricing-feature-line">🏎️ Skins e Trajes Lendários de Vestiário</div>
-                            <div class="pricing-feature-line">🚀 Prioridade Máxima Instantânea no Render</div>
+                            <div class="pricing-feature-line"> Borda Neon Ciano Lendria (Legendary)</div>
+                            <div class="pricing-feature-line"> 12.000 L de Gasolina de Render (O Dobro!)</div>
+                            <div class="pricing-feature-line"> Skins e Trajes Lendrios de Vestirio</div>
+                            <div class="pricing-feature-line"> Prioridade Mxima Instantnea no Render</div>
                         </div>
                         
                         <button class="btn" style="width:100%; background:var(--btn-blue); border-color:#000;" onclick="alert('Assinando Plano MASTER!')">ASSINAR MASTER</button>
@@ -651,12 +651,12 @@ function showSaaSPricingModal() {
     modal.style.display = 'flex';
 }
 
-// Verifica na inicialização da página
+// Verifica na inicializao da pgina
 document.addEventListener('DOMContentLoaded', async () => {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     if(currentPage === 'admin.html' || currentPage === 'admin_login.html') return;
 
-    // Carregar informações do perfil unificado E checar bloqueios
+    // Carregar informaes do perfil unificado E checar bloqueios
     const isBlocked = await loadWebUserProfile();
     if (isBlocked) return; // Halt execution if banned or in maintenance
 
@@ -668,10 +668,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // FASE 38: Registrar Visita, Checar Acesso e Renderizar Ads
     checkPageAccessAndLog();
 
-    // FASE 34: Injeção do Master Toggle Button no HUD (Dev Tools)
+    // FASE 34: Injeo do Master Toggle Button no HUD (Dev Tools)
     injectDevModeToggle();
 
-    // FASE 36: Tintura Temática (Theme Tinting)
+    // FASE 36: Tintura Temtica (Theme Tinting)
     applyChannelTheme();
 });
 
@@ -688,7 +688,7 @@ async function checkPageAccessAndLog() {
         const data = await response.json();
         
         if (data.settings) {
-            // Verifica permissão da página inteira
+            // Verifica permisso da pgina inteira
             const reqAccess = data.settings[`page_${currentPage}_access`] || 'Free';
             if (reqAccess !== 'Free') {
                 const profileRes = await fetch('https://api.apolloedit.com/api/user/profile');
@@ -706,7 +706,7 @@ async function checkPageAccessAndLog() {
                 if (reqAccess === 'Disabled') reqLevel = 99;
 
                 if (userLevel < reqLevel) {
-                    alert(`ACESSO NEGADO: Esta página requer nível ${reqAccess}.`);
+                    alert(`ACESSO NEGADO: Esta pgina requer nvel ${reqAccess}.`);
                     window.location.href = '/hub.html';
                     return;
                 }
@@ -726,10 +726,10 @@ async function renderAds() {
         const res = await fetch('https://api.apolloedit.com/api/public/ads');
         const data = await res.json();
         if(data.success && data.ads.length > 0) {
-            // Escolhe um AD aleatório ativo
+            // Escolhe um AD aleatrio ativo
             const ad = data.ads[Math.floor(Math.random() * data.ads.length)];
             
-            // Cria div de anúncio no canto inferior direito
+            // Cria div de anncio no canto inferior direito
             const adDiv = document.createElement('div');
             adDiv.className = 'floating-ad';
             adDiv.style.position = 'fixed';
@@ -797,7 +797,7 @@ function injectDevModeToggle() {
     const currentMode = localStorage.getItem('apollo_user_mode') || 'cloud';
     
     const toggleBtn = document.createElement('button');
-    toggleBtn.innerHTML = currentMode === 'cloud' ? '☁️ Mudar p/ Local' : '💻 Mudar p/ Nuvem';
+    toggleBtn.innerHTML = currentMode === 'cloud' ? ' Mudar p/ Local' : ' Mudar p/ Nuvem';
     toggleBtn.style.position = 'fixed';
     toggleBtn.style.bottom = '10px';
     toggleBtn.style.left = '10px';
@@ -815,7 +815,7 @@ function injectDevModeToggle() {
     toggleBtn.onclick = () => {
         const newMode = currentMode === 'cloud' ? 'local' : 'cloud';
         localStorage.setItem('apollo_user_mode', newMode);
-        alert(`Modo alterado para: ${newMode.toUpperCase()}.\nA página será recarregada para aplicar as mudanças.`);
+        alert(`Modo alterado para: ${newMode.toUpperCase()}.\nA pgina ser recarregada para aplicar as mudanas.`);
         window.location.reload();
     };
 

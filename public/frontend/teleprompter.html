@@ -69,7 +69,7 @@
             position: absolute;
             top: 100%;
             white-space: pre-wrap;
-            transform: scaleY(-1); /* Para espelhar no vidro do teleprompter (Opcional, vamos deixar normal por padrão) */
+            transform: scaleY(-1); /* Para espelhar no vidro do teleprompter (Opcional, vamos deixar normal por padro) */
             transform: none;
         }
 
@@ -138,9 +138,9 @@
 
     <div class="controls">
         <div>
-            <a href="hub.html" style="color: #aaa; text-decoration: none; font-weight: bold; margin-right: 20px;">← Voltar</a>
-            <button onclick="toggleEdit()">📝 Editar Texto</button>
-            <button onclick="toggleMirror()">🪞 Espelhar Texto</button>
+            <a href="hub.html" style="color: #aaa; text-decoration: none; font-weight: bold; margin-right: 20px;"> Voltar</a>
+            <button onclick="toggleEdit()"> Editar Texto</button>
+            <button onclick="toggleMirror()"> Espelhar Texto</button>
         </div>
         <div class="sliders">
             <div>
@@ -151,19 +151,19 @@
                 <label>Velocidade</label>
                 <input type="range" id="speed" min="1" max="10" value="3">
             </div>
-            <button class="play" id="btnPlay" onclick="togglePlay()">▶ Iniciar</button>
+            <button class="play" id="btnPlay" onclick="togglePlay()"> Iniciar</button>
         </div>
     </div>
 
     <div class="prompter-container" id="prompter">
         <div class="focus-line"></div>
         <div class="focus-fade"></div>
-        <div class="text-scroll" id="scrollText">Cole seu roteiro aqui e clique em Iniciar. Olhe diretamente para a lente da câmera enquanto lê!</div>
+        <div class="text-scroll" id="scrollText">Cole seu roteiro aqui e clique em Iniciar. Olhe diretamente para a lente da cmera enquanto l!</div>
     </div>
 
     <div class="edit-area" id="editArea" style="display: none;">
         <h2 style="margin-top: 0;">Colar Roteiro</h2>
-        <textarea id="inputText">Cole seu roteiro aqui e clique em Iniciar. Olhe diretamente para a lente da câmera enquanto lê!</textarea>
+        <textarea id="inputText">Cole seu roteiro aqui e clique em Iniciar. Olhe diretamente para a lente da cmera enquanto l!</textarea>
         <button class="btn-close" onclick="saveText()">Salvar e Ir para Teleprompter</button>
     </div>
 
@@ -183,7 +183,7 @@
         function toggleEdit() {
             editArea.style.display = 'flex';
             isPlaying = false;
-            btnPlay.innerText = "▶ Iniciar";
+            btnPlay.innerText = " Iniciar";
             cancelAnimationFrame(animationId);
         }
 
@@ -206,11 +206,11 @@
         function togglePlay() {
             isPlaying = !isPlaying;
             if (isPlaying) {
-                btnPlay.innerText = "⏸ Pausar";
+                btnPlay.innerText = " Pausar";
                 btnPlay.style.background = "#555";
                 scrollLoop();
             } else {
-                btnPlay.innerText = "▶ Continuar";
+                btnPlay.innerText = " Continuar";
                 btnPlay.style.background = "#ec4899";
                 cancelAnimationFrame(animationId);
             }
@@ -224,7 +224,7 @@
 
             if (position < -scrollText.clientHeight) {
                 isPlaying = false;
-                btnPlay.innerText = "▶ Reiniciar";
+                btnPlay.innerText = " Reiniciar";
                 btnPlay.style.background = "#ec4899";
                 position = document.getElementById('prompter').clientHeight;
                 return;

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleRoteiroBase();
 });
 
-// -- FUNÇÕES DE MODO / TOGGLE --
+// -- FUNES DE MODO / TOGGLE --
 function toggleMappingMode() {
     const isMapped = document.getElementById('usar_mapeamento').checked;
     const singleProfileBox = document.getElementById('single_profile_box');
@@ -36,7 +36,7 @@ function toggleRoteiroBase() {
     }
 }
 
-// -- INTEGRAÇÃO COM BACKEND --
+// -- INTEGRAO COM BACKEND --
 async function loadProfiles() {
     const select = document.getElementById('perfil_unico');
     select.innerHTML = '<option value="">Carregando perfis...</option>';
@@ -66,7 +66,7 @@ async function loadProfiles() {
 
 async function browseFile(inputId, type = 'media') {
     try {
-        // Usar endpoint genérico browse_file (ou criar um novo no python futuramente)
+        // Usar endpoint genrico browse_file (ou criar um novo no python futuramente)
         const response = await fetch('/api/browse_file', { method: 'POST' });
         const result = await response.json();
         if (result.status === 'success' && result.path) {
@@ -80,7 +80,7 @@ async function browseFile(inputId, type = 'media') {
 
 async function browseFolder(inputId) {
     try {
-        // Fallback: se o servidor não tiver browse_folder, pode falhar.
+        // Fallback: se o servidor no tiver browse_folder, pode falhar.
         const response = await fetch('/api/browse_file?type=folder', { method: 'POST' });
         const result = await response.json();
         if (result.status === 'success' && result.path) {
@@ -89,15 +89,15 @@ async function browseFolder(inputId) {
             logTerminal(`Pasta selecionada: ${result.path}`, 'info');
         }
     } catch (e) {
-        logTerminal("Por favor atualize o backend para suportar seleção de pastas (browse_folder).", 'warning');
+        logTerminal("Por favor atualize o backend para suportar seleo de pastas (browse_folder).", 'warning');
     }
 }
 
-// -- VÍDEOS BASE --
+// -- VDEOS BASE --
 let videoList = [];
 
 function addVideos() {
-    // Simula seleção múltipla e adiciona na lista
+    // Simula seleo mltipla e adiciona na lista
     fetch('/api/browse_file')
         .then(res => res.json())
         .then(result => {
@@ -105,7 +105,7 @@ function addVideos() {
                 if (!videoList.includes(result.path)) {
                     videoList.push(result.path);
                     renderVideoGrid();
-                    logTerminal(`Vídeo base adicionado: ${result.path.split(/[\/\\]/).pop()}`, 'info');
+                    logTerminal(`Vdeo base adicionado: ${result.path.split(/[\/\\]/).pop()}`, 'info');
                 }
             }
         });
@@ -118,20 +118,20 @@ function removeSelectedVideos() {
         videoList = videoList.filter(p => p !== path);
     });
     renderVideoGrid();
-    logTerminal(`${selected.length} vídeos removidos.`, 'warning');
+    logTerminal(`${selected.length} vdeos removidos.`, 'warning');
 }
 
 function renderVideoGrid() {
     const grid = document.getElementById('video_grid');
     const badge = document.getElementById('video-count');
     
-    badge.textContent = `${videoList.length} vídeos`;
+    badge.textContent = `${videoList.length} vdeos`;
     
     if (videoList.length === 0) {
         grid.innerHTML = `
             <div class="empty-state">
-                <span class="icon">📂</span>
-                <p>Nenhum vídeo adicionado.</p>
+                <span class="icon"></span>
+                <p>Nenhum vdeo adicionado.</p>
                 <p class="sub">Arraste arquivos ou clique em Adicionar.</p>
             </div>
         `;
@@ -145,7 +145,7 @@ function renderVideoGrid() {
         div.className = 'video-item';
         div.setAttribute('data-path', path);
         
-        // Exibe um thumb vazio até o backend carregar (usando endpoint /api/thumb)
+        // Exibe um thumb vazio at o backend carregar (usando endpoint /api/thumb)
         div.innerHTML = `
             <div class="idx">${index + 1}</div>
             <img class="thumb" src="/api/thumb?path=${encodeURIComponent(path)}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAiIGhlaWdodD0iOTAiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iI2ZmZiIgZHk9Ii4zZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiPk5vIFRodW1iPC90ZXh0Pjwvc3ZnPg=='">
@@ -172,7 +172,7 @@ function moveVideoUp() {
     if (idx > 0) {
         [videoList[idx - 1], videoList[idx]] = [videoList[idx], videoList[idx - 1]];
         renderVideoGrid();
-        // Restaurar seleção
+        // Restaurar seleo
         setTimeout(() => {
             const el = document.querySelector(`.video-item[data-path="${path}"]`);
             if (el) el.classList.add('selected');
@@ -218,12 +218,12 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     const saidaDir = document.getElementById('saida_dir').value;
     
     if (!audioPath || !saidaDir) {
-        logTerminal("Erro: Selecione o Áudio Narração e a Pasta de Saída.", "error");
-        alert("Preencha as Entradas e Saídas necessárias!");
+        logTerminal("Erro: Selecione o udio Narrao e a Pasta de Sada.", "error");
+        alert("Preencha as Entradas e Sadas necessrias!");
         return;
     }
     
-    logTerminal("Iniciando requisição de Renderização em Lote...", "info");
+    logTerminal("Iniciando requisio de Renderizao em Lote...", "info");
     
     // Obter dados do Form
     const payload = {
@@ -266,9 +266,9 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
     };
     
     console.log("Payload Render:", payload);
-    logTerminal("Pre-processamento e Whisper inicializados (Simulação).", "info");
+    logTerminal("Pre-processamento e Whisper inicializados (Simulao).", "info");
     
-    // Simulação de Progresso
+    // Simulao de Progresso
     let progress = 0;
     const bar = document.getElementById('render_progress');
     const text = document.getElementById('render_status_text');
@@ -284,8 +284,8 @@ document.getElementById('btn-render-master').addEventListener('click', () => {
         
         if (progress === 100) {
             clearInterval(interval);
-            logTerminal("✅ Renderização Concluída com Sucesso!", "success");
-            text.textContent = "Concluído!";
+            logTerminal(" Renderizao Concluda com Sucesso!", "success");
+            text.textContent = "Concludo!";
             document.getElementById('btn-render-master').disabled = false;
         }
     }, 1000);

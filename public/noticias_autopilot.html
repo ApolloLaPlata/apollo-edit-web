@@ -1,9 +1,9 @@
-﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="latin-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit Web - Piloto Automático</title>
+    <title>Apollo Edit Web - Piloto Automtico</title>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global_style.css">
     <style>
@@ -193,43 +193,43 @@
 
 </head>
 <body>
-    <a href="noticias.html" class="return-btn">⬅ VOLTAR AO HUB</a>
+    <a href="noticias.html" class="return-btn"> VOLTAR AO HUB</a>
 
     <div class="autopilot-container">
         <!-- CHAT PRINCIPAL -->
         <div class="chat-section">
-            <div class="chat-header">✈️ PILOTO AUTOMÁTICO IA</div>
+            <div class="chat-header"> PILOTO AUTOMTICO IA</div>
             <div class="chat-history" id="main-chat-history">
                 <div class="msg-ai">
-                    <strong style="color:var(--btn-yellow); display:block; margin-bottom:5px;">🤖 Copiloto Supremo</strong>
-                    Olá! Bem-vindo ao modo de delegação total. Preencha suas configurações no painel ao lado e me diga o que você quer produzir hoje.
+                    <strong style="color:var(--btn-yellow); display:block; margin-bottom:5px;"> Copiloto Supremo</strong>
+                    Ol! Bem-vindo ao modo de delegao total. Preencha suas configuraes no painel ao lado e me diga o que voc quer produzir hoje.
                     <br><br>
-                    Lembre-se: Isso custará <strong>Combustível</strong>, mas eu farei todo o trabalho chato por você (pesquisa, roteiro, geração, montagem na timeline e finalização).
+                    Lembre-se: Isso custar <strong>Combustvel</strong>, mas eu farei todo o trabalho chato por voc (pesquisa, roteiro, gerao, montagem na timeline e finalizao).
                 </div>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="autopilot-input" placeholder="Ex: Gere um vídeo de 1 min sobre dicas de finanças usando o Template 1...">
-                <button onclick="sendAutoPilotMessage()">ENVIAR INSTRUÇÃO</button>
+                <input type="text" id="autopilot-input" placeholder="Ex: Gere um vdeo de 1 min sobre dicas de finanas usando o Template 1...">
+                <button onclick="sendAutoPilotMessage()">ENVIAR INSTRUO</button>
             </div>
         </div>
 
-        <!-- PAINEL DE CONFIGURAÇÕES -->
+        <!-- PAINEL DE CONFIGURAES -->
         <div class="config-section">
-            <div class="config-title">⚙️ REGRAS DO DIRETOR</div>
+            <div class="config-title"> REGRAS DO DIRETOR</div>
             
             <div class="config-group">
-                <label>Voz e Áudio</label>
-                <label class="checkbox-label"><input type="checkbox" id="cfg-narration" checked> Incluir Narração Inteligente</label>
-                <label class="checkbox-label"><input type="checkbox" id="cfg-lipsync"> Ativar Lip Sync Dinâmico (Custo Extra)</label>
-                <label class="checkbox-label"><input type="checkbox" id="cfg-bgm" checked> Inserir Trilha Sonora (Automático)</label>
+                <label>Voz e udio</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-narration" checked> Incluir Narrao Inteligente</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-lipsync"> Ativar Lip Sync Dinmico (Custo Extra)</label>
+                <label class="checkbox-label"><input type="checkbox" id="cfg-bgm" checked> Inserir Trilha Sonora (Automtico)</label>
             </div>
 
             <div class="config-group">
                 <label>Perfil de Identidade Visual (Templates)</label>
                 <select style="width:100%; padding:10px; background:#111; color:#fff; border:1px solid #555; border-radius:8px; margin-bottom:10px;">
                     <option>Canal: Curiosidades Sombrias</option>
-                    <option>Canal: Dicas de Finanças</option>
-                    <option>Canal: Genérico</option>
+                    <option>Canal: Dicas de Finanas</option>
+                    <option>Canal: Genrico</option>
                 </select>
                 
                 <label class="checkbox-label"><input type="checkbox" id="cfg-temp1" checked> Usar Template 1 (Intro)</label>
@@ -238,13 +238,13 @@
             </div>
 
             <div class="config-group">
-                <label>Estilo de B-Roll (Geração/Busca)</label>
+                <label>Estilo de B-Roll (Gerao/Busca)</label>
                 <label class="checkbox-label"><input type="radio" name="broll" value="ai" checked> Gerar Imagens 100% via IA</label>
                 <label class="checkbox-label"><input type="radio" name="broll" value="stock"> Buscar Banco de Imagens (Pexels/Pixabay)</label>
-                <label class="checkbox-label"><input type="radio" name="broll" value="mixed"> Híbrido (IA + Banco de Imagens)</label>
+                <label class="checkbox-label"><input type="radio" name="broll" value="mixed"> Hbrido (IA + Banco de Imagens)</label>
             </div>
 
-            <button onclick="saveAutoPilotConfig()" style="width:100%; background:var(--btn-yellow, #facc15); color:#000; border:none; padding:15px; font-family:'Bangers'; font-size:1.5rem; border-radius:12px; cursor:pointer;">💾 SALVAR PERFIL</button>
+            <button onclick="saveAutoPilotConfig()" style="width:100%; background:var(--btn-yellow, #facc15); color:#000; border:none; padding:15px; font-family:'Bangers'; font-size:1.5rem; border-radius:12px; cursor:pointer;"> SALVAR PERFIL</button>
         </div>
     </div>
 

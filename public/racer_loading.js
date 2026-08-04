@@ -1,5 +1,5 @@
 // racer_loading.js
-// Injeta a estrutura HTML do Racing Loading dinamicamente na página
+// Injeta a estrutura HTML do Racing Loading dinamicamente na pgina
 document.addEventListener('DOMContentLoaded', () => {
     const overlayHTML = `
         <div id="global-racer-overlay">
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.insertAdjacentHTML('beforeend', overlayHTML);
 });
 
-// API Global para as outras páginas usarem
+// API Global para as outras pginas usarem
 window.ApolloRacer = {
     overlay: null,
     titleEl: null,
@@ -47,13 +47,13 @@ window.ApolloRacer = {
         if (!this.barEl) this.barEl = document.getElementById('racer-nitro-bar');
     },
 
-    start(title = "Missão em Andamento...", costTier = "basic") {
+    start(title = "Misso em Andamento...", costTier = "basic") {
         this._initElements();
         if (this.titleEl) this.titleEl.innerText = title;
-        if (this.statusEl) this.statusEl.innerText = "Conectando peças...";
+        if (this.statusEl) this.statusEl.innerText = "Conectando peas...";
         if (this.barEl) this.barEl.style.width = "5%";
         
-        // Fase 23: Desvinculação do Custo. Carrega o Avatar Persistente.
+        // Fase 23: Desvinculao do Custo. Carrega o Avatar Persistente.
         const savedAvatarData = localStorage.getItem('apollo_car_avatar');
         let parts = { chassi: 'enferrujado', pintura: 'desgastada' };
         if (savedAvatarData) {
@@ -86,20 +86,20 @@ window.ApolloRacer = {
             }
         }
 
-        // Cenário Dinâmico baseado no Custo da API (costTier)
+        // Cenrio Dinmico baseado no Custo da API (costTier)
         const trackGrid = document.querySelector('.track-grid');
         const speedLines = document.querySelector('.speed-lines');
         if (trackGrid && speedLines) {
             if (costTier === 'premium') {
-                // Cenário Ultra Cyberpunk
+                // Cenrio Ultra Cyberpunk
                 trackGrid.style.backgroundImage = 'linear-gradient(rgba(155, 89, 182, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(155, 89, 182, 0.4) 1px, transparent 1px)';
                 speedLines.style.background = 'repeating-linear-gradient(90deg, transparent 0, transparent 20px, rgba(155, 89, 182, 0.2) 20px, rgba(155, 89, 182, 0.2) 40px)';
             } else if (costTier === 'medium') {
-                // Cenário Intermediário (Amarelo)
+                // Cenrio Intermedirio (Amarelo)
                 trackGrid.style.backgroundImage = 'linear-gradient(rgba(250, 204, 21, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(250, 204, 21, 0.4) 1px, transparent 1px)';
                 speedLines.style.background = 'repeating-linear-gradient(90deg, transparent 0, transparent 20px, rgba(250, 204, 21, 0.1) 20px, rgba(250, 204, 21, 0.1) 40px)';
             } else {
-                // Cenário Básico (Escuro / Verde lodo)
+                // Cenrio Bsico (Escuro / Verde lodo)
                 trackGrid.style.backgroundImage = 'linear-gradient(rgba(100, 255, 218, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(100, 255, 218, 0.1) 1px, transparent 1px)';
                 speedLines.style.background = 'repeating-linear-gradient(90deg, transparent 0, transparent 20px, rgba(255, 255, 255, 0.05) 20px, rgba(255, 255, 255, 0.05) 40px)';
             }
@@ -123,7 +123,7 @@ window.ApolloRacer = {
 
     finish(callback = null) {
         this._initElements();
-        if (this.statusEl) this.statusEl.innerText = "🏁 Missão Concluída! Cortando a linha de chegada...";
+        if (this.statusEl) this.statusEl.innerText = " Misso Concluda! Cortando a linha de chegada...";
         if (this.barEl) this.barEl.style.width = "100%";
         
         setTimeout(() => {
@@ -139,21 +139,21 @@ window.ApolloRacer = {
 };
 
 // ==========================================
-// FUNÇÃO DEMO APENAS PARA FASE DE DESENVOLVIMENTO
+// FUNO DEMO APENAS PARA FASE DE DESENVOLVIMENTO
 // ==========================================
 window.demoRacingLoader = function(costTier = 'medium') {
     
     // Inicia a corrida
-    window.ApolloRacer.start("🛠️ Montando o Vídeo...", costTier);
+    window.ApolloRacer.start(" Montando o Vdeo...", costTier);
     
     setTimeout(() => window.ApolloRacer.update("Gerando Roteiro de IA...", 20), 1000);
-    setTimeout(() => window.ApolloRacer.update("Acoplando Peças Visuais (Runware)...", 45), 2500);
+    setTimeout(() => window.ApolloRacer.update("Acoplando Peas Visuais (Runware)...", 45), 2500);
     setTimeout(() => window.ApolloRacer.update("Abastecendo com FFmpeg...", 70), 4000);
-    setTimeout(() => window.ApolloRacer.update("Acelerando Renderização Final...", 90), 5500);
+    setTimeout(() => window.ApolloRacer.update("Acelerando Renderizao Final...", 90), 5500);
     
     setTimeout(() => {
         window.ApolloRacer.finish(() => {
-            alert("Vídeo entregue na sua Garagem!");
+            alert("Vdeo entregue na sua Garagem!");
         });
     }, 7000);
 };

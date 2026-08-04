@@ -1,6 +1,6 @@
 /**
  * Apollo La Plata - Image Studio Logic
- * Gerencia a lógica de laplata_studio.html
+ * Gerencia a lgica de laplata_studio.html
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             rosterMini.innerHTML = '';
             
             if (cachedCharacters.length === 0) {
-                rosterMini.innerHTML = '<div style="color: #64748b; font-size: 0.8rem;">Sem personagens. Crie no Laboratório primeiro.</div>';
+                rosterMini.innerHTML = '<div style="color: #64748b; font-size: 0.8rem;">Sem personagens. Crie no Laboratrio primeiro.</div>';
                 return;
             }
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 
                 btn.innerHTML = `${imgHtml} ${char.name}`;
-                btn.title = char.description || 'Sem descrição visual';
+                btn.title = char.description || 'Sem descrio visual';
                 
                 btn.addEventListener('click', () => {
                     playClick();
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- UPLOAD DE REFERÊNCIA ---
+    // --- UPLOAD DE REFERNCIA ---
     refDropzone.addEventListener('click', (e) => {
         if (e.target !== btnRemoveRef && !isGenerating) refFileInput.click();
     });
@@ -148,18 +148,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         playClick();
         isGenerating = true;
-        btnEnhance.innerHTML = "⏳";
+        btnEnhance.innerHTML = "";
         updateGenerateBtnState();
 
         try {
             const sysInstruction = "You are an expert prompt engineer. Enhance the following prompt for image generation, adding details about lighting, composition, and mood. Keep character names intact.";
             const expanded = await window.laplataSettings.executeWithKeyRotation(async (apiKey) => {
-                // laplata_ai tem a função genérica generateText
+                // laplata_ai tem a funo genrica generateText
                 return await window.laplataAI.generateText(apiKey, `Original: ${text}\nGlobal Context: ${globalContextInput.value}\n\nEnhance:`, {}, sysInstruction);
             });
 
             mainPrompt.value = expanded;
-            showToast('Sucesso', 'Prompt mágico aplicado!', 'success');
+            showToast('Sucesso', 'Prompt mgico aplicado!', 'success');
             playSuccess();
         } catch (e) {
             console.error(e);
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             playError();
         } finally {
             isGenerating = false;
-            btnEnhance.innerHTML = "✨ Melhorar";
+            btnEnhance.innerHTML = " Melhorar";
             updateGenerateBtnState();
         }
     });
@@ -178,14 +178,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!text || isGenerating) return;
 
         playClick();
-        await startGenerationLogic(text, "Luz, Câmera... Ação!");
+        await startGenerationLogic(text, "Luz, Cmera... Ao!");
     });
 
     async function startGenerationLogic(promptText, loadingMsg) {
         const db = await window.laplataDB.openDB();
         const currencies = await window.laplataDB.getCurrencies(db);
         if (currencies.gasolina < 1) {
-            if (window.apolloNotifications) window.apolloNotifications.add("Sem Combustível", "Você precisa de Gasolina para gerar imagens no Laboratório.", "error");
+            if (window.apolloNotifications) window.apolloNotifications.add("Sem Combustvel", "Voc precisa de Gasolina para gerar imagens no Laboratrio.", "error");
             if (window.apolloSFX) window.apolloSFX.play('error');
             if (window.apolloCopilot) window.apolloCopilot.react("low_gas");
             return;
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const settings = await window.laplataSettings.getSettings();
             
-            // Injeta configurações específicas da tela
+            // Injeta configuraes especficas da tela
             let finalSettings = { 
                 ...settings,
                 aspectRatio: aspectRatioSelect.value,
@@ -229,10 +229,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             resultWrapper.style.height = ratio[0] > ratio[1] ? 'auto' : '100%';
 
             playSuccess();
-            showToast('Corte!', 'Cena renderizada com perfeição.', 'quest');
+            showToast('Corte!', 'Cena renderizada com perfeio.', 'quest');
 
             // Salvar na Galeria
-            const finalSavePrompt = `[Estúdio] ${promptText}`;
+            const finalSavePrompt = `[Estdio] ${promptText}`;
             await window.laplataDB.gallery.save({
                 id: crypto.randomUUID(),
                 prompt: finalSavePrompt,
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (window.apolloCopilot && Math.random() > 0.5) window.apolloCopilot.react("generate_success");
 
         } catch (e) {
-            console.error("Geração falhou:", e);
+            console.error("Gerao falhou:", e);
             showToast('Erro', e.message, 'system');
             playError();
         } finally {

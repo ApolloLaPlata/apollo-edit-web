@@ -199,9 +199,9 @@
         
         <div style="width: 100%; max-width: 1600px; margin: 0 auto 20px auto;">
             <h3 style="font-family: 'Bangers', cursive; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; display:flex; align-items:center; gap:10px;">
-                <span style="font-size:2.5rem;">🎬</span> DIRETOR DE VÍDEO
+                <span style="font-size:2.5rem;"></span> DIRETOR DE VDEO
             </h3>
-            <p style="color: #94a3b8; margin-top: 5px;">Transforme scripts em vídeos. Use [CORTA] para novas cenas e [CONTINUA] para sequências perfeitas.</p>
+            <p style="color: #94a3b8; margin-top: 5px;">Transforme scripts em vdeos. Use [CORTA] para novas cenas e [CONTINUA] para sequncias perfeitas.</p>
         </div>
 
         <div class="layout-container">
@@ -210,26 +210,26 @@
             <div class="left-panel">
                 
                 <h2 style="color: white; font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;">
-                    🎬 Script do Diretor
+                     Script do Diretor
                 </h2>
 
                 <div class="input-group" style="flex-grow: 1;">
                     <label>Digite ou cole o texto do roteiro:</label>
                     <p class="helper-text">
                         <strong>[CORTA]</strong> inicia nova cena (exige imagem de ref).<br/>
-                        <strong>[CONTINUA]</strong> pega o último frame do clipe anterior automaticamente.
+                        <strong>[CONTINUA]</strong> pega o ltimo frame do clipe anterior automaticamente.
                     </p>
                     <textarea id="director-script" style="height: 100%; min-height: 250px;">
 [CORTA] o macaco abre um sorriso e comprimenta
 [CONTINUA] o macaco pega uma grande banana e come
 [CORTA] o carro sai rodando muito rapido
-[CONTINUA] o carro bate no poste com força e amassa</textarea>
+[CONTINUA] o carro bate no poste com fora e amassa</textarea>
                 </div>
 
                 <div class="input-group">
                     <label style="display:flex; justify-content: space-between;">
-                        <span>Imagens de Referência (CORTA)</span>
-                        <span id="img-status" style="color:#10b981;">0/2 Necessárias</span>
+                        <span>Imagens de Referncia (CORTA)</span>
+                        <span id="img-status" style="color:#10b981;">0/2 Necessrias</span>
                     </label>
                     <input type="file" id="img-upload" multiple accept="image/*" style="display:none;">
                     
@@ -240,14 +240,14 @@
                             <span>Adicionar</span>
                         </div>
                         <div class="img-slot" id="btn-paste-img" style="background: rgba(245, 158, 11, 0.2); border-color: #f59e0b;">
-                            <span style="font-size: 1.5rem;">🎒</span>
+                            <span style="font-size: 1.5rem;"></span>
                             <span>Colar</span>
                         </div>
                     </div>
                 </div>
 
                 <button class="btn-action" id="btn-execute">
-                    🎬 Iniciar GRAVAÇÃO EM CADEIA
+                     Iniciar GRAVAO EM CADEIA
                 </button>
 
             </div>
@@ -255,14 +255,14 @@
             <!-- DIREITA: Viewer Cenas Processadas -->
             <div class="right-panel">
                 <div class="viewer-header">
-                    <h3 style="color:white; margin:0; font-size:1.1rem; display: flex; align-items: center; gap: 8px;">🎞️ Cenas (Filme)</h3>
-                    <button class="btn-action" style="width: auto; padding: 6px 12px; font-size: 0.8rem; background: #1e293b; color: white;" onclick="document.getElementById('cue-list').innerHTML=''">🗑️ Limpar</button>
+                    <h3 style="color:white; margin:0; font-size:1.1rem; display: flex; align-items: center; gap: 8px;"> Cenas (Filme)</h3>
+                    <button class="btn-action" style="width: auto; padding: 6px 12px; font-size: 0.8rem; background: #1e293b; color: white;" onclick="document.getElementById('cue-list').innerHTML=''"> Limpar</button>
                 </div>
 
                 <div class="cue-list" id="cue-list">
                     <div class="placeholder-text" style="text-align: center; margin-top: 50px; color: #475569;">
-                        <div style="font-size: 4rem; opacity: 0.5;">🎞️</div>
-                        <div style="margin-top: 10px;">Preencha o script e clique em Iniciar Gravação.</div>
+                        <div style="font-size: 4rem; opacity: 0.5;"></div>
+                        <div style="margin-top: 10px;">Preencha o script e clique em Iniciar Gravao.</div>
                     </div>
                 </div>
             </div>
@@ -286,9 +286,9 @@
                     <span style="color:#818cf8;">Entrada (Frame)</span>
                     <img>
                 </div>
-                <div class="media-arrow">➔</div>
+                <div class="media-arrow"></div>
                 <div class="media-box output-media">
-                    <span style="color:#10b981;">Vídeo Gerado</span>
+                    <span style="color:#10b981;">Vdeo Gerado</span>
                     <video autoplay loop muted playsinline></video>
                 </div>
             </div>

@@ -12,7 +12,7 @@ const State = {
     activeTool: 'select'
 };
 
-// --- 2. CONFIGURAÇÃO DE UI ---
+// --- 2. CONFIGURAO DE UI ---
 const UI = {
     zoomSlider: document.getElementById('zoom-slider'),
     playhead: document.getElementById('playhead'),
@@ -22,10 +22,10 @@ const UI = {
     mediaItems: document.querySelectorAll('.media-item')
 };
 
-// --- 3. INICIALIZAÇÃO DE DRAG AND DROP (Da Biblioteca para a Timeline) ---
+// --- 3. INICIALIZAO DE DRAG AND DROP (Da Biblioteca para a Timeline) ---
 UI.mediaItems.forEach(item => {
     item.addEventListener('dragstart', (e) => {
-        // Usa dataset.path se disponível (item importado), senão pega o texto do media-info
+        // Usa dataset.path se disponvel (item importado), seno pega o texto do media-info
         const path = item.dataset.path || 
                      item.querySelector('.media-info')?.firstChild?.textContent?.trim() ||
                      item.querySelector('.media-info')?.textContent?.trim() || 'media';
@@ -39,8 +39,8 @@ UI.mediaItems.forEach(item => {
     });
 });
 
-// Configurar as zonas de drop (Os trilhos) — gerenciado pela função setupDropZone() mais abaixo.
-// As trilhas V1 e A1 recebem o setup após a definição da função no Passo 10.
+// Configurar as zonas de drop (Os trilhos)  gerenciado pela funo setupDropZone() mais abaixo.
+// As trilhas V1 e A1 recebem o setup aps a definio da funo no Passo 10.
 
 // =============================================================
 // === PASSO 12: FERRAMENTA GILETE (RAZOR TOOL)             ===
@@ -58,7 +58,7 @@ function getRazorLine() {
             background: #ef4444; pointer-events: none; z-index: 200;
             display: none;
         `;
-        // Adicionar um cabeçalho
+        // Adicionar um cabealho
         const head = document.createElement('div');
         head.style.cssText = `
             position: absolute; top: -18px; left: -12px;
@@ -72,7 +72,7 @@ function getRazorLine() {
     return razorLine;
 }
 
-// Função central de corte — usada pela tecla C e pelo clique no modo Gilete
+// Funo central de corte  usada pela tecla C e pelo clique no modo Gilete
 function splitClipAtTime(clip, cutTime) {
     if (cutTime <= clip.start + 0.05 || cutTime >= clip.start + clip.duration - 0.05) return null; // Corte muito na borda
 
@@ -122,7 +122,7 @@ function setActiveTool(tool) {
     }
 }
 
-// Hover no modo Gilete — mostrar a linha de preview de corte
+// Hover no modo Gilete  mostrar a linha de preview de corte
 function setupRazorHover(trackContent) {
     trackContent.addEventListener('mousemove', (e) => {
         if (State.activeTool !== 'razor') return;
@@ -132,11 +132,11 @@ function setupRazorHover(trackContent) {
         const containerRect = tracksContainer.getBoundingClientRect();
         const contentRect = trackContent.getBoundingClientRect();
 
-        // Posição X relativa ao container de tracks
+        // Posio X relativa ao container de tracks
         const xInContent = e.clientX - contentRect.left + trackContent.scrollLeft;
         const cutTime = Math.max(0, xInContent / State.zoomLevel);
 
-        // Verificar se o mouse está sobre algum clipe
+        // Verificar se o mouse est sobre algum clipe
         const clipUnder = State.clips.find(c =>
             c.element.parentElement === trackContent &&
             cutTime > c.start + 0.05 &&
@@ -145,7 +145,7 @@ function setupRazorHover(trackContent) {
 
         const line = getRazorLine();
         if (clipUnder) {
-            // Posição X relativa ao timeline-tracks (incluindo scroll)
+            // Posio X relativa ao timeline-tracks (incluindo scroll)
             const xInContainer = e.clientX - containerRect.left + tracksContainer.scrollLeft;
             line.style.left = xInContainer + 'px';
             line.style.display = 'block';
@@ -168,7 +168,7 @@ function setupRazorHover(trackContent) {
         const xInContent = e.clientX - contentRect.left + trackContent.scrollLeft;
         const cutTime = Math.max(0, xInContent / State.zoomLevel);
 
-        // Clicar fora de qualquer clipe — mover o playhead e cortar tudo
+        // Clicar fora de qualquer clipe  mover o playhead e cortar tudo
         const clipUnder = State.clips.find(c =>
             c.element.parentElement === trackContent &&
             cutTime > c.start + 0.05 &&
@@ -178,7 +178,7 @@ function setupRazorHover(trackContent) {
         if (clipUnder) {
             splitClipAtTime(clipUnder, cutTime);
         } else {
-            // Clicar numa área vazia move o playhead e corta tudo que estiver na posição
+            // Clicar numa rea vazia move o playhead e corta tudo que estiver na posio
             State.currentTime = cutTime;
             updatePlayhead();
             splitAllClipsAtPlayhead();
@@ -193,9 +193,9 @@ function createClip(name, type, startTime, duration, color, trackElement, trimIn
         id: State.nextId++,
         name: name,
         type: type, // 'video' ou 'audio'
-        start: startTime, // Onde começa na timeline
+        start: startTime, // Onde comea na timeline
         duration: duration,
-        trimIn: trimIn, // Onde começa dentro do arquivo original
+        trimIn: trimIn, // Onde comea dentro do arquivo original
         color: color,
         element: null
     };
@@ -216,7 +216,7 @@ function createClip(name, type, startTime, duration, color, trackElement, trimIn
     dom.style.cursor = 'grab';
     dom.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
     dom.style.userSelect = 'none';
-    // Waveform para áudio | Thumbnail para vídeo
+    // Waveform para udio | Thumbnail para vdeo
     const extraVisual = type === 'audio'
         ? `<div class="waveform">${Array.from({length: 18}, (_,i) =>
             `<div class="waveform-bar" style="height:${30+Math.sin(i)*50}%;animation-delay:${i*0.07}s"></div>`
@@ -225,7 +225,7 @@ function createClip(name, type, startTime, duration, color, trackElement, trimIn
     
     dom.innerHTML = `<div class="trim-handle left"></div><strong style="font-size:0.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 20px);display:block;">${name.split('\\').pop().split('/').pop()}</strong><span class="duration-text">${duration.toFixed(1)}s</span>${extraVisual}<div class="trim-handle right"></div>`;
 
-    // Atualizar posição e largura com base no Zoom
+    // Atualizar posio e largura com base no Zoom
     updateClipVisual(clip, dom);
     
     // Inserir no DOM
@@ -233,10 +233,10 @@ function createClip(name, type, startTime, duration, color, trackElement, trimIn
     clip.element = dom;
     State.clips.push(clip);
 
-    // Lógica de Mover o Clipe e Fazer Trim
+    // Lgica de Mover o Clipe e Fazer Trim
     setupClipInteractions(clip);
     
-    // Adicionar botão de transição se for vídeo
+    // Adicionar boto de transio se for vdeo
     addTransitionButton(clip);
 }
 
@@ -250,7 +250,7 @@ function renderTimeline() {
     State.clips.forEach(clip => updateClipVisual(clip, clip.element));
 }
 
-// --- 5. LÓGICA DE INTERAÇÃO (Mover e Recortar) ---
+// --- 5. LGICA DE INTERAO (Mover e Recortar) ---
 function setupClipInteractions(clip) {
     let mode = null; // 'move', 'trim-left', 'trim-right'
     let startX = 0;
@@ -271,7 +271,7 @@ function setupClipInteractions(clip) {
         initialTrimIn = clip.trimIn;
         clip.element.style.zIndex = '100';
 
-        // Lógica de Seleção (Passo 14)
+        // Lgica de Seleo (Passo 14)
         State.clips.forEach(c => c.element.classList.remove('selected'));
         clip.element.classList.add('selected');
         State.selectedClip = clip;
@@ -291,7 +291,7 @@ function setupClipInteractions(clip) {
         } 
         else if (mode === 'trim-right') {
             let newDuration = initialDuration + deltaSeconds;
-            if (newDuration < 0.5) newDuration = 0.5; // Mínimo 0.5s
+            if (newDuration < 0.5) newDuration = 0.5; // Mnimo 0.5s
             clip.duration = newDuration;
         }
         else if (mode === 'trim-left') {
@@ -345,11 +345,11 @@ document.querySelector('.timeline-tracks').addEventListener('wheel', (e) => {
         const delta = e.deltaY < 0 ? 3 : -3;
         const newZoom = Math.min(50, Math.max(1, parseInt(slider.value) + delta));
         
-        if (oldZoom === newZoom) return; // Nenhuma mudança necessária
+        if (oldZoom === newZoom) return; // Nenhuma mudana necessria
         
-        // Descobrir em qual "tempo" da timeline o mouse está apontando
+        // Descobrir em qual "tempo" da timeline o mouse est apontando
         const rect = container.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left; // Posição do mouse na tela
+        const mouseX = e.clientX - rect.left; // Posio do mouse na tela
         const scrollX = container.scrollLeft;
         const timeAtMouse = Math.max(0, (mouseX + scrollX - 80) / oldZoom);
         
@@ -375,11 +375,11 @@ let previewCurrentClipId = null;
 function syncPreviewPlayer() {
     if (!mainPlayer) return;
     
-    // Encontra o clipe de vídeo sob a agulha — prioriza a trilha com maior z-order (B-Roll fica acima do V1)
+    // Encontra o clipe de vdeo sob a agulha  prioriza a trilha com maior z-order (B-Roll fica acima do V1)
     const videoClip = State.clips
         .filter(c => c.type === 'video')
         .filter(c => {
-            // Verifica se a trilha não está mutada ou oculta
+            // Verifica se a trilha no est mutada ou oculta
             const trackEl = c.element?.parentElement?.closest('.track');
             if (!trackEl) return true;
             const tid = trackEl.dataset.trackId;
@@ -401,7 +401,7 @@ function syncPreviewPlayer() {
         return;
     }
     
-    // Só troca o src se mudou de clipe
+    // S troca o src se mudou de clipe
     if (previewCurrentClipId !== videoClip.id) {
         previewCurrentClipId = videoClip.id;
         mainPlayer.src = videoClip.name.startsWith('http') 
@@ -410,15 +410,15 @@ function syncPreviewPlayer() {
         mainPlayer.load();
     }
     
-    // Sincroniza o tempo interno do vídeo com a posição relativa dentro do clipe
+    // Sincroniza o tempo interno do vdeo com a posio relativa dentro do clipe
     const clipLocalTime = (State.currentTime - videoClip.start) + (videoClip.trimIn || 0);
     
-    // Só corrige se estiver mais de 0.3s fora de sync (evita loop de correção)
+    // S corrige se estiver mais de 0.3s fora de sync (evita loop de correo)
     if (Math.abs(mainPlayer.currentTime - clipLocalTime) > 0.3) {
         mainPlayer.currentTime = clipLocalTime;
     }
     
-    // Se está reproduzindo na timeline, toca o player também
+    // Se est reproduzindo na timeline, toca o player tambm
     if (isPlaying && mainPlayer.paused && mainPlayer.src) {
         mainPlayer.play().catch(() => {}); // Erro silencioso (autoplay policy)
     } else if (!isPlaying && !mainPlayer.paused) {
@@ -435,7 +435,7 @@ function formatTime(seconds) {
     return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}:${ms.toString().padStart(2,'0')}`;
 }
 
-// --- PASSO 10: MÚLTIPLAS TRILHAS DINÂMICAS ---
+// --- PASSO 10: MLTIPLAS TRILHAS DINMICAS ---
 // Registro de estado de todas as trilhas
 State.tracks = {};
 
@@ -456,7 +456,7 @@ function registerTrack(trackEl) {
         header.appendChild(vol);
     }
     
-    // Registrar botões de controle
+    // Registrar botes de controle
     const btnMute = trackEl.querySelector('.btn-track-mute');
     const btnSolo = trackEl.querySelector('.btn-track-solo');
     const btnVis = trackEl.querySelector('.btn-track-vis');
@@ -478,14 +478,14 @@ function toggleMute(id, trackEl, btn) {
     State.tracks[id].muted = !State.tracks[id].muted;
     trackEl.classList.toggle('muted', State.tracks[id].muted);
     btn.classList.toggle('muted', State.tracks[id].muted);
-    btn.textContent = State.tracks[id].muted ? '🔇' : '🔊';
+    btn.textContent = State.tracks[id].muted ? '' : '';
 }
 
 function toggleSolo(id, trackEl, btn) {
     State.tracks[id].solo = !State.tracks[id].solo;
     btn.classList.toggle('soloed', State.tracks[id].solo);
     
-    // Se há algum solo ativo, mutar todas as outras trilhas
+    // Se h algum solo ativo, mutar todas as outras trilhas
     const hasSolo = Object.values(State.tracks).some(t => t.solo);
     document.querySelectorAll('.track').forEach(el => {
         const tid = el.dataset.trackId;
@@ -501,17 +501,17 @@ function toggleVisibility(id, trackEl, btn) {
     btn.classList.toggle('hidden-track', State.tracks[id].hidden);
 }
 
-let trackCounter = 2; // V1 e A1 já existem
+let trackCounter = 2; // V1 e A1 j existem
 
 function addTrack(type) {
     trackCounter++;
     const trackId = `track-${type}-${trackCounter}`;
     const defs = {
-        'broll':       { icon: '🎥', label: 'B-Roll', clipType: 'video', z: 2 },
-        'audio-narr':  { icon: '🎙️', label: 'Narr.',  clipType: 'audio', z: 1 },
-        'audio-music': { icon: '🎵', label: 'Música', clipType: 'audio', z: 0 }
+        'broll':       { icon: '', label: 'B-Roll', clipType: 'video', z: 2 },
+        'audio-narr':  { icon: '', label: 'Narr.',  clipType: 'audio', z: 1 },
+        'audio-music': { icon: '', label: 'Msica', clipType: 'audio', z: 0 }
     };
-    const { icon, label, z } = defs[type] || { icon: '📹', label: 'Extra', z: 1 };
+    const { icon, label, z } = defs[type] || { icon: '', label: 'Extra', z: 1 };
     
     const track = document.createElement('div');
     track.className = 'track video-track';
@@ -525,10 +525,10 @@ function addTrack(type) {
                 <span class="track-name">${label}</span>
             </div>
             <div class="track-controls">
-                <button class="btn-track-mute btn-icon" title="Mute" data-track-id="${trackId}">🔊</button>
+                <button class="btn-track-mute btn-icon" title="Mute" data-track-id="${trackId}"></button>
                 <button class="btn-track-solo btn-icon" title="Solo" data-track-id="${trackId}">S</button>
-                <button class="btn-track-vis btn-icon" title="Ocultar" data-track-id="${trackId}">👁️</button>
-                <button class="btn-icon" title="Remover trilha" onclick="this.closest('.track').remove(); delete State.tracks['${trackId}']">🗑️</button>
+                <button class="btn-track-vis btn-icon" title="Ocultar" data-track-id="${trackId}"></button>
+                <button class="btn-icon" title="Remover trilha" onclick="this.closest('.track').remove(); delete State.tracks['${trackId}']"></button>
             </div>
         </div>
         <div class="track-content" id="${trackId}-content"></div>
@@ -540,7 +540,7 @@ function addTrack(type) {
     return track.querySelector('.track-content');
 }
 
-// Extrair a lógica de drop para ser reutilizável por qualquer trilha
+// Extrair a lgica de drop para ser reutilizvel por qualquer trilha
 function setupDropZone(track) {
     track.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -575,26 +575,26 @@ function setupPlayheadClick(track) {
 // Registrar as trilhas existentes no HTML
 document.querySelectorAll('.track[data-track-id]').forEach(registerTrack);
 
-// Adicionar o botão de nova trilha na interface
+// Adicionar o boto de nova trilha na interface
 const addTrackRow = document.createElement('div');
 addTrackRow.id = 'btn-add-track-row';
 addTrackRow.style.cssText = 'padding: 6px 0; background: #0f172a; border-top: 1px dashed #1e293b;';
 addTrackRow.innerHTML = `
     <div style="display:flex; gap:6px; padding:4px 84px; align-items:center;">
         <span style="font-size:0.7rem;color:#475569;white-space:nowrap;">+ Trilha:</span>
-        <button class="btn-add-track" onclick="addTrack('broll')">B-Roll 🎥</button>
-        <button class="btn-add-track" onclick="addTrack('audio-narr')">Narração 🎙️</button>
-        <button class="btn-add-track" onclick="addTrack('audio-music')">Música 🎵</button>
+        <button class="btn-add-track" onclick="addTrack('broll')">B-Roll </button>
+        <button class="btn-add-track" onclick="addTrack('audio-narr')">Narrao </button>
+        <button class="btn-add-track" onclick="addTrack('audio-music')">Msica </button>
     </div>
 `;
 document.getElementById('timeline-tracks').appendChild(addTrackRow);
 
-// Inicialização (após todas as trilhas e drop zones serem configuradas)
+// Inicializao (aps todas as trilhas e drop zones serem configuradas)
 renderTimeline();
 updatePlayhead();
 
 // ============================================================
-// === PASSO 11: PLAYBACK ENGINE — SINCRONIA MULTITRACK      ===
+// === PASSO 11: PLAYBACK ENGINE  SINCRONIA MULTITRACK      ===
 // ============================================================
 
 // --- Estado central do Motor ---
@@ -605,21 +605,21 @@ let playbackRateVal = 1.0;    // 0.5 | 1.0 | 2.0
 let loopEnabled = false;
 let rafId = null;
 
-// Pool de <audio> elements para clipes de áudio
-const audioPool = new Map(); // clipId → HTMLAudioElement
+// Pool de <audio> elements para clipes de udio
+const audioPool = new Map(); // clipId  HTMLAudioElement
 
 const btnPlay = document.getElementById('btn-play');
 
 // --- Controles extras na barra de controle ---
 const controlsBar = document.querySelector('.player-controls');
 controlsBar.insertAdjacentHTML('beforeend', `
-    <select id="playback-rate" title="Velocidade de reprodução" style="background:#1e293b;border:1px solid #334155;color:#f8fafc;padding:3px 6px;border-radius:4px;font-size:0.8rem;cursor:pointer;">
-        <option value="0.5">0.5×</option>
-        <option value="1" selected>1×</option>
-        <option value="2">2×</option>
+    <select id="playback-rate" title="Velocidade de reproduo" style="background:#1e293b;border:1px solid #334155;color:#f8fafc;padding:3px 6px;border-radius:4px;font-size:0.8rem;cursor:pointer;">
+        <option value="0.5">0.5</option>
+        <option value="1" selected>1</option>
+        <option value="2">2</option>
     </select>
-    <button id="btn-loop" title="Repetir" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:0.8rem;cursor:pointer;">🔁 Loop</button>
-    <button id="btn-rewind" title="Voltar ao início" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:0.8rem;cursor:pointer;">⏮ Início</button>
+    <button id="btn-loop" title="Repetir" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:0.8rem;cursor:pointer;"> Loop</button>
+    <button id="btn-rewind" title="Voltar ao incio" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:0.8rem;cursor:pointer;"> Incio</button>
 `);
 
 document.getElementById('playback-rate').addEventListener('change', (e) => {
@@ -649,20 +649,20 @@ document.getElementById('btn-rewind').addEventListener('click', () => {
     if (wasPlaying) togglePlay();
 });
 
-// --- Duração total do projeto ---
+// --- Durao total do projeto ---
 function getProjectDuration() {
     if (State.clips.length === 0) return 0;
     return Math.max(...State.clips.map(c => c.start + c.duration));
 }
 
-// --- Gerenciar os <audio> elements de cada clipe de áudio ---
+// --- Gerenciar os <audio> elements de cada clipe de udio ---
 function syncAudioClips() {
     const now = State.currentTime;
 
     State.clips.forEach(clip => {
         if (clip.type !== 'audio') return;
 
-        // Verificar se a trilha não está mutada
+        // Verificar se a trilha no est mutada
         const trackEl = clip.element?.parentElement?.closest('.track');
         const tid = trackEl?.dataset?.trackId;
         const tState = tid ? State.tracks[tid] : null;
@@ -677,7 +677,7 @@ function syncAudioClips() {
         const audioEl = audioPool.get(clip.id);
 
         if (clipActive && !trackMuted) {
-            // Definir src se ainda não definido para este clipe
+            // Definir src se ainda no definido para este clipe
             if (!audioEl.dataset.clipId || audioEl.dataset.clipId !== String(clip.id)) {
                 audioEl.src = `file:///${clip.name.replace(/\\/g, '/')}`;
                 audioEl.dataset.clipId = clip.id;
@@ -696,7 +696,7 @@ function syncAudioClips() {
                 audioEl.play().catch(() => {});
             }
         } else {
-            // Clipe fora do range — pausar e "devolver ao pool"
+            // Clipe fora do range  pausar e "devolver ao pool"
             if (!audioEl.paused) {
                 audioEl.pause();
             }
@@ -704,7 +704,7 @@ function syncAudioClips() {
     });
 }
 
-// --- Destacar visualmente o clipe em reprodução ---
+// --- Destacar visualmente o clipe em reproduo ---
 function highlightActiveClips() {
     State.clips.forEach(clip => {
         const active = State.currentTime >= clip.start && State.currentTime < clip.start + clip.duration;
@@ -718,7 +718,7 @@ function highlightActiveClips() {
 function playbackLoop(now) {
     if (!isPlaying) return;
 
-    // Relógio-mestre: calcula o tempo de projeto usando wall-clock (evita drift acumulado)
+    // Relgio-mestre: calcula o tempo de projeto usando wall-clock (evita drift acumulado)
     const elapsed = (now - playStartWallTime) / 1000 * playbackRateVal;
     State.currentTime = playStartProjectTime + elapsed;
 
@@ -752,15 +752,15 @@ function playbackLoop(now) {
 // --- Toggle Play / Pause ---
 function togglePlay() {
     isPlaying = !isPlaying;
-    btnPlay.innerText = isPlaying ? '⏸ Pause' : '▶ Play';
+    btnPlay.innerText = isPlaying ? ' Pause' : ' Play';
 
     if (isPlaying) {
-        // Captura o ponto de partida no relógio de parede
+        // Captura o ponto de partida no relgio de parede
         playStartWallTime = performance.now();
         playStartProjectTime = State.currentTime;
         rafId = requestAnimationFrame(playbackLoop);
     } else {
-        // Pause: cancelar RAF e pausar todos os áudios
+        // Pause: cancelar RAF e pausar todos os udios
         if (rafId) cancelAnimationFrame(rafId);
         if (mainPlayer && !mainPlayer.paused) mainPlayer.pause();
         audioPool.forEach(a => { if (!a.paused) a.pause(); });
@@ -791,17 +791,17 @@ function updateInspector() {
         <div class="inspector-form">
             <div style="background:#1e293b; padding:8px; border-radius:6px; margin-bottom:10px;">
                 <h4 style="color:white; margin:0; font-size:0.85rem; word-break:break-all;">
-                    ${c.type==='video'?'🎬':'🎵'} ${c.name.split('\\').pop().split('/').pop()}
+                    ${c.type==='video'?'':''} ${c.name.split('\\').pop().split('/').pop()}
                 </h4>
             </div>
 
             <div style="display:flex; gap:10px;">
                 <div style="flex:1;">
-                    <label>Início (s)</label>
+                    <label>Incio (s)</label>
                     <input type="number" step="0.1" value="${c.start.toFixed(2)}" readonly style="background:#0f172a; color:#64748b;">
                 </div>
                 <div style="flex:1;">
-                    <label>Duração (s)</label>
+                    <label>Durao (s)</label>
                     <input type="number" step="0.1" value="${c.duration.toFixed(2)}" readonly style="background:#0f172a; color:#64748b;">
                 </div>
             </div>
@@ -856,7 +856,7 @@ function updateInspector() {
             c[field] = val;
             if (disp) disp.innerText = val + (field==='posX'||field==='posY'?'px':'%');
             
-            // Para preview imediato no player HTML (opcional, só de volume e opacidade para videos simples)
+            // Para preview imediato no player HTML (opcional, s de volume e opacidade para videos simples)
             applyLivePreview(c);
         });
     };
@@ -871,7 +871,7 @@ function updateInspector() {
     }
 }
 
-// Aplica propriedades em tempo real no preview HTML (apenas aproximação visual para o browser)
+// Aplica propriedades em tempo real no preview HTML (apenas aproximao visual para o browser)
 function applyLivePreview(clip) {
     if (clip.type === 'video' && mainPlayer && previewCurrentClipId === clip.id) {
         mainPlayer.volume = Math.min(1.0, clip.volume / 100);
@@ -887,7 +887,7 @@ function applyLivePreview(clip) {
 
 // Atalhos de Teclado
 window.addEventListener('keydown', (e) => {
-    // Espaço para Play/Pause
+    // Espao para Play/Pause
     if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
         togglePlay();
@@ -907,7 +907,7 @@ window.addEventListener('keydown', (e) => {
     // Ferramenta Gilete (Cortar ao meio com a tecla C)
     if (e.code === 'KeyC' && State.selectedClip && e.target.tagName !== 'INPUT') {
         const c = State.selectedClip;
-        // Verifica se a playhead está em cima do clipe selecionado
+        // Verifica se a playhead est em cima do clipe selecionado
         if (State.currentTime > c.start && State.currentTime < c.start + c.duration) {
             const cutPoint = State.currentTime;
             const originalDuration = c.duration;
@@ -923,7 +923,7 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// --- 9. EXPORTAÇÃO E SALVAMENTO (Fase 4 & Passo 16) ---
+// --- 9. EXPORTAO E SALVAMENTO (Fase 4 & Passo 16) ---
 
 function serializeProject() {
     return {
@@ -945,7 +945,7 @@ function serializeProject() {
             pos_x: c.posX !== undefined ? c.posX : 0,
             pos_y: c.posY !== undefined ? c.posY : 0
         })).sort((a, b) => a.start_time - b.start_time),
-        // Passo 13: incluir transições no JSON
+        // Passo 13: incluir transies no JSON
         transitions: State.transitions.map(t => ({
             id: t.id,
             type: t.type,
@@ -961,7 +961,7 @@ function loadProject(jsonString) {
         const data = JSON.parse(jsonString);
         
         // 1. Limpar timeline atual
-        if (isPlaying) togglePlay(); // Pausa a reprodução
+        if (isPlaying) togglePlay(); // Pausa a reproduo
         
         State.clips.forEach(c => c.element.remove());
         State.clips = [];
@@ -977,7 +977,7 @@ function loadProject(jsonString) {
         data.clips.forEach(c => {
             const trackEl = document.getElementById(c.track);
             if (!trackEl) {
-                console.warn(`Trilha ${c.track} não encontrada para o clipe ${c.name}`);
+                console.warn(`Trilha ${c.track} no encontrada para o clipe ${c.name}`);
                 return;
             }
             
@@ -985,7 +985,7 @@ function loadProject(jsonString) {
             createClip(c.name, c.type, c.start_time, c.duration, color, trackEl, c.trim_in);
             
             const newClip = State.clips[State.clips.length - 1];
-            newClip.id = c.id; // Mantém IDs consistentes para transições
+            newClip.id = c.id; // Mantm IDs consistentes para transies
             newClip.volume = c.volume !== undefined ? c.volume : 100;
             newClip.opacity = c.opacity !== undefined ? c.opacity : 100;
             newClip.scale = c.scale !== undefined ? c.scale : 100;
@@ -995,7 +995,7 @@ function loadProject(jsonString) {
             if (c.id > maxId) maxId = c.id;
         });
         
-        // 3. Reconstruir transições
+        // 3. Reconstruir transies
         if (data.transitions) {
             data.transitions.forEach(t => {
                 const leftClip = State.clips.find(c => c.id === t.left_clip_id);
@@ -1015,12 +1015,12 @@ function loadProject(jsonString) {
         
         alert('Projeto carregado com sucesso!');
     } catch(err) {
-        alert('Erro ao carregar projeto: Arquivo inválido ou corrompido.');
+        alert('Erro ao carregar projeto: Arquivo invlido ou corrompido.');
         console.error(err);
     }
 }
 
-// Função genérica para enviar job pro back-end
+// Funo genrica para enviar job pro back-end
 function sendToPython(draftMode = false) {
     const exportData = serializeProject();
     exportData.draft_mode = draftMode;
@@ -1035,22 +1035,22 @@ function sendToPython(draftMode = false) {
         if (data.status === 'success') {
             startRenderPolling(); // Inicia o monitoramento de progresso!
         } else {
-            alert("Erro na exportação: " + data.message);
+            alert("Erro na exportao: " + data.message);
         }
     })
     .catch(err => {
-        alert("Erro de conexão com o servidor Python. Ele está rodando?");
+        alert("Erro de conexo com o servidor Python. Ele est rodando?");
         console.error(err);
     });
 }
 
-// Botão "Exportar para Python" (Renderizar HD)
+// Boto "Exportar para Python" (Renderizar HD)
 document.getElementById('btn-export').addEventListener('click', () => sendToPython(false));
 
-// Botão "Rascunho Rápido" (Renderizar SD/Ultrafast)
+// Boto "Rascunho Rpido" (Renderizar SD/Ultrafast)
 document.getElementById('btn-draft').addEventListener('click', () => sendToPython(true));
 
-// Botão "Salvar Projeto" (Baixar .json local)
+// Boto "Salvar Projeto" (Baixar .json local)
 document.getElementById('btn-save-project').addEventListener('click', () => {
     const exportData = serializeProject();
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 4));
@@ -1060,7 +1060,7 @@ document.getElementById('btn-save-project').addEventListener('click', () => {
     dlAnchorElem.click();
 });
 
-// Botão "Abrir Projeto" (Carregar .json local)
+// Boto "Abrir Projeto" (Carregar .json local)
 const loadInput = document.getElementById('file-load-project');
 document.getElementById('btn-load-project').addEventListener('click', () => {
     loadInput.click();
@@ -1077,7 +1077,7 @@ loadInput.addEventListener('change', (e) => {
     reader.readAsText(file);
 });
 
-// --- 10. INTEGRAÇÃO REAL DE MÍDIA COM FFPROBE (Parte 7) ---
+// --- 10. INTEGRAO REAL DE MDIA COM FFPROBE (Parte 7) ---
 const btnImport = document.querySelector('.media-library .btn-icon');
 if (btnImport) {
     btnImport.addEventListener('click', () => {
@@ -1088,7 +1088,7 @@ if (btnImport) {
                     const path = data.path;
                     const name = path.split('/').pop().split('\\').pop();
                     
-                    // Usa FFprobe para ler a duração REAL do arquivo
+                    // Usa FFprobe para ler a durao REAL do arquivo
                     fetch(`/api/probe_file?path=${encodeURIComponent(path)}`)
                         .then(r => r.json())
                         .then(probe => {
@@ -1107,7 +1107,7 @@ if (btnImport) {
                                 : `${realDuration.toFixed(1)}s`;
                             
                             div.innerHTML = `
-                                <div class="media-thumb ${isVideo ? 'bg-blue' : 'bg-orange'}">${isVideo ? '🎥' : '🎵'}</div>
+                                <div class="media-thumb ${isVideo ? 'bg-blue' : 'bg-orange'}">${isVideo ? '' : ''}</div>
                                 <div class="media-info" style="font-size:0.7rem; word-break:break-all;">${name}<br><span>${durStr}</span></div>
                             `;
                             
@@ -1128,7 +1128,7 @@ if (btnImport) {
     });
 }
 
-// --- 11. BARRA DE PROGRESSO DE RENDERIZAÇÃO (Parte 7) ---
+// --- 11. BARRA DE PROGRESSO DE RENDERIZAO (Parte 7) ---
 let renderPollInterval = null;
 
 function startRenderPolling() {
@@ -1144,12 +1144,12 @@ function startRenderPolling() {
             display: flex; align-items: center; gap: 15px;
         `;
         container.innerHTML = `
-            <span style="color:#8b5cf6; font-weight:bold;">🎬 Renderizando:</span>
+            <span style="color:#8b5cf6; font-weight:bold;"> Renderizando:</span>
             <div style="flex:1; background:#1e293b; height:12px; border-radius:6px; overflow:hidden;">
                 <div id="render-progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg,#8b5cf6,#f97316); transition:width 0.5s;"></div>
             </div>
             <span id="render-progress-text" style="color:#f8fafc; font-family:monospace; min-width:200px;">Iniciando...</span>
-            <button onclick="this.parentElement.remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1.2rem;">✕</button>
+            <button onclick="this.parentElement.remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1.2rem;"></button>
         `;
         document.body.appendChild(container);
         bar = document.getElementById('render-progress-bar');
@@ -1166,7 +1166,7 @@ function startRenderPolling() {
                 
                 if (s.state === 'done') {
                     clearInterval(renderPollInterval);
-                    bar.style.background = '#22c55e'; // Verde = concluído
+                    bar.style.background = '#22c55e'; // Verde = concludo
                     setTimeout(() => {
                         document.getElementById('render-progress-container')?.remove();
                     }, 4000);
@@ -1184,14 +1184,14 @@ function startRenderPolling() {
 // =============================================================
 
 // --- 12. THUMBNAIL REAL NA BIBLIOTECA ---
-// Quando um card de mídia é adicionado, tenta carregar o frame do vídeo
+// Quando um card de mdia  adicionado, tenta carregar o frame do vdeo
 function attachThumbToCard(div, path) {
     const thumbEl = div.querySelector('.media-thumb');
     if (!thumbEl) return;
     const img = document.createElement('img');
     img.src = `/api/thumb?path=${encodeURIComponent(path)}`;
     img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:4px;';
-    img.onerror = () => {}; // Silencia se não conseguir (áudio, etc.)
+    img.onerror = () => {}; // Silencia se no conseguir (udio, etc.)
     img.onload = () => {
         thumbEl.innerHTML = '';
         thumbEl.appendChild(img);
@@ -1215,13 +1215,13 @@ function showContextMenu(x, y, clip) {
     const menu = document.createElement('div');
     menu.className = 'context-menu';
     menu.innerHTML = `
-        <div class="context-menu-item" id="ctx-duplicate">📋 Duplicar Clipe</div>
-        <div class="context-menu-item" id="ctx-split">✂️ Cortar aqui (C)</div>
+        <div class="context-menu-item" id="ctx-duplicate"> Duplicar Clipe</div>
+        <div class="context-menu-item" id="ctx-split"> Cortar aqui (C)</div>
         <div class="context-menu-divider"></div>
-        <div class="context-menu-item" id="ctx-color-video" style="${clip.type!=='video'?'display:none':''}">🔵 Vídeo Principal</div>
-        <div class="context-menu-item" id="ctx-color-broll" style="${clip.type!=='video'?'display:none':''}">🟣 B-Roll</div>
+        <div class="context-menu-item" id="ctx-color-video" style="${clip.type!=='video'?'display:none':''}"> Vdeo Principal</div>
+        <div class="context-menu-item" id="ctx-color-broll" style="${clip.type!=='video'?'display:none':''}"> B-Roll</div>
         <div class="context-menu-divider"></div>
-        <div class="context-menu-item danger" id="ctx-delete">🗑️ Excluir Clipe (Del)</div>
+        <div class="context-menu-item danger" id="ctx-delete"> Excluir Clipe (Del)</div>
     `;
     menu.style.left = x + 'px';
     menu.style.top = y + 'px';
@@ -1266,7 +1266,7 @@ function showContextMenu(x, y, clip) {
 document.addEventListener('click', closeContextMenu);
 document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-// Listener global de contextmenu em TODOS os trilhos (dinâmicos incluídos)
+// Listener global de contextmenu em TODOS os trilhos (dinmicos includos)
 document.getElementById('timeline-tracks').addEventListener('contextmenu', (e) => {
     e.preventDefault();
     const clipEl = e.target.closest('.timeline-clip');
@@ -1279,7 +1279,7 @@ document.getElementById('timeline-tracks').addEventListener('contextmenu', (e) =
 const btnShortcuts = document.createElement('button');
 btnShortcuts.className = 'btn-shortcuts';
 btnShortcuts.title = 'Atalhos de Teclado';
-btnShortcuts.innerText = '⌨️';
+btnShortcuts.innerText = '';
 document.body.appendChild(btnShortcuts);
 
 let shortcutsVisible = false;
@@ -1292,9 +1292,9 @@ btnShortcuts.addEventListener('click', () => {
             panel.id = 'shortcuts-panel';
             panel.className = 'shortcuts-panel';
             panel.innerHTML = `
-                <h4>⌨️ Atalhos do Editor</h4>
+                <h4> Atalhos do Editor</h4>
                 <div class="shortcut-row"><span>Play / Pause</span><span class="shortcut-key">Space</span></div>
-                <div class="shortcut-row"><span>Ferramenta Seleção</span><span class="shortcut-key">V</span></div>
+                <div class="shortcut-row"><span>Ferramenta Seleo</span><span class="shortcut-key">V</span></div>
                 <div class="shortcut-row"><span>Ferramenta Gilete</span><span class="shortcut-key">B</span></div>
                 <div class="shortcut-row"><span>Cortar sob Playhead</span><span class="shortcut-key">C</span></div>
                 <div class="shortcut-row"><span>Excluir clipe</span><span class="shortcut-key">Del</span></div>
@@ -1303,9 +1303,9 @@ btnShortcuts.addEventListener('click', () => {
                 <div class="shortcut-row"><span>Desfazer</span><span class="shortcut-key">Ctrl+Z</span></div>
                 <div class="shortcut-row"><span>Zoom +</span><span class="shortcut-key">+</span></div>
                 <div class="shortcut-row"><span>Zoom -</span><span class="shortcut-key">-</span></div>
-                <div class="shortcut-row"><span>Ir ao Início</span><span class="shortcut-key">Home</span></div>
+                <div class="shortcut-row"><span>Ir ao Incio</span><span class="shortcut-key">Home</span></div>
                 <div class="shortcut-row"><span>Ir ao Fim</span><span class="shortcut-key">End</span></div>
-                <div class="shortcut-row"><span>Voltar ao modo Seleção</span><span class="shortcut-key">Esc</span></div>
+                <div class="shortcut-row"><span>Voltar ao modo Seleo</span><span class="shortcut-key">Esc</span></div>
             `;
             document.body.appendChild(panel);
         }
@@ -1316,20 +1316,20 @@ btnShortcuts.addEventListener('click', () => {
 });
 
 // ================================================================
-// === PASSO 13: ZONAS DE TRANSIÇÃO                            ===
+// === PASSO 13: ZONAS DE TRANSIO                            ===
 // ================================================================
 
 const TRANSITION_TYPES = {
-    'fade':       { label: 'Fade',      icon: '🌅', ffmpeg: 'fade' },
-    'dissolve':   { label: 'Dissolve',  icon: '💫', ffmpeg: 'dissolve' },
-    'zoom-in':    { label: 'Zoom In',   icon: '🔍', ffmpeg: 'zoominzoomout' },
-    'slide-left': { label: 'Slide ←',   icon: '⬅️', ffmpeg: 'slideleft' },
-    'wipe':       { label: 'Wipe',      icon: '↔️', ffmpeg: 'wipeleft' },
+    'fade':       { label: 'Fade',      icon: '', ffmpeg: 'fade' },
+    'dissolve':   { label: 'Dissolve',  icon: '', ffmpeg: 'dissolve' },
+    'zoom-in':    { label: 'Zoom In',   icon: '', ffmpeg: 'zoominzoomout' },
+    'slide-left': { label: 'Slide ',   icon: '', ffmpeg: 'slideleft' },
+    'wipe':       { label: 'Wipe',      icon: '', ffmpeg: 'wipeleft' },
 };
 
 let selectedTransition = null;
 
-// Criar o bloco DOM da transição e posicioná-lo
+// Criar o bloco DOM da transio e posicion-lo
 function createTransitionBlock(leftClip, rightClip, type, duration) {
     // Evitar duplicata
     const existing = State.transitions.find(
@@ -1365,7 +1365,7 @@ function createTransitionBlock(leftClip, rightClip, type, duration) {
 
     updateTransitionPosition(transition);
 
-    // Clique → selecionar e abrir inspetor
+    // Clique  selecionar e abrir inspetor
     el.addEventListener('click', (e) => {
         e.stopPropagation();
         // Desselecionar anterior
@@ -1377,7 +1377,7 @@ function createTransitionBlock(leftClip, rightClip, type, duration) {
         openTransitionInspector(transition);
     });
 
-    // Duplo clique → mudar tipo rapidamente
+    // Duplo clique  mudar tipo rapidamente
     el.addEventListener('dblclick', (e) => {
         e.stopPropagation();
         showTransitionPicker(e.clientX, e.clientY, transition);
@@ -1386,13 +1386,13 @@ function createTransitionBlock(leftClip, rightClip, type, duration) {
     return transition;
 }
 
-// Atualizar a posição do bloco na timeline (chamado ao fazer zoom ou mover clips)
+// Atualizar a posio do bloco na timeline (chamado ao fazer zoom ou mover clips)
 function updateTransitionPosition(transition) {
     const leftClip = State.clips.find(c => c.id === transition.leftClipId);
     const rightClip = State.clips.find(c => c.id === transition.rightClipId);
     if (!leftClip || !rightClip || !transition.element) return;
 
-    const junctionTime = leftClip.start + leftClip.duration; // Momento da junção
+    const junctionTime = leftClip.start + leftClip.duration; // Momento da juno
     const halfDur = transition.duration / 2;
 
     const startPx = (junctionTime - halfDur) * State.zoomLevel + 80;
@@ -1402,15 +1402,15 @@ function updateTransitionPosition(transition) {
     transition.element.style.width = widthPx + 'px';
 }
 
-// Atualizar TODAS as transições (chamado ao fazer zoom)
+// Atualizar TODAS as transies (chamado ao fazer zoom)
 function updateAllTransitions() {
     State.transitions.forEach(updateTransitionPosition);
 }
 
-// Hook no zoomLevel — re-renderizar transições ao fazer zoom
+// Hook no zoomLevel  re-renderizar transies ao fazer zoom
 UI.zoomSlider.addEventListener('input', () => updateAllTransitions());
 
-// Modal de seleção de tipo de transição
+// Modal de seleo de tipo de transio
 function showTransitionPicker(x, y, transition) {
     document.getElementById('transition-picker')?.remove();
     const picker = document.createElement('div');
@@ -1423,7 +1423,7 @@ function showTransitionPicker(x, y, transition) {
     `;
     picker.innerHTML = `
         <div style="font-size:0.75rem;color:#94a3b8;padding:4px 8px 8px;border-bottom:1px solid #334155;margin-bottom:4px;">
-            ✨ Tipo de Transição
+             Tipo de Transio
         </div>
         ${Object.entries(TRANSITION_TYPES).map(([key, def]) => `
             <div class="context-menu-item" data-type="${key}">
@@ -1432,13 +1432,13 @@ function showTransitionPicker(x, y, transition) {
         `).join('')}
         <div class="context-menu-divider"></div>
         <div style="padding:4px 8px;">
-            <label style="font-size:0.7rem;color:#94a3b8;">Duração (s)</label>
+            <label style="font-size:0.7rem;color:#94a3b8;">Durao (s)</label>
             <input type="number" id="t-dur-input" min="0.2" max="5" step="0.1" value="${transition.duration}"
                 style="width:100%;background:#0f172a;border:1px solid #334155;color:white;padding:3px 6px;border-radius:3px;font-size:0.8rem;margin-top:3px;">
         </div>
         <div style="display:flex;gap:4px;padding:6px 8px 2px;">
-            <button id="t-apply" style="flex:1;background:#8b5cf6;border:none;color:white;padding:4px;border-radius:4px;cursor:pointer;font-size:0.75rem;">✔ Aplicar</button>
-            <button id="t-remove" style="flex:1;background:#7f1d1d;border:none;color:#fca5a5;padding:4px;border-radius:4px;cursor:pointer;font-size:0.75rem;">🗑 Remover</button>
+            <button id="t-apply" style="flex:1;background:#8b5cf6;border:none;color:white;padding:4px;border-radius:4px;cursor:pointer;font-size:0.75rem;"> Aplicar</button>
+            <button id="t-remove" style="flex:1;background:#7f1d1d;border:none;color:#fca5a5;padding:4px;border-radius:4px;cursor:pointer;font-size:0.75rem;"> Remover</button>
         </div>
     `;
     document.body.appendChild(picker);
@@ -1487,7 +1487,7 @@ function removeTransition(transition) {
     }
 }
 
-// Abre o inspetor de transição no painel lateral
+// Abre o inspetor de transio no painel lateral
 function openTransitionInspector(transition) {
     const content = document.getElementById('inspector-content');
     const def = TRANSITION_TYPES[transition.type] || TRANSITION_TYPES['fade'];
@@ -1498,10 +1498,10 @@ function openTransitionInspector(transition) {
             <div style="background:#1e293b;border-radius:8px;padding:10px;text-align:center;">
                 <span style="font-size:2rem;">${def.icon}</span>
                 <div style="font-weight:bold;color:#f59e0b;margin-top:4px;">${def.label}</div>
-                <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">Transição</div>
+                <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">Transio</div>
             </div>
             <label class="inspector-form">
-                <span>Tipo de Transição</span>
+                <span>Tipo de Transio</span>
                 <select id="t-type-sel">
                     ${Object.entries(TRANSITION_TYPES).map(([k, d]) =>
                         `<option value="${k}" ${k === transition.type ? 'selected' : ''}>${d.icon} ${d.label}</option>`
@@ -1509,17 +1509,17 @@ function openTransitionInspector(transition) {
                 </select>
             </label>
             <label class="inspector-form">
-                <span>Duração (segundos)</span>
+                <span>Durao (segundos)</span>
                 <input type="number" id="t-dur-sel" min="0.2" max="5" step="0.1" value="${transition.duration}">
             </label>
             <div style="font-size:0.7rem;color:#64748b;">
-                📎 ${leftClip?.name?.split(/[\\/]/).pop() ?? '?'} → ${rightClip?.name?.split(/[\\/]/).pop() ?? '?'}
+                 ${leftClip?.name?.split(/[\\/]/).pop() ?? '?'}  ${rightClip?.name?.split(/[\\/]/).pop() ?? '?'}
             </div>
             <button id="t-apply-insp" style="background:#8b5cf6;border:none;color:white;padding:8px;border-radius:6px;cursor:pointer;font-weight:bold;">
-                ✔ Aplicar
+                 Aplicar
             </button>
             <button id="t-remove-insp" style="background:#7f1d1d;border:none;color:#fca5a5;padding:6px;border-radius:6px;cursor:pointer;">
-                🗑 Remover Transição
+                 Remover Transio
             </button>
         </div>
     `;
@@ -1538,19 +1538,19 @@ function openTransitionInspector(transition) {
     document.getElementById('t-remove-insp').onclick = () => removeTransition(transition);
 }
 
-// Adicionar botão "+" na borda direita de cada clipe ao criá-lo
+// Adicionar boto "+" na borda direita de cada clipe ao cri-lo
 function addTransitionButton(clip) {
-    if (clip.type !== 'video') return; // Transições só em vídeo
+    if (clip.type !== 'video') return; // Transies s em vdeo
     const addBtn = document.createElement('button');
     addBtn.className = 'transition-add-btn';
     addBtn.textContent = '+';
-    addBtn.title = 'Adicionar Transição';
+    addBtn.title = 'Adicionar Transio';
     addBtn.style.left = '100%';
     clip.element.appendChild(addBtn);
 
     addBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        // Encontrar o clipe mais próximo à direita na mesma trilha
+        // Encontrar o clipe mais prximo  direita na mesma trilha
         const trackEl = clip.element.parentElement;
         const clipsOnTrack = State.clips.filter(c =>
             c.element.parentElement === trackEl && c.type === 'video'
@@ -1560,14 +1560,14 @@ function addTransitionButton(clip) {
         const nextClip = clipsOnTrack[myIndex + 1];
 
         if (!nextClip) {
-            alert('Sem clipe à direita para adicionar transição.');
+            alert('Sem clipe  direita para adicionar transio.');
             return;
         }
 
-        // Verificar adjacência (menos de 0.5s de gap)
+        // Verificar adjacncia (menos de 0.5s de gap)
         const gap = nextClip.start - (clip.start + clip.duration);
         if (gap > 0.5) {
-            alert('Os clipes não são adjacentes. Coloque-os lado a lado primeiro.');
+            alert('Os clipes no so adjacentes. Coloque-os lado a lado primeiro.');
             return;
         }
 
@@ -1609,7 +1609,7 @@ window.addEventListener('keydown', (e) => {
         }
     }
 
-    // Ctrl+Z = Desfazer (remove o último clipe adicionado)
+    // Ctrl+Z = Desfazer (remove o ltimo clipe adicionado)
     if (e.ctrlKey && e.code === 'KeyZ') {
         e.preventDefault();
         const last = State.clips[State.clips.length - 1];
@@ -1632,7 +1632,7 @@ window.addEventListener('keydown', (e) => {
         slider.dispatchEvent(new Event('input'));
     }
 
-    // Home = Voltar ao início
+    // Home = Voltar ao incio
     if (e.code === 'Home') {
         State.currentTime = 0;
         updatePlayhead();
@@ -1652,13 +1652,13 @@ window.addEventListener('keydown', (e) => {
         e.preventDefault();
         togglePlay();
     }
-    // V = Ferramenta de Seleção
+    // V = Ferramenta de Seleo
     if (e.code === 'KeyV') setActiveTool('select');
     // B = Gilete (Blade/Razor)
     if (e.code === 'KeyB') setActiveTool('razor');
-    // Escape = Volta para Seleção
+    // Escape = Volta para Seleo
     if (e.code === 'Escape') setActiveTool('select');
-    // C = Cortar todos os clipes sob o playhead (modo rápido, sem mudar de ferramenta)
+    // C = Cortar todos os clipes sob o playhead (modo rpido, sem mudar de ferramenta)
     if (e.code === 'KeyC' && !e.ctrlKey) splitAllClipsAtPlayhead();
     // Delete/Backspace = Excluir clipe selecionado
     if ((e.code === 'Delete' || e.code === 'Backspace') && State.selectedClip) {

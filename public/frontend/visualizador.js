@@ -4,7 +4,7 @@
 
 class ApolloVisualizador {
     constructor() {
-        this.instances = {}; // Armazena instâncias ativas
+        this.instances = {}; // Armazena instncias ativas
         this.zIndexCounter = 1000;
         this.initCSS();
     }
@@ -126,7 +126,7 @@ class ApolloVisualizador {
      * Abre um arquivo no visualizador
      * @param {string} url URL do arquivo
      * @param {string} type 'image', 'video', 'audio', etc
-     * @param {string} title Título da janela
+     * @param {string} title Ttulo da janela
      * @param {string} bagageiroId ID do DOM do item no bagageiro para sincronizar cor
      */
     open(url, type, title = 'Visualizador', bagageiroId = null) {
@@ -137,16 +137,16 @@ class ApolloVisualizador {
         win.className = 'apollo-visualizador';
         win.style.zIndex = this.zIndexCounter++;
         
-        // Tamanho inicial baseado no tipo (poderia ser mais inteligente e ler proporção real)
+        // Tamanho inicial baseado no tipo (poderia ser mais inteligente e ler proporo real)
         if(type === 'video') {
             win.style.width = '400px';
-            win.style.height = '700px'; // Assumindo vertical por padrão para Shorts
+            win.style.height = '700px'; // Assumindo vertical por padro para Shorts
         } else {
             win.style.width = '600px';
             win.style.height = '400px';
         }
         
-        // Posição inicial centralizada
+        // Posio inicial centralizada
         win.style.left = (window.innerWidth / 2 - parseInt(win.style.width)/2) + 'px';
         win.style.top = (window.innerHeight / 2 - parseInt(win.style.height)/2) + 'px';
 
@@ -158,7 +158,7 @@ class ApolloVisualizador {
         } else if (type === 'audio') {
             contentHtml = `
                 <div style="padding:20px; text-align:center; color:#fff;">
-                    <div style="font-size:3rem; margin-bottom:10px;">🎵</div>
+                    <div style="font-size:3rem; margin-bottom:10px;"></div>
                     <audio src="${url}" controls autoplay></audio>
                 </div>`;
         } else if (type === 'editor') {
@@ -206,7 +206,7 @@ class ApolloVisualizador {
             win.style.zIndex = this.zIndexCounter++;
         });
 
-        // Minimização (Bolinha)
+        // Minimizao (Bolinha)
         btnMin.addEventListener('click', (e) => {
             e.stopPropagation();
             this.toggleMinimize(id);
@@ -254,7 +254,7 @@ class ApolloVisualizador {
             document.addEventListener('mouseup', onMouseUp);
         });
 
-        // Drag da bolinha também funciona
+        // Drag da bolinha tambm funciona
         win.addEventListener('mousedown', (e) => {
             if (inst.state !== 'minimized') return;
             // Se clicar na bolinha para arrastar
@@ -264,7 +264,7 @@ class ApolloVisualizador {
             initialLeft = win.offsetLeft;
             initialTop = win.offsetTop;
             
-            // Variável para não disparar o click (restore) se for só drag
+            // Varivel para no disparar o click (restore) se for s drag
             inst.didDrag = false;
 
             const onMouseMoveBubble = (ev) => {
@@ -280,7 +280,7 @@ class ApolloVisualizador {
                 isDragging = false;
                 document.removeEventListener('mousemove', onMouseMoveBubble);
                 document.removeEventListener('mouseup', onMouseUpBubble);
-                // Reseta a flag apos um pequeno delay para não interferir com o evento de click
+                // Reseta a flag apos um pequeno delay para no interferir com o evento de click
                 setTimeout(() => inst.didDrag = false, 50);
             };
 

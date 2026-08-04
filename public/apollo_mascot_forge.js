@@ -7,8 +7,8 @@ class MascotForge {
     constructor() {
         this.isOpen = false;
         this.unlockedAvatares = [
-            { id: 'ruby', name: 'Ruby (Default)', role: 'Assistente Geral', prompt: 'Você é Ruby, assistente oficial do Apollo Edit.', image: 'assets/ruby_mascot.png' },
-            { id: 'master_chef', name: 'Master Chef', role: 'Copiloto de Culinária', prompt: 'Você é um chef francês estressado que julga receitas.', image: 'https://cdn-icons-png.flaticon.com/512/3461/3461836.png' }
+            { id: 'ruby', name: 'Ruby (Default)', role: 'Assistente Geral', prompt: 'Voc  Ruby, assistente oficial do Apollo Edit.', image: 'assets/ruby_mascot.png' },
+            { id: 'master_chef', name: 'Master Chef', role: 'Copiloto de Culinria', prompt: 'Voc  um chef francs estressado que julga receitas.', image: 'https://cdn-icons-png.flaticon.com/512/3461/3461836.png' }
         ];
 
         this.initUI();
@@ -23,7 +23,7 @@ class MascotForge {
                     <!-- Header -->
                     <div style="background: linear-gradient(90deg, #1f1f1f, #2a1b40); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8b5cf6;">
                         <h2 style="margin: 0; color: #fff; display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 24px;">🧬</span> Mascot Forge
+                            <span style="font-size: 24px;"></span> Mascot Forge
                         </h2>
                         <button id="close-forge-btn" style="background: transparent; border: none; color: #aaa; font-size: 24px; cursor: pointer; transition: color 0.2s;">&times;</button>
                     </div>
@@ -45,7 +45,7 @@ class MascotForge {
                             </div>
                         </div>
 
-                        <!-- Área de Conteúdo -->
+                        <!-- rea de Contedo -->
                         <div id="forge-content-area" style="flex: 1; padding: 30px; overflow-y: auto;">
                             <!-- Formulario de Forja -->
                             <div id="tab-forjar" style="display: none; animation: fadeIn 0.3s;">
@@ -57,38 +57,38 @@ class MascotForge {
                                         <input type="text" placeholder="Ex: Sr. Sarcasmo" style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; border-radius: 8px; color: white; margin-top: 5px;">
                                     </div>
                                     <div style="flex: 1;">
-                                        <label style="color: #aaa; font-size: 13px;">Profissão / Role</label>
+                                        <label style="color: #aaa; font-size: 13px;">Profisso / Role</label>
                                         <input type="text" placeholder="Ex: Editor Chefe" style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; border-radius: 8px; color: white; margin-top: 5px;">
                                     </div>
                                 </div>
 
                                 <div style="margin-bottom: 20px;">
-                                    <label style="color: #aaa; font-size: 13px;">System Prompt (Cérebro da IA)</label>
-                                    <textarea placeholder="Descreva como ele deve agir, suas gírias, seu nível de grosseria ou educação..." style="width: 100%; height: 80px; padding: 12px; background: #222; border: 1px solid #444; border-radius: 8px; color: white; margin-top: 5px; resize: none;"></textarea>
+                                    <label style="color: #aaa; font-size: 13px;">System Prompt (Crebro da IA)</label>
+                                    <textarea placeholder="Descreva como ele deve agir, suas grias, seu nvel de grosseria ou educao..." style="width: 100%; height: 80px; padding: 12px; background: #222; border: 1px solid #444; border-radius: 8px; color: white; margin-top: 5px; resize: none;"></textarea>
                                 </div>
 
                                 <div style="display: flex; gap: 20px; margin-bottom: 30px;">
                                     <div style="flex: 1; border: 2px dashed #444; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#8b5cf6'" onmouseout="this.style.borderColor='#444'">
-                                        <div style="font-size: 24px; margin-bottom: 10px;">🖼️</div>
+                                        <div style="font-size: 24px; margin-bottom: 10px;"></div>
                                         <div style="color: #fff; font-size: 14px;">Upload Imagem Base</div>
-                                        <div style="color: #777; font-size: 11px; margin-top: 5px;">O motor visual gerará as expressões (feliz, raiva, etc) com base nesta foto.</div>
+                                        <div style="color: #777; font-size: 11px; margin-top: 5px;">O motor visual gerar as expresses (feliz, raiva, etc) com base nesta foto.</div>
                                     </div>
                                     <div style="flex: 1; border: 2px dashed #444; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#444'">
-                                        <div style="font-size: 24px; margin-bottom: 10px;">🎙️</div>
+                                        <div style="font-size: 24px; margin-bottom: 10px;"></div>
                                         <div style="color: #fff; font-size: 14px;">Audio Sample (15s)</div>
-                                        <div style="color: #777; font-size: 11px; margin-top: 5px;">Para o Voice Cloning (TTS). Suba um áudio limpo do personagem falando.</div>
+                                        <div style="color: #777; font-size: 11px; margin-top: 5px;">Para o Voice Cloning (TTS). Suba um udio limpo do personagem falando.</div>
                                     </div>
                                 </div>
 
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
-                                    <div style="color: #aaa; font-size: 14px;">Custo de Sintetização: <strong style="color: #a78bfa;">1.500 Cristais</strong></div>
+                                    <div style="color: #aaa; font-size: 14px;">Custo de Sintetizao: <strong style="color: #a78bfa;">1.500 Cristais</strong></div>
                                     <button style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
                                         Sintetizar & Acordar IA
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Seleção de Avatar -->
+                            <!-- Seleo de Avatar -->
                             <div id="tab-selecao" style="display: block; animation: fadeIn 0.3s; text-align: center;">
                                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                                     <img id="preview-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid #8b5cf6; box-shadow: 0 0 30px rgba(139, 92, 246, 0.3); margin-bottom: 20px; object-fit: cover;">
@@ -100,11 +100,11 @@ class MascotForge {
                                     </div>
 
                                     <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 8px; border: 1px dashed #444; width: 100%; max-width: 300px;">
-                                        <label for="select-nitro-level" style="color: #ccc; font-size: 14px; font-weight: bold;">Motor de Geração de Voz</label>
+                                        <label for="select-nitro-level" style="color: #ccc; font-size: 14px; font-weight: bold;">Motor de Gerao de Voz</label>
                                         <select id="select-nitro-level" style="background: #333; color: white; border: 1px solid #555; padding: 8px; border-radius: 4px; width: 100%; outline: none; cursor: pointer;">
-                                            <option value="free">Lento (CPU Compartilhada) - Grátis</option>
-                                            <option value="nitro">Rápido (GPU T4) - 2 Cristais/msg</option>
-                                            <option value="nitro_master">Instantâneo (GPU Ultra) - 5 Cristais/msg</option>
+                                            <option value="free">Lento (CPU Compartilhada) - Grtis</option>
+                                            <option value="nitro">Rpido (GPU T4) - 2 Cristais/msg</option>
+                                            <option value="nitro_master">Instantneo (GPU Ultra) - 5 Cristais/msg</option>
                                         </select>
                                     </div>
 
@@ -135,7 +135,7 @@ class MascotForge {
         
         this.renderList();
         
-        // Substituir o alert do apollo_mascot pelo método open() do forge
+        // Substituir o alert do apollo_mascot pelo mtodo open() do forge
         if (window.apolloCompanion) {
             window.apolloCompanion.openMascotMenu = () => this.open();
         }
@@ -154,7 +154,7 @@ class MascotForge {
                 </div>
             `;
             el.onclick = () => {
-                // Atualiza seleção visual na lista
+                // Atualiza seleo visual na lista
                 document.querySelectorAll('.avatar-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
                 this.selectAvatar(avatar);
@@ -162,7 +162,7 @@ class MascotForge {
             this.listContainer.appendChild(el);
         });
         
-        // Seleciona o primeiro por padrão
+        // Seleciona o primeiro por padro
         if(this.unlockedAvatares.length > 0) this.selectAvatar(this.unlockedAvatares[0]);
     }
 
@@ -180,14 +180,14 @@ class MascotForge {
     bindEvents() {
         document.getElementById('close-forge-btn').addEventListener('click', () => this.close());
         
-        // Botão Forjar Tab
+        // Boto Forjar Tab
         document.getElementById('btn-tab-forjar').addEventListener('click', () => {
             document.querySelectorAll('.avatar-item').forEach(i => i.classList.remove('active'));
             this.tabSelecao.style.display = 'none';
             this.tabForjar.style.display = 'block';
         });
 
-        // Botão Equipar
+        // Boto Equipar
         document.getElementById('btn-equip-avatar').addEventListener('click', () => {
             this.equipCurrentAvatar();
         });
@@ -204,11 +204,11 @@ class MascotForge {
             };
             window.apolloCompanion.setEmotion('idle');
             
-            // Toca um áudio ou exibe alerta de sucesso
+            // Toca um udio ou exibe alerta de sucesso
             if(window.apolloSfx) window.apolloSfx.play('success');
             
             // Fala de entrada
-            window.apolloCompanion.speak(`Identidade alterada para ${this.selectedAvatar.name}. Às ordens!`);
+            window.apolloCompanion.speak(`Identidade alterada para ${this.selectedAvatar.name}. s ordens!`);
         }
         
         this.close();
