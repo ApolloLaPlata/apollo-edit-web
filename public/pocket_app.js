@@ -1,13 +1,5 @@
 // Apollo Pocket Director — Voice Core & Diagnostic OS (Master Turbo Blaster)
-// --- APOLLO EDIT WEB NATIVE INTEGRATION ---
-let API_BASE_URL = '';
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) {
-    // Acesso Local ou na Rede Wi-Fi (Celular aponta para o IP do PC na porta 8100)
-    API_BASE_URL = 'http://' + window.location.hostname + ':8100';
-} else {
-    // Acesso Externo via Nuvem/Tunnel (Garante o HTTPS)
-    API_BASE_URL = 'https://api.apolloedit.com.br';
-}
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8000' : 'https://api.apolloedit.com.br';
 
 // --- ETAPA 181: Módulo de Criptografia AES-256 ---
 class ApolloCrypto {
@@ -433,7 +425,7 @@ class PocketDirectorApp {
 
   // --- ETAPA 171 e 172: O GUARDIÃO DE BOLSO (DAEMON) ---
   startBackgroundDaemon() {
-    console.log('🛡 Iniciando Daemon do Apollo Pocket Director em Background...');
+    console.log('🛡️ Iniciando Daemon do Apollo Pocket Director em Background...');
     // Roda a cada 60 segundos (pode ser ajustado)
     setInterval(async () => {
       if (!this.notificationsEnabled) return;
@@ -604,7 +596,7 @@ class PocketDirectorApp {
         console.log("💎 Cristais sincronizados com o Maestro.");
       }
     } catch (e) {
-      console.warn("⚠ Maestro Offline. Carregando Carteira Offline Criptografada...");
+      console.warn("⚠️ Maestro Offline. Carregando Carteira Offline Criptografada...");
       const encrypted = await ApolloDirectorDB.getSetting('offline_crystals');
       if (encrypted) {
         try {
@@ -619,7 +611,7 @@ class PocketDirectorApp {
     }
   }
 
-  // Ativa Microfone e udio no primeiro toque do usuário
+  // Ativa Microfone e Áudio no primeiro toque do usuário
   async activateAudioAndMic() {
     if (!this.audioUnlocked) {
       this.audioUnlocked = true;
@@ -735,7 +727,7 @@ class PocketDirectorApp {
 
       this.micInitialized = true;
       this.setOrbState('listening');
-      console.log('🎙 Microfone e Analisador de udio conectados com sucesso.');
+      console.log('🎙️ Microfone e Analisador de Áudio conectados com sucesso.');
       this.populateAudioDevices();
     } catch (err) {
       console.warn('Aviso ao acessar microfone via getUserMedia:', err);
@@ -890,9 +882,9 @@ class PocketDirectorApp {
     console.log('🔄 Tentando restaurar modo primário STT: Groq Whisper Cloud...');
     this.sttMode = 'whisper';
     if (this.sttTestBox) {
-      this.sttTestBox.textContent = '🎙 Groq Whisper STT Restaurado (Primário)';
+      this.sttTestBox.textContent = '🎙️ Groq Whisper STT Restaurado (Primário)';
     }
-    this.liveSubtitle.textContent = '🎙 Groq Whisper STT Restaurado';
+    this.liveSubtitle.textContent = '🎙️ Groq Whisper STT Restaurado';
     this.triggerHaptic('success');
   }
 
@@ -1039,7 +1031,7 @@ class PocketDirectorApp {
             if (e.data && e.data.size > 0) this.vadChunks.push(e.data);
           };
           this.vadRecorder.start(100);
-          console.log('🎙 VAD: Detecção de voz ativa (Gravando fala do usuário...)');
+          console.log('🎙️ VAD: Detecção de voz ativa (Gravando fala do usuário...)');
           this.triggerHaptic('start');
         } catch(err) {
           console.warn('Erro ao iniciar VAD MediaRecorder:', err);
@@ -1062,9 +1054,9 @@ class PocketDirectorApp {
                 console.log('⚡ Modo STT Fallback Ativo (Web Speech API) — ignorando envio de áudio para Groq Whisper.');
               } else if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                 if (Date.now() - (this.lastSpeechRecognitionTime || 0) > 1200) {
-                  console.log(`🗣 VAD [Etapa 7]: Enviando fala (${blob.size} bytes) para Groq Whisper STT...`);
-                  if (this.sttTestBox) this.sttTestBox.textContent = `🗣 udio enviado (${Math.round(blob.size/1024)} KB)...`;
-                  this.liveSubtitle.textContent = '🎙 Transcrevendo voz...';
+                  console.log(`🗣️ VAD [Etapa 7]: Enviando fala (${blob.size} bytes) para Groq Whisper STT...`);
+                  if (this.sttTestBox) this.sttTestBox.textContent = `🗣️ Áudio enviado (${Math.round(blob.size/1024)} KB)...`;
+                  this.liveSubtitle.textContent = '🎙️ Transcrevendo voz...';
                   try {
                     const buffer = await blob.arrayBuffer();
                     this.sendToColmeia(buffer);
@@ -1075,7 +1067,7 @@ class PocketDirectorApp {
                   }
                 }
               } else {
-                console.warn('⚠ Conexão WebSocket offline ou instável. Ativando fallback STT nativo (Etapa 14)...');
+                console.warn('⚠️ Conexão WebSocket offline ou instável. Ativando fallback STT nativo (Etapa 14)...');
                 this.activateWebSpeechFallback('Conexão WebSocket indisponível (4G/Wi-Fi instável)');
               }
             }
@@ -1095,7 +1087,7 @@ class PocketDirectorApp {
     await this.activateAudioAndMic();
 
     if (!this.mediaStream) {
-      this.testRecordStatus.textContent = ' Erro: Microfone não disponível. Clique em "Solicitar Permissão" acima.';
+      this.testRecordStatus.textContent = '❌ Erro: Microfone não disponível. Clique em "Solicitar Permissão" acima.';
       return;
     }
 
@@ -1120,7 +1112,7 @@ class PocketDirectorApp {
             this.testRecordStatus.textContent = '✅ Teste concluído! Se você ouviu sua voz, o microfone está perfeito.';
           };
         }).catch(err => {
-          this.testRecordStatus.textContent = ' Erro ao reproduzir o teste: ' + err.message;
+          this.testRecordStatus.textContent = '❌ Erro ao reproduzir o teste: ' + err.message;
         });
       };
 
@@ -1142,7 +1134,7 @@ class PocketDirectorApp {
 
     } catch (err) {
       this.isRecordingTest = false;
-      this.testRecordStatus.textContent = ' Erro ao gravar teste: ' + err.message;
+      this.testRecordStatus.textContent = '❌ Erro ao gravar teste: ' + err.message;
     }
   }
 
@@ -1160,14 +1152,14 @@ class PocketDirectorApp {
     await this.activateAudioAndMic();
 
     if (!this.mediaStream) {
-      this.testRecordStatus.textContent = ' Erro: Microfone indisponível. Solicite permissão acima.';
+      this.testRecordStatus.textContent = '❌ Erro: Microfone indisponível. Solicite permissão acima.';
       return;
     }
 
     try {
       this.isEchoLoopActive = true;
       if (this.btnTestEchoLoop) {
-        this.btnTestEchoLoop.textContent = ' Parar Echo Loop';
+        this.btnTestEchoLoop.textContent = '⏹️ Parar Echo Loop';
         this.btnTestEchoLoop.style.background = 'var(--coral-glow)';
       }
       if (this.echoLoopStatsBox) this.echoLoopStatsBox.style.display = 'block';
@@ -1229,12 +1221,12 @@ class PocketDirectorApp {
 
         if (this.echoQualityBadge) {
           if (snr >= 20 && this.echoNoiseFloorDb < -45) {
-            this.echoQualityBadge.textContent = '✅ RUDO BAIXO • GANHO ÓTIMO';
+            this.echoQualityBadge.textContent = '✅ RUÍDO BAIXO • GANHO ÓTIMO';
             this.echoQualityBadge.style.color = '#10b981';
             this.echoQualityBadge.style.borderColor = '#10b981';
             this.echoQualityBadge.style.background = 'rgba(16, 185, 129, 0.2)';
           } else if (this.echoNoiseFloorDb >= -45) {
-            this.echoQualityBadge.textContent = '⚠ ALERTA: RUDO DE FUNDO ALTO';
+            this.echoQualityBadge.textContent = '⚠️ ALERTA: RUÍDO DE FUNDO ALTO';
             this.echoQualityBadge.style.color = '#f59e0b';
             this.echoQualityBadge.style.borderColor = '#f59e0b';
             this.echoQualityBadge.style.background = 'rgba(245, 158, 11, 0.2)';
@@ -1252,7 +1244,7 @@ class PocketDirectorApp {
       updateStats();
     } catch (err) {
       console.error('Erro ao iniciar Echo Loop:', err);
-      this.testRecordStatus.textContent = ' Erro ao ativar Echo Loop: ' + err.message;
+      this.testRecordStatus.textContent = '❌ Erro ao ativar Echo Loop: ' + err.message;
       this.stopLiveEchoLoopTest();
     }
   }
@@ -1276,7 +1268,7 @@ class PocketDirectorApp {
       this.btnTestEchoLoop.style.background = '';
     }
     if (this.echoLoopStatsBox) this.echoLoopStatsBox.style.display = 'none';
-    this.testRecordStatus.textContent = ' Echo Loop encerrado.';
+    this.testRecordStatus.textContent = '⏹️ Echo Loop encerrado.';
   }
 
   // Teste de Voz TTS do Diretor
@@ -1284,7 +1276,7 @@ class PocketDirectorApp {
     const voice = this.voiceSelect.value;
     const testText = "Olá Criador! O teste de áudio do Diretor de Bolso está funcionando perfeitamente!";
     
-    this.btnTestTTS.textContent = ' Sintetizando...';
+    this.btnTestTTS.textContent = '⏳ Sintetizando...';
     try {
       const resp = await fetch(`/api/tts/test?text=${encodeURIComponent(testText)}&voice=${encodeURIComponent(voice)}`);
       if (!resp.ok) throw new Error('Falha na resposta do servidor');
@@ -1295,12 +1287,12 @@ class PocketDirectorApp {
       
       this.btnTestTTS.textContent = '🔊 Tocando...';
       audio.onended = () => {
-        this.btnTestTTS.textContent = '▶ Testar';
+        this.btnTestTTS.textContent = '▶️ Testar';
       };
       await audio.play();
     } catch (err) {
       alert('Erro ao testar voz: ' + err.message);
-      this.btnTestTTS.textContent = '▶ Testar';
+      this.btnTestTTS.textContent = '▶️ Testar';
     }
   }
 
@@ -1509,7 +1501,7 @@ class PocketDirectorApp {
         if (data.role === 'user') {
           const txt = data.text.toLowerCase();
           if (txt.includes('verifique') && txt.includes('atualiza')) {
-            this.showToast('🎙 Comando OTA detectado...', 'info');
+            this.showToast('🎙️ Comando OTA detectado...', 'info');
             this.checkForUpdates(true);
           }
         }
@@ -1832,7 +1824,7 @@ class PocketDirectorApp {
     card.className = 'card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">⚠ ALERTA</span>
+        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">⚠️ ALERTA</span>
       </div>
       <div class="card-content" style="color: #fda4af;">${this.escapeHtml(message)}</div>
     `;
@@ -1946,7 +1938,7 @@ class PocketDirectorApp {
     card.className = 'card approval-card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">⚠ APROVAÇÃO NECESSRIA</span>
+        <span class="card-tag" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">⚠️ APROVAÇÃO NECESSÁRIA</span>
       </div>
       <div class="card-content">
         <div style="font-size:0.85rem; margin-bottom:0.5rem; color:#e2e8f0;">
@@ -2094,8 +2086,8 @@ class PocketDirectorApp {
           const res = await fetch(`${API_BASE_URL}/api/memory/status`);
           const data = await res.json();
           let html = `<strong>RAG (ChromaDB):</strong> ${data.rag_ready ? '🟢 Online' : '🔴 Offline'}<br>`;
-          html += `<strong>Memória Local:</strong> ${data.local_exists ? '✅' : ''}<br>`;
-          html += `<strong>Hive Bus:</strong> ${data.hive_exists ? '✅' : ''}<br>`;
+          html += `<strong>Memória Local:</strong> ${data.local_exists ? '✅' : '❌'}<br>`;
+          html += `<strong>Hive Bus:</strong> ${data.hive_exists ? '✅' : '❌'}<br>`;
           if (data.last_synced) html += `<strong>Último Sync:</strong> ${data.last_synced.local_mtime || 'N/A'}`;
           memoryStatusBox.innerHTML = html;
         } catch(e) {
@@ -2148,7 +2140,7 @@ class PocketDirectorApp {
         this.triggerHaptic('start');
         this.btnMicToggle.className = 'deck-btn primary';
         this.micLabel.textContent = 'Microfone Ativo (VAD)';
-        if (this.micIcon) this.micIcon.textContent = '🎙';
+        if (this.micIcon) this.micIcon.textContent = '🎙️';
         this.setOrbState('listening');
       } else {
         this.triggerHaptic('stop');
@@ -2205,7 +2197,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'flex';
         if(this.btnSendText) this.btnSendText.style.display = 'none';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = '⬆';
+          this.btnSendText.innerHTML = '⬆️';
           this.btnSendText.classList.remove('danger');
           this.btnSendText.classList.add('primary');
         }
@@ -2214,7 +2206,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'none';
         if(this.btnSendText) this.btnSendText.style.display = 'flex';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = '⬆';
+          this.btnSendText.innerHTML = '⬆️';
           this.btnSendText.classList.remove('danger');
           this.btnSendText.classList.add('primary');
         }
@@ -2223,7 +2215,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'none';
         if(this.btnSendText) this.btnSendText.style.display = 'flex';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = '';
+          this.btnSendText.innerHTML = '⏹️';
           this.btnSendText.classList.remove('primary');
           this.btnSendText.classList.add('danger');
         }
@@ -2232,7 +2224,7 @@ class PocketDirectorApp {
         if(this.btnModeToggle) this.btnModeToggle.style.display = 'none';
         if(this.btnSendText) this.btnSendText.style.display = 'flex';
         if(this.btnSendText) {
-          this.btnSendText.innerHTML = '';
+          this.btnSendText.innerHTML = '⏹️';
           this.btnSendText.classList.remove('danger');
           this.btnSendText.classList.add('primary');
         }
@@ -2454,7 +2446,7 @@ class PocketDirectorApp {
           <strong>Título:</strong> Vazou o GTA 6 denovo!<br>
           <div style="margin-top: 10px; display: flex; gap: 10px;">
             <button class="deck-btn primary" id="btnApproveAutoBlog" style="flex: 1;">✅ Aprovar (Biometria)</button>
-            <button class="deck-btn" id="btnRejectAutoBlog" style="flex: 1; border-color: var(--neon-red); color: var(--neon-red);"> Rejeitar</button>
+            <button class="deck-btn" id="btnRejectAutoBlog" style="flex: 1; border-color: var(--neon-red); color: var(--neon-red);">❌ Rejeitar</button>
           </div>
         `;
         
@@ -2769,7 +2761,7 @@ class PocketDirectorApp {
           this.btnMuteTTS.textContent = '🔔';
           this.btnMuteTTS.style.background = 'rgba(255, 255, 255, 0.1)';
           this.btnMuteTTS.style.color = 'var(--text-primary)';
-          this.showToast('udio do Agente Reativado', 'success');
+          this.showToast('Áudio do Agente Reativado', 'success');
         }
       });
     }
@@ -2907,10 +2899,10 @@ class PocketDirectorApp {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
-    let icon = 'ℹ';
+    let icon = 'ℹ️';
     if (type === 'success') icon = '✅';
-    if (type === 'error') icon = '';
-    if (type === 'warn') icon = '⚠';
+    if (type === 'error') icon = '❌';
+    if (type === 'warn') icon = '⚠️';
 
     toast.innerHTML = `<span>${icon}</span> <span>${this.escapeHtml(message)}</span>`;
     container.appendChild(toast);
@@ -2993,7 +2985,6 @@ class PocketDirectorApp {
 }
 
 window.app = new PocketDirectorApp();
-
 
 
 
