@@ -2509,7 +2509,6 @@ class PocketDirectorApp {
         if (hash) {
           this.showToast('Enviando sinal de reinício para Maestro...', 'warn');
           try {
-            await fetch('http://localhost:8080/api/mobile/approve', {
             await fetch(`${API_BASE_URL}/api/mobile/approve`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
