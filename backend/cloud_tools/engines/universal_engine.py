@@ -824,7 +824,7 @@ async def handle_request(endpoint_path: str, request: Request):
 
 @app.function(image=modal.Image.debian_slim(python_version="3.10").pip_install("fastapi"), timeout=1200)
 @modal.asgi_app()
-def universal_web_api():
+def apollo_api():
     return web_app
 
 

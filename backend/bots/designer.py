@@ -5,12 +5,17 @@ import base64
 import uuid
 from dotenv import load_dotenv
 
+from backend.api.routes_studio import get_active_modal_account
+
 load_dotenv()
-APOLLO_MODAL_URL = "https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run/generate/image"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "uploads")
 
 def gerar_imagem(prompt, image_format="Horizontal", upscale=False):
+    acc = get_active_modal_account()
+    workspace = acc.get("workspace") if acc else "filosofiadocodigo"
+    APOLLO_MODAL_URL = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/generate/image"
+    
     print(f"[DESIGNER] Gerando arte via Modal API Serverless | Formato: {image_format} | Upscale: {upscale}")
     
     if not os.path.exists(PUBLIC_DIR):

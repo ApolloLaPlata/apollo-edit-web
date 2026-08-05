@@ -253,6 +253,19 @@ def init_db():
         )
     ''')
 
+    # Integração Mobile Fase VIII
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS pending_approvals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source TEXT NOT NULL,
+            title TEXT NOT NULL,
+            payload_json TEXT NOT NULL,
+            status TEXT DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            approved_at TIMESTAMP
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -431,3 +444,44 @@ def get_page_visits_stats() -> list:
         return []
     finally:
         conn.close()
+
+# --- INTEGRAÇÃO POCKET DIRECTOR FASE VIII ---
+def add_pending_approval(source: str, title: str, payload_json: str) -> int:
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO pending_approvals (source, title, payload_json) VALUES (?, ?, ?)",
+            (source, title, payload_json)
+        )
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
+def get_pending_approvals() -> list:
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id, source, title, payload_json, status, created_at FROM pending_approvals WHERE status = 'pending'")
+        rows = cursor.fetchall()
+        return [
+            {"id": r[0], "source": r[1], "title": r[2], "payload": r[3], "status": r[4], "created_at": r[5]}
+            for r in rows
+        ]
+    finally:
+        conn.close()
+
+def update_approval_status(approval_id: int, status: str) -> bool:
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "UPDATE pending_approvals SET status = ?, approved_at = CURRENT_TIMESTAMP WHERE id = ?",
+            (status, approval_id)
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+    finally:
+        conn.close()
+

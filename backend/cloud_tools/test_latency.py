@@ -1,9 +1,9 @@
-﻿import time
+import time
 import requests
 
 start = time.time()
 print("Iniciando benchmark de latencia Flux 2 Snapshot...")
-res = requests.post("https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run/generate/image", json={
+res = requests.post("https://filosofiadocodigo--apollo-render-router-apollo-api.modal.run/generate/image", json={
     "model": "flux2-universal",
     "prompt": "A cinematic shot of a young man with messy hair and a leather jacket sitting alone at a wooden table in a neon-lit cyberpunk bar, drinking a beer.",
     "format": "square"

@@ -1,146 +1,146 @@
-# Arquitetura de Mapeamento Multi-Agentes (OrquestraÃ§Ã£o Swarm)
+# Arquitetura de Mapeamento Multi-Agentes (Orquestração Swarm)
 
-A geraÃ§Ã£o automÃ¡tica de conteÃºdo (VÃ­deos, Imagens, Ã�udios e Mapeamentos em 4 camadas) deixarÃ¡ de ser linear. O Apollo utilizarÃ¡ uma arquitetura de "Agentes HierÃ¡rquicos" (Swarm Orchestration) trabalhando em unÃ­ssono.
+A geração automática de conteúdo (Vídeos, Imagens, �udios e Mapeamentos em 4 camadas) deixará de ser linear. O Apollo utilizará uma arquitetura de "Agentes Hierárquicos" (Swarm Orchestration) trabalhando em uníssono.
 
-## O Fluxograma de ProduÃ§Ã£o
+## O Fluxograma de Produção
 
-1. **Agente 1: O Atendente (Criador do ReceituÃ¡rio e Ponte Relacional)**
-   - **FunÃ§Ã£o:** Atuar como "Entrevistador" e ponte exclusiva de comunicaÃ§Ã£o entre o UsuÃ¡rio e o Swarm (trabalhadores). 
-   - **AÃ§Ã£o:** Escaneia o banco de dados do usuÃ¡rio e gera um questionÃ¡rio interativo. O usuÃ¡rio marca as caixinhas escolhendo estilos e templates. 
-   - **Sistema de ProteÃ§Ã£o (UsuÃ¡rio PreguiÃ§oso):** Se o usuÃ¡rio nÃ£o tiver nada salvo na aba Diretor ou nÃ£o quiser configurar nada, a IA aplica o Fallback: *"VocÃª nÃ£o tem configuraÃ§Ãµes personalizadas. Deseja usar nosso PadrÃ£o Simplificado?"* O sistema oferecerÃ¡ ~3 opÃ§Ãµes genÃ©ricas (ex: SÃ³ vÃ­deo base sem LUT, ou com legenda padrÃ£o).
-   - Com as respostas, a IA cria o **ReceituÃ¡rio** (Planta Baixa). A partir daqui, os outros robÃ´s do Swarm assumem, isolados do usuÃ¡rio, focados apenas na produÃ§Ã£o em lote usando a MemÃ³ria JSON coletiva.
+1. **Agente 1: O Atendente (Criador do Receituário e Ponte Relacional)**
+   - **Função:** Atuar como "Entrevistador" e ponte exclusiva de comunicação entre o Usuário e o Swarm (trabalhadores). 
+   - **Ação:** Escaneia o banco de dados do usuário e gera um questionário interativo. O usuário marca as caixinhas escolhendo estilos e templates. 
+   - **Sistema de Proteção (Usuário Preguiçoso):** Se o usuário não tiver nada salvo na aba Diretor ou não quiser configurar nada, a IA aplica o Fallback: *"Você não tem configurações personalizadas. Deseja usar nosso Padrão Simplificado?"* O sistema oferecerá ~3 opções genéricas (ex: Só vídeo base sem LUT, ou com legenda padrão).
+   - Com as respostas, a IA cria o **Receituário** (Planta Baixa). A partir daqui, os outros robôs do Swarm assumem, isolados do usuário, focados apenas na produção em lote usando a Memória JSON coletiva.
 
 2. **Agente 2: O Gerente (Roteirista Principal)**
-   - **FunÃ§Ã£o:** Entender o contexto global, o canal e as personas.
-   - **AÃ§Ã£o:** Puxa o ReceituÃ¡rio e o expande para um **Roteiro Master**. Ele sabe o que os roteiristas tÃ©cnicos precisam.
+   - **Função:** Entender o contexto global, o canal e as personas.
+   - **Ação:** Puxa o Receituário e o expande para um **Roteiro Master**. Ele sabe o que os roteiristas técnicos precisam.
 
-3. **Agente 3: O Analista AvanÃ§ado (O Fatiador)**
-   - **FunÃ§Ã£o:** Dividir e Conquistar.
-   - **AÃ§Ã£o:** Pega o Roteiro Master e o quebra em dezenas de micro-tarefas altamente especializadas (Ex: "Fazer prompt visual para cena 1", "Fazer configuraÃ§Ã£o de LUT para cena 2", "Dividir bloco de Lip-Sync no Ã¡udio 3").
-   - **Envio:** Despacha essas fatias para a "Fazenda de RenderizaÃ§Ã£o Cognitiva" (Os Minions).
+3. **Agente 3: O Analista Avançado (O Fatiador)**
+   - **Função:** Dividir e Conquistar.
+   - **Ação:** Pega o Roteiro Master e o quebra em dezenas de micro-tarefas altamente especializadas (Ex: "Fazer prompt visual para cena 1", "Fazer configuração de LUT para cena 2", "Dividir bloco de Lip-Sync no áudio 3").
+   - **Envio:** Despacha essas fatias para a "Fazenda de Renderização Cognitiva" (Os Minions).
 
-4. **Swarm: Chatbots Mini EconÃ´micos (Os Minions)**
-   - **FunÃ§Ã£o:** ForÃ§a bruta e baixo custo computacional.
-   - **AÃ§Ã£o:** Dezenas de micro-IAs rodam em paralelo. Cada uma recebe um JSON pequeno, preenche o micro-trabalho (ex: apenas a Cena 4) e devolve. Elas nÃ£o tÃªm visÃ£o do todo, apenas do seu escopo para nÃ£o alucinarem.
+4. **Swarm: Chatbots Mini Econômicos (Os Minions)**
+   - **Função:** Força bruta e baixo custo computacional.
+   - **Ação:** Dezenas de micro-IAs rodam em paralelo. Cada uma recebe um JSON pequeno, preenche o micro-trabalho (ex: apenas a Cena 4) e devolve. Elas não têm visão do todo, apenas do seu escopo para não alucinarem.
 
-5. **Agente 4: O Corretor de CongruÃªncia (QA / Quality Assurance)**
-   - **FunÃ§Ã£o:** Garantir a matemÃ¡tica e lÃ³gica temporal.
-   - **AÃ§Ã£o:** Puxa todos os resultados dos Minions e monta a Timeline. Ele verifica: *O tempo do Ã¡udio da Cena 1 bate com o vÃ­deo gerado? O Lip-sync foi colocado no segundo correto e nÃ£o cortou o narrador no meio de uma frase?*
-   - **Loop:** Se houver erro crasso de incongruÃªncia de tempo, ele manda o pedaÃ§o com defeito voltar para o Gerente refazer. Se estiver perfeito, ele "Empacota" tudo nos **Metadados do Pack** e entrega finalizado para a Ã�rea de TransferÃªncia do usuÃ¡rio (UI).
+5. **Agente 4: O Corretor de Congruência (QA / Quality Assurance)**
+   - **Função:** Garantir a matemática e lógica temporal.
+   - **Ação:** Puxa todos os resultados dos Minions e monta a Timeline. Ele verifica: *O tempo do áudio da Cena 1 bate com o vídeo gerado? O Lip-sync foi colocado no segundo correto e não cortou o narrador no meio de uma frase?*
+   - **Loop:** Se houver erro crasso de incongruência de tempo, ele manda o pedaço com defeito voltar para o Gerente refazer. Se estiver perfeito, ele "Empacota" tudo nos **Metadados do Pack** e entrega finalizado para a �rea de Transferência do usuário (UI).
 
-## ðŸ›¡ï¸� Regra de Ouro: Contexto SemÃ¢ntico do Diretor (User Background)
-Para evitar que a IA faÃ§a escolhas ruins de direÃ§Ã£o de arte (ex: botar uma cena calma com transiÃ§Ã£o agressiva, ou usar um template de "cÃ¢mera facecam" em uma paisagem), o sistema exige **Metadados SemÃ¢nticos** criados pelo usuÃ¡rio.
-* **Aba Diretor:** Toda ConfiguraÃ§Ã£o (LUTs, transiÃ§Ãµes) ou Template GrÃ¡fico (molduras, posiÃ§Ãµes) salvo pelo usuÃ¡rio **deve** conter uma breve descriÃ§Ã£o de intenÃ§Ã£o. Ex: *"Template A: Foco no narrador reagindo no canto direito"*, *"Config B: Clima tenso e escuro"*.
-* **ConsciÃªncia de Elenco:** O ReceituÃ¡rio inicial deve obrigatoriamente questionar se o projeto possui um Narrador em VÃ­deo (Facecam) ou apenas voz. 
-* **O Casamento Perfeito:** Quando o *Agente Fatiador* for escolher qual Template de Lip Sync usar, ele vai ler o banco de dados de Templates do usuÃ¡rio e farÃ¡ o "Match SemÃ¢ntico" entre o que a cena pede e a descriÃ§Ã£o que o usuÃ¡rio deixou. Se o vÃ­deo ficar ruim, a culpa serÃ¡ da falta de metadados, e nÃ£o de uma alucinaÃ§Ã£o da IA.
+## 🛡� Regra de Ouro: Contexto Semântico do Diretor (User Background)
+Para evitar que a IA faça escolhas ruins de direção de arte (ex: botar uma cena calma com transição agressiva, ou usar um template de "câmera facecam" em uma paisagem), o sistema exige **Metadados Semânticos** criados pelo usuário.
+* **Aba Diretor:** Toda Configuração (LUTs, transições) ou Template Gráfico (molduras, posições) salvo pelo usuário **deve** conter uma breve descrição de intenção. Ex: *"Template A: Foco no narrador reagindo no canto direito"*, *"Config B: Clima tenso e escuro"*.
+* **Consciência de Elenco:** O Receituário inicial deve obrigatoriamente questionar se o projeto possui um Narrador em Vídeo (Facecam) ou apenas voz. 
+* **O Casamento Perfeito:** Quando o *Agente Fatiador* for escolher qual Template de Lip Sync usar, ele vai ler o banco de dados de Templates do usuário e fará o "Match Semântico" entre o que a cena pede e a descrição que o usuário deixou. Se o vídeo ficar ruim, a culpa será da falta de metadados, e não de uma alucinação da IA.
 
-## Arquivos de MemÃ³ria e ReferÃªncia
-* Todo chatbot possui acesso a um Banco de Dados de MemÃ³ria JSON Coletiva. Isso permite que um Roteirista saiba qual foi o estilo usado na receita anterior e mantenha a consistÃªncia do canal.
-
-
-## A Interface do Mapeamento (Mapeador Manual e Timeline)
-A construÃ§Ã£o do mapeamento em 4 camadas que o Swarm realiza ganha vida na ferramenta **Mapeador Manual** (agora consolidada nos Equipamentos da interface principal). Ela permite que o usuÃ¡rio atue em dois formatos:
-1. **IntervenÃ§Ã£o Manual:** Arrastando os \Quadradinhos MÃ¡gicos\ da sua **Ã�rea de TransferÃªncia/Bagageiro** diretamente para os slots da timeline visual, ajustando duraÃ§Ã£o de VÃ­deo, LUTs e NarraÃ§Ã£o na mÃ£o.
-2. **RevisÃ£o Visual:** Se o Swarm realizou todo o trabalho e o *Agente 4 (QA)* empacotou com sucesso, o usuÃ¡rio abre o Mapeador Manual apenas para revisar a conguÃªncia dos blocos injetados e, em seguida, enviar para a Fila de Render.
-
----
-## [ATUALIZAÃ‡ÃƒO DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
-
-**1. Scraper de PreÃ§os AutÃ´nomo (pricing_scraper_agent.py):**
-- Vasculha a API do OpenRouter em busca de novos modelos de IA.
-- Cadastra novos modelos diretamente com status 'Ativo' (Autonomia Total).
-- Captura Rate Limits (TPM/RPM) e atualiza preÃ§os de input/output dinamicamente.
-
-**2. Gestor Financeiro / Analista de Mercado:**
-- Motor de PrecificaÃ§Ã£o DinÃ¢mica integrado Ã  tabela models_pricing atravÃ©s da coluna margin_multiplier.
-- Calcula o Custo da Gasolina baseado na demanda (se um modelo estÃ¡ ocioso, a margem cai para 10%; se estÃ¡ concorrido, sobe atÃ© 100%).
-
-**3. Diretor de Marketing (marketing_agent.py):**
-- Observa as aÃ§Ãµes do Diretor Financeiro.
-- Gera chamadas publicitÃ¡rias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
-- IntegraÃ§Ã£o preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
-- Salva anÃºncios criados na tabela d_campaigns.
-
-**4. Gestor de TrÃ¡fego AI (traffic_manager_agent.py):**
-- Monitora os endpoints de telemetria criados no servidor_web.py (/view e /click).
-- Calcula o CTR (Click-Through Rate) dos banners injetados no sistema.
-- Desativa campanhas de baixa performance (CTR < 0.5% apÃ³s 200 views).
-
-**5. Sistema de RotaÃ§Ã£o de AnÃºncios UI (noticias_scripts.html):**
-- ImplementaÃ§Ã£o de um rodÃ­zio Javascript que puxa campanhas ativas.
-- AlternÃ¢ncia visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da pÃ¡gina.
-
+## Arquivos de Memória e Referência
+* Todo chatbot possui acesso a um Banco de Dados de Memória JSON Coletiva. Isso permite que um Roteirista saiba qual foi o estilo usado na receita anterior e mantenha a consistência do canal.
 
 
 ## A Interface do Mapeamento (Mapeador Manual e Timeline)
-A construÃ§Ã£o do mapeamento em 4 camadas que o Swarm realiza ganha vida na ferramenta **Mapeador Manual** (agora consolidada nos Equipamentos da interface principal). Ela permite que o usuÃ¡rio atue em dois formatos:
-1. **IntervenÃ§Ã£o Manual:** Arrastando os \Quadradinhos MÃ¡gicos\ da sua **Ã�rea de TransferÃªncia/Bagageiro** diretamente para os slots da timeline visual, ajustando duraÃ§Ã£o de VÃ­deo, LUTs e NarraÃ§Ã£o na mÃ£o.
-2. **RevisÃ£o Visual:** Se o Swarm realizou todo o trabalho e o *Agente 4 (QA)* empacotou com sucesso, o usuÃ¡rio abre o Mapeador Manual apenas para revisar a conguÃªncia dos blocos injetados e, em seguida, enviar para a Fila de Render.
+A construção do mapeamento em 4 camadas que o Swarm realiza ganha vida na ferramenta **Mapeador Manual** (agora consolidada nos Equipamentos da interface principal). Ela permite que o usuário atue em dois formatos:
+1. **Intervenção Manual:** Arrastando os \Quadradinhos Mágicos\ da sua **�rea de Transferência/Bagageiro** diretamente para os slots da timeline visual, ajustando duração de Vídeo, LUTs e Narração na mão.
+2. **Revisão Visual:** Se o Swarm realizou todo o trabalho e o *Agente 4 (QA)* empacotou com sucesso, o usuário abre o Mapeador Manual apenas para revisar a conguência dos blocos injetados e, em seguida, enviar para a Fila de Render.
 
 ---
-## [ATUALIZAÃ‡ÃƒO DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
+## [ATUALIZAÇÃO DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
 
-**1. Scraper de PreÃ§os AutÃ´nomo (pricing_scraper_agent.py):**
+**1. Scraper de Preços Autônomo (pricing_scraper_agent.py):**
 - Vasculha a API do OpenRouter em busca de novos modelos de IA.
 - Cadastra novos modelos diretamente com status 'Ativo' (Autonomia Total).
-- Captura Rate Limits (TPM/RPM) e atualiza preÃ§os de input/output dinamicamente.
+- Captura Rate Limits (TPM/RPM) e atualiza preços de input/output dinamicamente.
 
 **2. Gestor Financeiro / Analista de Mercado:**
-- Motor de PrecificaÃ§Ã£o DinÃ¢mica integrado Ã  tabela models_pricing atravÃ©s da coluna margin_multiplier.
-- Calcula o Custo da Gasolina baseado na demanda (se um modelo estÃ¡ ocioso, a margem cai para 10%; se estÃ¡ concorrido, sobe atÃ© 100%).
+- Motor de Precificação Dinâmica integrado à tabela models_pricing através da coluna margin_multiplier.
+- Calcula o Custo da Gasolina baseado na demanda (se um modelo está ocioso, a margem cai para 10%; se está concorrido, sobe até 100%).
 
 **3. Diretor de Marketing (marketing_agent.py):**
-- Observa as aÃ§Ãµes do Diretor Financeiro.
-- Gera chamadas publicitÃ¡rias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
-- IntegraÃ§Ã£o preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
-- Salva anÃºncios criados na tabela  d_campaigns.
+- Observa as ações do Diretor Financeiro.
+- Gera chamadas publicitárias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
+- Integração preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
+- Salva anúncios criados na tabela d_campaigns.
 
-**4. Gestor de TrÃ¡fego AI (traffic_manager_agent.py):**
+**4. Gestor de Tráfego AI (traffic_manager_agent.py):**
 - Monitora os endpoints de telemetria criados no servidor_web.py (/view e /click).
 - Calcula o CTR (Click-Through Rate) dos banners injetados no sistema.
-- Desativa campanhas de baixa performance (CTR < 0.5% apÃ³s 200 views).
+- Desativa campanhas de baixa performance (CTR < 0.5% após 200 views).
 
-**5. Sistema de RotaÃ§Ã£o de AnÃºncios UI (noticias_scripts.html):**
-- ImplementaÃ§Ã£o de um rodÃ­zio Javascript que puxa campanhas ativas.
-- AlternÃ¢ncia visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da pÃ¡gina.
+**5. Sistema de Rotação de Anúncios UI (noticias_scripts.html):**
+- Implementação de um rodízio Javascript que puxa campanhas ativas.
+- Alternância visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da página.
 
-*Nota TÃ©cnica: Todos os planos de implementaÃ§Ã£o, walkthroughs e documentos criados por IA estÃ£o agora salvos localmente na pasta /docs/arquivos_ia/ dentro da base de cÃ³digo.*
+
+
+## A Interface do Mapeamento (Mapeador Manual e Timeline)
+A construção do mapeamento em 4 camadas que o Swarm realiza ganha vida na ferramenta **Mapeador Manual** (agora consolidada nos Equipamentos da interface principal). Ela permite que o usuário atue em dois formatos:
+1. **Intervenção Manual:** Arrastando os \Quadradinhos Mágicos\ da sua **�rea de Transferência/Bagageiro** diretamente para os slots da timeline visual, ajustando duração de Vídeo, LUTs e Narração na mão.
+2. **Revisão Visual:** Se o Swarm realizou todo o trabalho e o *Agente 4 (QA)* empacotou com sucesso, o usuário abre o Mapeador Manual apenas para revisar a conguência dos blocos injetados e, em seguida, enviar para a Fila de Render.
 
 ---
-## [DIRETRIZ DE ARQUITETURA AVANÃ‡ADA: O ROTEADOR GATEWAY LLM] (Data: 07/06/2026)
+## [ATUALIZAÇÃO DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
+
+**1. Scraper de Preços Autônomo (pricing_scraper_agent.py):**
+- Vasculha a API do OpenRouter em busca de novos modelos de IA.
+- Cadastra novos modelos diretamente com status 'Ativo' (Autonomia Total).
+- Captura Rate Limits (TPM/RPM) e atualiza preços de input/output dinamicamente.
+
+**2. Gestor Financeiro / Analista de Mercado:**
+- Motor de Precificação Dinâmica integrado à tabela models_pricing através da coluna margin_multiplier.
+- Calcula o Custo da Gasolina baseado na demanda (se um modelo está ocioso, a margem cai para 10%; se está concorrido, sobe até 100%).
+
+**3. Diretor de Marketing (marketing_agent.py):**
+- Observa as ações do Diretor Financeiro.
+- Gera chamadas publicitárias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
+- Integração preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
+- Salva anúncios criados na tabela  d_campaigns.
+
+**4. Gestor de Tráfego AI (traffic_manager_agent.py):**
+- Monitora os endpoints de telemetria criados no servidor_web.py (/view e /click).
+- Calcula o CTR (Click-Through Rate) dos banners injetados no sistema.
+- Desativa campanhas de baixa performance (CTR < 0.5% após 200 views).
+
+**5. Sistema de Rotação de Anúncios UI (noticias_scripts.html):**
+- Implementação de um rodízio Javascript que puxa campanhas ativas.
+- Alternância visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da página.
+
+*Nota Técnica: Todos os planos de implementação, walkthroughs e documentos criados por IA estão agora salvos localmente na pasta /docs/arquivos_ia/ dentro da base de código.*
+
+---
+## [DIRETRIZ DE ARQUITETURA AVANÇADA: O ROTEADOR GATEWAY LLM] (Data: 07/06/2026)
 
 **O Problema do 'Corta Tesouro' e Roteamento Inteligente:**
-Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de InteligÃªncia Artificial da Apollo nÃ£o serÃ¡ apenas baseada em strings fixas ('high' ou 'low'). O sistema adotarÃ¡ ### 5. O Gateway Triador (LLM Routing)
-A plataforma gerencia seus custos de I.A. atravÃ©s de um roteador cognitivo (`agent_core.py`):
-- **O Roteador (Corta-Tesouro):** Todo input de usuÃ¡rio passa primeiro por um modelo gratuito/rÃ¡pido (Llama 3 ou Claude Haiku). Esse modelo avalia a complexidade do pedido.
-- **Regra de NegÃ³cio (NÃ­vel UsuÃ¡rio):** Absolutamente TODOS os chatbots, assistentes e interfaces voltadas para o usuÃ¡rio final (como o WPP Bot ou os Copilotos) devem **por padrÃ£o** utilizar o modelo que aceita mais requisiÃ§Ãµes pelo menor preÃ§o possÃ­vel (Llama 3 Local ou APIs gratuitas). 
-- **Modelos Premium (GPT-4o, Claude Opus):** Estritamente reservados para chamadas administrativas (Diretoria/Manager) ou para usuÃ¡rios que estejam pagando (via Gastos de Cristais/Assinaturas). O uso indiscriminado de LLMs caros para usuÃ¡rios grÃ¡tis Ã© estritamente proibido. para enxugar os tokens.
+Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de Inteligência Artificial da Apollo não será apenas baseada em strings fixas ('high' ou 'low'). O sistema adotará ### 5. O Gateway Triador (LLM Routing)
+A plataforma gerencia seus custos de I.A. através de um roteador cognitivo (`agent_core.py`):
+- **O Roteador (Corta-Tesouro):** Todo input de usuário passa primeiro por um modelo gratuito/rápido (Llama 3 ou Claude Haiku). Esse modelo avalia a complexidade do pedido.
+- **Regra de Negócio (Nível Usuário):** Absolutamente TODOS os chatbots, assistentes e interfaces voltadas para o usuário final (como o WPP Bot ou os Copilotos) devem **por padrão** utilizar o modelo que aceita mais requisições pelo menor preço possível (Llama 3 Local ou APIs gratuitas). 
+- **Modelos Premium (GPT-4o, Claude Opus):** Estritamente reservados para chamadas administrativas (Diretoria/Manager) ou para usuários que estejam pagando (via Gastos de Cristais/Assinaturas). O uso indiscriminado de LLMs caros para usuários grátis é estritamente proibido. para enxugar os tokens.
 4. **Despacho Final:**
-   - Se for simples: O prÃ³prio Porteiro (ou outro modelo free) responde e finaliza a tarefa. Custo Zero.
-   - Se for complexo: O Porteiro encaminha a requisiÃ§Ã£o limpa e otimizada (com poucos tokens) para a Elite (ChatGPT-4o, Grok 3, Gemini 3.5 Pro, Claude 4.6).
+   - Se for simples: O próprio Porteiro (ou outro modelo free) responde e finaliza a tarefa. Custo Zero.
+   - Se for complexo: O Porteiro encaminha a requisição limpa e otimizada (com poucos tokens) para a Elite (ChatGPT-4o, Grok 3, Gemini 3.5 Pro, Claude 4.6).
 
 **Vantagem Competitiva:**
-Essa arquitetura garante lucro absoluto. Nunca gastaremos 1 centavo de dÃ³lar em tarefas triviais, e as tarefas crÃ­ticas receberÃ£o a inteligÃªncia mÃ¡xima sem o desperdÃ­cio de contexto inchado.
+Essa arquitetura garante lucro absoluto. Nunca gastaremos 1 centavo de dólar em tarefas triviais, e as tarefas críticas receberão a inteligência máxima sem o desperdício de contexto inchado.
 
 ---
-## [NOVA DIRETRIZ: GESTÃƒO DE ARMAZENAMENTO E MERCADO P2P] (Data: 07/06/2026)
+## [NOVA DIRETRIZ: GESTÃO DE ARMAZENAMENTO E MERCADO P2P] (Data: 07/06/2026)
 
-Para evitar a falÃªncia do sistema de nuvem devido ao alto custo de armazenamento de templates de vÃ­deo HD transparentes (ex: arquivos de 15GB), foram definidas as seguintes polÃ­ticas:
+Para evitar a falência do sistema de nuvem devido ao alto custo de armazenamento de templates de vídeo HD transparentes (ex: arquivos de 15GB), foram definidas as seguintes políticas:
 
-1. **Lixeiro AutomÃ¡tico de 24h (Garbage Collector):** 
-A Apollo NÃƒO Ã© um serviÃ§o de hospedagem vitalÃ­cio. Todos os arquivos de renderizaÃ§Ã£o temporÃ¡rios e vÃ­deos finais em MP4 hospedados em `/static/renders/` possuem um tempo de vida estrito de 24 horas. ApÃ³s esse perÃ­odo, um Cron Job limpa o HD automaticamente.
+1. **Lixeiro Automático de 24h (Garbage Collector):** 
+A Apollo NÃO é um serviço de hospedagem vitalício. Todos os arquivos de renderização temporários e vídeos finais em MP4 hospedados em `/static/renders/` possuem um tempo de vida estrito de 24 horas. Após esse período, um Cron Job limpa o HD automaticamente.
 
 2. **Mercado P2P Descentralizado (External Hosting):**
-UsuÃ¡rios podem vender "Templates HD" na loja da plataforma em troca de Cristais. No entanto, o sistema Apollo sÃ³ hospeda o "Esqueleto" (.json de configuraÃ§Ã£o) e um thumbnail/preview leve. O arquivo pesado do template **obrigatoriamente** deve ser hospedado pelo criador em serviÃ§os externos de nuvem (Google Drive, Dropbox, Mega). O sistema apenas transaciona o acesso/link ao comprador.
+Usuários podem vender "Templates HD" na loja da plataforma em troca de Cristais. No entanto, o sistema Apollo só hospeda o "Esqueleto" (.json de configuração) e um thumbnail/preview leve. O arquivo pesado do template **obrigatoriamente** deve ser hospedado pelo criador em serviços externos de nuvem (Google Drive, Dropbox, Mega). O sistema apenas transaciona o acesso/link ao comprador.
 
-3. **Mochila (Franquia de TrÃ¡fego Mensal):**
-Para evitar que usuÃ¡rios mal-intencionados driblem o "Lixeiro de 24h" apagando e subindo arquivos de 15GB diariamente (o que estouraria o custo de Bandwidth/Egress na AWS/GCP), contas gratuitas possuem uma "Mochila" com limite fixo de TrÃ¡fego de Upload/Download mensal (Ex: 5GB ou 10GB de bagagem gratuita). Exceder esse limite para carregar mais peso na viagem exige a compra de Cotas Extras via Cristais ou upgrade para plano Pro, eliminando o abuso do sistema. O "Bagageiro" temporÃ¡rio de 24h Ã© gratuito, mas o ato de *transitar* os arquivos atÃ© ele consome o peso da Mochila.
+3. **Mochila (Franquia de Tráfego Mensal):**
+Para evitar que usuários mal-intencionados driblem o "Lixeiro de 24h" apagando e subindo arquivos de 15GB diariamente (o que estouraria o custo de Bandwidth/Egress na AWS/GCP), contas gratuitas possuem uma "Mochila" com limite fixo de Tráfego de Upload/Download mensal (Ex: 5GB ou 10GB de bagagem gratuita). Exceder esse limite para carregar mais peso na viagem exige a compra de Cotas Extras via Cristais ou upgrade para plano Pro, eliminando o abuso do sistema. O "Bagageiro" temporário de 24h é gratuito, mas o ato de *transitar* os arquivos até ele consome o peso da Mochila.
 
 4. **Mercado P2P Fechado (Safe Mode) e Anti-Lavagem de Dinheiro:**
-- **Zero Arquivos Externos:** Ã‰ estritamente proibida a venda de links do Google Drive, Mega ou arquivos pesados (.mp4, .zip) no Mercado P2P. Isso elimina 100% o risco de distribuiÃ§Ã£o de Malwares, material ilÃ­cito e "Golpes de Link Vazio".
-- **ComÃ©rcio Exclusivo de "CÃ©rebros":** Os usuÃ¡rios sÃ³ podem vender Arquivos Nativos da Apollo (.json textuais). Exemplos: Roteiristas Customizados, Presets de EdiÃ§Ã£o de Timeline, LUTs matemÃ¡ticos. Como sÃ£o arquivos nativos, a instalaÃ§Ã£o na conta do comprador Ã© *imediata* e *100% segura*.
-- **PrevenÃ§Ã£o de Lavagem via Banda de PreÃ§os:** A plataforma mantÃ©m uma economia livre e descentralizada (sem burocracia de documentos KYC para sacar). Para impedir lavagem de dinheiro, o sistema impÃµe limites matemÃ¡ticos estritos de venda: O *PreÃ§o MÃ­nimo* Ã© o Custo Base + Taxa da Apollo (evitando dumping); O *PreÃ§o MÃ¡ximo (Teto)* Ã© limitado a 100% de Margem de Lucro sobre o custo. Isso inviabiliza a movimentaÃ§Ã£o de fortunas ilÃ­citas num Ãºnico item.
-- **O Xerife do Mercado (Market Auditor AI):** Um agente autÃ´nomo especÃ­fico (Agente 6) fiscaliza o Mercado P2P 24 horas por dia. Se o Xerife detectar padrÃµes de lavagem (Ex: UsuÃ¡rio A compra 50 itens de preÃ§o mÃ¡ximo do UsuÃ¡rio B em poucas horas; Contas recÃ©m-criadas transacionando teto mÃ¡ximo), a IA congela automaticamente as carteiras envolvidas e bloqueia os saques atÃ© uma auditoria manual, mantendo a plataforma segura sem intervenÃ§Ã£o humana constante.
+- **Zero Arquivos Externos:** É estritamente proibida a venda de links do Google Drive, Mega ou arquivos pesados (.mp4, .zip) no Mercado P2P. Isso elimina 100% o risco de distribuição de Malwares, material ilícito e "Golpes de Link Vazio".
+- **Comércio Exclusivo de "Cérebros":** Os usuários só podem vender Arquivos Nativos da Apollo (.json textuais). Exemplos: Roteiristas Customizados, Presets de Edição de Timeline, LUTs matemáticos. Como são arquivos nativos, a instalação na conta do comprador é *imediata* e *100% segura*.
+- **Prevenção de Lavagem via Banda de Preços:** A plataforma mantém uma economia livre e descentralizada (sem burocracia de documentos KYC para sacar). Para impedir lavagem de dinheiro, o sistema impõe limites matemáticos estritos de venda: O *Preço Mínimo* é o Custo Base + Taxa da Apollo (evitando dumping); O *Preço Máximo (Teto)* é limitado a 100% de Margem de Lucro sobre o custo. Isso inviabiliza a movimentação de fortunas ilícitas num único item.
+- **O Xerife do Mercado (Market Auditor AI):** Um agente autônomo específico (Agente 6) fiscaliza o Mercado P2P 24 horas por dia. Se o Xerife detectar padrões de lavagem (Ex: Usuário A compra 50 itens de preço máximo do Usuário B em poucas horas; Contas recém-criadas transacionando teto máximo), a IA congela automaticamente as carteiras envolvidas e bloqueia os saques até uma auditoria manual, mantendo a plataforma segura sem intervenção humana constante.
 
 ---
 ## V. A Infraestrutura Serverless Privada (A Frota Lightning ⚡)
@@ -238,10 +238,10 @@ fetch("https://lightning.ai/api/v1/chat/completions", {
 **A LÓGICA DE INJEÇÃO (NÃO ALTERAR):**
 O processo que insere múltiplos personagens (ex: 3 pessoas) em uma única imagem foi otimizado para a nuvem Modal. A única forma aceitável e rápida (~2.5 minutos) de executá-lo é através do motor nativo:
 
-1. **Script de Orquestração:** ackend/tests/test_multipass_direct.py
+1. **Script de Orquestração:** ackend/tests/test_multipass_direct.py
 2. **Método de Execução:** Execução via RPC Direta (modal run test_multipass_direct.py). NUNCA usar requisições autônomas via roteador HTTP (
 equests.post), pois isso força reinicializações a frio duplas no servidor da Modal, explodindo o tempo para quase 9 minutos.
 3. **Workflows ComfyUI (Os arquivos Intocáveis):**
-   - **Geração Base:** pollo_flux2_klein.json (Gera o cenário sem personagens).
+   - **Geração Base:** pollo_flux2_klein.json (Gera o cenário sem personagens).
    - **Geração Inpaint (Multi-pass):** 10resultado_3_personagens_CHAINED_klein.json. Este arquivo roda repetidas vezes (loop nativo no python) inserindo um personagem por vez sobre a mesma imagem usando ReferenceLatent.
 4. **O Segredo do Text-Locking:** O segredo para que os rostos não se fundam (Efeito Quimera) nem gerem pessoas aleatórias não é usar PuLID nem Máscaras Regionais. A solução é a redundância textual. O LLM deve receber **descrições fotorealistas idênticas às fotos** (cabelo, barba, cor de roupa, expressão). Se o prompt de texto for genérico (ex: 'Person 1, a man'), o modelo ignora a foto e desenha um estranho. Prompts maciços e descritivos *travam* a identidade na referência da imagem.

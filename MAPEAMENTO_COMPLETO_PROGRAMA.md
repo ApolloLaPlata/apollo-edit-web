@@ -792,16 +792,16 @@ O Apollo Edit Web ja tem muita coisa construida, mas ainda esta em fase de conve
 O caminho mais seguro e tratar este mapa como base para uma fase de estabilizacao: primeiro proteger segredos, depois limpar o hub, reconciliar APIs, definir o backend de identidade/economia e so entao evoluir a experiencia visual.
 
 ---
-## [MAPEAMENTO DA API CENTRAL DE INFERÊNCIA (LIGHTNING AI)] (Data: 08/06/2026)
+## [MAPEAMENTO DA API CENTRAL DE INFERï¿½NCIA (LIGHTNING AI)] (Data: 08/06/2026)
 
 **A GRANDE DESCOBERTA:** 
-Não precisamos criar dezenas de "Agentes" isolados no painel da Lightning e capturar URLs diferentes. A Lightning AI provê uma **API Universal Padrão OpenAI**. 
-Com uma única Chave de API, podemos chamar *QUALQUER* modelo trocando apenas a string do parâmetro model.
+Nï¿½o precisamos criar dezenas de "Agentes" isolados no painel da Lightning e capturar URLs diferentes. A Lightning AI provï¿½ uma **API Universal Padrï¿½o OpenAI**. 
+Com uma ï¿½nica Chave de API, podemos chamar *QUALQUER* modelo trocando apenas a string do parï¿½metro model.
 
 **Endpoint Universal:** https://lightning.ai/api/v1/chat/completions
-**Formato:** Idêntico à API da OpenAI (Permite usar a biblioteca oficial openai do Python/Node).
+**Formato:** Idï¿½ntico ï¿½ API da OpenAI (Permite usar a biblioteca oficial openai do Python/Node).
 
-### Exemplos de Chamada de Produção (Guardados para o Apollo):
+### Exemplos de Chamada de Produï¿½ï¿½o (Guardados para o Apollo):
 
 **Python (Biblioteca OpenAI Oficial):**
 `python
@@ -817,7 +817,7 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 `
 
-**JavaScript (Fetch puro - Útil para painéis leves):**
+**JavaScript (Fetch puro - ï¿½til para painï¿½is leves):**
 `javascript
 fetch("https://lightning.ai/api/v1/chat/completions", {
   method: "POST",
@@ -832,8 +832,8 @@ fetch("https://lightning.ai/api/v1/chat/completions", {
 });
 `
 
-### TABELA DE MODELOS E CUSTOS (Referência para o Banco de Dados)
-*(Nota: Valores parecem ser USD por 1 Milhão de Tokens - Input / Output)*
+### TABELA DE MODELOS E CUSTOS (Referï¿½ncia para o Banco de Dados)
+*(Nota: Valores parecem ser USD por 1 Milhï¿½o de Tokens - Input / Output)*
 
 | Modelo | Provedor | Custo (In/Out) | Contexto |
 | :--- | :--- | :--- | :--- |
@@ -860,30 +860,30 @@ fetch("https://lightning.ai/api/v1/chat/completions", {
 
 ---
 
-## 6. A ARQUITETURA DEFINITIVA DOS AGENTES (PONTO DE VISTA DO USUÁRIO)
-*(Correção e Refinamento de UX - Data: 08/06/2026)*
+## 6. A ARQUITETURA DEFINITIVA DOS AGENTES (PONTO DE VISTA DO USUï¿½RIO)
+*(Correï¿½ï¿½o e Refinamento de UX - Data: 08/06/2026)*
 
-Para não haver confusão, o sistema de IA para o usuário final é dividido em três entidades distintas e geniais:
+Para nï¿½o haver confusï¿½o, o sistema de IA para o usuï¿½rio final ï¿½ dividido em trï¿½s entidades distintas e geniais:
 
 ### A. O Copiloto Personalizado (Roteirista Customizado do Cliente)
-O usuário tem a liberdade de criar o seu próprio "Funcionário IA".
-- **Aba de Criação:** Ele dá nome, foto, descreve a personalidade, o canal do YouTube, as funções exatas e habilidades especiais (Ex: "Especialista em criar roteiros de suspense").
-- **Escolha do Cérebro:** O próprio usuário escolhe na lista qual Modelo de IA vai pilotar esse boneco (Ex: "Eu quero o GPT 3.5 Turbo pro meu roteirista").
-- **Uso na Esteira:** Quando o usuário vai para a "Geração de Vídeo Automatizado", ele seleciona o "seu" bonequinho roteirista. O custo desse bonequinho trabalhar é pago pelo usuário usando os quadradinhos mágicos (Cristais), atrelado ao custo do modelo que ele mesmo escolheu.
+O usuï¿½rio tem a liberdade de criar o seu prï¿½prio "Funcionï¿½rio IA".
+- **Aba de Criaï¿½ï¿½o:** Ele dï¿½ nome, foto, descreve a personalidade, o canal do YouTube, as funï¿½ï¿½es exatas e habilidades especiais (Ex: "Especialista em criar roteiros de suspense").
+- **Escolha do Cï¿½rebro:** O prï¿½prio usuï¿½rio escolhe na lista qual Modelo de IA vai pilotar esse boneco (Ex: "Eu quero o GPT 3.5 Turbo pro meu roteirista").
+- **Uso na Esteira:** Quando o usuï¿½rio vai para a "Geraï¿½ï¿½o de Vï¿½deo Automatizado", ele seleciona o "seu" bonequinho roteirista. O custo desse bonequinho trabalhar ï¿½ pago pelo usuï¿½rio usando os quadradinhos mï¿½gicos (Cristais), atrelado ao custo do modelo que ele mesmo escolheu.
 
 ### B. O Playground de IA (O "ChatGPT/Gemini" Interno do Apollo)
-Uma aba dedicada exclusivamente para o usuário conversar livremente com IAs.
+Uma aba dedicada exclusivamente para o usuï¿½rio conversar livremente com IAs.
 - Ele seleciona o modelo que quiser (Claude, GPT, Gemini).
 - Custo pago por input usando a "Gasolina" (fracionamento em centavos baseados no modelo escolhido).
-- **Recurso de Projetos:** Inspirado no Gemini, ele pode criar pastas/projetos e atrelar agentes com conhecimentos específicos para ajudar a escrever textos, organizar ideias, antes de mandar para a linha de produção de vídeos.
+- **Recurso de Projetos:** Inspirado no Gemini, ele pode criar pastas/projetos e atrelar agentes com conhecimentos especï¿½ficos para ajudar a escrever textos, organizar ideias, antes de mandar para a linha de produï¿½ï¿½o de vï¿½deos.
 
 ### C. O Agente de Suporte Central (O Fantasma Omnipresente do Apollo)
-Este é o robô da plataforma (não o roteirista do cliente).
-- Ele atende o cliente no WhatsApp, fica flutuando na interface do site e tira dúvidas.
+Este ï¿½ o robï¿½ da plataforma (nï¿½o o roteirista do cliente).
+- Ele atende o cliente no WhatsApp, fica flutuando na interface do site e tira dï¿½vidas.
 - Sabe tudo sobre o cliente.
-- Se o cliente estiver na aba de criação, esse robô de suporte pode ajudar, mas sua função principal é guiar e vender (Gerar orçamentos, receitas, direcionamentos).
+- Se o cliente estiver na aba de criaï¿½ï¿½o, esse robï¿½ de suporte pode ajudar, mas sua funï¿½ï¿½o principal ï¿½ guiar e vender (Gerar orï¿½amentos, receitas, direcionamentos).
 
-Esta estrutura cria um ecossistema viciante onde o usuário se sente dono de uma agência de publicidade particular (com seus próprios roteiristas customizados) e paga alegremente a gasolina e os cristais para manter sua agência rodando.
+Esta estrutura cria um ecossistema viciante onde o usuï¿½rio se sente dono de uma agï¿½ncia de publicidade particular (com seus prï¿½prios roteiristas customizados) e paga alegremente a gasolina e os cristais para manter sua agï¿½ncia rodando.
 
 
 ## 7. ARQUITETURA DEFINITIVA DE GERAÃ‡ÃƒO DE IMAGENS (FLUX MULTI-PASS / TEXT-LOCKING)
@@ -892,10 +892,10 @@ Esta estrutura cria um ecossistema viciante onde o usuário se sente dono de uma 
 **A LÃ“GICA DE INJEÃ‡ÃƒO (NÃƒO ALTERAR):**
 O processo que insere mÃºltiplos personagens (ex: 3 pessoas) em uma Ãºnica imagem foi otimizado para a nuvem Modal. A Ãºnica forma aceitÃ¡vel e rÃ¡pida (~2.5 minutos) de executÃ¡-lo Ã© atravÃ©s do motor nativo:
 
-1. **Script de OrquestraÃ§Ã£o:** ackend/tests/test_multipass_direct.py
+1. **Script de OrquestraÃ§Ã£o:** ackend/tests/test_multipass_direct.py
 2. **MÃ©todo de ExecuÃ§Ã£o:** ExecuÃ§Ã£o via RPC Direta (modal run test_multipass_direct.py). NUNCA usar requisiÃ§Ãµes autÃ´nomas via roteador HTTP (
 equests.post), pois isso forÃ§a reinicializaÃ§Ãµes a frio duplas no servidor da Modal, explodindo o tempo para quase 9 minutos.
 3. **Workflows ComfyUI (Os arquivos IntocÃ¡veis):**
-   - **GeraÃ§Ã£o Base:** pollo_flux2_klein.json (Gera o cenÃ¡rio sem personagens).
+   - **GeraÃ§Ã£o Base:** pollo_flux2_klein.json (Gera o cenÃ¡rio sem personagens).
    - **GeraÃ§Ã£o Inpaint (Multi-pass):** 10resultado_3_personagens_CHAINED_klein.json. Este arquivo roda repetidas vezes (loop nativo no python) inserindo um personagem por vez sobre a mesma imagem usando ReferenceLatent.
 4. **O Segredo do Text-Locking:** O segredo para que os rostos nÃ£o se fundam (Efeito Quimera) nem gerem pessoas aleatÃ³rias nÃ£o Ã© usar PuLID nem MÃ¡scaras Regionais. A soluÃ§Ã£o Ã© a redundÃ¢ncia textual. O LLM deve receber **descriÃ§Ãµes fotorealistas idÃªnticas Ã s fotos** (cabelo, barba, cor de roupa, expressÃ£o). Se o prompt de texto for genÃ©rico (ex: 'Person 1, a man'), o modelo ignora a foto e desenha um estranho. Prompts maciÃ§os e descritivos *travam* a identidade na referÃªncia da imagem.

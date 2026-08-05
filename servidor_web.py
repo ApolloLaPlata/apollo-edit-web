@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import json
 import glob
@@ -47,7 +47,7 @@ app = FastAPI(title="Apollo Studio Web Engine")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEB_UI_DIR = os.path.join(BASE_DIR, "web_ui")
 
-# VariÃ¡vel Global de Workspace (injetada pelo apollo_studio.py)
+# VariÃƒÂ¡vel Global de Workspace (injetada pelo apollo_studio.py)
 CURRENT_WORKSPACE = "Default"
 CURRENT_WORKSPACE_PATH = ""
 
@@ -78,7 +78,15 @@ async def read_root(request: Request):
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
         return response
-    return HTMLResponse(content="<h1>Hub nÃ£o encontrado</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Hub não encontrado</h1>", status_code=404)
+
+@app.get("/chat", response_class=HTMLResponse)
+async def read_chat():
+    """Atalho para o Pocket Director"""
+    path = os.path.join(WEB_UI_DIR, "pocket_director.html")
+    if os.path.exists(path):
+        return FileResponse(path)
+    return HTMLResponse(content="<h1>Chat do Diretor (Pocket) não encontrado</h1>", status_code=404)
 
 @app.get("/apollo-master", response_class=HTMLResponse)
 async def read_apollo_master():
@@ -87,7 +95,7 @@ async def read_apollo_master():
     if os.path.exists(path):
         with open(path, 'r', encoding='utf-8') as f:
             return HTMLResponse(content=f.read(), status_code=200)
-    return HTMLResponse(content="<h1>Admin não encontrado</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Admin nÃ£o encontrado</h1>", status_code=404)
 
 @app.get("/admin", response_class=HTMLResponse)
 async def read_admin():
@@ -112,7 +120,7 @@ async def read_apollo_master_login():
     if os.path.exists(path):
         with open(path, 'r', encoding='utf-8') as f:
             return HTMLResponse(content=f.read(), status_code=200)
-    return HTMLResponse(content="<h1>Login nÃ£o encontrado</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Login nÃƒÂ£o encontrado</h1>", status_code=404)
 
 @app.get("/mobile")
 async def read_mobile(request: Request):
@@ -129,11 +137,11 @@ async def read_mobile(request: Request):
     if os.path.exists(path):
         response = HTMLResponse(content=open(path, 'r', encoding='utf-8').read(), status_code=200)
         return response
-    return HTMLResponse(content="<h1>Mobile Studio não encontrado</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Mobile Studio nÃ£o encontrado</h1>", status_code=404)
 
 @app.get("/{filename}.html")
 async def serve_html(request: Request, filename: str):
-    """Serve arquivos HTML com traduÃ§Ã£o nativa baseada em cookie"""
+    """Serve arquivos HTML com traduÃƒÂ§ÃƒÂ£o nativa baseada em cookie"""
     lang = request.cookies.get("apollo_lang", "pt")
     
     response = None
@@ -162,11 +170,11 @@ class PresignedURLRequest(BaseModel):
 async def generate_presigned_url(req: PresignedURLRequest):
     """
     Gera uma Presigned URL (S3 / Cloudflare R2) para que o frontend
-    faÃ§a o upload de arquivos pesados (ex: 2GB) direto do navegador,
-    sem sobrecarregar o servidor VPS com trÃ¡fego.
+    faÃƒÂ§a o upload de arquivos pesados (ex: 2GB) direto do navegador,
+    sem sobrecarregar o servidor VPS com trÃƒÂ¡fego.
     """
-    # ATENÃÃO: As credenciais devem vir do config.json do Workspace no futuro
-    # Por seguranÃ§a, estamos mockando a configuraÃ§Ã£o atÃ© o usuÃ¡rio prover as chaves R2/S3
+    # ATENÃƒÂ‡ÃƒÂƒO: As credenciais devem vir do config.json do Workspace no futuro
+    # Por seguranÃƒÂ§a, estamos mockando a configuraÃƒÂ§ÃƒÂ£o atÃƒÂ© o usuÃƒÂ¡rio prover as chaves R2/S3
     AWS_ACCESS_KEY = os.getenv("S3_ACCESS_KEY", "MOCK_ACCESS_KEY")
     AWS_SECRET_KEY = os.getenv("S3_SECRET_KEY", "MOCK_SECRET_KEY")
     ENDPOINT_URL = os.getenv("S3_ENDPOINT", "https://MOCK-R2.cloudflarestorage.com")
@@ -188,17 +196,17 @@ async def generate_presigned_url(req: PresignedURLRequest):
                 'Key': f"uploads/{req.filename}",
                 'ContentType': req.content_type
             },
-            ExpiresIn=3600 # VÃ¡lido por 1 hora
+            ExpiresIn=3600 # VÃƒÂ¡lido por 1 hora
         )
         return {"success": True, "presigned_url": response, "file_key": f"uploads/{req.filename}"}
     except ClientError as e:
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 # =====================================================================
-# ### INÍCIO DA LÓGICA DE ADMINISTRAÇÃO E AUTENTICAÇÃO (SAAS) ###
+# ### INÃCIO DA LÃ“GICA DE ADMINISTRAÃ‡ÃƒO E AUTENTICAÃ‡ÃƒO (SAAS) ###
 # =====================================================================
-# AVISO DE REFATORAÇÃO FUTURA: Estas rotas controlam o painel Master,
-# chaves de API e saldo de usuários. Futuramente mover para: /src/api/admin_routes.py
+# AVISO DE REFATORAÃ‡ÃƒO FUTURA: Estas rotas controlam o painel Master,
+# chaves de API e saldo de usuÃ¡rios. Futuramente mover para: /src/api/admin_routes.py
 # =====================================================================
 
 class AdminLoginRequest(BaseModel):
@@ -254,15 +262,15 @@ async def admin_get_dashboard(token: str = None):
         from chat_ai_manager import ChatAIManager
         ai = ChatAIManager(cm)
         
-        prompt = f"""Você é o Agente Financeiro Autônomo.
+        prompt = f"""VocÃª Ã© o Agente Financeiro AutÃ´nomo.
 Resumo atual do sistema:
-- Usuários Totais: {eco_stats.get("total_users")}
+- UsuÃ¡rios Totais: {eco_stats.get("total_users")}
 - Receita Estimada (Coins): ${estimated_revenue:.2f}
 - Custo de APIs de IA: ${total_api_spend:.2f}
-- Custo de Computação Cloud: ${total_cloud_spend:.2f}
+- Custo de ComputaÃ§Ã£o Cloud: ${total_cloud_spend:.2f}
 - Lucro Estimado: ${profit:.2f}
 
-Escreva um relatório de 1 parágrafo focado na saúde financeira. Seja direto e analítico."""
+Escreva um relatÃ³rio de 1 parÃ¡grafo focado na saÃºde financeira. Seja direto e analÃ­tico."""
         
         ai_res = ai.send_message("agente_financeiro", prompt)
         ai_report = ai_res.get("text", "Erro ao conectar com a IA Financeira.")
@@ -301,8 +309,8 @@ async def market_analyst_recommendations(token: str = None):
         recommendations.append({
             "id": "high_dalle_cost",
             "type": "warning",
-            "title": "Custo Elevado: Geração Visual",
-            "description": "Custo das APIs de imagem está acima da média. Recomendação do Agente: Alterar fallback para infraestrutura Modal local (Flux). Economia estimada: R$ 450/dia.",
+            "title": "Custo Elevado: GeraÃ§Ã£o Visual",
+            "description": "Custo das APIs de imagem estÃ¡ acima da mÃ©dia. RecomendaÃ§Ã£o do Agente: Alterar fallback para infraestrutura Modal local (Flux). Economia estimada: R$ 450/dia.",
             "action_label": "Redirecionar para Modal",
             "action_payload": {"action": "set_image_fallback", "value": "modal"}
         })
@@ -312,7 +320,7 @@ async def market_analyst_recommendations(token: str = None):
             "id": "engagement_spike",
             "type": "opportunity",
             "title": "Pico de Engajamento: Jogo de Corrida",
-            "description": f"Retenção no minigame subiu. Usuários totais: {eco_stats.get('total_users', 0)}. Recomendação: Aumentar o custo em 'Gasolina' dos renders para forçar mais tempo de gameplay (AdSense).",
+            "description": f"RetenÃ§Ã£o no minigame subiu. UsuÃ¡rios totais: {eco_stats.get('total_users', 0)}. RecomendaÃ§Ã£o: Aumentar o custo em 'Gasolina' dos renders para forÃ§ar mais tempo de gameplay (AdSense).",
             "action_label": "Aumentar Custo (+5%)",
             "action_payload": {"action": "increase_gas_cost", "value": 1.05}
         })
@@ -343,7 +351,7 @@ async def market_analyst_apply(payload: MarketActionPayload):
             cm.set("gas_cost_multiplier", new_mult)
             return {"success": True, "message": f"Multiplicador de gasolina ajustado para {new_mult:.2f}x"}
             
-        return {"success": False, "error": "Ação desconhecida."}
+        return {"success": False, "error": "AÃ§Ã£o desconhecida."}
     except Exception as e:
         return {"success": False, "error": str(e)}
 
@@ -510,7 +518,7 @@ async def admin_manage_credits(req: UserCreditRequest):
             
         if res:
             return {"success": True}
-        return {"success": False, "error": "Falha ao gerenciar crÃ©ditos"}
+        return {"success": False, "error": "Falha ao gerenciar crÃƒÂ©ditos"}
     except Exception as e:
         return {"success": False, "error": str(e)}
 
@@ -527,16 +535,145 @@ async def admin_create_user(req: NewUserRequest):
         res = user_database.create_user(req.username, req.password, req.initial_credits)
         if res:
             return {"success": True}
-        return {"success": False, "error": "UsuÃ¡rio jÃ¡ existe ou erro no banco"}
+        return {"success": False, "error": "UsuÃƒÂ¡rio jÃƒÂ¡ existe ou erro no banco"}
     except Exception as e:
         return {"success": False, "error": str(e)}
         
-# --- FIM ROTAS DE ADMINISTRAÃÃO ---
+# --- INÃCIO FASE VIII: ORQUESTRAÃ‡ÃƒO NÃVEL DEUS (MOBILE / POCKET DIRECTOR) ---
+
+class AutoblogSubmitRequest(BaseModel):
+    source: str
+    title: str
+    payload: dict
+
+@app.post("/api/internal/autoblog/submit")
+async def autoblog_submit(req: AutoblogSubmitRequest):
+    try:
+        import user_database
+        payload_json = json.dumps(req.payload)
+        approval_id = user_database.add_pending_approval(req.source, req.title, payload_json)
+        
+        # Notifica via WebSocket/JobNotifier (se jÃ¡ conectado) ou deixa pendente
+        # para o Cloud Sync Worker pegar
+        return {"success": True, "approval_id": approval_id}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.get("/api/mobile/pending_approvals")
+async def get_mobile_pending_approvals(token: str = None):
+    try:
+        # TODO: Adicionar middleware `VerifyBiometricSignature` futuro
+        import user_database
+        pending = user_database.get_pending_approvals()
+        
+        # Converte a string json de volta pra objeto na resposta
+        for p in pending:
+            try:
+                p["payload"] = json.loads(p["payload"])
+            except:
+                pass
+                
+        return {"success": True, "data": pending}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+def VerifyBiometricSignature(signature: str, payload_str: str) -> bool:
+    # Em produÃ§Ã£o real, validaria assinatura RSA/ECDSA do dispositivo
+    # Aqui usamos um secret partilhado e um dev bypass
+    SECRET = "POCKET_DIRECTOR_SECURE_TOKEN_2026"
+    expected = hashlib.sha256((payload_str + SECRET).encode()).hexdigest()
+    return signature == expected or signature == "DEV_BYPASS_TOKEN"
+
+class MobileApproveRequest(BaseModel):
+    approval_id: int
+    user_id: int
+    signature: str
+    cost_gas: int = 10
+    cost_crystals: int = 0
+
+@app.post("/api/mobile/approve")
+async def mobile_approve(req: MobileApproveRequest):
+    try:
+        import user_database
+        
+        # Validar assinatura biomÃ©trica
+        if not VerifyBiometricSignature(req.signature, str(req.approval_id)):
+            raise HTTPException(status_code=403, detail="Invalid Biometric Signature")
+            
+        # Tentar descontar a Gasolina
+        if req.cost_gas > 0:
+            if not user_database.deduct_currency(req.user_id, req.cost_gas, 'gas', f"AprovaÃ§Ã£o Mobile ID {req.approval_id}"):
+                raise HTTPException(status_code=402, detail="Insufficient Gas")
+                
+        if req.cost_crystals > 0:
+            if not user_database.deduct_currency(req.user_id, req.cost_crystals, 'crystals', f"AprovaÃ§Ã£o Mobile ID {req.approval_id}"):
+                raise HTTPException(status_code=402, detail="Insufficient Crystals")
+                
+        # Atualizar status no banco
+        success = user_database.update_approval_status(req.approval_id, 'approved')
+        
+        # TODO: Encaminhar para fila real de renderizaÃ§Ã£o no PC
+        return {"success": success, "message": "Approval processed successfully"}
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+class MobileRenderStartRequest(BaseModel):
+    timeline_data: dict
+
+@app.post("/api/mobile/render/start")
+async def mobile_render_start(req: MobileRenderStartRequest, background_tasks: BackgroundTasks):
+    try:
+        import os
+        import json
+        import subprocess
+        
+        timeline_path = os.path.join(CURRENT_WORKSPACE_PATH, "timeline_export.json")
+        with open(timeline_path, 'w', encoding='utf-8') as f:
+            json.dump(req.timeline_data, f, ensure_ascii=False, indent=4)
+            
+        render_script = os.path.join(BASE_DIR, "render_timeline.py")
+        
+        def run_render():
+            print(f"[Mobile Render] Disparando render_timeline.py para o workspace {CURRENT_WORKSPACE}...")
+            # subprocess.Popen dispara e deixa rolando independentemente
+            subprocess.Popen(
+                ["python", render_script, timeline_path],
+                cwd=CURRENT_WORKSPACE_PATH,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+            )
+            
+        background_tasks.add_task(run_render)
+        
+        return {"success": True, "message": "RenderizaÃ§Ã£o iniciada em background na mÃ¡quina local."}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.get("/api/mobile/render/status")
+async def mobile_render_status():
+    try:
+        import os
+        import json
+        status_path = os.path.join(CURRENT_WORKSPACE_PATH, "render_status.json")
+        if not os.path.exists(status_path):
+            return {"success": True, "state": "idle", "progress": 0, "message": "Nenhum render ativo."}
+            
+        with open(status_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return {"success": True, **data}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+# --- FIM ROTAS DE ADMINISTRAÃ‡ÃƒO ---
+        
+# --- FIM ROTAS DE ADMINISTRAÃƒâ€¡ÃƒÆ’O ---
 
 # =====================================================================
-# ### INÍCIO DA LÓGICA DO PAINEL DO USUÁRIO E GAMIFICAÇÃO ###
+# ### INÃCIO DA LÃ“GICA DO PAINEL DO USUÃRIO E GAMIFICAÃ‡ÃƒO ###
 # =====================================================================
-# AVISO DE REFATORAÇÃO FUTURA: Perfil, experiência, inventário e itens RPG.
+# AVISO DE REFATORAÃ‡ÃƒO FUTURA: Perfil, experiÃªncia, inventÃ¡rio e itens RPG.
 # Futuramente mover para: /src/api/user_routes.py e /src/api/rpg_routes.py
 # =====================================================================
 
@@ -546,14 +683,14 @@ async def get_user_profile():
     conn = user_database.get_connection()
     cursor = conn.cursor()
     
-    # Busca os dados base do usuário (assumindo ID 1 como master provisório)
+    # Busca os dados base do usuÃ¡rio (assumindo ID 1 como master provisÃ³rio)
     cursor.execute("""
         SELECT username, credits, role, level, xp, country, rank_points, is_banned
         FROM users WHERE id = 1
     """)
     user = cursor.fetchone()
     
-    # Se o usuário não existir (banco recém-criado), criamos o usuário admin
+    # Se o usuÃ¡rio nÃ£o existir (banco recÃ©m-criado), criamos o usuÃ¡rio admin
     if not user:
         user_database.create_user("Admin", "admin123", 5000, "Master")
         cursor.execute("UPDATE users SET level = 10, xp = 1500, country = 'BR' WHERE id = 1")
@@ -572,7 +709,7 @@ async def get_user_profile():
     gas = currency_row[0] if currency_row else 100
     cristais = currency_row[1] if currency_row else 0
 
-    # Busca os cosméticos desbloqueados no inventário
+    # Busca os cosmÃ©ticos desbloqueados no inventÃ¡rio
     cursor.execute("""
         SELECT s.name, s.type, s.id
         FROM user_inventory i
@@ -582,7 +719,7 @@ async def get_user_profile():
     inventory = cursor.fetchall()
     unlocked_cosmetics = [item[2] for item in inventory if item[1] == 'border']
 
-    # Busca cosméticos equipados
+    # Busca cosmÃ©ticos equipados
     cursor.execute("""
         SELECT equipped_border_id, equipped_title_id
         FROM user_equipped WHERE user_id = 1
@@ -625,7 +762,7 @@ async def log_page_visit_endpoint(req: LogVisitRequest):
     # Assumindo user ID 1 localmente
     res = user_database.log_page_visit(1, req.page_name)
     
-    # Retornar settings de página para que o auth.js possa aplicar bloqueios de acesso
+    # Retornar settings de pÃ¡gina para que o auth.js possa aplicar bloqueios de acesso
     try:
         conn = user_database.get_connection()
         cursor = conn.cursor()
@@ -651,7 +788,7 @@ async def buy_item(req: Request):
         # Obter custo do item (Mock) - Poderia vir do banco se populado
         cost = data.get("cost", 0)
         
-        # Simular desconto de cristais (Como nÃ£o temos coluna cristais, vamos usar dummy success)
+        # Simular desconto de cristais (Como nÃƒÂ£o temos coluna cristais, vamos usar dummy success)
         cursor.execute("INSERT INTO user_inventory (user_id, item_id) VALUES (1, ?)", (item_id_str,))
         
         # Equipar automaticamente ao comprar
@@ -707,11 +844,11 @@ def check_feature(feature_key: str):
     res = cursor.fetchone()
     conn.close()
     if res and res[0] == 'off':
-        raise HTTPException(status_code=503, detail="Ferramenta em manutenção pelo Administrador.")
+        raise HTTPException(status_code=503, detail="Ferramenta em manutenÃ§Ã£o pelo Administrador.")
     return True
 
 def check_user_status(user_id: int = 1):
-    """Verifica se o usuário está banido."""
+    """Verifica se o usuÃ¡rio estÃ¡ banido."""
     import user_database
     conn = user_database.get_connection()
     cursor = conn.cursor()
@@ -727,16 +864,16 @@ async def chat_interaction(msg: ChatMessage):
     check_user_status()
     check_feature('feature_grok') # Exemplo: amarrado a feature_grok
     import time
-    time.sleep(1) # Simular latÃªncia
+    time.sleep(1) # Simular latÃƒÂªncia
     return {
-        "response": f"Processando sua requisiÃ§Ã£o: '{msg.message}'. Como Apollo Copilot da V2, estou configurando os agentes para iniciar a construÃ§Ã£o do seu vÃ­deo utilizando os bancos de dados do seu canal..."
+        "response": f"Processando sua requisiÃƒÂ§ÃƒÂ£o: '{msg.message}'. Como Apollo Copilot da V2, estou configurando os agentes para iniciar a construÃƒÂ§ÃƒÂ£o do seu vÃƒÂ­deo utilizando os bancos de dados do seu canal..."
     }
 
 # =====================================================================
-# ### INÍCIO DA LÓGICA DE PROXY (MOTORES EXTERNOS / LIGHTNING AI) ###
+# ### INÃCIO DA LÃ“GICA DE PROXY (MOTORES EXTERNOS / LIGHTNING AI) ###
 # =====================================================================
-# AVISO DE REFATORAÇÃO FUTURA: Estes endpoints bypassam o CORS para falar
-# com o Lightning AI e geradores de imagem/áudio externos.
+# AVISO DE REFATORAÃ‡ÃƒO FUTURA: Estes endpoints bypassam o CORS para falar
+# com o Lightning AI e geradores de imagem/Ã¡udio externos.
 # Futuramente mover para: /src/api/proxy_routes.py
 # =====================================================================
 
@@ -769,9 +906,9 @@ async def lightning_proxy(request: Request):
 @app.post("/api/media_proxy")
 async def media_proxy(request: Request):
     """
-    Proxy Universal para o "Pendrive Mágico da Nuvem".
-    Recebe do frontend a URL alvo, os cabeçalhos e o corpo da requisição.
-    Bypassa o CORS para gerar Imagem, Áudio, Vídeo e Música em qualquer API.
+    Proxy Universal para o "Pendrive MÃ¡gico da Nuvem".
+    Recebe do frontend a URL alvo, os cabeÃ§alhos e o corpo da requisiÃ§Ã£o.
+    Bypassa o CORS para gerar Imagem, Ãudio, VÃ­deo e MÃºsica em qualquer API.
     """
     try:
         import requests
@@ -779,16 +916,16 @@ async def media_proxy(request: Request):
         
         target_url = data.pop("target_url", "")
         if not target_url:
-            return JSONResponse(status_code=400, content={"error": "target_url não fornecida"})
+            return JSONResponse(status_code=400, content={"error": "target_url nÃ£o fornecida"})
             
         target_headers = data.pop("target_headers", {})
         
-        # Faz a requisição para a API externa
+        # Faz a requisiÃ§Ã£o para a API externa
         response = requests.post(
             target_url,
             json=data,
             headers=target_headers,
-            timeout=120 # Timeout maior para geração de mídia pesada
+            timeout=120 # Timeout maior para geraÃ§Ã£o de mÃ­dia pesada
         )
         
         try:
@@ -801,9 +938,9 @@ async def media_proxy(request: Request):
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 # =====================================================================
-# ### INÍCIO DA LÓGICA DO BOT DE WHATSAPP E CHATBOT (LLM CASCADE) ###
+# ### INÃCIO DA LÃ“GICA DO BOT DE WHATSAPP E CHATBOT (LLM CASCADE) ###
 # =====================================================================
-# AVISO DE REFATORAÇÃO FUTURA: Controle do Cão de Guarda (Node.js) e do
+# AVISO DE REFATORAÃ‡ÃƒO FUTURA: Controle do CÃ£o de Guarda (Node.js) e do
 # LLM Cascade para responder mensagens via Web ou WhatsApp.
 # Futuramente mover para: /src/api/whatsapp_routes.py
 # =====================================================================
@@ -828,10 +965,10 @@ async def start_whatsapp():
     # Usa START do Windows para abrir em janela oculta ou minimizada se desejar, 
     # mas o cmd /c com CREATE_NO_WINDOW faria ele rodar sem tela nenhuma. 
     # Como o bat tem "pause", melhor rodar escondido sem a janela travando,
-    # Ou só executar o node direto.
+    # Ou sÃ³ executar o node direto.
     # Vamos rodar via subprocess sem janela para integrar ao fundo:
     # subprocess.Popen(["node", "index.js"], cwd=os.path.join(CURRENT_WORKSPACE_PATH, "whatsapp_bot"), creationflags=subprocess.CREATE_NO_WINDOW)
-    # Mas como o bat já existe, executamos ele minimizado:
+    # Mas como o bat jÃ¡ existe, executamos ele minimizado:
     subprocess.Popen(f'start /min "WhatsApp Bridge" cmd /c "{bat_path}"', shell=True)
     return {"success": True}
 
@@ -869,10 +1006,10 @@ async def chat_send(request: Request):
                     import json
                     req = urllib.request.Request("http://127.0.0.1:5001/api/send", method="POST")
                     req.add_header('Content-Type', 'application/json')
-                    out_data = json.dumps({"to": admin_group_id, "message": f"🤖 [Painel Web]: {msg_text}"}).encode('utf-8')
+                    out_data = json.dumps({"to": admin_group_id, "message": f"ðŸ¤– [Painel Web]: {msg_text}"}).encode('utf-8')
                     urllib.request.urlopen(req, data=out_data)
                 except Exception as e:
-                    print(f"[WhatsApp] Falha ao enviar cópia da pergunta web: {e}")
+                    print(f"[WhatsApp] Falha ao enviar cÃ³pia da pergunta web: {e}")
         
         if api_key:
             chat_cfg = cm.get("api_config.lightning_chat", {})
@@ -880,13 +1017,13 @@ async def chat_send(request: Request):
                 chat_cfg["api_key"] = api_key
                 cm.set("api_config.lightning_chat", chat_cfg)
             
-        # O histórico precisa ser o unificado se for o PRIME
+        # O histÃ³rico precisa ser o unificado se for o PRIME
         prompt_with_history = msg_text
         if agent_id == "PRIME" and len(unified_chat_history) > 1:
             history_text = "\n".join([f"{item['role'].upper()}: {item['content']}" for item in unified_chat_history[-10:]])
-            prompt_with_history = f"Histórico Recente:\n{history_text}\n\nMensagem Atual:\n{msg_text}"
+            prompt_with_history = f"HistÃ³rico Recente:\n{history_text}\n\nMensagem Atual:\n{msg_text}"
             
-        # O painel Web é usado apenas pelo admin (Chefe). Conectando direto no Lightning AI.
+        # O painel Web Ã© usado apenas pelo admin (Chefe). Conectando direto no Lightning AI.
         import requests
         chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
         used_api_key = api_key if api_key else chat_cfg.get("api_key", "")
@@ -896,7 +1033,7 @@ async def chat_send(request: Request):
             
         response_text = ""
         if not used_api_key:
-            response_text = "⚠️ [Apollo Prime] A Chave da API da Lightning não está configurada neste Canal."
+            response_text = "âš ï¸ [Apollo Prime] A Chave da API da Lightning nÃ£o estÃ¡ configurada neste Canal."
         else:
             headers = {
                 "Authorization": f"Bearer {used_api_key}",
@@ -915,9 +1052,9 @@ async def chat_send(request: Request):
                     resp_json = resp.json()
                     response_text = resp_json.get("choices", [{}])[0].get("message", {}).get("content", "")
                 else:
-                    response_text = f"⚠️ [Lightning API Error] Falha de comunicação (Status {resp.status_code})"
+                    response_text = f"âš ï¸ [Lightning API Error] Falha de comunicaÃ§Ã£o (Status {resp.status_code})"
             except Exception as e:
-                response_text = f"⚠️ [Network Error] Falha ao contatar a Lightning AI: {str(e)}"
+                response_text = f"âš ï¸ [Network Error] Falha ao contatar a Lightning AI: {str(e)}"
         
         if response_text:
             if agent_id == "PRIME":
@@ -933,7 +1070,7 @@ async def chat_send(request: Request):
                         out_data = json.dumps({"to": admin_group_id, "message": response_text}).encode('utf-8')
                         urllib.request.urlopen(req, data=out_data)
                     except Exception as e:
-                        print(f"[WhatsApp] Falha ao enviar cópia web: {e}")
+                        print(f"[WhatsApp] Falha ao enviar cÃ³pia web: {e}")
             
             return {"success": True, "reply": response_text}
         return {"success": False, "error": "No response"}
@@ -950,14 +1087,14 @@ async def whatsapp_webhook(request: Request):
         sender = msg.get("from", "")
         recipient = msg.get("to", "")
         
-        # Se a mensagem foi digitada pelo dono do celular, o ID do Grupo está no 'to'. 
-        # Se foi digitada por outra pessoa no grupo, está no 'from'.
+        # Se a mensagem foi digitada pelo dono do celular, o ID do Grupo estÃ¡ no 'to'. 
+        # Se foi digitada por outra pessoa no grupo, estÃ¡ no 'from'.
         group_id = recipient if "@g.us" in recipient else sender
         
         whatsapp_last_contact = group_id
         user_text = msg.get("body", "")
         
-        # Procura qual workspace é o dono desse group_id
+        # Procura qual workspace Ã© o dono desse group_id
         target_workspace_path = None
         
         # 1. Verifica o workspace ADMIN primeiro (BASE_DIR)
@@ -989,9 +1126,9 @@ async def whatsapp_webhook(request: Request):
                             except:
                                 pass
                                 
-        # 4. Se não encontrou NENHUM workspace dono deste grupo, ignora a mensagem silenciosamente
+        # 4. Se nÃ£o encontrou NENHUM workspace dono deste grupo, ignora a mensagem silenciosamente
         if not target_workspace_path:
-            print(f"[Aviso] Mensagem ignorada de grupo ou contato desconhecido/não configurado: {group_id}")
+            print(f"[Aviso] Mensagem ignorada de grupo ou contato desconhecido/nÃ£o configurado: {group_id}")
             return {"success": True, "message": "Ignored - unknown group"}
                             
         cm = ConfigManager(os.path.join(target_workspace_path, "config.json"))     
@@ -1000,14 +1137,14 @@ async def whatsapp_webhook(request: Request):
         if target_workspace_path == BASE_DIR:
             unified_chat_history.append({"role": "user", "content": user_text})
         
-        system_prompt = cm.get("ai_system_prompt", "Você é o assistente virtual deste canal.")
-        system_prompt += "\n\nATENÇÃO: Você está falando com o usuário através de um grupo do WhatsApp. Responda de forma direta, irônica e concisa, como o robô do sistema. Evite formatações longas."
+        system_prompt = cm.get("ai_system_prompt", "VocÃª Ã© o assistente virtual deste canal.")
+        system_prompt += "\n\nATENÃ‡ÃƒO: VocÃª estÃ¡ falando com o usuÃ¡rio atravÃ©s de um grupo do WhatsApp. Responda de forma direta, irÃ´nica e concisa, como o robÃ´ do sistema. Evite formataÃ§Ãµes longas."
         
-        # Carrega histórico persistente do canal (usaremos uma versão simplificada aqui)
-        prompt_with_history = f"Mensagem Atual do Usuário:\n{user_text}"
+        # Carrega histÃ³rico persistente do canal (usaremos uma versÃ£o simplificada aqui)
+        prompt_with_history = f"Mensagem Atual do UsuÃ¡rio:\n{user_text}"
         if target_workspace_path == BASE_DIR:
             history_text = "\n".join([f"{item['role'].upper()}: {item['content']}" for item in unified_chat_history[-10:]])
-            prompt_with_history = f"Histórico Recente:\n{history_text}\n\n{prompt_with_history}"
+            prompt_with_history = f"HistÃ³rico Recente:\n{history_text}\n\n{prompt_with_history}"
         
         # ========================================================
         # ROBO DE ATENDIMENTO: CONECTANDO DIRETO AO LIGHTNING AI
@@ -1022,7 +1159,7 @@ async def whatsapp_webhook(request: Request):
             
         response_text = ""
         if not api_key:
-            response_text = "⚠️ [Apollo Prime] A Chave da API da Lightning não está configurada neste Canal. Configure no Painel Web primeiro."
+            response_text = "âš ï¸ [Apollo Prime] A Chave da API da Lightning nÃ£o estÃ¡ configurada neste Canal. Configure no Painel Web primeiro."
         else:
             headers = {
                 "Authorization": f"Bearer {api_key}",
@@ -1041,9 +1178,9 @@ async def whatsapp_webhook(request: Request):
                     resp_json = resp.json()
                     response_text = resp_json.get("choices", [{}])[0].get("message", {}).get("content", "Erro vazio da API.")
                 else:
-                    response_text = f"⚠️ [Lightning API Error] Falha de comunicação (Status {resp.status_code})"
+                    response_text = f"âš ï¸ [Lightning API Error] Falha de comunicaÃ§Ã£o (Status {resp.status_code})"
             except Exception as e:
-                response_text = f"⚠️ [Network Error] Falha ao contatar a Lightning AI: {str(e)}"
+                response_text = f"âš ï¸ [Network Error] Falha ao contatar a Lightning AI: {str(e)}"
             
         unified_chat_history.append({"role": "model", "content": response_text})
         import urllib.request
@@ -1057,7 +1194,7 @@ async def whatsapp_webhook(request: Request):
             print(f"[WhatsApp] Falha ao responder pro Node.js: {e}")
             
         # Tenta enviar a mesma mensagem para o Painel Web, se ele estiver aberto (broadcast local)
-        # O histórico unificado já fez isso acima, então o painel será atualizado via sync
+        # O histÃ³rico unificado jÃ¡ fez isso acima, entÃ£o o painel serÃ¡ atualizado via sync
         
         return {"success": True, "reply": response_text}
     except Exception as e:
@@ -1077,7 +1214,7 @@ async def gerar_grupo_whatsapp(request: Request):
         # Cria o grupo com o nome do ADMIN
         req = urllib.request.Request("http://127.0.0.1:5001/api/create_group", method="POST")
         req.add_header('Content-Type', 'application/json')
-        out_data = json.dumps({"name": "🤖 ADM APOLLO EDIT WEB"}).encode('utf-8')
+        out_data = json.dumps({"name": "ðŸ¤– ADM APOLLO EDIT WEB"}).encode('utf-8')
         
         response = urllib.request.urlopen(req, data=out_data)
         data = json.loads(response.read().decode('utf-8'))
@@ -1098,7 +1235,7 @@ async def gerar_grupo_whatsapp(request: Request):
 
 @app.get("/api/workspace")
 async def get_workspace_info():
-    """Retorna dados bÃ¡sicos do workspace logado."""
+    """Retorna dados bÃƒÂ¡sicos do workspace logado."""
     return {
         "name": CURRENT_WORKSPACE,
         "path": CURRENT_WORKSPACE_PATH
@@ -1131,11 +1268,11 @@ async def save_config_full(request: Request):
         return {"success": False, "error": str(e)}
 
 # =====================================================================
-# ### INÍCIO DA LÓGICA DE RENDER E GERAÇÃO DE CONTEÚDO (A FÁBRICA) ###
+# ### INÃCIO DA LÃ“GICA DE RENDER E GERAÃ‡ÃƒO DE CONTEÃšDO (A FÃBRICA) ###
 # =====================================================================
-# AVISO DE REFATORAÇÃO FUTURA: Estas são as rotas mais pesadas. Elas 
-# invocam scripts Python (FFmpeg, TTS, RVC) e não devem ser interrompidas
-# por IAs. O motor é puramente determinístico aqui.
+# AVISO DE REFATORAÃ‡ÃƒO FUTURA: Estas sÃ£o as rotas mais pesadas. Elas 
+# invocam scripts Python (FFmpeg, TTS, RVC) e nÃ£o devem ser interrompidas
+# por IAs. O motor Ã© puramente determinÃ­stico aqui.
 # Futuramente mover para: /src/api/render_routes.py
 # =====================================================================
 
@@ -1285,8 +1422,8 @@ async def api_ajustador_processar(
             out_dir = os.path.join(CURRENT_WORKSPACE_PATH, "saida_ajustador")
             os.makedirs(out_dir, exist_ok=True)
             
-            q.put(f"âš™ï¸  Configurando processador de mÃ­dia...\n")
-            q.put(f"ðŸ“‚ SaÃ­da automÃ¡tica configurada para: {out_dir}\n")
+            q.put(f"Ã¢Å¡â„¢Ã¯Â¸  Configurando processador de mÃƒÂ­dia...\n")
+            q.put(f"Ã°Å¸â€œâ€š SaÃƒÂ­da automÃƒÂ¡tica configurada para: {out_dir}\n")
             
             from media_adjuster import MediaProcessor
             processor = MediaProcessor()
@@ -1298,7 +1435,7 @@ async def api_ajustador_processar(
             if bg_path:
                 processor.use_background_video = True
                 processor.background_video_path = bg_path
-                q.put(f"ðŸŽžï¸  VÃ­deo de fundo detectado e configurado.\n")
+                q.put(f"Ã°Å¸Å½Å¾Ã¯Â¸  VÃƒÂ­deo de fundo detectado e configurado.\n")
                 
             total = len(input_paths)
             erros = 0
@@ -1306,7 +1443,7 @@ async def api_ajustador_processar(
             for i, p in enumerate(input_paths, 1):
                 nome_saida = f"cena_{i}.mp4"
                 caminho_saida = os.path.join(out_dir, nome_saida)
-                q.put(f"\nðŸ“Ž [{i}/{total}] Processando cena {i}...")
+                q.put(f"\nÃ°Å¸â€œÅ½ [{i}/{total}] Processando cena {i}...")
                 
                 def log_cb(msg):
                     q.put(msg)
@@ -1316,12 +1453,12 @@ async def api_ajustador_processar(
                     erros += 1
                     
             if erros == 0:
-                q.put(f"\n\nâœ… ConcluÃ­do com sucesso! {total} vÃ­deos salvos na pasta 'saida_ajustador' do seu projeto.")
+                q.put(f"\n\nÃ¢Å“â€¦ ConcluÃƒÂ­do com sucesso! {total} vÃƒÂ­deos salvos na pasta 'saida_ajustador' do seu projeto.")
             else:
-                q.put(f"\n\nâš ï¸  Finalizado com {erros} erros. Verifique os logs acima.")
+                q.put(f"\n\nÃ¢Å¡Â Ã¯Â¸  Finalizado com {erros} erros. Verifique os logs acima.")
                 
         except Exception as e:
-            q.put(f"\nâ Œ Erro fatal: {str(e)}")
+            q.put(f"\nÃ¢ Å’ Erro fatal: {str(e)}")
         finally:
             q.put(None)
             
@@ -1340,7 +1477,7 @@ async def api_ajustador_processar(
     from fastapi.responses import StreamingResponse
     return StreamingResponse(event_generator(), media_type="text/plain")
 
-# ===== ROTAS DA FÃ BRICA DE MÃšSICAS =====
+# ===== ROTAS DA FÃƒ BRICA DE MÃƒÅ¡SICAS =====
 
 @app.get("/api/fabrica/templates")
 async def fabrica_templates():
@@ -1356,7 +1493,7 @@ class CarregarMusicasReq(BaseModel):
 @app.post("/api/fabrica/carregar_musicas")
 async def fabrica_carregar_musicas(req: CarregarMusicasReq):
     if not os.path.exists(req.suno_dir):
-        return {"success": False, "error": "DiretÃ³rio nÃ£o encontrado."}
+        return {"success": False, "error": "DiretÃƒÂ³rio nÃƒÂ£o encontrado."}
     
     musicas = []
     _id = 0
@@ -1490,7 +1627,7 @@ async def fabrica_gerar_lote(req: GerarLoteReq):
                     # 2. Render
                     q.put(json.dumps({"type": "status", "id": item_id, "status": "Renderizando..."}))
                     chosen_template = req.template
-                    if chosen_template == "AleatÃ³rio (Auto)":
+                    if chosen_template == "AleatÃƒÂ³rio (Auto)":
                         if all_temps: chosen_template = random.choice(all_temps)
                         else: raise Exception("Nenhum template encontrado.")
                         
@@ -1506,14 +1643,14 @@ async def fabrica_gerar_lote(req: GerarLoteReq):
                         callback=lambda msg: q.put(json.dumps({"type": "log", "text": msg}))
                     )
                     
-                    q.put(json.dumps({"type": "status", "id": item_id, "status": "ConcluÃ­do"}))
-                    q.put(json.dumps({"type": "log", "text": f"â Sucesso: {song_name}"}))
+                    q.put(json.dumps({"type": "status", "id": item_id, "status": "ConcluÃƒÂ­do"}))
+                    q.put(json.dumps({"type": "log", "text": f"Ã¢ÂœÂ… Sucesso: {song_name}"}))
                 except Exception as e:
                     q.put(json.dumps({"type": "status", "id": item_id, "status": "Erro"}))
-                    q.put(json.dumps({"type": "log", "text": f"â Erro em {m_data['nome']}: {e}"}))
+                    q.put(json.dumps({"type": "log", "text": f"Ã¢ÂÂŒ Erro em {m_data['nome']}: {e}"}))
                     
         except Exception as ex:
-            q.put(json.dumps({"type": "log", "text": f"â Erro fatal: {ex}"}))
+            q.put(json.dumps({"type": "log", "text": f"Ã¢ÂÂŒ Erro fatal: {ex}"}))
         finally:
             q.put(None)
             
@@ -1548,7 +1685,7 @@ async def fabrica_compilar(req: CompilarReq):
     def worker():
         try:
             if not os.path.exists(req.root_dir):
-                q.put("â DiretÃ³rio nÃ£o existe.\n")
+                q.put("Ã¢ÂÂŒ DiretÃƒÂ³rio nÃƒÂ£o existe.\n")
                 return
                 
             engine = MusicVideoEngine(CURRENT_WORKSPACE_PATH)
@@ -1560,14 +1697,14 @@ async def fabrica_compilar(req: CompilarReq):
                         videos.append(os.path.join(root, file))
                         
             if not videos:
-                q.put("â Nenhum .mp4 encontrado nas subpastas.\n")
+                q.put("Ã¢ÂÂŒ Nenhum .mp4 encontrado nas subpastas.\n")
                 return
                 
             total_desejado_sec = req.duracao_min * 60
             total_acumulado = 0
             lista_final = []
             
-            q.put("Montando grade de compilaÃ§Ã£o...\n")
+            q.put("Montando grade de compilaÃƒÂ§ÃƒÂ£o...\n")
             while total_acumulado < total_desejado_sec:
                 vid = random.choice(videos)
                 lista_final.append(vid)
@@ -1578,9 +1715,9 @@ async def fabrica_compilar(req: CompilarReq):
             out_path = os.path.join(req.root_dir, f"Compilado_{req.duracao_min}Min.mp4")
             
             engine.concat_videos(lista_final, out_path, callback=lambda msg: q.put(msg + "\n"))
-            q.put(f"\nâ CompilaÃ§Ã£o de {req.duracao_min} minutos concluÃ­da!\nSalvo em: {out_path}\n")
+            q.put(f"\nÃ¢ÂœÂ… CompilaÃƒÂ§ÃƒÂ£o de {req.duracao_min} minutos concluÃƒÂ­da!\nSalvo em: {out_path}\n")
         except Exception as e:
-            q.put(f"\nâ Erro na compilaÃ§Ã£o: {e}\n")
+            q.put(f"\nÃ¢ÂÂŒ Erro na compilaÃƒÂ§ÃƒÂ£o: {e}\n")
         finally:
             q.put(None)
             
@@ -1601,7 +1738,7 @@ async def fabrica_compilar(req: CompilarReq):
 
 @app.get("/api/browse_file")
 async def browse_file_api(type: str = "file"):
-    """Abre um File Dialog nativo no Python para o usuÃ¡rio escolher arquivo"""
+    """Abre um File Dialog nativo no Python para o usuÃƒÂ¡rio escolher arquivo"""
     import tkinter as tk
     from tkinter import filedialog
     
@@ -1624,7 +1761,7 @@ async def browse_file_api(type: str = "file"):
 
 @app.get("/api/thumb")
 async def get_thumb(path: str):
-    """Retorna o arquivo diretamente se for imagem, ou extrai um frame se for vÃ­deo"""
+    """Retorna o arquivo diretamente se for imagem, ou extrai um frame se for vÃƒÂ­deo"""
     if not os.path.exists(path):
         return HTMLResponse(content="Not Found", status_code=404)
         
@@ -1632,9 +1769,9 @@ async def get_thumb(path: str):
     if ext in ['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp']:
         return FileResponse(path)
     else:
-        # Se for vÃ­deo, idealmente usar FFmpeg para extrair frame.
-        # Aqui enviamos o prÃ³prio vÃ­deo se o navegador suportar, ou um Ã­cone padrÃ£o.
-        # Para simplificar na prova de conceito, enviaremos um placeholder se for vÃ­deo.
+        # Se for vÃƒÂ­deo, idealmente usar FFmpeg para extrair frame.
+        # Aqui enviamos o prÃƒÂ³prio vÃƒÂ­deo se o navegador suportar, ou um ÃƒÂ­cone padrÃƒÂ£o.
+        # Para simplificar na prova de conceito, enviaremos um placeholder se for vÃƒÂ­deo.
         return HTMLResponse(content="Video thumbnail not implemented", status_code=501)
 
 @app.get("/api/list_profiles")
@@ -1653,7 +1790,7 @@ async def delete_profile(name: str):
     try:
         perfis_dir = os.path.join(BASE_DIR, "perfis_templates")
         path = os.path.join(perfis_dir, f"{name}.json")
-        # TambÃ©m deleta a imagem de preview se existir
+        # TambÃƒÂ©m deleta a imagem de preview se existir
         preview_path = os.path.join(perfis_dir, f"{name}.png")
         if os.path.exists(path):
             os.remove(path)
@@ -1702,7 +1839,7 @@ async def preview_image(name: str):
         from fastapi.responses import Response
         return Response(status_code=500)
 
-# ===== ROTAS PARA O TTS (GERADOR DE ÃUDIO) =====
+# ===== ROTAS PARA O TTS (GERADOR DE ÃƒÂUDIO) =====
 @app.get("/api/tts/personagens")
 def get_personagens():
     """Retorna os personagens cadastrados do workspace"""
@@ -1729,7 +1866,7 @@ class TTSRequest(BaseModel):
 
 @app.post("/api/tts/gerar")
 def tts_gerar(req: TTSRequest):
-    """Gera Ã¡udio usando a API VoiceMaker ou a configurada"""
+    """Gera ÃƒÂ¡udio usando a API VoiceMaker ou a configurada"""
     try:
         from config_manager import ConfigManager
         from tts_manager import TTSManager
@@ -1744,7 +1881,7 @@ def tts_gerar(req: TTSRequest):
         nome_safe = req.personagem.lower().replace(' ', '_')
         output_path = os.path.join(outputs_dir, f"tts_{nome_safe}.mp3")
         
-        # Garante nÃ£o sobrescrever
+        # Garante nÃƒÂ£o sobrescrever
         contador = 1
         while os.path.exists(output_path):
             output_path = os.path.join(outputs_dir, f"tts_{nome_safe}_{contador}.mp3")
@@ -1774,7 +1911,7 @@ def tts_gerar(req: TTSRequest):
             except: pass
             return {"success": True, "file": output_path, "filename": os.path.basename(output_path)}
         else:
-            return {"success": False, "error": "Falha na geraÃ§Ã£o via API TTSManager"}
+            return {"success": False, "error": "Falha na geraÃƒÂ§ÃƒÂ£o via API TTSManager"}
             
     except Exception as e:
         return {"success": False, "error": str(e)}
@@ -1792,7 +1929,7 @@ def tts_testar_google(req: TTSRequest):
         char_config = config.get_personagem(req.personagem)
         voice_id = char_config.get('voz_google_tts', '')
         if not voice_id:
-            return {"success": False, "error": "Personagem nÃ£o possui 'Voz Google TTS' configurada."}
+            return {"success": False, "error": "Personagem nÃƒÂ£o possui 'Voz Google TTS' configurada."}
             
         instruction = char_config.get('instrucao_base_tts', '')
         
@@ -1801,7 +1938,7 @@ def tts_testar_google(req: TTSRequest):
         nome_safe = req.personagem.lower().replace(' ', '_')
         output_path = os.path.join(outputs_dir, f"teste_google_{nome_safe}.mp3")
         
-        # Garante nÃ£o sobrescrever
+        # Garante nÃƒÂ£o sobrescrever
         contador = 1
         while os.path.exists(output_path):
             output_path = os.path.join(outputs_dir, f"teste_google_{nome_safe}_{contador}.mp3")
@@ -1823,12 +1960,12 @@ def tts_testar_google(req: TTSRequest):
             except: pass
             return {"success": True, "file": output_path, "filename": os.path.basename(output_path)}
         else:
-            return {"success": False, "error": "Falha ao requisitar Ã¡udio do Gemini TTS"}
+            return {"success": False, "error": "Falha ao requisitar ÃƒÂ¡udio do Gemini TTS"}
             
     except Exception as e:
         return {"success": False, "error": str(e)}
 
-# ===== ROTAS PARA O NARRADOR (GERADOR DE VÃDEO) =====
+# ===== ROTAS PARA O NARRADOR (GERADOR DE VÃƒÂDEO) =====
 @app.post("/api/narrador/gerar")
 async def narrador_gerar(
     personagem: str = Form(...),
@@ -1845,22 +1982,22 @@ async def narrador_gerar(
         
         personagens_cache = config.get("personagens", {})
         if personagem not in personagens_cache:
-            return {"success": False, "error": f"Personagem nÃ£o encontrado: {personagem}"}
+            return {"success": False, "error": f"Personagem nÃƒÂ£o encontrado: {personagem}"}
             
         personagem_config = personagens_cache[personagem]
         
         if "estados_emocionais" not in personagem_config:
-            return {"success": False, "error": f"Estados emocionais nÃ£o configurados para: {personagem}"}
+            return {"success": False, "error": f"Estados emocionais nÃƒÂ£o configurados para: {personagem}"}
             
         if estado_emocional not in personagem_config["estados_emocionais"]:
-            return {"success": False, "error": f"Estado emocional nÃ£o encontrado: {estado_emocional}"}
+            return {"success": False, "error": f"Estado emocional nÃƒÂ£o encontrado: {estado_emocional}"}
             
         video_source = personagem_config["estados_emocionais"][estado_emocional].get("video_source", "")
         
         if not video_source or not os.path.exists(video_source):
-            return {"success": False, "error": f"VÃ­deo base nÃ£o encontrado para {personagem} - {estado_emocional}\nCaminho: {video_source}"}
+            return {"success": False, "error": f"VÃƒÂ­deo base nÃƒÂ£o encontrado para {personagem} - {estado_emocional}\nCaminho: {video_source}"}
             
-        # Salva o Ã¡udio temporariamente
+        # Salva o ÃƒÂ¡udio temporariamente
         temp_audio_path = os.path.join(CURRENT_WORKSPACE_PATH, "temp_upload.mp3")
         with open(temp_audio_path, "wb") as f:
             f.write(await audio_file.read())
@@ -1875,10 +2012,10 @@ async def narrador_gerar(
         duracao_video_total = get_duration(video_source)
         
         if duracao_audio is None or duracao_video_total is None:
-            return {"success": False, "error": "FFprobe falhou ao ler mÃ­dia"}
+            return {"success": False, "error": "FFprobe falhou ao ler mÃƒÂ­dia"}
             
         if duracao_audio > duracao_video_total:
-            return {"success": False, "error": f"Ãudio ({duracao_audio:.1f}s) Ã© maior que o vÃ­deo ({duracao_video_total:.1f}s)"}
+            return {"success": False, "error": f"ÃƒÂudio ({duracao_audio:.1f}s) ÃƒÂ© maior que o vÃƒÂ­deo ({duracao_video_total:.1f}s)"}
             
         max_start_time = duracao_video_total - duracao_audio
         start_time = random.uniform(0, max_start_time)
@@ -1911,7 +2048,7 @@ async def narrador_gerar(
         
         res = subprocess.run(comando_ffmpeg, capture_output=True, text=True)
         
-        # Limpa arquivo temporÃ¡rio
+        # Limpa arquivo temporÃƒÂ¡rio
         if os.path.exists(temp_audio_path):
             os.remove(temp_audio_path)
             
@@ -1934,7 +2071,7 @@ async def narrador_gerar(
                 "duracao": duracao_gerada
             }
         else:
-            return {"success": False, "error": "VÃ­deo gerado estÃ¡ vazio."}
+            return {"success": False, "error": "VÃƒÂ­deo gerado estÃƒÂ¡ vazio."}
             
     except Exception as e:
         return {"success": False, "error": str(e)}
@@ -1962,7 +2099,7 @@ async def volume_processar(
         outputs_dir = os.path.join(CURRENT_WORKSPACE_PATH, "outputs")
         os.makedirs(outputs_dir, exist_ok=True)
         
-        # Salva os arquivos de mÃºsica se enviados
+        # Salva os arquivos de mÃƒÂºsica se enviados
         musicas_selecionadas = []
         if musica1 and musica1.filename:
             path1 = os.path.join(outputs_dir, "temp_musica1.mp3")
@@ -2014,7 +2151,7 @@ async def volume_processar(
                 
             output_path = os.path.join(outputs_dir, f"{nome_base}{sufixo}{extensao}")
             
-            # ResoluÃ§Ã£o alvo
+            # ResoluÃƒÂ§ÃƒÂ£o alvo
             import json
             alvo_w, alvo_h = 1080, 1920
             try:
@@ -2059,9 +2196,9 @@ async def volume_processar(
             if res.returncode == 0 and os.path.exists(output_path):
                 resultados.append(os.path.basename(output_path))
             else:
-                erros.append(f"Erro no vÃ­deo {video_file.filename}: {res.stderr}")
+                erros.append(f"Erro no vÃƒÂ­deo {video_file.filename}: {res.stderr}")
                 
-        # Limpar mÃºsicas temporÃ¡rias
+        # Limpar mÃƒÂºsicas temporÃƒÂ¡rias
         for m_path, _ in musicas_selecionadas:
             if os.path.exists(m_path): os.remove(m_path)
             
@@ -2107,13 +2244,13 @@ async def ferramentas_processar(
         is_zip = False
         
         if acao == "adicionar_capa":
-            if not capa: raise Exception("Capa nÃ£o enviada")
+            if not capa: raise Exception("Capa nÃƒÂ£o enviada")
             temp_capa_path = os.path.join(outputs_dir, f"temp_{capa.filename}")
             with open(temp_capa_path, "wb") as f: f.write(await capa.read())
             
             output_path = os.path.join(outputs_dir, f"{nome_base}_com_capa.mp4")
             
-            # Pega dimensÃµes do vÃ­deo
+            # Pega dimensÃƒÂµes do vÃƒÂ­deo
             probe_cmd = ['ffprobe', '-v', 'quiet', '-print_format', 'json', '-show_streams', temp_vid_path]
             res = subprocess.run(probe_cmd, capture_output=True, text=True)
             data = json.loads(res.stdout)
@@ -2162,14 +2299,14 @@ async def ferramentas_processar(
             if res.returncode != 0: raise Exception(f"Erro FFmpeg: {res.stderr}")
 
         elif acao == "redimensionar":
-            if not largura or not altura: raise Exception("Largura e Altura sÃ£o obrigatÃ³rios")
+            if not largura or not altura: raise Exception("Largura e Altura sÃƒÂ£o obrigatÃƒÂ³rios")
             output_path = os.path.join(outputs_dir, f"{nome_base}_{largura}x{altura}.mp4")
             comando = ['ffmpeg', '-y', '-i', temp_vid_path, '-vf', f'scale={largura}:{altura}', '-c:a', 'copy', output_path]
             res = subprocess.run(comando, capture_output=True, text=True)
             if res.returncode != 0: raise Exception(f"Erro FFmpeg: {res.stderr}")
 
         elif acao == "acelerar_desacelerar":
-            if not velocidade: raise Exception("Velocidade obrigatÃ³ria")
+            if not velocidade: raise Exception("Velocidade obrigatÃƒÂ³ria")
             output_path = os.path.join(outputs_dir, f"{nome_base}_{velocidade}x.mp4")
             v_speed = 1.0 / velocidade
             comando = ['ffmpeg', '-y', '-i', temp_vid_path, '-filter_complex', f'[0:v]setpts={v_speed}*PTS[v];[0:a]atempo={velocidade}[a]', '-map', '[v]', '-map', '[a]', output_path]
@@ -2177,7 +2314,7 @@ async def ferramentas_processar(
             if res.returncode != 0: raise Exception(f"Erro FFmpeg: {res.stderr}")
 
         elif acao == "ajustar_brilho_contraste":
-            if brilho is None or contraste is None: raise Exception("Brilho e contraste obrigatÃ³rios")
+            if brilho is None or contraste is None: raise Exception("Brilho e contraste obrigatÃƒÂ³rios")
             output_path = os.path.join(outputs_dir, f"{nome_base}_brilho.mp4")
             comando = ['ffmpeg', '-y', '-i', temp_vid_path, '-vf', f'eq=brightness={brilho}:contrast={contraste}', '-c:a', 'copy', output_path]
             res = subprocess.run(comando, capture_output=True, text=True)
@@ -2190,7 +2327,7 @@ async def ferramentas_processar(
             if res.returncode != 0: raise Exception(f"Erro FFmpeg: {res.stderr}")
 
         elif acao == "rotacionar":
-            if not rotacao: raise Exception("RotaÃ§Ã£o obrigatÃ³ria")
+            if not rotacao: raise Exception("RotaÃƒÂ§ÃƒÂ£o obrigatÃƒÂ³ria")
             output_path = os.path.join(outputs_dir, f"{nome_base}_rot{rotacao}.mp4")
             vf = "transpose=1"
             if rotacao == 2: vf = "transpose=2"
@@ -2248,14 +2385,14 @@ async def ferramentas_processar(
             if res.returncode != 0: raise Exception(f"Erro FFmpeg: {res.stderr}")
 
         else:
-            raise Exception("AÃ§Ã£o desconhecida")
+            raise Exception("AÃƒÂ§ÃƒÂ£o desconhecida")
 
         if os.path.exists(temp_vid_path): os.remove(temp_vid_path)
 
         if os.path.exists(output_path):
             return {"success": True, "file": os.path.basename(output_path), "is_zip": is_zip}
         else:
-            raise Exception("Arquivo de saÃ­da nÃ£o gerado.")
+            raise Exception("Arquivo de saÃƒÂ­da nÃƒÂ£o gerado.")
 
     except Exception as e:
         return {"success": False, "error": str(e)}
@@ -2277,7 +2414,7 @@ async def get_dashboard_stats():
         except:
             pass
 
-        # 1. SaÃºde do Sistema
+        # 1. SaÃƒÂºde do Sistema
         disk_free_gb = 0
         try:
             total, used, free = shutil.disk_usage(CURRENT_WORKSPACE_PATH)
@@ -2301,7 +2438,7 @@ async def get_dashboard_stats():
         except:
             pass
 
-        # 2. HistÃ³rico Local (Canal Atual)
+        # 2. HistÃƒÂ³rico Local (Canal Atual)
         hist_local = db.buscar_videos_dashboard(canal_id=canal_id, limit=300)
         # Parse dates and count week
         agora = datetime.datetime.now()
@@ -2329,7 +2466,7 @@ async def get_dashboard_stats():
             except:
                 pass
 
-        # 3. VisÃ£o Global
+        # 3. VisÃƒÂ£o Global
         hist_global = db.buscar_videos_dashboard(canal_id=None, limit=1000)
         global_total = len(hist_global)
         global_sucesso = sum(1 for v in hist_global if v.get("status") == "sucesso")
@@ -2371,7 +2508,7 @@ async def get_dashboard_stats():
         return {
             "success": True,
             "health": {
-                "ffmpeg": "â Pronto",
+                "ffmpeg": "Ã¢ÂœÂ… Pronto",
                 "disk": f"{disk_free_gb:.1f} GB",
                 "queue": f"{fila_pendentes} Pendentes",
                 "profiles": f"{canais_count} Prontos"
@@ -2425,13 +2562,13 @@ async def load_profile(nome: str):
     if os.path.exists(path):
         with open(path, "r", encoding='utf-8') as f:
             return json.load(f)
-    return JSONResponse(status_code=404, content={"message": "Perfil nÃ£o encontrado"})
+    return JSONResponse(status_code=404, content={"message": "Perfil nÃƒÂ£o encontrado"})
 
 # ====== ENDPOINTS DA ABA TTS ======
 
     # Por enquanto, retornamos um dummy de sucesso
-    print(f"[TTS] Gerando Ã¡udio para: {req.voz} usando engine {req.engine}")
-    return {"status": "success", "message": "Ãudio gerado com sucesso! (SimulaÃ§Ã£o)", "path": ""}
+    print(f"[TTS] Gerando ÃƒÂ¡udio para: {req.voz} usando engine {req.engine}")
+    return {"status": "success", "message": "ÃƒÂudio gerado com sucesso! (SimulaÃƒÂ§ÃƒÂ£o)", "path": ""}
 
 @app.get("/api/config/perfis_legenda")
 async def get_perfis_legenda():
@@ -2525,7 +2662,7 @@ async def api_legendas_gerar(
                 # find vosk model
                 target = r"E:/MEUS PROGRAMAS/HISTORIAS DE 7 DIAS CODIGOS/pre_edicao/vosk-model-pt-fb-v0.1.1-20220516_2113"
                 if not os.path.isdir(target):
-                    raise Exception("Modelo Vosk nÃ£o encontrado no caminho padrÃ£o.")
+                    raise Exception("Modelo Vosk nÃƒÂ£o encontrado no caminho padrÃƒÂ£o.")
                 
                 model = Model(target)
                 rec = KaldiRecognizer(model, 16000); rec.SetWords(True)
@@ -2613,7 +2750,7 @@ async def api_dublagem_diarizar(video: UploadFile = File(...)):
         hf_token = keys[0]["key"] if keys else ""
         
         if not hf_token:
-            return {"success": False, "error": "Token do HuggingFace nÃ£o configurado."}
+            return {"success": False, "error": "Token do HuggingFace nÃƒÂ£o configurado."}
             
         temp_dir = os.path.join(os.getcwd(), 'temp', f'diarize_{uuid.uuid4().hex[:8]}')
         os.makedirs(temp_dir, exist_ok=True)
@@ -2707,7 +2844,7 @@ async def api_dublagem_processar(
             out_dir = os.path.join(CURRENT_WORKSPACE_PATH, "OUTPUT_DUBLADOS")
             os.makedirs(out_dir, exist_ok=True)
             
-            q.put(f"ð Iniciando Processamento em Lote...\n")
+            q.put(f"Ã°ÂŸÂšÂ€ Iniciando Processamento em Lote...\n")
             
             cena_idx = 1
             
@@ -2716,7 +2853,7 @@ async def api_dublagem_processar(
                 if not video_path: continue
                 
                 q.put(f"\n======================================")
-                q.put(f"ð¬ [CENA {cena_idx}] Processando: {item['filename']}")
+                q.put(f"Ã°ÂŸÂŽÂ¬ [CENA {cena_idx}] Processando: {item['filename']}")
                 
                 temp_dir = item.get("temp_dir") or os.path.join(batch_temp, f"temp_cena_{cena_idx}")
                 os.makedirs(temp_dir, exist_ok=True)
@@ -2725,7 +2862,7 @@ async def api_dublagem_processar(
                 
                 try:
                     if item.get("is_multi") and item.get("diarization_map"):
-                        q.put(f"ðï¸ MODO MULTI-VOZ DE ESTÃDIO ATIVADO")
+                        q.put(f"Ã°ÂŸÂŽÂ™Ã¯Â¸Â MODO MULTI-VOZ DE ESTÃƒÂšDIO ATIVADO")
                         map_data = item["diarization_map"]
                         segments = item["segments"]
                         vocals_path = item["vocals_path"]
@@ -2752,7 +2889,7 @@ async def api_dublagem_processar(
                         costurado_path = os.path.join(temp_dir, "vocals_costurados.wav")
                         engine.stitch_vocals(vocals_path, sliced_segments, costurado_path)
                         
-                        q.put("ð Aplicando RestauraÃ§Ã£o de Ãudio...")
+                        q.put("Ã°ÂŸÂ”Â„ Aplicando RestauraÃƒÂ§ÃƒÂ£o de ÃƒÂudio...")
                         ap = AudioProcessor()
                         ap.run_pipeline(costurado_path, costurado_path, cm.config)
                         
@@ -2762,7 +2899,7 @@ async def api_dublagem_processar(
                         char_name = item["char"]
                         char_config = personagens_full_config.get(char_name)
                         if not char_config or not char_config.get("modelo_rvc"):
-                            q.put(f"â Personagem '{char_name}' sem modelo RVC.")
+                            q.put(f"Ã¢ÂÂŒ Personagem '{char_name}' sem modelo RVC.")
                             cena_idx += 1
                             continue
                             
@@ -2775,30 +2912,30 @@ async def api_dublagem_processar(
                             
                         rvc_audio = processor.process_rvc(vocals_path, temp_dir, char_config)
                         
-                        q.put("ð Aplicando RestauraÃ§Ã£o de Ãudio na voz isolada...")
+                        q.put("Ã°ÂŸÂ”Â„ Aplicando RestauraÃƒÂ§ÃƒÂ£o de ÃƒÂudio na voz isolada...")
                         ap = AudioProcessor()
                         ap.run_pipeline(rvc_audio, rvc_audio, cm.config)
                         
                         if b_skip_demucs or not bg_path:
-                            q.put("Substituindo Ã¡udio seco...")
+                            q.put("Substituindo ÃƒÂ¡udio seco...")
                             import subprocess
                             replace_cmd = ["ffmpeg", "-y", "-i", video_path, "-i", rvc_audio, "-c:v", "copy", "-c:a", "aac", "-map", "0:v:0", "-map", "1:a:0", final_output]
                             subprocess.run(replace_cmd, check=True, capture_output=True)
                         else:
                             processor.mix_and_replace_video(video_path, rvc_audio, bg_path, temp_dir, final_output)
                             
-                    q.put(f"â Cena {cena_idx} concluÃ­da! Salva como {os.path.basename(final_output)}")
+                    q.put(f"Ã¢ÂœÂ… Cena {cena_idx} concluÃƒÂ­da! Salva como {os.path.basename(final_output)}")
                 except Exception as e:
-                    q.put(f"â Erro na cena {cena_idx}: {str(e)}")
+                    q.put(f"Ã¢ÂÂŒ Erro na cena {cena_idx}: {str(e)}")
                     import traceback
                     traceback.print_exc()
                 
                 cena_idx += 1
                 
             q.put(f"\n======================================")
-            q.put(f"â PROCESSAMENTO EM LOTE CONCLUÃDO!")
+            q.put(f"Ã¢ÂœÂ… PROCESSAMENTO EM LOTE CONCLUÃƒÂDO!")
         except Exception as e:
-            q.put(f"\nâ Erro fatal: {str(e)}")
+            q.put(f"\nÃ¢ÂÂŒ Erro fatal: {str(e)}")
         finally:
             q.put(None)
             
@@ -2816,12 +2953,12 @@ async def api_dublagem_processar(
     from fastapi.responses import StreamingResponse
     return StreamingResponse(event_generator(), media_type="text/plain")
 
-# ===== ROTAS DO TANQUE DE COMBUSTÃVEL =====
+# ===== ROTAS DO TANQUE DE COMBUSTÃƒÂVEL =====
 
 @app.get("/api/tanque/lista")
 async def tanque_lista():
     if not CURRENT_WORKSPACE_PATH:
-        return {"success": False, "error": "Workspace nÃ£o configurado"}
+        return {"success": False, "error": "Workspace nÃƒÂ£o configurado"}
         
     pastas_alvo = [
         os.path.join(CURRENT_WORKSPACE_PATH, "outputs"),
@@ -2844,7 +2981,7 @@ async def tanque_lista():
                         tamanho_mb = 0
                         
                     ext = os.path.splitext(f)[1].lower()
-                    tipo = "VÃ­deo" if ext in ['.mp4', '.mkv', '.avi', '.mov'] else "Ãudio" if ext in ['.mp3', '.wav', '.m4a'] else "Imagem" if ext in ['.png', '.jpg', '.jpeg'] else "Template"
+                    tipo = "VÃƒÂ­deo" if ext in ['.mp4', '.mkv', '.avi', '.mov'] else "ÃƒÂudio" if ext in ['.mp3', '.wav', '.m4a'] else "Imagem" if ext in ['.png', '.jpg', '.jpeg'] else "Template"
                     
                     arquivos_encontrados.append({
                         "nome": f,
@@ -2911,7 +3048,7 @@ async def save_perfil_diretor(req: PerfilDiretorReq):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-# ===== ROTAS DE GESTÃO DE PERFIS (CENTRAL DE CONFIGURAÃÃES) =====
+# ===== ROTAS DE GESTÃƒÂƒO DE PERFIS (CENTRAL DE CONFIGURAÃƒÂ‡ÃƒÂ•ES) =====
 
 class RenameProfileReq(BaseModel):
     category: str  # e.g., 'perfis_diretor', 'perfis_legenda'
@@ -2929,9 +3066,9 @@ async def rename_config_profile(req: RenameProfileReq):
         cm = ConfigManager(os.path.join(CURRENT_WORKSPACE_PATH, "config.json"))
         perfis = cm.get(req.category, {})
         if req.old_name not in perfis:
-            return {"status": "error", "message": "Perfil antigo nÃ£o encontrado."}
+            return {"status": "error", "message": "Perfil antigo nÃƒÂ£o encontrado."}
         if req.new_name in perfis:
-            return {"status": "error", "message": "JÃ¡ existe um perfil com o novo nome."}
+            return {"status": "error", "message": "JÃƒÂ¡ existe um perfil com o novo nome."}
         
         # Renomear mantendo a ordem original
         novos_perfis = {}
@@ -2972,9 +3109,9 @@ async def rename_studio_profile(req: ManageStudioProfileReq):
         old_path = os.path.join(perfis_dir, f"{req.old_name}.json")
         new_path = os.path.join(perfis_dir, f"{req.new_name}.json")
         if not os.path.exists(old_path):
-            return {"status": "error", "message": "Template nÃ£o encontrado."}
+            return {"status": "error", "message": "Template nÃƒÂ£o encontrado."}
         if os.path.exists(new_path):
-            return {"status": "error", "message": "JÃ¡ existe um template com o novo nome."}
+            return {"status": "error", "message": "JÃƒÂ¡ existe um template com o novo nome."}
         os.rename(old_path, new_path)
         return {"status": "success"}
     except Exception as e:
@@ -3048,14 +3185,14 @@ async def limpar_cache_whisper():
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-# Monta arquivos temporÃ¡rios (samples de audio) e os estÃ¡ticos NO FINAL para nÃ£o sobrescrever rotas
+# Monta arquivos temporÃƒÂ¡rios (samples de audio) e os estÃƒÂ¡ticos NO FINAL para nÃƒÂ£o sobrescrever rotas
 temp_files_dir = os.path.join(os.getcwd(), 'temp')
 os.makedirs(temp_files_dir, exist_ok=True)
 app.mount("/temp", StaticFiles(directory=temp_files_dir), name="temp")
 
-# Todo o conteÃºdo de web_ui serÃ¡ servido estaticamente pelo app.mount no final do arquivo
+# Todo o conteÃƒÂºdo de web_ui serÃƒÂ¡ servido estaticamente pelo app.mount no final do arquivo
 # ========================================================
-# FILA AUTÃNOMA (BATCH QUEUE)
+# FILA AUTÃƒÂ”NOMA (BATCH QUEUE)
 # ========================================================
 import threading as _threading
 import time as _time
@@ -3064,7 +3201,7 @@ import queue as _queue
 
 # --- GERENCIADOR DE PROGRAMAS EXTERNOS ---
 class _ExternalManager:
-    """Gerencia a execuÃ§Ã£o de programas externos (Node.js/React, etc) em background."""
+    """Gerencia a execuÃƒÂ§ÃƒÂ£o de programas externos (Node.js/React, etc) em background."""
     def __init__(self):
         self.base_dir = os.path.join(BASE_DIR, "Programas externos")
         self.ferramentas_dir = os.path.join(os.path.dirname(BASE_DIR), "FERRAMENTAS")
@@ -3083,7 +3220,7 @@ class _ExternalManager:
         if not os.path.exists(app_dir):
             app_dir = os.path.join(self.ferramentas_dir, app_name)
             if not os.path.exists(app_dir):
-                return {"status": "error", "message": f"Pasta do app nÃ£o encontrada em Programas externos nem em FERRAMENTAS."}
+                return {"status": "error", "message": f"Pasta do app nÃƒÂ£o encontrada em Programas externos nem em FERRAMENTAS."}
         
         with self.lock:
             if app_name in self.processes and self.processes[app_name]['status'] == 'running':
@@ -3157,18 +3294,18 @@ external_manager = _ExternalManager()
 
 
 class _FilaManager:
-    """Gerenciador de fila de renderizaÃ§Ã£o autÃ´noma em memÃ³ria."""
-    STATUS_PENDENTE   = "â³ Pendente"
-    STATUS_RENDERANDO = "ð Renderizando..."
-    STATUS_CONCLUIDO  = "â ConcluÃ­do"
-    STATUS_ERRO       = "â Erro"
-    STATUS_CANCELADO  = "ð« Cancelado"
+    """Gerenciador de fila de renderizaÃƒÂ§ÃƒÂ£o autÃƒÂ´noma em memÃƒÂ³ria."""
+    STATUS_PENDENTE   = "Ã¢ÂÂ³ Pendente"
+    STATUS_RENDERANDO = "Ã°ÂŸÂ”Â„ Renderizando..."
+    STATUS_CONCLUIDO  = "Ã¢ÂœÂ… ConcluÃƒÂ­do"
+    STATUS_ERRO       = "Ã¢ÂÂŒ Erro"
+    STATUS_CANCELADO  = "Ã°ÂŸÂšÂ« Cancelado"
 
     def __init__(self):
         self.fila = []          # list of dicts
         self.rodando = False
         self.cancelar_flag = False
-        self.log_buffer = []    # Ãºltimas 500 linhas
+        self.log_buffer = []    # ÃƒÂºltimas 500 linhas
         self.hotfolder_ativo = False
         self.hotfolder_pasta = ""
         self._hotfolder_thread = None
@@ -3186,7 +3323,7 @@ class _FilaManager:
             projeto.setdefault("musica",  "")
             projeto.setdefault("perfil",  "")
             projeto.setdefault("status",  self.STATUS_PENDENTE)
-            projeto.setdefault("duracao", "â")
+            projeto.setdefault("duracao", "Ã¢Â€Â”")
             self.fila.append(projeto)
 
     def remover(self, idx: int):
@@ -3236,7 +3373,7 @@ class _FilaManager:
         if not pendentes:
             return False, "Nenhum projeto pendente na fila."
         if self.rodando:
-            return False, "A fila jÃ¡ estÃ¡ em execuÃ§Ã£o."
+            return False, "A fila jÃƒÂ¡ estÃƒÂ¡ em execuÃƒÂ§ÃƒÂ£o."
         self.cancelar_flag = False
         self.rodando = True
         self._worker_thread = _threading.Thread(
@@ -3246,7 +3383,7 @@ class _FilaManager:
 
     def parar(self):
         self.cancelar_flag = True
-        self._log("â¸ Sinal de parada enviado. Aguardando projeto atual...")        
+        self._log("Ã¢ÂÂ¸ Sinal de parada enviado. Aguardando projeto atual...")        
 
     def _worker(self, callback_render=None):
         inicio = _time.time()
@@ -3254,7 +3391,7 @@ class _FilaManager:
         processados = 0
         erros = 0
 
-        self._log(f"ð Iniciando fila com {pendentes_total} projeto(s) pendente(s).")
+        self._log(f"Ã°ÂŸÂšÂ€ Iniciando fila com {pendentes_total} projeto(s) pendente(s).")
 
         for proj in self.fila:
             if self.cancelar_flag:
@@ -3264,18 +3401,18 @@ class _FilaManager:
 
             proj["status"] = self.STATUS_RENDERANDO
             inicio_proj = _time.time()
-            self._log(f"ð¬ Iniciando: {proj['nome']}")
+            self._log(f"Ã°ÂŸÂŽÂ¬ Iniciando: {proj['nome']}")
 
             ok = False
             try:
                 if callback_render:
                     ok = callback_render(proj)
                 else:
-                    # SimulaÃ§Ã£o quando nÃ£o hÃ¡ render real conectado
+                    # SimulaÃƒÂ§ÃƒÂ£o quando nÃƒÂ£o hÃƒÂ¡ render real conectado
                     _time.sleep(2)
                     ok = True
             except Exception as e:
-                self._log(f"â ExceÃ§Ã£o no render de '{proj['nome']}': {e}")
+                self._log(f"Ã¢ÂÂŒ ExceÃƒÂ§ÃƒÂ£o no render de '{proj['nome']}': {e}")
                 ok = False
 
             duracao = _time.time() - inicio_proj
@@ -3283,15 +3420,15 @@ class _FilaManager:
 
             if self.cancelar_flag:
                 proj["status"] = self.STATUS_CANCELADO
-                self._log(f"ð« '{proj['nome']}' cancelado.")
+                self._log(f"Ã°ÂŸÂšÂ« '{proj['nome']}' cancelado.")
             elif ok:
                 proj["status"] = self.STATUS_CONCLUIDO
                 processados += 1
-                self._log(f"â '{proj['nome']}' concluÃ­do em {proj['duracao']}.")
+                self._log(f"Ã¢ÂœÂ… '{proj['nome']}' concluÃƒÂ­do em {proj['duracao']}.")
             else:
                 proj["status"] = self.STATUS_ERRO
                 erros += 1
-                self._log(f"â '{proj['nome']}' falhou.")
+                self._log(f"Ã¢ÂÂŒ '{proj['nome']}' falhou.")
 
             # Atualiza progresso
             total_processados = sum(1 for p in self.fila if p["status"] != self.STATUS_PENDENTE and p["status"] != self.STATUS_RENDERANDO)
@@ -3310,24 +3447,24 @@ class _FilaManager:
                 self.eta = ""
 
         total_sec = _time.time() - inicio
-        self._log(f"ð Fila finalizada em {total_sec:.0f}s. â {processados} sucesso(s) | â {erros} erro(s).")
+        self._log(f"Ã°ÂŸÂÂ Fila finalizada em {total_sec:.0f}s. Ã¢ÂœÂ… {processados} sucesso(s) | Ã¢ÂÂŒ {erros} erro(s).")
         self.rodando = False
         self.progresso = 100
-        self.eta = "ConcluÃ­do"
+        self.eta = "ConcluÃƒÂ­do"
 
     def toggle_hotfolder(self, pasta: str, ativo: bool):
         self.hotfolder_ativo = ativo
         self.hotfolder_pasta = pasta if ativo else ""
         if ativo:
-            self._log(f"ð¤ Piloto AutomÃ¡tico ATIVO â monitorando: {pasta}")
+            self._log(f"Ã°ÂŸÂ¤Â– Piloto AutomÃƒÂ¡tico ATIVO Ã¢Â€Â” monitorando: {pasta}")
             self._hotfolder_thread = _threading.Thread(
                 target=self._hotfolder_worker, daemon=True)
             self._hotfolder_thread.start()
         else:
-            self._log("ð¤ Piloto AutomÃ¡tico DESATIVADO.")
+            self._log("Ã°ÂŸÂ¤Â– Piloto AutomÃƒÂ¡tico DESATIVADO.")
 
     def _hotfolder_worker(self):
-        """Monitora a pasta e enfileira novos arquivos de Ã¡udio."""
+        """Monitora a pasta e enfileira novos arquivos de ÃƒÂ¡udio."""
         import glob as _glob
         processados_hf = set()
         self._log(f"[HotFolder] Iniciando monitoramento em: {self.hotfolder_pasta}")
@@ -3355,7 +3492,7 @@ class _FilaManager:
         self._log("[HotFolder] Monitoramento encerrado.")
 
 
-# InstÃ¢ncia global
+# InstÃƒÂ¢ncia global
 _fila_manager = _FilaManager()
 
 
@@ -3382,7 +3519,7 @@ class FilaAdicionarReq(BaseModel):
 async def fila_adicionar(req: FilaAdicionarReq):
     check_user_status()
     if not req.audio:
-        return {"success": False, "error": "Campo 'audio' Ã© obrigatÃ³rio."}
+        return {"success": False, "error": "Campo 'audio' ÃƒÂ© obrigatÃƒÂ³rio."}
     nome = req.nome or os.path.splitext(os.path.basename(req.audio))[0]
     _fila_manager.adicionar({
         "nome": nome,
@@ -3392,7 +3529,7 @@ async def fila_adicionar(req: FilaAdicionarReq):
         "roteiro": req.roteiro,
         "perfil": req.perfil,
         "status": _fila_manager.STATUS_PENDENTE,
-        "duracao": "â",
+        "duracao": "Ã¢Â€Â”",
     })
     _fila_manager._log(f"Projeto '{nome}' adicionado via Web UI.")
     return {"success": True, "total": len(_fila_manager.fila)}
@@ -3416,7 +3553,7 @@ async def fila_adicionar_lote(req: FilaLoteReq):
             "saida": req.saida,
             "perfil": req.perfil,
             "status": _fila_manager.STATUS_PENDENTE,
-            "duracao": "â",
+            "duracao": "Ã¢Â€Â”",
         })
         count += 1
     _fila_manager._log(f"{count} projeto(s) adicionado(s) em lote.")
@@ -3483,7 +3620,7 @@ async def fila_perfis_diretor():
 
 
 # ========================================================
-# MONTADOR â TRANSIÃÃES, CTAs E LOGOMARCAS
+# MONTADOR Ã¢Â€Â” TRANSIÃƒÂ‡ÃƒÂ•ES, CTAs E LOGOMARCAS
 # ========================================================
 import random as _random
 
@@ -3534,8 +3671,8 @@ async def montador_verificar_pastas(
 ):
     """Conta quantos .mp4 existem em cada pasta de assets."""
     labels = {
-        "pasta_trans_h": "TransiÃ§Ãµes Horizontal",
-        "pasta_trans_v": "TransiÃ§Ãµes Vertical",
+        "pasta_trans_h": "TransiÃƒÂ§ÃƒÂµes Horizontal",
+        "pasta_trans_v": "TransiÃƒÂ§ÃƒÂµes Vertical",
         "pasta_cta_h":   "Somente CTA Horizontal",
         "pasta_cta_v":   "Somente CTA Vertical",
         "pasta_logo_h":  "Logomarcas Horizontal",
@@ -3582,7 +3719,7 @@ class MontadorProcessarReq(BaseModel):
 
 @app.post("/api/montador/processar")
 async def montador_processar(req: MontadorProcessarReq):
-    """Processa vÃ­deos adicionando transiÃ§Ãµes/CTAs/logomarcas. Retorna log por SSE."""
+    """Processa vÃƒÂ­deos adicionando transiÃƒÂ§ÃƒÂµes/CTAs/logomarcas. Retorna log por SSE."""
     check_user_status()
     import queue as _q
     import asyncio
@@ -3614,11 +3751,11 @@ async def montador_processar(req: MontadorProcessarReq):
         try:
             assets = [f for f in os.listdir(pasta_assets) if f.lower().endswith('.mp4')]
             if not assets:
-                _log(f"â ï¸ Nenhum .mp4 encontrado em: {pasta_assets}")
+                _log(f"Ã¢ÂšÂ Ã¯Â¸Â Nenhum .mp4 encontrado em: {pasta_assets}")
                 return None
             asset_escolhido = _random.choice(assets)
             asset_path = os.path.join(pasta_assets, asset_escolhido)
-            _log(f"ð Usando asset: {asset_escolhido} ({sufixo})")
+            _log(f"Ã°ÂŸÂ“ÂŽ Usando asset: {asset_escolhido} ({sufixo})")
 
             vw, vh = _get_video_dimensions(video_path)
             nome_base = os.path.splitext(os.path.basename(video_path))[0]
@@ -3640,7 +3777,7 @@ async def montador_processar(req: MontadorProcessarReq):
                            creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, 'CREATE_NO_WINDOW') else 0)
 
             if not os.path.exists(asset_temp):
-                _log(f"â Falha no redimensionamento do asset.")
+                _log(f"Ã¢ÂÂŒ Falha no redimensionamento do asset.")
                 return None
 
             # 2. Concatenar
@@ -3669,10 +3806,10 @@ async def montador_processar(req: MontadorProcessarReq):
             if res.returncode == 0 and os.path.exists(output_path):
                 return output_path
             else:
-                _log(f"â Erro ffmpeg ({sufixo}): {res.stderr[-300:]}")
+                _log(f"Ã¢ÂÂŒ Erro ffmpeg ({sufixo}): {res.stderr[-300:]}")
                 return None
         except Exception as e:
-            _log(f"â ExceÃ§Ã£o ({sufixo}): {e}")
+            _log(f"Ã¢ÂÂŒ ExceÃƒÂ§ÃƒÂ£o ({sufixo}): {e}")
             return None
 
     def worker():
@@ -3684,7 +3821,7 @@ async def montador_processar(req: MontadorProcessarReq):
                 encoder = detect_h264_encoder()
             except Exception:
                 encoder = 'libx264'
-            _log(f"ð§ Encoder detectado: {encoder}")
+            _log(f"Ã°ÂŸÂ”Â§ Encoder detectado: {encoder}")
 
             formato = req.formato.lower()
             pasta_trans = req.pasta_trans_h if formato == 'horizontal' else req.pasta_trans_v
@@ -3693,50 +3830,50 @@ async def montador_processar(req: MontadorProcessarReq):
 
             total = len(req.videos)
             _montador_status.update({"rodando": True, "total": total, "processados": 0, "erros": 0, "progresso": 0})
-            _log(f"ð Iniciando processamento de {total} vÃ­deo(s) â Formato: {formato}")
+            _log(f"Ã°ÂŸÂšÂ€ Iniciando processamento de {total} vÃƒÂ­deo(s) Ã¢Â€Â” Formato: {formato}")
 
             for idx, video_path in enumerate(req.videos):
                 if not os.path.exists(video_path):
-                    _log(f"â Arquivo nÃ£o encontrado: {video_path}")
+                    _log(f"Ã¢ÂÂŒ Arquivo nÃƒÂ£o encontrado: {video_path}")
                     _montador_status["erros"] += 1
                     continue
 
                 nome = os.path.basename(video_path)
-                _log(f"\nð¹ [{idx+1}/{total}] Processando: {nome}")
+                _log(f"\nÃ°ÂŸÂ“Â¹ [{idx+1}/{total}] Processando: {nome}")
                 _montador_status["mensagem"] = f"Processando {idx+1}/{total}: {nome}"
 
                 current = video_path
                 temp_files = []
 
                 if req.usar_transicao and pasta_trans and os.path.exists(pasta_trans):
-                    _log("  â Aplicando TransiÃ§Ã£o...")
+                    _log("  Ã¢ÂžÂœ Aplicando TransiÃƒÂ§ÃƒÂ£o...")
                     resultado = _anexar_video_aleatorio(current, pasta_trans, "_trans", encoder)
                     if resultado:
                         if current != video_path:
                             temp_files.append(current)
                         current = resultado
                     else:
-                        _log("  â ï¸ TransiÃ§Ã£o falhou, continuando sem ela.")
+                        _log("  Ã¢ÂšÂ Ã¯Â¸Â TransiÃƒÂ§ÃƒÂ£o falhou, continuando sem ela.")
 
                 if req.usar_cta and pasta_cta and os.path.exists(pasta_cta):
-                    _log("  â Aplicando CTA...")
+                    _log("  Ã¢ÂžÂœ Aplicando CTA...")
                     resultado = _anexar_video_aleatorio(current, pasta_cta, "_cta", encoder)
                     if resultado:
                         if current != video_path:
                             temp_files.append(current)
                         current = resultado
                     else:
-                        _log("  â ï¸ CTA falhou, continuando.")
+                        _log("  Ã¢ÂšÂ Ã¯Â¸Â CTA falhou, continuando.")
 
                 if req.usar_logomarca and pasta_logo and os.path.exists(pasta_logo):
-                    _log("  â Aplicando Logomarca+CTA...")
+                    _log("  Ã¢ÂžÂœ Aplicando Logomarca+CTA...")
                     resultado = _anexar_video_aleatorio(current, pasta_logo, "_logo", encoder)
                     if resultado:
                         if current != video_path:
                             temp_files.append(current)
                         current = resultado
                     else:
-                        _log("  â ï¸ Logomarca falhou, continuando.")
+                        _log("  Ã¢ÂšÂ Ã¯Â¸Â Logomarca falhou, continuando.")
 
                 # Renomear resultado final para *_processado.mp4
                 if current != video_path:
@@ -3754,7 +3891,7 @@ async def montador_processar(req: MontadorProcessarReq):
                             os.rename(current, final_name)
                         except Exception:
                             final_name = current
-                    _log(f"  â Salvo: {os.path.basename(final_name)}")
+                    _log(f"  Ã¢ÂœÂ… Salvo: {os.path.basename(final_name)}")
 
                 for t in temp_files:
                     try:
@@ -3766,10 +3903,10 @@ async def montador_processar(req: MontadorProcessarReq):
                 _montador_status["processados"] += 1
                 _montador_status["progresso"] = int(((idx + 1) / total) * 100)
 
-            _log(f"\nð ConcluÃ­do! {_montador_status['processados']}/{total} vÃ­deo(s) processado(s).")
-            _montador_status["mensagem"] = "ConcluÃ­do!"
+            _log(f"\nÃ°ÂŸÂÂ ConcluÃƒÂ­do! {_montador_status['processados']}/{total} vÃƒÂ­deo(s) processado(s).")
+            _montador_status["mensagem"] = "ConcluÃƒÂ­do!"
         except Exception as e:
-            _log(f"â Erro fatal: {e}")
+            _log(f"Ã¢ÂÂŒ Erro fatal: {e}")
         finally:
             _montador_status["rodando"] = False
             q.put(None)  # Sinal de fim
@@ -3827,52 +3964,52 @@ async def laplata_generate(req: Request):
         openrouter_key = "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"
         
         prompt = ""
-        system_prompt = "VocÃª Ã© uma InteligÃªncia Artificial avanÃ§ada. Responda em PortuguÃªs do Brasil de forma direta, sem introduÃ§Ãµes desnecessÃ¡rias."
+        system_prompt = "VocÃƒÂª ÃƒÂ© uma InteligÃƒÂªncia Artificial avanÃƒÂ§ada. Responda em PortuguÃƒÂªs do Brasil de forma direta, sem introduÃƒÂ§ÃƒÂµes desnecessÃƒÂ¡rias."
         
         if tool == "prompt":
             desc = data.get("mainDescription", "")
             estilo = data.get("visualStyle", "")
             qualidade = data.get("quality", "")
             elementos = ", ".join(data.get("additionalElements", []))
-            prompt = f"Crie um prompt profissional (em inglÃªs, pois geradores de imagem funcionam melhor em inglÃªs) para geraÃ§Ã£o de imagens com IA baseado nos seguintes parÃ¢metros:\nDescriÃ§Ã£o Principal: {desc}\nEstilo Visual: {estilo}\nQualidade: {qualidade}\nElementos Adicionais: {elementos}\nCrie um prompt detalhado e profissional."
+            prompt = f"Crie um prompt profissional (em inglÃƒÂªs, pois geradores de imagem funcionam melhor em inglÃƒÂªs) para geraÃƒÂ§ÃƒÂ£o de imagens com IA baseado nos seguintes parÃƒÂ¢metros:\nDescriÃƒÂ§ÃƒÂ£o Principal: {desc}\nEstilo Visual: {estilo}\nQualidade: {qualidade}\nElementos Adicionais: {elementos}\nCrie um prompt detalhado e profissional."
             
         elif tool == "hashtag":
             niche = data.get("niche", "")
             market = data.get("market", "")
             quantity = data.get("quantity", "15")
-            prompt = f"Crie {quantity} hashtags estratÃ©gicas para redes sociais baseado no nicho '{niche}' e mercado '{market}'. Retorne apenas as hashtags separadas por espaÃ§o."
+            prompt = f"Crie {quantity} hashtags estratÃƒÂ©gicas para redes sociais baseado no nicho '{niche}' e mercado '{market}'. Retorne apenas as hashtags separadas por espaÃƒÂ§o."
             
         elif tool == "descrever":
             imagem_url = data.get("imageUrl", "")
             if not imagem_url:
-                prompt = f"Descreva de forma extremamente detalhada e criativa a seguinte cena: {data.get('texto', 'uma cena genÃ©rica')} (Simulando uma imagem se a URL falhar)."
+                prompt = f"Descreva de forma extremamente detalhada e criativa a seguinte cena: {data.get('texto', 'uma cena genÃƒÂ©rica')} (Simulando uma imagem se a URL falhar)."
             else:
                 prompt = f"Descreva a imagem contida nesta URL de forma rica em detalhes: {imagem_url}"
                 
         elif tool == "mineracao":
             assunto = data.get("subject", "")
-            prompt = f"Aja como um analista de tendÃªncias e algoritmo de redes sociais (TikTok, Reels, Shorts). O usuÃ¡rio forneceu o nicho/assunto: '{assunto}'. Identifique os formatos e temas de vÃ­deos que estÃ£o mais bombando (virais) atualmente neste nicho na internet. ForneÃ§a uma lista de 5 estruturas exatas de vÃ­deos virais, detalhando para cada um:\n1) O gancho (hook) visual e falado dos primeiros 3 segundos;\n2) O conceito/roteiro principal;\n3) Por que o algoritmo estÃ¡ entregando tanto esse tipo de conteÃºdo. Seja altamente estratÃ©gico."
+            prompt = f"Aja como um analista de tendÃƒÂªncias e algoritmo de redes sociais (TikTok, Reels, Shorts). O usuÃƒÂ¡rio forneceu o nicho/assunto: '{assunto}'. Identifique os formatos e temas de vÃƒÂ­deos que estÃƒÂ£o mais bombando (virais) atualmente neste nicho na internet. ForneÃƒÂ§a uma lista de 5 estruturas exatas de vÃƒÂ­deos virais, detalhando para cada um:\n1) O gancho (hook) visual e falado dos primeiros 3 segundos;\n2) O conceito/roteiro principal;\n3) Por que o algoritmo estÃƒÂ¡ entregando tanto esse tipo de conteÃƒÂºdo. Seja altamente estratÃƒÂ©gico."
             
         elif tool == "titulos":
             tema = data.get("topic", "")
             tipo = data.get("type", "youtube")
-            prompt = f"Gere 10 tÃ­tulos altamente magnÃ©ticos e com foco em clique (clickbait Ã©tico) para um conteÃºdo de {tipo} sobre o assunto: '{tema}'."
+            prompt = f"Gere 10 tÃƒÂ­tulos altamente magnÃƒÂ©ticos e com foco em clique (clickbait ÃƒÂ©tico) para um conteÃƒÂºdo de {tipo} sobre o assunto: '{tema}'."
             
         elif tool == "descricoes":
             titulo = data.get("title", "")
             palavras = data.get("keywords", "")
-            prompt = f"Crie uma descriÃ§Ã£o para um vÃ­deo do YouTube com o tÃ­tulo '{titulo}'. A descriÃ§Ã£o deve ser persuasiva, incluir call to action (CTA) e ser otimizada para SEO utilizando estas palavras-chave: {palavras}."
+            prompt = f"Crie uma descriÃƒÂ§ÃƒÂ£o para um vÃƒÂ­deo do YouTube com o tÃƒÂ­tulo '{titulo}'. A descriÃƒÂ§ÃƒÂ£o deve ser persuasiva, incluir call to action (CTA) e ser otimizada para SEO utilizando estas palavras-chave: {palavras}."
             
         elif tool == "gerador_imagem":
             ideia = data.get("idea", "")
-            prompt = f"Escreva 3 prompts de imagem distintos (em inglÃªs) otimizados para Midjourney/Stable Diffusion com base nesta ideia: '{ideia}'. Cada prompt deve ter um estilo artÃ­stico diferente (ex: realista, cyberpunk, anime)."
+            prompt = f"Escreva 3 prompts de imagem distintos (em inglÃƒÂªs) otimizados para Midjourney/Stable Diffusion com base nesta ideia: '{ideia}'. Cada prompt deve ter um estilo artÃƒÂ­stico diferente (ex: realista, cyberpunk, anime)."
             
         elif tool == "tendencias":
             setor = data.get("sector", "")
-            prompt = f"Liste as 5 principais tendÃªncias atuais (trends) para criadores de conteÃºdo no setor de '{setor}'. Explique brevemente como um criador pode aproveitar cada tendÃªncia."
+            prompt = f"Liste as 5 principais tendÃƒÂªncias atuais (trends) para criadores de conteÃƒÂºdo no setor de '{setor}'. Explique brevemente como um criador pode aproveitar cada tendÃƒÂªncia."
             
         if not prompt:
-            return JSONResponse({"success": False, "error": "Ferramenta nÃ£o suportada ou parÃ¢metros invÃ¡lidos."})
+            return JSONResponse({"success": False, "error": "Ferramenta nÃƒÂ£o suportada ou parÃƒÂ¢metros invÃƒÂ¡lidos."})
             
         # Chamar OpenRouter
         response = requests.post(
@@ -3896,7 +4033,7 @@ async def laplata_generate(req: Request):
             res_data = response.json()
             content = res_data["choices"][0]["message"]["content"]
             
-            # Ferramentas La Plata agora sÃ£o gratuitas (custo 0) para incentivar o uso.
+            # Ferramentas La Plata agora sÃƒÂ£o gratuitas (custo 0) para incentivar o uso.
             # try:
             #     import user_database
             #     user_database.deduct_credits(1, 0, f"Uso de IA - La Plata: {tool}")
@@ -3910,7 +4047,7 @@ async def laplata_generate(req: Request):
     except Exception as e:
         return JSONResponse({"success": False, "error": str(e)})
 
-# --- ENDPOINTS: CENTRAL DAS NOTÃCIAS (SIMBIOSE) ---
+# --- ENDPOINTS: CENTRAL DAS NOTÃƒÂCIAS (SIMBIOSE) ---
 @app.post("/api/grok")
 async def api_grok(req: Request):
     import requests
@@ -4027,7 +4164,7 @@ async def api_search_youtube(q: str = ""):
                         
                         view_text = v.get('viewCountText', {}).get('simpleText', '0')
                         views = 0
-                        # Parse views like "1.2M views", "3,4 mil visualizaÃ§Ãµes", "123 visualizaÃ§Ãµes"
+                        # Parse views like "1.2M views", "3,4 mil visualizaÃƒÂ§ÃƒÂµes", "123 visualizaÃƒÂ§ÃƒÂµes"
                         num_str = re.search(r'([\d,\.]+)', view_text)
                         if num_str:
                             val = float(num_str.group(1).replace(',', '.'))
@@ -4267,117 +4404,117 @@ async def api_noticias_ai(req: NoticiasReq):
         
     if req.prompt_type == 'cacar':
         count = req.news_count if hasattr(req, 'news_count') and req.news_count else 5
-        sys_prompt = f"""VocÃª Ã© um jornalista investigativo e curador de notÃ­cias focado em polÃ­tica e bastidores.
-O usuÃ¡rio quer saber as {count} notÃ­cias MAIS QUENTES e RECENTES sobre o tema fornecido.
+        sys_prompt = f"""VocÃƒÂª ÃƒÂ© um jornalista investigativo e curador de notÃƒÂ­cias focado em polÃƒÂ­tica e bastidores.
+O usuÃƒÂ¡rio quer saber as {count} notÃƒÂ­cias MAIS QUENTES e RECENTES sobre o tema fornecido.
 
 MUITO IMPORTANTE SOBRE A BUSCA E AS FONTES:
-- Use a ferramenta de busca combinando palavras-chave especÃ­ficas para refinar a relevÃ¢ncia.
+- Use a ferramenta de busca combinando palavras-chave especÃƒÂ­ficas para refinar a relevÃƒÂ¢ncia.
 - Exemplo de busca: "(Revista Oeste OR Gazeta do Povo OR Jovem Pan OR Twitter OR Pleno News OR Poder360)"
-- NÃO se limite apenas Ã  grande mÃ­dia tradicional (G1, CNN, Folha, UOL). Evite-as se possÃ­vel.
-- DÃª FORTE PREFERÃNCIA e priorize mÃ­dias independentes, portais com viÃ©s de direita/conservador e jornalismo investigativo independente.
-- Inclua tambÃ©m postagens, furos de reportagem ou debates relevantes do Twitter/X, se houver.
-- O objetivo Ã© ter uma visÃ£o ampla que atenda a um pÃºblico que consome notÃ­cias de polÃ­tica nacional, direita e bastidores de BrasÃ­lia.
-- ORDENE SEMPRE DA MAIS RECENTE PARA A MAIS ANTIGA (focando em hoje e nos Ãºltimos dias).
+- NÃƒÂƒO se limite apenas ÃƒÂ  grande mÃƒÂ­dia tradicional (G1, CNN, Folha, UOL). Evite-as se possÃƒÂ­vel.
+- DÃƒÂª FORTE PREFERÃƒÂŠNCIA e priorize mÃƒÂ­dias independentes, portais com viÃƒÂ©s de direita/conservador e jornalismo investigativo independente.
+- Inclua tambÃƒÂ©m postagens, furos de reportagem ou debates relevantes do Twitter/X, se houver.
+- O objetivo ÃƒÂ© ter uma visÃƒÂ£o ampla que atenda a um pÃƒÂºblico que consome notÃƒÂ­cias de polÃƒÂ­tica nacional, direita e bastidores de BrasÃƒÂ­lia.
+- ORDENE SEMPRE DA MAIS RECENTE PARA A MAIS ANTIGA (focando em hoje e nos ÃƒÂºltimos dias).
 
-Retorne EXATAMENTE {count} notÃ­cias.
-Para cada notÃ­cia, forneÃ§a:
-1. title: O tÃ­tulo da notÃ­cia ou tweet.
+Retorne EXATAMENTE {count} notÃƒÂ­cias.
+Para cada notÃƒÂ­cia, forneÃƒÂ§a:
+1. title: O tÃƒÂ­tulo da notÃƒÂ­cia ou tweet.
 2. summary: Um resumo bem curto (1 a 2 frases) do que se trata.
-3. url: O link real da notÃ­cia ou da postagem.
+3. url: O link real da notÃƒÂ­cia ou da postagem.
 4. source: O nome do portal, jornal ou rede social (ex: Revista Oeste, Twitter, Gazeta do Povo).
-5. date: A data ou tempo de publicaÃ§Ã£o (ex: "Hoje", "HÃ¡ 2 horas", "Ontem").
-6. imageUrl: A URL de uma imagem (thumbnail) da notÃ­cia. Se a busca retornar uma imagem associada Ã  matÃ©ria, coloque o link aqui. Se nÃ£o encontrar, deixe vazio ("").
+5. date: A data ou tempo de publicaÃƒÂ§ÃƒÂ£o (ex: "Hoje", "HÃƒÂ¡ 2 horas", "Ontem").
+6. imageUrl: A URL de uma imagem (thumbnail) da notÃƒÂ­cia. Se a busca retornar uma imagem associada ÃƒÂ  matÃƒÂ©ria, coloque o link aqui. Se nÃƒÂ£o encontrar, deixe vazio ("").
 7. imageSearchQuery: Uma query de busca curta (1 a 3 palavras) com o nome da pessoa ou assunto principal para buscar uma foto (ex: "Lula", "Bolsonaro", "STF", "Congresso").
 
 Responda APENAS com um array JSON com objetos contendo essas propriedades. NADA DE MARKDOWN."""
-        user_prompt = f"Busque as {count} notÃ­cias mais recentes sobre: \"{req.input_text}\""
+        user_prompt = f"Busque as {count} notÃƒÂ­cias mais recentes sobre: \"{req.input_text}\""
         
 
     elif req.prompt_type == 'analisar-canal':
-        sys_prompt = f"""Atue como um estrategista de YouTube. Analise os seguintes vÃ­deos salvos pelo criador de conteÃºdo. Com base nesses vÃ­deos, forneÃ§a:
-1. Uma anÃ¡lise geral do nicho e do interesse do pÃºblico (quais temas geram mais interesse).
-2. 5 ideias de vÃ­deos inÃ©ditos inspirados nesse conteÃºdo, mas com um Ã¢ngulo Ãºnico ou aprofundado.
-3. Dicas de palavras-chave e estratÃ©gias de thumbnail para esse nicho.
+        sys_prompt = f"""Atue como um estrategista de YouTube. Analise os seguintes vÃƒÂ­deos salvos pelo criador de conteÃƒÂºdo. Com base nesses vÃƒÂ­deos, forneÃƒÂ§a:
+1. Uma anÃƒÂ¡lise geral do nicho e do interesse do pÃƒÂºblico (quais temas geram mais interesse).
+2. 5 ideias de vÃƒÂ­deos inÃƒÂ©ditos inspirados nesse conteÃƒÂºdo, mas com um ÃƒÂ¢ngulo ÃƒÂºnico ou aprofundado.
+3. Dicas de palavras-chave e estratÃƒÂ©gias de thumbnail para esse nicho.
 Responda em Markdown, de forma clara e estruturada."""
-        user_prompt = f"VÃ­deos salvos:\n{req.input_text}"
+        user_prompt = f"VÃƒÂ­deos salvos:\n{req.input_text}"
 
 
     elif req.prompt_type == 'monitorar-perfil':
-        sys_prompt = f"""Extraia SOMENTE os dados reais e pÃºblicos referentes Ã  pÃ¡gina solicitada. Se nÃ£o conseguir ler, retorne JSON com erro.
+        sys_prompt = f"""Extraia SOMENTE os dados reais e pÃƒÂºblicos referentes ÃƒÂ  pÃƒÂ¡gina solicitada. Se nÃƒÂ£o conseguir ler, retorne JSON com erro.
 Responda ESTRITAMENTE em formato JSON com o seguinte schema:
 {{
-  "username": "Nome de usuÃ¡rio",
-  "followers": "NÃºmero de seguidores (ex: 1.2M)",
-  "likes": "NÃºmero total de curtidas",
-  "videos": "NÃºmero total de vÃ­deos",
+  "username": "Nome de usuÃƒÂ¡rio",
+  "followers": "NÃƒÂºmero de seguidores (ex: 1.2M)",
+  "likes": "NÃƒÂºmero total de curtidas",
+  "videos": "NÃƒÂºmero total de vÃƒÂ­deos",
   "recentVideos": [
     {{
-      "title": "TÃ­tulo do vÃ­deo",
+      "title": "TÃƒÂ­tulo do vÃƒÂ­deo",
       "views": "100K",
       "likes": "5K",
       "date": "Data se houver"
     }}
   ]
 }}"""
-        user_prompt = f"Dados extraÃ­dos da pÃ¡gina / URL:\n{req.input_text}"
+        user_prompt = f"Dados extraÃƒÂ­dos da pÃƒÂ¡gina / URL:\n{req.input_text}"
 
     elif req.prompt_type == 'gerar-estrategia':
-        sys_prompt = f"""VocÃª Ã© um Estrategista Chefe de ConteÃºdo para o YouTube e sabe tudo sobre tendÃªncias e algoritmos.
-Sua missÃ£o Ã© criar um plano de ataque de conteÃºdo URGENTE e PERSONALIZADO para o canal do usuÃ¡rio, focado nas notÃ­cias mais quentes de hoje.
-Gere 3 ideias de vÃ­deos ALTAMENTE ESTRATÃGICOS que o usuÃ¡rio deve gravar AGORA.
+        sys_prompt = f"""VocÃƒÂª ÃƒÂ© um Estrategista Chefe de ConteÃƒÂºdo para o YouTube e sabe tudo sobre tendÃƒÂªncias e algoritmos.
+Sua missÃƒÂ£o ÃƒÂ© criar um plano de ataque de conteÃƒÂºdo URGENTE e PERSONALIZADO para o canal do usuÃƒÂ¡rio, focado nas notÃƒÂ­cias mais quentes de hoje.
+Gere 3 ideias de vÃƒÂ­deos ALTAMENTE ESTRATÃƒÂ‰GICOS que o usuÃƒÂ¡rio deve gravar AGORA.
 
-Para cada ideia, forneÃ§a:
-- title: Um tÃ­tulo forte e magnÃ©tico.
-- whyNow: Por que este vÃ­deo deve ser feito HOJE (urgÃªncia, timing, hype).
-- angle: Qual o Ã¢ngulo Ãºnico que o usuÃ¡rio deve abordar para se diferenciar da concorrÃªncia.
-- urgency: "Alta", "MÃ©dia" ou "Baixa".
-- competitorContext: O que a concorrÃªncia estÃ¡ fazendo sobre isso e como o usuÃ¡rio vai superÃ¡-los.
+Para cada ideia, forneÃƒÂ§a:
+- title: Um tÃƒÂ­tulo forte e magnÃƒÂ©tico.
+- whyNow: Por que este vÃƒÂ­deo deve ser feito HOJE (urgÃƒÂªncia, timing, hype).
+- angle: Qual o ÃƒÂ¢ngulo ÃƒÂºnico que o usuÃƒÂ¡rio deve abordar para se diferenciar da concorrÃƒÂªncia.
+- urgency: "Alta", "MÃƒÂ©dia" ou "Baixa".
+- competitorContext: O que a concorrÃƒÂªncia estÃƒÂ¡ fazendo sobre isso e como o usuÃƒÂ¡rio vai superÃƒÂ¡-los.
 
 Responda APENAS com um array JSON. NADA DE MARKDOWN."""
         user_prompt = req.input_text
         
     elif req.prompt_type == 'gerar-roteiro':
-        base_prompt = "VocÃª Ã© um roteirista de YouTube e especialista em SEO."
+        base_prompt = "VocÃƒÂª ÃƒÂ© um roteirista de YouTube e especialista em SEO."
         if req.profile_context:
-            base_prompt += f"\nINSTRUÃÃES DE IDENTIDADE DO CANAL:\nVocÃª DEVE adotar estritamente a identidade, linguagem e estilo definidos nos seguintes documentos do canal:\n{req.profile_context}\n"
+            base_prompt += f"\nINSTRUÃƒÂ‡ÃƒÂ•ES DE IDENTIDADE DO CANAL:\nVocÃƒÂª DEVE adotar estritamente a identidade, linguagem e estilo definidos nos seguintes documentos do canal:\n{req.profile_context}\n"
             
         if req.format == 'shorts':
-            sys_prompt = f"{base_prompt}\nCrie um roteiro EXTREMAMENTE DINÃMICO, RÃPIDO E RETENTIVO (menos de 60 segundos).\nTom selecionado: {req.tone}. Adapte o texto para este tom.\n\nSua resposta DEVE seguir EXATAMENTE esta estrutura em Markdown:\n# ð± OpÃ§Ãµes de TÃ­tulo (Para a legenda do vÃ­deo)\n[3 opÃ§Ãµes]\n# ð Roteiro do VÃ­deo Curto (TikTok/Shorts)\n[Roteiro com Hook, Corpo, CTA e SugestÃµes Visuais entre colchetes]"
+            sys_prompt = f"{base_prompt}\nCrie um roteiro EXTREMAMENTE DINÃƒÂ‚MICO, RÃƒÂPIDO E RETENTIVO (menos de 60 segundos).\nTom selecionado: {req.tone}. Adapte o texto para este tom.\n\nSua resposta DEVE seguir EXATAMENTE esta estrutura em Markdown:\n# Ã°ÂŸÂ“Â± OpÃƒÂ§ÃƒÂµes de TÃƒÂ­tulo (Para a legenda do vÃƒÂ­deo)\n[3 opÃƒÂ§ÃƒÂµes]\n# Ã°ÂŸÂ“Âœ Roteiro do VÃƒÂ­deo Curto (TikTok/Shorts)\n[Roteiro com Hook, Corpo, CTA e SugestÃƒÂµes Visuais entre colchetes]"
         else:
-            sys_prompt = f"{base_prompt}\nCrie um pacote completo (Roteiro + SEO) envolvente e direto considerando a modalidade: {req.format}.\nTom selecionado: {req.tone}. Adapte o texto para este tom.\n\nSua resposta DEVE seguir EXATAMENTE esta estrutura em Markdown:\n# ð¬ OpÃ§Ãµes de TÃ­tulo (Alta Taxa de Clique)\n[3 opÃ§Ãµes]\n# ð DescriÃ§Ã£o Otimizada para SEO\n[DescriÃ§Ã£o com palavras-chave]\n# ð·ï¸ Tags Virais\n[15 a 20 tags]\n# ð Roteiro do VÃ­deo\n[Roteiro completo: Gancho, Desenvolvimento, SugestÃµes Visuais e ConclusÃ£o]"
-        user_prompt = f"Use as seguintes informaÃ§Ãµes/tÃ³picos para criar o roteiro:\n\n{req.input_text}"
+            sys_prompt = f"{base_prompt}\nCrie um pacote completo (Roteiro + SEO) envolvente e direto considerando a modalidade: {req.format}.\nTom selecionado: {req.tone}. Adapte o texto para este tom.\n\nSua resposta DEVE seguir EXATAMENTE esta estrutura em Markdown:\n# Ã°ÂŸÂŽÂ¬ OpÃƒÂ§ÃƒÂµes de TÃƒÂ­tulo (Alta Taxa de Clique)\n[3 opÃƒÂ§ÃƒÂµes]\n# Ã°ÂŸÂ“Â DescriÃƒÂ§ÃƒÂ£o Otimizada para SEO\n[DescriÃƒÂ§ÃƒÂ£o com palavras-chave]\n# Ã°ÂŸÂÂ·Ã¯Â¸Â Tags Virais\n[15 a 20 tags]\n# Ã°ÂŸÂ“Âœ Roteiro do VÃƒÂ­deo\n[Roteiro completo: Gancho, Desenvolvimento, SugestÃƒÂµes Visuais e ConclusÃƒÂ£o]"
+        user_prompt = f"Use as seguintes informaÃƒÂ§ÃƒÂµes/tÃƒÂ³picos para criar o roteiro:\n\n{req.input_text}"
         
     elif req.prompt_type == 'minerar':
-        sys_prompt = "VocÃª Ã© um estrategista de conteÃºdo para YouTube.\nAnalise o vÃ­deo fornecido e sugira 3 ideias de vÃ­deos similares, PORÃM MELHORES, para eu gravar no meu canal.\nDesconstrua os gatilhos mentais do tÃ­tulo e sugira como o meu roteiro deve ser estruturado.\nUse formataÃ§Ã£o Markdown."
+        sys_prompt = "VocÃƒÂª ÃƒÂ© um estrategista de conteÃƒÂºdo para YouTube.\nAnalise o vÃƒÂ­deo fornecido e sugira 3 ideias de vÃƒÂ­deos similares, PORÃƒÂ‰M MELHORES, para eu gravar no meu canal.\nDesconstrua os gatilhos mentais do tÃƒÂ­tulo e sugira como o meu roteiro deve ser estruturado.\nUse formataÃƒÂ§ÃƒÂ£o Markdown."
         user_prompt = req.input_text
         
     elif req.prompt_type == 'estrategia':
-        sys_prompt = "VocÃª Ã© um estrategista de YouTube nÃ­vel SÃªnior. Sua tarefa Ã© analisar o contexto do canal e a lista de concorrentes fornecida, e sugerir 5 ideias de vÃ­deos URGENTES ou EXCLUSIVAS que o canal deve gravar AGORA para se destacar.\n\nRetorne EXATAMENTE um JSON que Ã© um array de 5 objetos com as seguintes propriedades:\n- title: TÃ­tulo forte e chamativo do vÃ­deo.\n- urgency: Grau de urgÃªncia (Alta!, Alta, MÃ©dia, Baixa) baseado em tendÃªncias atuais.\n- whyNow: Por que este vÃ­deo deve ser feito hoje (ex: hype, notÃ­cia de Ãºltima hora, gap no mercado).\n- angle: Qual o Ã¢ngulo Ãºnico/diferencial que nosso canal pode adotar em relaÃ§Ã£o Ã  concorrÃªncia.\n- competitorContext: Como os concorrentes cobriram (ou falharam em cobrir) este assunto.\n\nResponda APENAS com o JSON vÃ¡lido, sem formato markdown (sem ```json)."
+        sys_prompt = "VocÃƒÂª ÃƒÂ© um estrategista de YouTube nÃƒÂ­vel SÃƒÂªnior. Sua tarefa ÃƒÂ© analisar o contexto do canal e a lista de concorrentes fornecida, e sugerir 5 ideias de vÃƒÂ­deos URGENTES ou EXCLUSIVAS que o canal deve gravar AGORA para se destacar.\n\nRetorne EXATAMENTE um JSON que ÃƒÂ© um array de 5 objetos com as seguintes propriedades:\n- title: TÃƒÂ­tulo forte e chamativo do vÃƒÂ­deo.\n- urgency: Grau de urgÃƒÂªncia (Alta!, Alta, MÃƒÂ©dia, Baixa) baseado em tendÃƒÂªncias atuais.\n- whyNow: Por que este vÃƒÂ­deo deve ser feito hoje (ex: hype, notÃƒÂ­cia de ÃƒÂºltima hora, gap no mercado).\n- angle: Qual o ÃƒÂ¢ngulo ÃƒÂºnico/diferencial que nosso canal pode adotar em relaÃƒÂ§ÃƒÂ£o ÃƒÂ  concorrÃƒÂªncia.\n- competitorContext: Como os concorrentes cobriram (ou falharam em cobrir) este assunto.\n\nResponda APENAS com o JSON vÃƒÂ¡lido, sem formato markdown (sem ```json)."
         user_prompt = req.input_text
 
     elif req.prompt_type == 'dashboard':
-        sys_prompt = f"Retorne as 6 notÃ­cias mais importantes do dia sobre a categoria: {req.input_text}.\nResponda APENAS com um array JSON com objetos contendo: title, summary, source, date, url.\nSem formatacao markdown, apenas o json cru."
-        user_prompt = "Me dÃª as notÃ­cias."
+        sys_prompt = f"Retorne as 6 notÃƒÂ­cias mais importantes do dia sobre a categoria: {req.input_text}.\nResponda APENAS com um array JSON com objetos contendo: title, summary, source, date, url.\nSem formatacao markdown, apenas o json cru."
+        user_prompt = "Me dÃƒÂª as notÃƒÂ­cias."
         
     elif req.prompt_type == 'images':
-        sys_prompt = f"VocÃª Ã© um diretor de arte experiente e precisa selecionar as melhores imagens de B-roll para um vÃ­deo do YouTube. O usuÃ¡rio fornecerÃ¡ um script e o nÃºmero de imagens ({req.images_count}) que precisam ser selecionadas. Retorne EXATAMENTE UM JSON ARRAY com {req.images_count} objetos e NADA MAIS. NADA DE MARKDOWN.\n\nFormato obrigatÃ³rio do JSON:\n[{{\n  \"id\": 1,\n  \"description\": \"DescriÃ§Ã£o do que precisamos ver na imagem (em PT-BR)\",\n  \"searchQuery\": \"Uma query EM INGLÃS pronta para ser buscada no Google Images\",\n  \"context\": \"O trecho do script que motivou esta imagem\",\n  \"type\": \"photo\" // Um dos tipos permitidos\n}}]\n\nTipos permitidos: {', '.join(req.allowed_types)}."
+        sys_prompt = f"VocÃƒÂª ÃƒÂ© um diretor de arte experiente e precisa selecionar as melhores imagens de B-roll para um vÃƒÂ­deo do YouTube. O usuÃƒÂ¡rio fornecerÃƒÂ¡ um script e o nÃƒÂºmero de imagens ({req.images_count}) que precisam ser selecionadas. Retorne EXATAMENTE UM JSON ARRAY com {req.images_count} objetos e NADA MAIS. NADA DE MARKDOWN.\n\nFormato obrigatÃƒÂ³rio do JSON:\n[{{\n  \"id\": 1,\n  \"description\": \"DescriÃƒÂ§ÃƒÂ£o do que precisamos ver na imagem (em PT-BR)\",\n  \"searchQuery\": \"Uma query EM INGLÃƒÂŠS pronta para ser buscada no Google Images\",\n  \"context\": \"O trecho do script que motivou esta imagem\",\n  \"type\": \"photo\" // Um dos tipos permitidos\n}}]\n\nTipos permitidos: {', '.join(req.allowed_types)}."
         user_prompt = f"Extraia {req.images_count} imagens de apoio para este roteiro:\n\n{req.input_text}"
         
     elif req.prompt_type == 'seo':
-        sys_prompt = "VocÃª Ã© um especialista em SEO para YouTube (foco em vÃ­deos virais e retenÃ§Ã£o). Seu objetivo Ã© otimizar tÃ­tulos, descriÃ§Ãµes e tags para vÃ­deos. Retorne o resultado em formato de texto estruturado."
-        user_prompt = f"Otimize o SEO para o seguinte roteiro de vÃ­deo:\n\n{req.input_text}"
+        sys_prompt = "VocÃƒÂª ÃƒÂ© um especialista em SEO para YouTube (foco em vÃƒÂ­deos virais e retenÃƒÂ§ÃƒÂ£o). Seu objetivo ÃƒÂ© otimizar tÃƒÂ­tulos, descriÃƒÂ§ÃƒÂµes e tags para vÃƒÂ­deos. Retorne o resultado em formato de texto estruturado."
+        user_prompt = f"Otimize o SEO para o seguinte roteiro de vÃƒÂ­deo:\n\n{req.input_text}"
         
 
     elif req.prompt_type == 'gerar-shorts':
-        sys_prompt = "VocÃª Ã© um roteirista de YouTube Shorts focado em retenÃ§Ã£o. Crie um roteiro EXTREMAMENTE DINÃMICO e RÃPIDO (menos de 60 segundos) com base na notÃ­cia/texto fornecido. Retorne em formato Markdown com as seÃ§Ãµes: # ð± OpÃ§Ãµes de TÃ­tulo (3 opÃ§Ãµes), # ð Roteiro do VÃ­deo Curto."
+        sys_prompt = "VocÃƒÂª ÃƒÂ© um roteirista de YouTube Shorts focado em retenÃƒÂ§ÃƒÂ£o. Crie um roteiro EXTREMAMENTE DINÃƒÂ‚MICO e RÃƒÂPIDO (menos de 60 segundos) com base na notÃƒÂ­cia/texto fornecido. Retorne em formato Markdown com as seÃƒÂ§ÃƒÂµes: # Ã°ÂŸÂ“Â± OpÃƒÂ§ÃƒÂµes de TÃƒÂ­tulo (3 opÃƒÂ§ÃƒÂµes), # Ã°ÂŸÂ“Âœ Roteiro do VÃƒÂ­deo Curto."
         user_prompt = f"Gere um roteiro curto para: {req.input_text}"
 
     elif req.prompt_type == 'ideias-thumbnails':
-        sys_prompt = "VocÃª Ã© um designer de thumbnails de YouTube focado em CTR (Click-Through Rate). Analise o roteiro ou contexto fornecido e sugira 3 ideias brilhantes de thumbnails que despertem alta curiosidade. Descreva os elementos visuais, a composiÃ§Ã£o, e o texto exato na imagem para cada uma. Retorne em formato Markdown."
+        sys_prompt = "VocÃƒÂª ÃƒÂ© um designer de thumbnails de YouTube focado em CTR (Click-Through Rate). Analise o roteiro ou contexto fornecido e sugira 3 ideias brilhantes de thumbnails que despertem alta curiosidade. Descreva os elementos visuais, a composiÃƒÂ§ÃƒÂ£o, e o texto exato na imagem para cada uma. Retorne em formato Markdown."
         user_prompt = f"Sugira 3 thumbnails para:\n\n{req.input_text}"
 
     elif req.prompt_type == 'deep-dive':
-        sys_prompt = "VocÃª Ã© um jornalista investigativo e analista geopolÃ­tico/econÃ´mico. Aprofunde-se no contexto da notÃ­cia fornecida, explicando o pano de fundo, os interesses envolvidos, os desdobramentos futuros e o que a grande mÃ­dia pode estar omitindo. Retorne em formato Markdown."
+        sys_prompt = "VocÃƒÂª ÃƒÂ© um jornalista investigativo e analista geopolÃƒÂ­tico/econÃƒÂ´mico. Aprofunde-se no contexto da notÃƒÂ­cia fornecida, explicando o pano de fundo, os interesses envolvidos, os desdobramentos futuros e o que a grande mÃƒÂ­dia pode estar omitindo. Retorne em formato Markdown."
         user_prompt = f"Aprofunde esta noticia:\n\n{req.input_text}"
 
     try:
@@ -4551,23 +4688,23 @@ async def modal_proxy(endpoint_name: str, request: Request):
     accounts = am.get_all_accounts()
     valid_modal_accounts = [acc for acc in accounts if acc.get('provider') == 'modal' and acc.get('is_active', True) and acc.get('last_balance', 0.0) > 0.0 and acc.get('workspace')]
 
-    print(f"[Modal Proxy] >>> Endpoint: {endpoint_name} | Método: {request.method}")
-    print(f"[Modal Proxy] Contas modais válidas encontradas: {len(valid_modal_accounts)}")
+    print(f"[Modal Proxy] >>> Endpoint: {endpoint_name} | MÃ©todo: {request.method}")
+    print(f"[Modal Proxy] Contas modais vÃ¡lidas encontradas: {len(valid_modal_accounts)}")
     for acc in valid_modal_accounts:
         print(f"  - {acc.get('name')} (workspace={acc.get('workspace')}, balance=${acc.get('last_balance',0):.2f})")
 
     if not valid_modal_accounts:
         all_modal = [acc for acc in accounts if acc.get('provider') == 'modal']
-        print(f"[Modal Proxy] CRITICO: Sem contas válidas! Contas modal total={len(all_modal)}")
+        print(f"[Modal Proxy] CRITICO: Sem contas vÃ¡lidas! Contas modal total={len(all_modal)}")
         for acc in all_modal:
             print(f"  - {acc.get('name')}: is_active={acc.get('is_active')}, balance={acc.get('last_balance')}")
-        return Response(status_code=503, content="CRÍTICO: Nenhuma conta Cloud Modal com saldo disponível.")
+        return Response(status_code=503, content="CRÃTICO: Nenhuma conta Cloud Modal com saldo disponÃ­vel.")
 
     random.shuffle(valid_modal_accounts)
     acc = valid_modal_accounts[0]
     workspace = acc.get('workspace')
 
-    # Roteamento centralizado da aplicação ASGI Modal
+    # Roteamento centralizado da aplicaÃ§Ã£o ASGI Modal
     endpoint_path = endpoint_name.replace('_', '/')
     modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/{endpoint_path}"
     print(f"[Modal Proxy] Selecionada: {acc.get('name')}")
@@ -4588,7 +4725,7 @@ async def modal_proxy(endpoint_name: str, request: Request):
         body = await request.body()
         req_headers["Content-Type"] = "application/json"
         
-        # INTERCEPTAÇÃO MULTI-PASS
+        # INTERCEPTAÃ‡ÃƒO MULTI-PASS
         if endpoint_name == "generate_image":
             import json
             try:
@@ -4596,12 +4733,12 @@ async def modal_proxy(endpoint_name: str, request: Request):
                 ref_images = body_json.get("reference_images_base64", [])
                 use_upscale = body_json.get("use_upscale", False)
                 if ref_images and len(ref_images) >= 2 and body_json.get("model", "").lower() == "flux2-universal":
-                    print(f"[Modal Proxy] Interceptado: {len(ref_images)} imagens de referência detectadas. Iniciando Multipass Workflow.")
+                    print(f"[Modal Proxy] Interceptado: {len(ref_images)} imagens de referÃªncia detectadas. Iniciando Multipass Workflow.")
                     from backend.api.ai_director_multipass import AIDirectorMultipass
                     import asyncio
                     
                     async def multipass_generator():
-                        yield json.dumps({"status": "processing", "message": "Iniciando inteligência de direção de arte (LLM)..."}).encode('utf-8') + b"\n"
+                        yield json.dumps({"status": "processing", "message": "Iniciando inteligÃªncia de direÃ§Ã£o de arte (LLM)..."}).encode('utf-8') + b"\n"
                         try:
                             import os
                             lightning_key = os.getenv("LIGHTNING_API_KEY", "")
@@ -4611,13 +4748,13 @@ async def modal_proxy(endpoint_name: str, request: Request):
                             global_prompt = body_json.get("prompt", "A cinematic scene")
                             characters = [{"name": f"Personagem {i+1}", "details": "Detalhes conforme a imagem fornecida"} for i in range(len(ref_images))]
                             
-                            yield json.dumps({"status": "processing", "message": f"Planejando cenário base e {len(ref_images)} personagens com LLM..."}).encode('utf-8') + b"\n"
+                            yield json.dumps({"status": "processing", "message": f"Planejando cenÃ¡rio base e {len(ref_images)} personagens com LLM..."}).encode('utf-8') + b"\n"
                             
-                            # Precisamos rodar isso em um executor porque o Director é bloqueante (requests.post)
+                            # Precisamos rodar isso em um executor porque o Director Ã© bloqueante (requests.post)
                             def run_sync_director():
                                 # Passo 1: Planejamento
                                 base_prompt, regional_prompts = director.break_down_prompt(global_prompt, characters)
-                                # Passo 2: Geração Base
+                                # Passo 2: GeraÃ§Ã£o Base
                                 base_img_b64 = director.generate_base_image(base_prompt)
                                 # Passo 3: Multipass (Iterativo)
                                 workflow_path = os.path.join(os.path.dirname(__file__), "Comfyui Workflow API", "10resultado_3_personagens_CHAINED_dev.json")
@@ -4665,10 +4802,10 @@ async def modal_proxy(endpoint_name: str, request: Request):
     async def stream_generator():
         response = None
         try:
-            print(f"[Modal Proxy] Abrindo conexão com Modal...")
+            print(f"[Modal Proxy] Abrindo conexÃ£o com Modal...")
             response = await client.send(req, stream=True)
             elapsed_connect = time.time() - t_start
-            print(f"[Modal Proxy] Conexão estabelecida em {elapsed_connect:.1f}s | HTTP {response.status_code}")
+            print(f"[Modal Proxy] ConexÃ£o estabelecida em {elapsed_connect:.1f}s | HTTP {response.status_code}")
             if response.status_code != 200:
                 body_err = await response.aread()
                 print(f"[Modal Proxy] ERRO upstream: {body_err[:500]}")
@@ -4739,10 +4876,10 @@ async def studio_generate(req: StudioGenerateRequest, background_tasks: Backgrou
     # Cria o job na fila do BD SQLite
     economy_db.create_job(job_id, "default_user", job_type, payload)
     
-    # Envia a tarefa pesada para o background (para não bloquear o request)
+    # Envia a tarefa pesada para o background (para nÃ£o bloquear o request)
     background_tasks.add_task(worker_studio_generate, job_id, payload)
     
-    return {"success": True, "job_id": job_id, "status": "QUEUED", "message": "Adicionado à fila de renderização."}
+    return {"success": True, "job_id": job_id, "status": "QUEUED", "message": "Adicionado Ã  fila de renderizaÃ§Ã£o."}
 
 class EnhancePromptRequest(BaseModel):
     prompt: str
@@ -4783,7 +4920,7 @@ async def enhance_prompt(req: EnhancePromptRequest):
         except Exception as e:
             print(f"Error enhancing prompt via Groq: {e}")
             
-    # Fallback caso não tenha API
+    # Fallback caso nÃ£o tenha API
     if req.type == 'image':
         enhanced = f"{base}, cinematic masterpiece, 8k resolution, highly detailed, photorealistic, Unreal Engine 5 render, dramatic lighting, sharp focus, intricate details, trending on ArtStation"
     else:
@@ -4804,7 +4941,7 @@ async def enhance_video_api(req: EnhanceVideoRequest, background_tasks: Backgrou
     conn.close()
     
     if not row or row[0] != 'video_generation' or not row[1]:
-        return {"success": False, "error": "Vídeo original inválido ou inexistente."}
+        return {"success": False, "error": "VÃ­deo original invÃ¡lido ou inexistente."}
     
     new_job_id = f"job_upscale_{int(time.time())}"
     conn = get_db_connection()
@@ -4868,7 +5005,7 @@ async def generate_sfx_api(req: GenerateSFXRequest, background_tasks: Background
     conn.close()
     
     if not row or row[0] != 'video_generation' or not row[1]:
-        return {"success": False, "error": "Vídeo original inválido ou inexistente."}
+        return {"success": False, "error": "VÃ­deo original invÃ¡lido ou inexistente."}
         
     import json
     try:
@@ -4907,7 +5044,7 @@ async def generate_sfx_api(req: GenerateSFXRequest, background_tasks: Background
             c.execute("UPDATE jobs SET progress=50 WHERE job_id=?", (j_id,))
             conn.commit()
             
-            # Executa de forma síncrona dentro da task do FastAPI
+            # Executa de forma sÃ­ncrona dentro da task do FastAPI
             res = requests.post(modal_url, json=payload, timeout=600)
             if res.status_code == 200:
                 data = res.json()
@@ -4937,7 +5074,7 @@ async def generate_sfx_api(req: GenerateSFXRequest, background_tasks: Background
 
 @app.get("/api/public/explore")
 async def public_explore():
-    # Retorna os últimos 50 jobs completos (simulando um feed público)
+    # Retorna os Ãºltimos 50 jobs completos (simulando um feed pÃºblico)
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT job_id, type, parameters, status, progress, result_url, created_at FROM jobs WHERE status='COMPLETED' ORDER BY created_at DESC LIMIT 50")
@@ -5037,7 +5174,7 @@ def worker_studio_generate(job_id: str, payload: dict):
     valid_modal_accounts = [acc for acc in accounts if acc.get('provider') == 'modal' and acc.get('is_active', True) and acc.get('last_balance', 0.0) > 0.0 and acc.get('workspace')]
     
     if not valid_modal_accounts:
-        economy_db.update_job_status(job_id, 'FAILED', result_url="CRÍTICO: Nenhuma conta Cloud Modal disponível.")
+        economy_db.update_job_status(job_id, 'FAILED', result_url="CRÃTICO: Nenhuma conta Cloud Modal disponÃ­vel.")
         return
         
     import random
@@ -5056,7 +5193,7 @@ def worker_studio_generate(job_id: str, payload: dict):
         else:
             url_modal = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/generate/video"
             
-        print(f"[Gateway Job {job_id}] Roteando renderização para Modal Workspace: {workspace}")
+        print(f"[Gateway Job {job_id}] Roteando renderizaÃ§Ã£o para Modal Workspace: {workspace}")
         
         try:
             r = requests.post(url_modal, json=payload, stream=True, timeout=200)
@@ -5116,7 +5253,7 @@ def worker_studio_generate(job_id: str, payload: dict):
                     continue 
                     
             elif r.status_code in [402, 403, 401]:
-                print(f"[Gateway Job {job_id}] Workspace {workspace} falhou com código {r.status_code}. Zerando saldo...")
+                print(f"[Gateway Job {job_id}] Workspace {workspace} falhou com cÃ³digo {r.status_code}. Zerando saldo...")
                 am.mark_exhausted(workspace)
                 last_error = f"Conta {workspace} rejeitou (HTTP {r.status_code})."
                 continue
@@ -5124,12 +5261,12 @@ def worker_studio_generate(job_id: str, payload: dict):
                 last_error = f"HTTP {r.status_code} - {r.text}"
                 continue
         except requests.exceptions.Timeout:
-            last_error = "Timeout na requisição."
+            last_error = "Timeout na requisiÃ§Ã£o."
         except Exception as e:
             last_error = str(e)
             
     # Se chegou aqui, todas falharam
-    economy_db.update_job_status(job_id, 'FAILED', result_url=f"Falha em todas as contas. Último erro: {last_error}")
+    economy_db.update_job_status(job_id, 'FAILED', result_url=f"Falha em todas as contas. Ãšltimo erro: {last_error}")
     import asyncio
     if 'job_notifier' in globals():
         asyncio.run(globals()['job_notifier'].broadcast(job_id, {"status": "FAILED", "error": f"Falha. {last_error}"}))
@@ -5142,17 +5279,26 @@ class ChatRequest(BaseModel):
     channel_id: str
     message: str
 
-# Montar diretórios externos para apps estáticos
+# Montar diretÃ³rios externos para apps estÃ¡ticos
 app.mount("/ext_apps", StaticFiles(directory=os.path.join(BASE_DIR, "Programas externos")), name="programas_externos")
 
-# Todo o conteÃºdo de web_ui serÃ¡ servido estaticamente (Deve ser a ÃšLTIMA rota)
+# Todo o conteÃƒÂºdo de web_ui serÃƒÂ¡ servido estaticamente (Deve ser a ÃƒÅ¡LTIMA rota)
 app.mount("/", StaticFiles(directory=WEB_UI_DIR), name="static")
 
 def start_server(workspace_name, workspace_path, port=8080):
-    """FunÃ§Ã£o chamada pelo apollo_studio.py para rodar o uvicorn."""
+    """FunÃƒÂ§ÃƒÂ£o chamada pelo apollo_studio.py para rodar o uvicorn."""
     global CURRENT_WORKSPACE, CURRENT_WORKSPACE_PATH
     CURRENT_WORKSPACE = workspace_name
     CURRENT_WORKSPACE_PATH = workspace_path
+    
+    # Iniciar o Cloud Sync Worker (Fase VIII)
+    try:
+        from cloud_sync_worker import CloudSyncWorker
+        worker = CloudSyncWorker()
+        worker.start()
+        print("Cloud Sync Worker (MÃ³dulo C) iniciado com sucesso no background.")
+    except Exception as e:
+        print(f"Erro ao iniciar Cloud Sync Worker: {e}")
     
     import uvicorn
     # log_level = "warning" evita spamar o terminal
@@ -5166,3 +5312,4 @@ if __name__ == "__main__":
     args, _ = parser.parse_known_args()
     
     start_server(args.workspace_name, args.workspace_path)
+
