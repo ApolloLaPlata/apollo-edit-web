@@ -1054,6 +1054,7 @@ class PocketDirectorApp {
                 console.log('⚡ Modo STT Fallback Ativo (Web Speech API) — ignorando envio de áudio para Groq Whisper.');
               } else if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                 if (Date.now() - (this.lastSpeechRecognitionTime || 0) > 1200) {
+                  if(window.addEngineLog) window.addEngineLog(`[STT] Enviando áudio Groq Whisper (${Math.round(blob.size/1024)} KB)`, 'info');
                   console.log(`🗣️ VAD [Etapa 7]: Enviando fala (${blob.size} bytes) para Groq Whisper STT...`);
                   if (this.sttTestBox) this.sttTestBox.textContent = `🗣️ Áudio enviado (${Math.round(blob.size/1024)} KB)...`;
                   this.liveSubtitle.textContent = '🎙️ Transcrevendo voz...';
@@ -1451,6 +1452,10 @@ class PocketDirectorApp {
   sendToColmeia(payload) {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       try {
+        let snippet = payload;
+        if(typeof payload === 'string' && payload.length > 50) snippet = payload.substring(0,50)+'...';
+        if(window.addEngineLog && payload.includes) window.addEngineLog(`[WS OUT] -> ${snippet}`, 'info');
+        
         this.ws.send(payload);
         return true;
       } catch (e) {
@@ -1487,20 +1492,33 @@ class PocketDirectorApp {
 
   // Processa eventos do backend
   handleServerEvent(data) {
+    if (window.addEngineLog && data.type !== 'audio_chunk' && data.type !== 'text_delta') {
+      window.addEngineLog(`[WS IN] <- Evento: ${data.type} | Status: ${data.status || '-'}`, 'info');
+    }
+    
     switch (data.type) {
       case 'llm_finished':
+        if(window.addEngineLog) {
+            let dur = "";
+            if(this.lastRequestStartTime) dur = " em " + ((performance.now() - this.lastRequestStartTime)/1000).toFixed(2) + "s";
+            window.addEngineLog(`[LLM] Geração Finalizada pelo Servidor${dur}.`, 'warn');
+        }
         window.dispatchEvent(new Event('llm_processing_finished'));
         break;
       case 'state':
         this.setOrbState(data.status, data.tool);
         if (data.status === 'idle') {
+          if(window.addEngineLog) window.addEngineLog(`[Engine] Estado alterado para IDLE (Livre)`, 'info');
           window.dispatchEvent(new Event('llm_processing_finished'));
+        } else {
+          if(window.addEngineLog) window.addEngineLog(`[Engine] Processando estado: ${data.status} ${data.tool ? '('+data.tool+')' : ''}`, 'warn');
         }
         break;
 
       case 'transcript':
         // Evitar duplicação: sendText já adiciona de forma otimista o card do user
         if (data.role !== 'user') {
+            if(window.addEngineLog) window.addEngineLog(`[LLM Resposta Final] Recebido: ${data.text.substring(0,30)}...`, 'info');
             this.addTranscriptCard(data.role, data.text);
         }
         // Etapa 116: Gatilho de voz para OTA Update
@@ -2253,6 +2271,11 @@ class PocketDirectorApp {
            this.sendToColmeia(JSON.stringify({ type: 'stop_generation' }));
         }
         this.addTranscriptCard('user', txt, false);
+        if(window.addEngineLog) window.addEngineLog(`[App] Iniciando Envio do texto: "${txt.substring(0,20)}..."`, 'warn');
+        
+        // Marca o tempo de inicio da solicitação (Performance Audit)
+        this.lastRequestStartTime = performance.now();
+        
         this.sendToColmeia(JSON.stringify({ type: 'user_text', text: txt }));
         this.drawerInput.value = '';
         this.isProcessingLLM = true;

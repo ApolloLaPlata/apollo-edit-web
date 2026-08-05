@@ -70,9 +70,18 @@
       </div>
     </div>
 
-    <div class="sidebar-content" id="chatHistoryList">
+    <div class="sidebar-content" id="chatHistoryList" style="flex: 1; overflow-y: auto;">
       <!-- Histórico injetado via JS -->
     </div>
+    
+    <!-- Painel de Logs Solicitado pelo Usuário -->
+    <div style="padding: 10px; border-top: 1px solid var(--surface-border); display: flex; flex-direction: column; height: 250px; background: rgba(0,0,0,0.4);">
+      <h3 style="color: var(--neon-cyan); font-size: 0.85rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">⚙️ Engine Logs</h3>
+      <div id="leftLogsBox" style="flex: 1; background: #000; border-radius: 4px; border: 1px solid #333; padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #a7f3d0; overflow-y: auto; word-break: break-all;">
+        > Monitoramento de Processamento Ativo...
+      </div>
+    </div>
+
     <div class="sidebar-footer">
       <button class="deck-btn primary" id="btnNewChat" style="width: 100%; font-size: 0.9rem;">➕ Novo Chat</button>
     </div>
@@ -430,6 +439,19 @@ Aguardando sincronização neural com o C:\ do Maestro...
   <!-- Bibliotecas Externas -->
   <!-- O script capacitor.js será injetado nativamente no build do Android. No PC, ele dará 404, o que é esperado e tratado no app.js -->
   <script src="capacitor.js"></script>
+  <!-- Engine Logs globais -->
+  <script>
+    window.addEngineLog = function(message, type="info") {
+      const box = document.getElementById('leftLogsBox');
+      if(!box) return;
+      const time = new Date().toLocaleTimeString();
+      let color = "#a7f3d0";
+      if (type === "warn") color = "#fcd34d";
+      if (type === "error") color = "#fca5a5";
+      box.innerHTML += `<div style="color: ${color}; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.05);">[${time}] ${message}</div>`;
+      box.scrollTop = box.scrollHeight;
+    };
+  </script>
   <script src="/pocket_app.js?v=20260804_1316"></script>
 </body>
 </html>
