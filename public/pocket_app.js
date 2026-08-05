@@ -1370,6 +1370,7 @@ class PocketDirectorApp {
     const wsHost = API_BASE_URL.replace(/^https?:\/\//, '');
     const wsUrl = `${wsProtocol}//${wsHost}/ws/voice`;
     
+    if(window.addEngineLog) window.addEngineLog(`[WS Init] Tentando conectar à Colmeia em: ${wsUrl}`, 'warn');
     this.updateStatus('connecting', 'Conectando à Colmeia...');
     this.ws = new WebSocket(wsUrl);
 
@@ -1390,6 +1391,7 @@ class PocketDirectorApp {
       if (this.isListeningActive) {
         this.setOrbState('listening');
       }
+      if(window.addEngineLog) window.addEngineLog(`[WS Open] Handshake concluído com sucesso. Conectado.`, 'info');
       console.log('✅ WebSocket conectado com sucesso à Colmeia.');
 
       // Despejo Silencioso da Fila Offline (Etapa 12)
@@ -1408,7 +1410,8 @@ class PocketDirectorApp {
       }
     };
 
-    this.ws.onclose = () => {
+    this.ws.onclose = (event) => {
+      if(window.addEngineLog) window.addEngineLog(`[WS Close] Conexão encerrada. Código: ${event.code} Reason: ${event.reason || 'None'}`, 'error');
       if (this.isConnected) {
         this.showToast('Conexão com a Colmeia perdida.', 'error');
       }
@@ -1418,6 +1421,7 @@ class PocketDirectorApp {
     };
 
     this.ws.onerror = (err) => {
+      if(window.addEngineLog) window.addEngineLog(`[WS Error] Erro de Socket detectado (pode ser CORS, DNS ou Servidor Offline).`, 'error');
       console.error('WebSocket Error:', err);
     };
 
@@ -1440,6 +1444,8 @@ class PocketDirectorApp {
     this.wsReconnectAttempt++;
 
     const seconds = (delay / 1000).toFixed(1);
+    if(window.addEngineLog) window.addEngineLog(`[WS Reconnect] Agendando reconexão em ${seconds}s (Tentativa ${this.wsReconnectAttempt})...`, 'warn');
+    
     this.updateStatus('connecting', `Offline • Reconexão em ${seconds}s`);
     console.log(`🔄 [Etapa 12] Agendando reconexão exponencial: ${delay}ms (Tentativa ${this.wsReconnectAttempt})`);
 
