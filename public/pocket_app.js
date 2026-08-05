@@ -1499,7 +1499,10 @@ class PocketDirectorApp {
         break;
 
       case 'transcript':
-        this.addTranscriptCard(data.role, data.text);
+        // Evitar duplicação: sendText já adiciona de forma otimista o card do user
+        if (data.role !== 'user') {
+            this.addTranscriptCard(data.role, data.text);
+        }
         // Etapa 116: Gatilho de voz para OTA Update
         if (data.role === 'user') {
           const txt = data.text.toLowerCase();
