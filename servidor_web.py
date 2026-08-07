@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import glob
@@ -1964,6 +1964,130 @@ def tts_testar_google(req: TTSRequest):
             
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+# ===== ROTAS DO GERENCIADOR DE MULTI-VOZES (XTTS + KOKORO) =====
+@app.get("/api/voice/catalog")
+def get_voice_catalog():
+    import os
+    import glob
+    catalog = [
+        {"id": "kokoro_pf_dora", "name": "Kokoro - Dora (Feminino)", "engine": "kokoro", "type": "standard"},
+        {"id": "kokoro_pm_lucas", "name": "Kokoro - Lucas (Masculino)", "engine": "kokoro", "type": "standard"}
+    ]
+    xtts_dir = os.path.join(BASE_DIR, "backend", "voices", "xtts")
+    if os.path.exists(xtts_dir):
+        for wav_file in glob.glob(os.path.join(xtts_dir, "*.wav")):
+            base_name = os.path.splitext(os.path.basename(wav_file))[0]
+            clean_name = base_name.replace("_ref", "").capitalize()
+            catalog.append({"id": f"f5_{base_name}", "name": f"F5-TTS Clone - {clean_name}", "engine": "f5-tts", "type": "zero-shot"})
+    return {"success": True, "catalog": catalog}
+
+import urllib.request
+import base64
+from fastapi import Request
+
+@app.get("/api/tts/test")
+@app.post("/api/voice/generate")
+async def voice_generate(request: Request):
+    text = ""
+    voice_id = ""
+    if request.method == "GET":
+        text = request.query_params.get("text", "")
+        voice_id = request.query_params.get("voice", "kokoro_pf_dora")
+    else:
+        data = await request.json()
+        text = data.get("text", "")
+        voice_id = data.get("voice_id", "kokoro_pf_dora")
+        
+    if not text:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"error": "Texto não fornecido"}, status_code=400)
+        
+    MODAL_USER = "apollolaplata"
+    
+    if voice_id.startswith("kokoro_"):
+        kokoro_voice = voice_id.replace("kokoro_", "")
+        url = f"https://{MODAL_USER}--apollo-api-tts.modal.run/"
+        req = urllib.request.Request(url, method="POST")
+        req.add_header("Content-Type", "application/json")
+        import json
+        payload = json.dumps({"text": text, "voice": kokoro_voice}).encode('utf-8')
+        try:
+            with urllib.request.urlopen(req, data=payload) as response:
+                audio_bytes = response.read()
+                from fastapi.responses import Response
+                return Response(content=audio_bytes, media_type="audio/wav")
+        except Exception as e:
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"error": f"Erro Kokoro Modal: {str(e)}"}, status_code=500)
+            
+    elif voice_id.startswith("f5_"):
+        wav_name = voice_id.replace("f5_", "")
+        xtts_dir = os.path.join(BASE_DIR, "backend", "voices", "xtts") # Mantemos a pasta antiga como repositório
+        wav_path = os.path.join(xtts_dir, f"{wav_name}.wav")
+        if not os.path.exists(wav_path):
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"error": f"Áudio de referência não encontrado: {wav_path}"}, status_code=404)
+            
+        with open(wav_path, "rb") as f:
+            ref_bytes = f.read()
+            ref_b64 = base64.b64encode(ref_bytes).decode('utf-8')
+            
+        url = f"https://{MODAL_USER}--apollo-api-f5-tts.modal.run/"
+        req = urllib.request.Request(url, method="POST")
+        req.add_header("Content-Type", "application/json")
+        import json
+        payload = json.dumps({"text": text, "reference_audio": ref_b64}).encode('utf-8')
+        
+        try:
+            with urllib.request.urlopen(req, data=payload) as response:
+                audio_bytes = response.read()
+                from fastapi.responses import Response
+                return Response(content=audio_bytes, media_type="audio/wav")
+        except Exception as e:
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"error": f"Erro F5-TTS Modal: {str(e)}"}, status_code=500)
+
+from fastapi import File, UploadFile, Form
+
+@app.post("/api/voice/studio_generate")
+async def studio_voice_generate(text: str = Form(...), voice_file: UploadFile = File(None)):
+    import base64
+    import urllib.request
+    import json
+    import os
+    
+    MODAL_USER = "apollolaplata"
+    url = f"https://{MODAL_USER}--apollo-api-f5-tts.modal.run/"
+    
+    if voice_file:
+        ref_bytes = await voice_file.read()
+    else:
+        # Usa um arquivo padrão do banco (exemplo: dora) se não enviar arquivo
+        default_path = os.path.join(BASE_DIR, "backend", "voices", "xtts", "dora.wav")
+        if os.path.exists(default_path):
+            with open(default_path, "rb") as f:
+                ref_bytes = f.read()
+        else:
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"error": "Voz padrão não encontrada e nenhum arquivo foi enviado."}, status_code=400)
+            
+    ref_b64 = base64.b64encode(ref_bytes).decode('utf-8')
+    payload = json.dumps({"text": text, "reference_audio": ref_b64}).encode('utf-8')
+    
+    req = urllib.request.Request(url, method="POST")
+    req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, data=payload) as response:
+            audio_bytes = response.read()
+            from fastapi.responses import Response
+            return Response(content=audio_bytes, media_type="audio/wav")
+    except Exception as e:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"error": f"Erro F5-TTS Modal Studio: {str(e)}"}, status_code=500)
+
+    from fastapi.responses import JSONResponse
+    return JSONResponse({"error": "Engine desconhecida"}, status_code=400)
 
 # ===== ROTAS PARA O NARRADOR (GERADOR DE VÃƒÂDEO) =====
 @app.post("/api/narrador/gerar")
@@ -5141,6 +5265,98 @@ async def get_studio_history():
     from backend.financial_agent import economy_db
     jobs = economy_db.get_user_jobs("default_user", 50)
     return {"success": True, "history": jobs}
+
+from fastapi import WebSocket, WebSocketDisconnect
+import asyncio
+
+@app.websocket("/ws/voice")
+async def ws_voice(websocket: WebSocket):
+    await websocket.accept()
+    
+    current_generation_task = None
+    voice_config = {"voice_name": "default"}
+    
+    async def run_llm_and_tts(user_text):
+        from backend.cloud_tools.engines.vllm_engine import VLLMEngine
+        from backend.cloud_tools.engines.f5_engine import F5TTSEngine
+        import os
+        
+        try:
+            llm = VLLMEngine()
+            f5 = F5TTSEngine()
+            
+            system_prompt = "Você é a IA de comunicação em tempo real do Apollo. Fale em português do brasil com um tom muito natural e humano. Responda SEMPRE de forma ultra curta e rápida, em no máximo 1 ou 2 frases curtas, para manter a conversa fluida e não gastar tempo."
+            
+            # Carrega uma voz de referência padrão caso exista
+            ref_bytes = b""
+            if os.path.exists("default_voice.wav"):
+                with open("default_voice.wav", "rb") as f:
+                    ref_bytes = f.read()
+            elif os.path.exists("web_ui/assets/peter_parker.wav"): # Apenas um fallback exemplo
+                with open("web_ui/assets/peter_parker.wav", "rb") as f:
+                    ref_bytes = f.read()
+                    
+            async for chunk in llm.generate_stream_generator.remote_gen.aio(user_text, system_prompt):
+                if chunk.strip():
+                    print(f"[WS] LLM Chunk: {chunk}")
+                    await websocket.send_text(json.dumps({"type": "llm_chunk", "text": chunk}))
+                    
+                    if ref_bytes: # F5-TTS precisa de referência
+                        audio_chunk = await f5.generate_voice.remote.aio(chunk, ref_bytes)
+                        await websocket.send_bytes(audio_chunk)
+                        
+        except asyncio.CancelledError:
+            print("[WS] Geração interrompida pelo Barge-in VAD (Task Cancelada)")
+        except Exception as e:
+            print(f"[WS] Erro no pipeline LLM/TTS: {e}")
+            await websocket.send_text(json.dumps({"type": "error", "message": str(e)}))
+
+    try:
+        while True:
+            message = await websocket.receive()
+            
+            if "text" in message:
+                import json
+                try:
+                    data = json.loads(message["text"])
+                    if data.get("type") == "set_voice":
+                        voice_config["voice_name"] = data.get("voice")
+                        print(f"[WS] Voz ao vivo configurada para: {voice_config['voice_name']}")
+                        await websocket.send_text(json.dumps({"type": "state", "status": "online", "tool": "Voice updated"}))
+                    elif data.get("type") == "vad_interrupt":
+                        # Barge-in Manual do Frontend: Usuário começou a falar, cancele a fala da IA!
+                        if current_generation_task and not current_generation_task.done():
+                            print("[WS] Sinal de VAD Interrupt recebido. Cortando Cérebro/Boca...")
+                            current_generation_task.cancel()
+                except:
+                    pass
+                    
+            elif "bytes" in message:
+                audio_bytes = message["bytes"]
+                if len(audio_bytes) < 1000:
+                    continue # Ignora chunks minúsculos ou ping
+                
+                # Barge-in Implícito: Nova entrada de voz cancela a geração anterior
+                if current_generation_task and not current_generation_task.done():
+                    current_generation_task.cancel()
+                    
+                # 1. Transcrição (ASR)
+                try:
+                    from backend.cloud_tools.engines.stt_engine import WhisperTurboSTT
+                    stt = WhisperTurboSTT()
+                    text = await stt.transcribe_audio_bytes.remote.aio(audio_bytes)
+                    
+                    if text.strip():
+                        print(f"[WS] Ouvido (STT): {text}")
+                        await websocket.send_text(json.dumps({"type": "transcript", "text": text}))
+                        
+                        # 2. Inicia o pipeline de resposta (Cérebro -> Boca)
+                        current_generation_task = asyncio.create_task(run_llm_and_tts(text))
+                except Exception as e:
+                    print(f"[WS] Erro de ASR: {e}")
+                    
+    except WebSocketDisconnect:
+        print("[WS] Live Voice Chat Client Disconnected")
 
 @app.websocket("/ws/jobs/{job_id}")
 async def websocket_job_status(websocket: WebSocket, job_id: str):
