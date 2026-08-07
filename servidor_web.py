@@ -2051,7 +2051,7 @@ async def voice_generate(request: Request):
 from fastapi import File, UploadFile, Form
 
 @app.post("/api/voice/studio_generate")
-async def studio_voice_generate(text: str = Form(...), voice_file: UploadFile = File(None)):
+async def studio_voice_generate(text: str = Form(...), voice_id: str = Form(None), voice_file: UploadFile = File(None)):
     import base64
     import urllib.request
     import json
@@ -2063,8 +2063,11 @@ async def studio_voice_generate(text: str = Form(...), voice_file: UploadFile = 
     if voice_file:
         ref_bytes = await voice_file.read()
     else:
-        # Usa um arquivo padrão do banco (exemplo: dora) se não enviar arquivo
-        default_path = os.path.join(BASE_DIR, "backend", "voices", "xtts", "dora.wav")
+        # Pega a voz escolhida, limpa o prefixo f5_ se existir e adiciona .wav
+        v_name = voice_id.replace("f5_", "") if voice_id else "narrador_ref"
+        if not v_name.endswith(".wav"): v_name += ".wav"
+        
+        default_path = os.path.join(BASE_DIR, "backend", "voices", "xtts", v_name)
         if os.path.exists(default_path):
             with open(default_path, "rb") as f:
                 ref_bytes = f.read()
