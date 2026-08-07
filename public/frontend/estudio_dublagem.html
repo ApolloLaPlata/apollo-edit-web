@@ -140,15 +140,17 @@
 
     <main class="editor-container">
         <div class="panel">
-            <h3 style="margin-top: 0;">1. Selecione o Modelo de Voz (RVC)</h3>
+            <h3 style="margin-top: 0;">1. Selecione o Modelo de Voz Base</h3>
             <div class="voice-selector">
-                <div class="voice-card active">Locutor Épico</div>
-                <div class="voice-card">Documentário</div>
-                <div class="voice-card" style="border-style: dashed;">+ Clonar Voz Nova</div>
+                <div class="voice-card active" data-voice="narrador_ref" onclick="selectVoice(this)">Locutor Épico</div>
+                <div class="voice-card" data-voice="roxingo_ref" onclick="selectVoice(this)">Roxingo (PT-BR)</div>
             </div>
+            
+            <h3 style="margin-top: 20px;">Ou faça Upload de Voz (Clone Eleven Labs)</h3>
+            <input type="file" id="voiceUpload" accept=".wav,.mp3" style="margin-bottom: 20px; color: white;">
 
             <h3 style="margin-top: 30px;">2. Texto do Roteiro</h3>
-            <textarea class="input-box" rows="6" placeholder="Cole o texto que será narrado pela IA..."></textarea>
+            <textarea id="ttsText" class="input-box" rows="6" placeholder="Cole o texto que será narrado pela IA..."></textarea>
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <span style="font-size: 12px; color: var(--text-muted);">Custo estimado: 40 Créditos</span>
@@ -159,15 +161,75 @@
     </main>
 
     <script>
-        function generateVoice() {
-            if (window.showToast) window.showToast("Iniciando cluster de inferência RVC... (Simulação)", "#3b82f6");
-            setTimeout(() => {
-                if (window.apolloTransferOS) { window.apolloTransferOS.addItem("audio", "dublagem_rvc.wav", "Estudio RVC", null, { url: "/dummy_voice.m4a" }); }
+        let selectedVoice = "narrador_ref";
 
-                if (window.showToast) window.showToast("Áudio .wav gerado e enviado ao Bagageiro!", "#00ffcc");
-            }, 3500);
+        function selectVoice(element) {
+            document.querySelectorAll('.voice-card').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            selectedVoice = element.getAttribute('data-voice');
+        }
+
+        async function generateVoice() {
+            const text = document.getElementById("ttsText").value.trim();
+            if (!text) {
+                if (window.showToast) window.showToast("Digite o texto primeiro!", "#ef4444");
+                return;
+            }
+
+            if (window.showToast) window.showToast("Iniciando F5-TTS Modal Studio... (Aguarde)", "#3b82f6");
+            const btn = document.querySelector('.btn-pro');
+            btn.disabled = true;
+            btn.innerText = "Gerando Áudio...";
+
+            try {
+                const formData = new FormData();
+                formData.append("text", text);
+                formData.append("voice_id", selectedVoice);
+                
+                const fileInput = document.getElementById("voiceUpload");
+                if (fileInput.files.length > 0) {
+                    formData.append("voice_file", fileInput.files[0]);
+                }
+
+                // URL Dinâmica (Vercel aponta pra VPS, localhost aponta pra localhost)
+                const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                                 ? 'http://localhost:8080' 
+                                 : 'https://api.apolloedit.com.br';
+
+                const response = await fetch(`${BASE_URL}/api/voice/studio_generate`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.statusText}`);
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                
+                if (window.showToast) window.showToast("Áudio .wav gerado com sucesso!", "#00ffcc");
+                
+                // Tocar automático e mandar pro bagageiro
+                const audio = new Audio(url);
+                audio.play();
+
+                if (window.apolloTransferOS) { 
+                    window.apolloTransferOS.addItem("audio", `dublagem_${Date.now()}.wav`, "Estudio Eleven", null, { url: url }); 
+                }
+            } catch (error) {
+                console.error(error);
+                if (window.showToast) window.showToast("Erro ao gerar áudio: " + error.message, "#ef4444");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Sintetizar Dublagem";
+            }
         }
     </script>
+
+    <div style="margin-top: 20px; display:flex; justify-content:center; width: 100%;">
+        <div id="audioPlayerContainer"></div>
+    </div>
 
         <!-- Supabase SDK e Autenticao -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
