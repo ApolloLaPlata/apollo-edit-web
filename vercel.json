@@ -15,7 +15,7 @@
                          "destination":  "http://163.176.135.59/api/$1"
                      },
                      {
-                         "destination":  "/pocket_director.html",
+                         "destination":  "/chat_ia.html",
                          "source":  "/chat"
                      }
                  ]
