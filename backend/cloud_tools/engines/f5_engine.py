@@ -69,23 +69,24 @@ class F5TTSEngine:
                 gen_text=text
             )
             
-            # CONVERSÃO DIRETA EM MEMÓRIA (Numpy Array -> OPUS)
-            # Sem passar por WAV, para otimizar processamento na Nuvem!
+            # CONVERSÃO OPUS 100% EM MEMÓRIA
+            # Usa o soundfile para garantir a conversão matemática correta do numpy array para WAV em memória
             import subprocess
-            import numpy as np
+            import io
+            import soundfile as sf
             
-            # 1. Converte o array matemático (float) da IA direto para PCM 16-bit bruto
-            pcm_bytes = (wav * 32767).astype(np.int16).tobytes()
+            wav_io = io.BytesIO()
+            sf.write(wav_io, wav, samplerate=sr, format='WAV')
+            wav_bytes = wav_io.getvalue()
             
-            # 2. Injeta o PCM direto no encoder Opus (em RAM, sem tocar o disco)
+            # Injeta o WAV da memória direto no FFmpeg para virar Opus (sem tocar o disco)
             proc = subprocess.Popen(
-                ['ffmpeg', '-f', 's16le', '-ar', str(sr), '-ac', '1', '-i', 'pipe:0', 
-                 '-c:a', 'libopus', '-b:a', '32k', '-f', 'ogg', 'pipe:1'],
+                ['ffmpeg', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '32k', '-vbr', 'on', '-f', 'ogg', 'pipe:1'],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL
             )
-            opus_bytes, _ = proc.communicate(input=pcm_bytes)
+            opus_bytes, _ = proc.communicate(input=wav_bytes)
             
             return opus_bytes
         finally:
