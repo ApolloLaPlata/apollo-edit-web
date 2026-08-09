@@ -9,9 +9,9 @@
     "lightning_chat": {
       "api_keys": [
         "16338b74-3f36-4c89-84db-a8e00b099058",
-        "CHAVE_CONTA_1_AQUI",
-        "CHAVE_CONTA_3_AQUI",
-        "CHAVE_CONTA_4_AQUI"
+        "a26bf6c5-7c2d-4889-8645-5917a33c6ddc",
+        "945b47c8-4552-4491-b2d2-ba91b045ac89",
+        "b0891012-db6f-48e9-aed4-4ebe53b841b6"
       ],
       "base_url": "https://lightning.ai/api/v1/chat/completions"
     },
