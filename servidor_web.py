@@ -5288,93 +5288,117 @@ from fastapi import WebSocket, WebSocketDisconnect
 import asyncio
 
 @app.websocket("/ws/voice")
-async def ws_voice(websocket: WebSocket):
+async def ws_voice(websocket: WebSocket, channel: str = "default"):
     await websocket.accept()
     
     current_generation_task = None
     voice_config = {"voice_name": "default"}
     
     async def run_llm_and_tts(user_text):
-        from backend.cloud_tools.engines.vllm_engine import VLLMEngine
         from backend.cloud_tools.engines.f5_engine import F5TTSEngine
         import os
+        import httpx
         
         try:
-            llm = VLLMEngine()
             f5 = F5TTSEngine()
             
-            system_prompt = "Você é a IA de comunicação em tempo real do Apollo. Fale em português do brasil com um tom muito natural e humano. Responda SEMPRE de forma ultra curta e rápida, em no máximo 1 ou 2 frases curtas, para manter a conversa fluida e não gastar tempo."
+            # Buscar contexto do canal (ex: admin_config.json -> api_config/canais ou similar)
+            from config_manager import ConfigManager
+            cm = ConfigManager(os.path.join(os.path.dirname(__file__), "admin_config.json"))
+            channel_cfg = cm.get(channel, {})
+            contexto = channel_cfg.get("channel_context", "")
+            
+            system_prompt = f"Você é a IA de comunicação em tempo real do canal '{channel}' do Apollo Edit Web. Fale em português do brasil com um tom muito natural e humano. Responda SEMPRE de forma ultra curta e rápida, em no máximo 1 ou 2 frases curtas, para manter a conversa fluida e não gastar tempo. {contexto}"
             
             # Carrega uma voz de referência padrão caso exista
             ref_bytes = b""
             if os.path.exists("default_voice.wav"):
                 with open("default_voice.wav", "rb") as f:
                     ref_bytes = f.read()
-            elif os.path.exists("web_ui/assets/peter_parker.wav"): # Apenas um fallback exemplo
+            elif os.path.exists("web_ui/assets/peter_parker.wav"): # Fallback
                 with open("web_ui/assets/peter_parker.wav", "rb") as f:
                     ref_bytes = f.read()
                     
-            async for chunk in llm.generate_stream_generator.remote_gen.aio(user_text, system_prompt):
-                if chunk.strip():
-                    print(f"[WS] LLM Chunk: {chunk}")
-                    await websocket.send_text(json.dumps({"type": "llm_chunk", "text": chunk}))
+            # CHAMA O LIGHTNING AI PROXY INTERNO INVES DO VLLM
+            proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(proxy_url, json={
+                    "model": "nvidia-nemotron-3-ultra-550b-a55b",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_text}
+                    ]
+                }, timeout=30)
+                
+                if resp.status_code == 200:
+                    data = resp.json()
+                    full_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
                     
-                    if ref_bytes: # F5-TTS precisa de referência
-                        audio_chunk = await f5.generate_voice.remote.aio(chunk, ref_bytes)
-                        await websocket.send_bytes(audio_chunk)
-                        
+                    # Envia em pequenos pedaços (simulando stream para o TTS)
+                    import textwrap
+                    chunks = textwrap.wrap(full_text, 80)
+                    for chunk in chunks:
+                        await websocket.send_text(json.dumps({"type": "llm_chunk", "text": chunk}))
+                        if ref_bytes:
+                            try:
+                                audio_chunk = await f5.generate_voice.remote.aio(chunk, ref_bytes)
+                                await websocket.send_bytes(audio_chunk)
+                            except Exception as f5_err:
+                                print(f"[WS] F5TTS gerou erro (Modal pode não estar rodando): {f5_err}")
+                else:
+                    await websocket.send_text(json.dumps({"type": "error", "message": "Lightning falhou"}))
+                    
         except asyncio.CancelledError:
-            print("[WS] Geração interrompida pelo Barge-in VAD (Task Cancelada)")
+            print(f"[WS] Geração interrompida (Task Cancelada) no canal {channel}")
         except Exception as e:
-            print(f"[WS] Erro no pipeline LLM/TTS: {e}")
+            print(f"[WS] Erro no pipeline Lightning/TTS: {e}")
             await websocket.send_text(json.dumps({"type": "error", "message": str(e)}))
 
     try:
         while True:
             message = await websocket.receive()
             
-            if "text" in message:
+            if message.get("type") == "websocket.disconnect":
+                print(f"[WS] Client Disconnected normal do canal {channel}")
+                break
+                
+            if "text" in message and message["text"] is not None:
                 import json
                 try:
                     data = json.loads(message["text"])
-                    if data.get("type") == "set_voice":
-                        voice_config["voice_name"] = data.get("voice")
-                        print(f"[WS] Voz ao vivo configurada para: {voice_config['voice_name']}")
+                    if data.get("type") == "voice_config":
+                        voice_config["voice_name"] = data.get("voice_name", "default")
                         await websocket.send_text(json.dumps({"type": "state", "status": "online", "tool": "Voice updated"}))
                     elif data.get("type") == "vad_interrupt":
-                        # Barge-in Manual do Frontend: Usuário começou a falar, cancele a fala da IA!
                         if current_generation_task and not current_generation_task.done():
-                            print("[WS] Sinal de VAD Interrupt recebido. Cortando Cérebro/Boca...")
+                            print("[WS] VAD Interrupt. Cortando...")
                             current_generation_task.cancel()
-                except:
+                    elif data.get("type") == "text":
+                        # Processa envio de texto direto
+                        text_val = data.get("text", "")
+                        print(f"[WS Usuário Texto - Canal {channel}]: {text_val}")
+                        if current_generation_task and not current_generation_task.done():
+                            current_generation_task.cancel()
+                        current_generation_task = asyncio.create_task(run_llm_and_tts(text_val))
+                except Exception:
                     pass
-                    
             elif "bytes" in message:
-                audio_bytes = message["bytes"]
-                if len(audio_bytes) < 1000:
-                    continue # Ignora chunks minúsculos ou ping
-                
-                # Barge-in Implícito: Nova entrada de voz cancela a geração anterior
-                if current_generation_task and not current_generation_task.done():
-                    current_generation_task.cancel()
-                    
-                # 1. Transcrição (ASR)
+                # Recebe audio do usuario
+                audio_data = message["bytes"]
+                from backend.cloud_tools.engines.qwen_stt_engine import SenseVoiceSTTEngine
                 try:
-                    from backend.cloud_tools.engines.stt_engine import WhisperTurboSTT
-                    stt = WhisperTurboSTT()
-                    text = await stt.transcribe_audio_bytes.remote.aio(audio_bytes)
-                    
-                    if text.strip():
-                        print(f"[WS] Ouvido (STT): {text}")
+                    stt = SenseVoiceSTTEngine()
+                    text = await stt.transcribe_audio.remote.aio(audio_data)
+                    if text and text.strip():
+                        print(f"[WS Usuário - Canal {channel}]: {text}")
+                        if current_generation_task and not current_generation_task.done():
+                            current_generation_task.cancel()
                         await websocket.send_text(json.dumps({"type": "transcript", "text": text}))
-                        
-                        # 2. Inicia o pipeline de resposta (Cérebro -> Boca)
                         current_generation_task = asyncio.create_task(run_llm_and_tts(text))
                 except Exception as e:
                     print(f"[WS] Erro de ASR: {e}")
-                    
     except WebSocketDisconnect:
-        print("[WS] Live Voice Chat Client Disconnected")
+        print(f"[WS] Client Disconnected do canal {channel}")
 
 @app.websocket("/ws/jobs/{job_id}")
 async def websocket_job_status(websocket: WebSocket, job_id: str):
