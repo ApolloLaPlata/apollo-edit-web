@@ -69,10 +69,26 @@ class F5TTSEngine:
                 gen_text=text
             )
             
-            # Converter para bytes WAV
-            out_io = io.BytesIO()
-            sf.write(out_io, wav, samplerate=sr, format='WAV')
-            return out_io.getvalue()
+            # Salvar como WAV e converter para Opus (OGG) na nuvem - Máxima Otimização de Peso
+            import subprocess
+            wav_path = tempfile.mktemp(suffix=".wav")
+            opus_path = tempfile.mktemp(suffix=".ogg")
+            sf.write(wav_path, wav, samplerate=sr, format='WAV')
+            
+            # Opus a 32kbps é incrivelmente leve para voz (cerca de metade do MP3 64k)
+            subprocess.run(
+                ['ffmpeg', '-y', '-i', wav_path, '-c:a', 'libopus', '-b:a', '32k', '-f', 'ogg', opus_path],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            
+            with open(opus_path, 'rb') as f_opus:
+                opus_bytes = f_opus.read()
+                
+            os.remove(wav_path)
+            os.remove(opus_path)
+            
+            return opus_bytes
         finally:
             if ref_file_path and os.path.exists(ref_file_path):
                 os.remove(ref_file_path)
