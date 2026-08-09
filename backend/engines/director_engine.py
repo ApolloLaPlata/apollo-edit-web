@@ -2,6 +2,7 @@ import logging
 import asyncio
 import json
 from typing import Dict, Any, List
+import os
 
 from backend.router.waterfall_router import WaterfallRouter
 
@@ -23,11 +24,37 @@ class AsyncDirectorEngine:
         """
         logger.info(f"🧠 [DirectorEngine] Analisando roteiro de {len(text)} caracteres...")
         
-        prompt = f"""Você é o Diretor de Arte de um vídeo.
-Analise o roteiro abaixo e extraia palavras-chave em inglês para buscar vídeos de banco de imagens (B-Rolls).
-Retorne APENAS um JSON no formato: {{"broll_keywords": ["keyword1", "keyword2"]}}
+        # Lendo a Bíblia de Edição
+        knowledge_path = os.path.join(os.path.dirname(__file__), "..", "knowledge", "cinematography_guidelines.md")
+        guidelines = ""
+        if os.path.exists(knowledge_path):
+            with open(knowledge_path, "r", encoding="utf-8") as f:
+                guidelines = f.read()
 
-Roteiro:
+        prompt = f"""Você é um Diretor de Arte Cinematográfica e Editor de Vídeo Profissional de um estúdio.
+Seu trabalho não é apenas gerar palavras-chave, mas DECUPAR um roteiro em uma sequência de cortes matemáticos e orgânicos, aplicando técnicas reais de retenção de atenção.
+
+LEIA E OBEDEÇA AS SEGUINTES DIRETRIZES DE CINEMATOGRAFIA OBRIGATORIAMENTE:
+=================
+{guidelines}
+=================
+
+Analise o roteiro abaixo e devolva APENAS um JSON contendo a "Cut Sheet" (Lista de Cortes) estruturada.
+Formato JSON exigido:
+{{
+  "scenes": [
+    {{
+      "text_snippet": "o pedaço exato do roteiro falado nesta cena",
+      "broll_prompt": "Prompt visual cinematográfico avançado em inglês descrevendo a ação (ex: 'Close-up of a neon glowing eye, low key lighting')",
+      "camera_angle": "Wide / Medium / Close-up / POV",
+      "duration_seconds": 3.5,
+      "transition": "cut / j-cut / l-cut / whip-pan",
+      "energy_level": "high / medium / low"
+    }}
+  ]
+}}
+
+O ROTEIRO:
 {text}
 """
         response = await self.router.request_ai_generation(
@@ -44,11 +71,21 @@ Roteiro:
                 response_text = response_text.split("```")[1].strip()
                 
             data = json.loads(response_text)
-            logger.info(f"✅ [DirectorEngine] Análise concluída: {data.get('broll_keywords', [])}")
+            
+            # Garantia de Retrocompatibilidade (para não quebrar sistemas atuais que esperam 'broll_keywords')
+            if "broll_keywords" not in data:
+                keywords = []
+                for scene in data.get("scenes", []):
+                    # Extrai algumas palavras do prompt cinematográfico para servir como keyword legada
+                    prompt_words = scene.get("broll_prompt", "").split()
+                    keywords.extend([w for w in prompt_words if len(w) > 4][:2])
+                data["broll_keywords"] = list(set(keywords)) if keywords else ["cinematic", "abstract"]
+
+            logger.info(f"✅ [DirectorEngine] Decupagem (Cut Sheet) concluída: {len(data.get('scenes', []))} cenas estruturadas.")
             return data
         except Exception as e:
-            logger.error(f"❌ [DirectorEngine] Falha ao parsear resposta do LLM: {e}\nRaw: {response_text}")
-            return {"broll_keywords": ["cinematic", "abstract", "technology"]}
+            logger.error(f"❌ [DirectorEngine] Falha ao parsear Cut Sheet do LLM: {e}\nRaw: {response_text}")
+            return {"scenes": [{"text_snippet": text, "broll_prompt": "cinematic abstract technology", "camera_angle": "Medium", "duration_seconds": 4.0, "transition": "cut", "energy_level": "medium"}]}
 
     async def suggest_sfx(self, clip_context: str) -> str:
         """

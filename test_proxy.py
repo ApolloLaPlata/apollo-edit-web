@@ -1,12 +1,17 @@
-import asyncio
-import httpx
-async def run():
-    client = httpx.AsyncClient(timeout=1200.0)
-    req = client.build_request('POST', 'https://apollolaplata--apollo-render-router-apollo-api.modal.run/generate/image', content=b'{\"prompt\":\"test\"}', headers={'Content-Type':'application/json'})
-    try:
-        async with client.send(req, stream=True) as response:
-            async for chunk in response.aiter_bytes():
-                print(chunk)
-    except Exception as e:
-        print('Error:', e)
-asyncio.run(run())
+﻿import requests
+import json
+import time
+
+print('Testando /api/lightning_proxy em 8080...')
+payload = {
+    'model': 'nvidia-nemotron-3-ultra-550b-a55b',
+    'messages': [{'role': 'user', 'content': 'Quem Ã© vocÃª e o que vocÃª sabe sobre a arquitetura do Apollo Edit Web? Responda em uma frase.'}]
+}
+
+try:
+    response = requests.post('http://127.0.0.1:8080/api/lightning_proxy', json=payload, timeout=20)
+    print(f'Status: {response.status_code}')
+    print('RAW TEXT:', response.text.encode('utf-8').decode('utf-8', 'ignore'))
+except Exception as e:
+    print('Erro na requisiÃ§Ã£o HTTP:', e)
+

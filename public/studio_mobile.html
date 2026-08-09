@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apollo Studio - Mobile</title>
+    
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/estaticos/css/studio_mobile.css">
+</head>
+<body>
+    
+    <!-- Header Minimalista -->
+    <header class="app-header">
+        <button class="icon-btn" id="btnMenu"><i class="fas fa-bars"></i></button>
+        <div class="logo-area">
+            <span class="logo-text">APOLLO <span class="highlight">STUDIO</span></span>
+        </div>
+        <button class="icon-btn" id="btnCredits"><i class="fas fa-coins"></i> <span id="creditCount">120</span></button>
+    </header>
+
+    <!-- Menu Lateral (Offcanvas) -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Menu</h3>
+            <button class="icon-btn" id="btnCloseMenu"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="menu-list">
+            <li><a href="/"><i class="fas fa-home"></i> Voltar ao Hub Clássico</a></li>
+            <li><a href="#"><i class="fas fa-user-astronaut"></i> Meus Personagens (LoRAs)</a></li>
+            <li><a href="#"><i class="fas fa-history"></i> Histórico de Projetos</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
+        </ul>
+    </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Área de Criação (Prompt/Config) -->
+    <main class="creation-area">
+        <div class="input-card">
+            <h2>O que vamos criar hoje?</h2>
+            
+            <div class="character-selector">
+                <label>Ator Principal (LoRA)</label>
+                <select id="loraSelect">
+                    <option value="">Nenhum (Personagem Genérico)</option>
+                    <option value="joao_massinha">João (Estilo Massinha)</option>
+                    <option value="rafael_descargas">Rafael Descargas</option>
+                </select>
+            </div>
+
+            <textarea id="mainPrompt" placeholder="Ex: Um explorador espacial descobre um artefato brilhante em marte..." rows="4"></textarea>
+            
+            <div class="action-row">
+                <div class="param-group">
+                    <label>Quadros</label>
+                    <select id="frameCount">
+                        <option value="15">15 (Curto)</option>
+                        <option value="30" selected>30 (Padrão)</option>
+                        <option value="60">60 (Longo)</option>
+                    </select>
+                </div>
+                <button class="btn-primary" id="btnGenerateStoryboard">
+                    <i class="fas fa-magic"></i> Gerar Cenas
+                </button>
+            </div>
+        </div>
+        
+        <!-- Estado Vazio antes de gerar -->
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-film fa-3x"></i>
+            <p>Seu storyboard aparecerá aqui</p>
+        </div>
+    </main>
+
+    <!-- Timeline Flutuante (Aparece após gerar) -->
+    <div class="floating-timeline hidden" id="floatingTimeline">
+        <div class="timeline-header">
+            <span>Storyboard <span id="progressText">(0/30)</span></span>
+            <button class="btn-success" id="btnPlayMovie" disabled>
+                <i class="fas fa-play"></i> Finalizar Vídeo
+            </button>
+        </div>
+        
+        <div class="timeline-track" id="timelineTrack">
+            <!-- Quadros injetados via JS -->
+        </div>
+    </div>
+
+    <!-- Modal de Visualização (Expandir Imagem) -->
+    <div class="image-modal" id="imageModal">
+        <div class="modal-top-bar">
+            <button class="icon-btn" id="btnModalClose"><i class="fas fa-chevron-down"></i></button>
+            <span class="modal-title">Cena <span id="modalSceneNum">1</span></span>
+            <button class="icon-btn action-redo" id="btnModalRedo" title="Refazer Cena"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div class="modal-content-area">
+            <img src="" id="modalImage" alt="Cena Expandida">
+            
+            <div class="modal-loading-overlay hidden" id="modalLoading">
+                <div class="spinner"></div>
+                <p>Refazendo cena...</p>
+            </div>
+        </div>
+        <div class="modal-bottom-bar">
+            <p class="scene-prompt" id="modalPromptText">O prompt da cena aparecerá aqui...</p>
+            <!-- Permite editar o prompt só daquela cena -->
+            <button class="btn-secondary btn-small" id="btnEditScenePrompt"><i class="fas fa-edit"></i> Editar Texto</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/estaticos/js/studio_mobile.js"></script>
+</body>
+</html>

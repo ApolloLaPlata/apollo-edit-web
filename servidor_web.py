@@ -43,6 +43,15 @@ job_notifier = JobNotifier()
 
 app = FastAPI(title="Apollo Studio Web Engine")
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Caminhos
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEB_UI_DIR = os.path.join(BASE_DIR, "web_ui")
@@ -80,13 +89,7 @@ async def read_root(request: Request):
         return response
     return HTMLResponse(content="<h1>Hub não encontrado</h1>", status_code=404)
 
-@app.get("/chat", response_class=HTMLResponse)
-async def read_chat():
-    """Atalho para o Pocket Director"""
-    path = os.path.join(WEB_UI_DIR, "pocket_director.html")
-    if os.path.exists(path):
-        return FileResponse(path)
-    return HTMLResponse(content="<h1>Chat do Diretor (Pocket) não encontrado</h1>", status_code=404)
+
 
 @app.get("/apollo-master", response_class=HTMLResponse)
 async def read_apollo_master():
@@ -882,8 +885,20 @@ async def lightning_proxy(request: Request):
     try:
         import requests
         data = await request.json()
+        
+        # Puxa a chave da configuração central de forma segura
+        from config_manager import ConfigManager
+        import os
+        cm = ConfigManager(os.path.join(os.path.dirname(__file__), "config.json"))
+        chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
+        backend_key = chat_cfg.get("api_key", "")
+        
+        auth_header = request.headers.get("Authorization", "")
+        if not auth_header and backend_key:
+            auth_header = f"Bearer {backend_key}"
+            
         headers = {
-            "Authorization": request.headers.get("Authorization", ""),
+            "Authorization": auth_header,
             "Content-Type": "application/json"
         }
         

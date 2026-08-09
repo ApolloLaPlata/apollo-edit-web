@@ -35,6 +35,10 @@ import backend.cloud_tools.engines.universal_engine
 import backend.cloud_tools.engines.lora_training_engine
 from backend.cloud_tools.engines.flux_engine import Flux2ComfyEngine_V2
 
+# Voz
+import backend.cloud_tools.engines.stt_engine
+import backend.cloud_tools.engines.tts_engine
+
 from backend.cloud_tools.modal_app import app
 
 # FORCE_REBUILD = 5

@@ -7,7 +7,7 @@
   "perfis_diretor": {},
   "api_config": {
     "lightning_chat": {
-      "api_key": "16338b74-3f36-4c89-84db-a8e00b099058/roxingo/apollo-maquinas-virtuais",
+      "api_key": "16338b74-3f36-4c89-84db-a8e00b099058",
       "base_url": "https://lightning.ai/api/v1/chat/completions"
     },
     "gemini": {

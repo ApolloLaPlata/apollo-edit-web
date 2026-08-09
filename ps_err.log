@@ -1,0 +1,7 @@
+ubuntu     73045  0.0  0.1   2808  1564 ?        S    Jul31   0:00 sh -c next start
+ubuntu     73046  0.0  8.7 23697488 85316 ?      Sl   Jul31   1:57 next-server (v16.2.10)
+ubuntu     90241  0.0  0.1   2808  1624 ?        S    05:16   0:00 sh -c next build
+ubuntu     90242 47.2 48.3 34923864 472504 ?     Sl   05:16   2:08 node /home/ubuntu/autoblog_cms/frontend/node_modules/.bin/next build
+ubuntu     90269  8.6  1.0 1827232 10152 ?       Sl   05:17   0:18 node /home/ubuntu/autoblog_cms/frontend/.next/build/56416d4ae4ce586f.js 43353
+ubuntu     90334  0.0  0.1   2808  1920 ?        S    05:20   0:00 /bin/sh -c ps aux | grep next
+ubuntu     90336  0.0  0.2   7084  2168 ?        S    05:20   0:00 grep next

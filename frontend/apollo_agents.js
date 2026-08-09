@@ -377,77 +377,65 @@ async function sendAgentMessage(agentId) {
             lastError = err.message;
         }
     } else {
-        // Lógica de Rotação de Chaves (Exatamente como no seu gemini_api.py Python)
-        for (let i = 0; i < apiKeysList.length; i++) {
-            let currentKey = apiKeysList[i];
-            try {
-                // Usando Header X-goog-api-key e o modelo 2.5 mais recente
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'X-goog-api-key': currentKey
-                    },
-                    body: JSON.stringify({
-                        system_instruction: { parts: [{ text: finalPrompt }] },
-                        contents: geminiHistory.length > 0 ? geminiHistory : [{role: 'user', parts: [{text: 'Olá'}]}] // Gemini exige pelo menos um item user
-                    })
-                });
+        try {
+            const openAiHistory = geminiHistory.map(msg => ({
+                role: msg.role === 'model' ? 'assistant' : 'user',
+                content: msg.parts[0].text
+            }));
+            
+            const response = await fetch('/api/lightning_proxy', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'nvidia-nemotron-3-ultra-550b-a55b',
+                    system_prompt: finalPrompt,
+                    messages: openAiHistory.length > 0 ? openAiHistory : [{role: 'user', content: 'Olá'}]
+                })
+            });
 
-                const data = await response.json();
+            const data = await response.json();
 
-                if (response.status === 200 && !data.error) {
-                    document.getElementById(typingId).remove();
-                    let aiText = data.candidates[0].content.parts[0].text;
-                    
-                    // ==========================================
-                    // TELEPATIA CORPORATIVA (Top-Down Orders)
-                    // ==========================================
-                    const orderRegex = /\[ORDEM PARA O\s+([A-Z]+):\s*(.*?)\]/gi;
-                    let match;
-                    while ((match = orderRegex.exec(aiText)) !== null) {
-                        const targetAgent = match[1].toUpperCase();
-                        const orderText = match[2];
-                        if (AGENTS[targetAgent] && targetAgent !== 'PRIME') {
-                            let targetCache = memCache[targetAgent];
-                            if(!targetCache) {
-                                const ls = localStorage.getItem('apollo_agent_' + targetAgent);
-                                targetCache = ls ? JSON.parse(ls) : [{role: 'model', content: AGENTS[targetAgent].initialMsg}];
-                            }
-                            targetCache.push({ role: 'user', content: `[MENSAGEM DO CEO - APOLLO PRIME]: ${orderText}` });
-                            localStorage.setItem('apollo_agent_' + targetAgent, JSON.stringify(targetCache));
-                            if(memCache[targetAgent]) memCache[targetAgent] = targetCache;
-                            
-                            const tWindow = document.getElementById(AGENTS[targetAgent].windowId);
-                            if(tWindow) {
-                                const div = document.createElement('div');
-                                div.className = "bg-blue-900/50 p-2 rounded border border-blue-500 text-left text-white mt-2 text-sm shadow-[0_0_10px_rgba(59,130,246,0.5)]";
-                                div.innerHTML = `<span class="text-blue-400 font-bold">⚡ [NOVA ORDEM DO CEO]:</span> ${orderText}`;
-                                tWindow.appendChild(div);
-                                scrollToBottom(tWindow);
-                            }
-                            aiText += `\n\n*(📡 Telepatia: Ordem executiva repassada com sucesso para a mente do ${targetAgent})*`;
+            if (response.status === 200 && !data.error) {
+                document.getElementById(typingId).remove();
+                let aiText = data.choices[0].message.content;
+                
+                // TELEPATIA CORPORATIVA
+                const orderRegex = /\[ORDEM PARA O\s+([A-Z]+):\s*(.*?)\]/gi;
+                let match;
+                while ((match = orderRegex.exec(aiText)) !== null) {
+                    const targetAgent = match[1].toUpperCase();
+                    const orderText = match[2];
+                    if (AGENTS[targetAgent] && targetAgent !== 'PRIME') {
+                        let targetCache = memCache[targetAgent];
+                        if(!targetCache) {
+                            const ls = localStorage.getItem('apollo_agent_' + targetAgent);
+                            targetCache = ls ? JSON.parse(ls) : [{role: 'assistant', content: AGENTS[targetAgent].initialMsg}];
                         }
+                        targetCache.push({ role: 'user', content: [MENSAGEM DO CEO - APOLLO PRIME]:  });
+                        localStorage.setItem('apollo_agent_' + targetAgent, JSON.stringify(targetCache));
+                        if(memCache[targetAgent]) memCache[targetAgent] = targetCache;
+                        
+                        const tWindow = document.getElementById(AGENTS[targetAgent].windowId);
+                        if(tWindow) {
+                            const div = document.createElement('div');
+                            div.className = "bg-blue-900/50 p-2 rounded border border-blue-500 text-left text-white mt-2 text-sm shadow-[0_0_10px_rgba(59,130,246,0.5)]";
+                            div.innerHTML = <span class="text-blue-400 font-bold">⚡ [NOVA ORDEM DO CEO]:</span> ;
+                            tWindow.appendChild(div);
+                        }
+                        aiText += \n\n*(📡 Telepatia: Ordem executiva repassada com sucesso para a mente do )*;
                     }
-
-                    renderBotMessage(chatWindow, agent, aiText);
-                    memCache[agentId].push({ role: 'model', content: aiText });
-                    success = true;
-                    break; // Sucesso, quebra o loop de chaves
-                } 
-                else if (response.status === 429 || response.status === 503) {
-                    // Rate limit ou Sobrecarga - Pula para a próxima chave igual no Python!
-                    lastError = data.error ? data.error.message : `HTTP ${response.status} (Sobrecarga/Cota)`;
-                    console.warn(`[Apollo Prime] Chave ${i+1} falhou. Tentando próxima...`);
-                    continue;
-                } else {
-                    lastError = data.error ? data.error.message : `HTTP ${response.status}`;
-                    break; // Outro erro fatal
                 }
-            } catch (err) {
-                lastError = err.message;
-                continue; // Erro de rede, tenta a próxima chave
+
+                renderBotMessage(chatWindow, agent, aiText);
+                memCache[agentId].push({ role: 'model', parts: [{text: aiText}] });
+                success = true;
+            } else {
+                lastError = data.error ? data.error.message : HTTP ;
             }
+        } catch (err) {
+            lastError = err.message;
         }
     }
 

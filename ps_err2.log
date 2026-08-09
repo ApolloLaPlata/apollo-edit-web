@@ -1,0 +1,4 @@
+ubuntu     73045  0.0  0.1   2808  1564 ?        S    Jul31   0:00 sh -c next start
+ubuntu     73046  0.0  8.8 23697488 86356 ?      Sl   Jul31   2:15 next-server (v16.2.10)
+ubuntu     90829  0.0  0.1   2808  1916 ?        S    05:26   0:00 /bin/sh -c ps aux | grep next
+ubuntu     90831  0.0  0.2   7084  2160 ?        S    05:26   0:00 grep next

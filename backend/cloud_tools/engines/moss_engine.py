@@ -36,7 +36,9 @@ moss_image = (
         "scipy==1.16.2",
         "librosa==0.11.0",
         "tiktoken==0.12.0",
-        "huggingface_hub"
+        "huggingface_hub",
+        "fastapi[standard]",
+        "accelerate>=0.26.0"
     )
     .run_commands(
         [
@@ -91,7 +93,7 @@ class MossTTSEngine:
         
         print(f"[GEN] Recebido pedido TTS. Texto: {text[:50]}...")
         
-        inputs = {"text": text}
+        inputs = {"conversations": [{"role": "user", "content": text}]}
         
         if reference_audio_bytes:
             # Carregar o áudio de referência a partir de bytes
@@ -107,12 +109,40 @@ class MossTTSEngine:
             if hasattr(input_features, "to"):
                 input_features = input_features.to(self.device, dtype=self.dtype)
                 
-            output = self.model.generate(**input_features, max_new_tokens=4096)
-            audio_data = output.audio[0].cpu().numpy()
+            outputs = self.model.generate(**input_features, max_new_tokens=4096)
+            messages = self.processor.decode(outputs)
+            audio = messages[0].audio_codes_list[0]
+            if audio.ndim == 1:
+                audio = audio.unsqueeze(0)
+            audio_data = audio.detach().cpu().to(torch.float32).numpy()
             
         # Converter para bytes WAV
         out_io = io.BytesIO()
-        sf.write(out_io, audio_data, samplerate=self.model.config.sample_rate, format='WAV')
+        sf.write(out_io, audio_data.T, samplerate=self.processor.model_config.sampling_rate, format='WAV')
         out_bytes = out_io.getvalue()
         
         return out_bytes
+
+from fastapi import Request
+
+@app.function(image=moss_image)
+@modal.fastapi_endpoint(method="POST", label="apollo-api-moss-tts")
+async def api_moss_tts(request: Request):
+    try:
+        from fastapi.responses import Response, JSONResponse
+        
+        # Pode receber json
+        data = await request.json()
+        text = data.get("text", "")
+        
+        if not text:
+            return JSONResponse({"error": "No text provided"}, status_code=400)
+            
+        tts_service = MossTTSEngine()
+        # O processamento do moss tts demora, então aguardamos a remote call
+        audio_bytes = tts_service.generate_voice.remote(text)
+        
+        return Response(content=audio_bytes, media_type="audio/wav")
+    except Exception as e:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"error": str(e)}, status_code=500)
