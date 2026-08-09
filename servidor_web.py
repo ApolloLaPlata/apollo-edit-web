@@ -891,7 +891,12 @@ async def lightning_proxy(request: Request):
         import os
         cm = ConfigManager(os.path.join(os.path.dirname(__file__), "config.json"))
         chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
-        backend_key = chat_cfg.get("api_key", "")
+        api_keys = chat_cfg.get("api_keys", [])
+        if api_keys and isinstance(api_keys, list):
+            import random
+            backend_key = random.choice(api_keys)
+        else:
+            backend_key = chat_cfg.get("api_key", "")
         
         auth_header = request.headers.get("Authorization", "")
         if not auth_header and backend_key:
@@ -1041,7 +1046,19 @@ async def chat_send(request: Request):
         # O painel Web Ã© usado apenas pelo admin (Chefe). Conectando direto no Lightning AI.
         import requests
         chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
-        used_api_key = api_key if api_key else chat_cfg.get("api_key", "")
+        api_keys = chat_cfg.get("api_keys", [])
+        if api_key:
+            used_api_key = api_key
+        elif api_keys and isinstance(api_keys, list):
+            import random
+            used_api_key = random.choice(api_keys)
+        else:
+            used_api_keys = chat_cfg.get("api_keys", [])
+        if api_keys and isinstance(api_keys, list):
+            import random
+            api_key = random.choice(api_keys)
+        else:
+            api_key = chat_cfg.get("api_key", "")
         base_url = chat_cfg.get("base_url", "https://lightning.ai/api/v1/chat/completions")
         if base_url.endswith("v1/"):
             base_url = "https://lightning.ai/api/v1/chat/completions"
@@ -1166,7 +1183,12 @@ async def whatsapp_webhook(request: Request):
         # ========================================================
         import requests
         chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
-        api_key = chat_cfg.get("api_key", "")
+        api_keys = chat_cfg.get("api_keys", [])
+        if api_keys and isinstance(api_keys, list):
+            import random
+            api_key = random.choice(api_keys)
+        else:
+            api_key = chat_cfg.get("api_key", "")
         # Fallback de seguranca caso o config.json esteja quebrado (como estava antes)
         base_url = chat_cfg.get("base_url", "https://lightning.ai/api/v1/chat/completions")
         if base_url.endswith("v1/"):
@@ -5344,7 +5366,22 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                                 audio_chunk = await f5.generate_voice.remote.aio(chunk, ref_bytes)
                                 await websocket.send_bytes(audio_chunk)
                             except Exception as f5_err:
-                                print(f"[WS] F5TTS gerou erro (Modal pode não estar rodando): {f5_err}")
+                                print(f"[WS] F5TTS gerou erro (Modal pode nao estar rodando). Fallback edge-tts: {f5_err}")
+                                import subprocess
+                                import tempfile
+                                import os
+                                with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
+                                    temp_name = f.name
+                                try:
+                                    subprocess.run(["edge-tts", "--text", chunk, "--write-media", temp_name, "--voice", "pt-BR-AntonioNeural"], creationflags=subprocess.CREATE_NO_WINDOW)
+                                    with open(temp_name, "rb") as f:
+                                        audio_chunk = f.read()
+                                    await websocket.send_bytes(audio_chunk)
+                                except Exception as edge_err:
+                                    print(f"Erro no edge-tts: {edge_err}")
+                                finally:
+                                    if os.path.exists(temp_name):
+                                        os.remove(temp_name)
                 else:
                     await websocket.send_text(json.dumps({"type": "error", "message": "Lightning falhou"}))
                     

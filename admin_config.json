@@ -7,7 +7,12 @@
   "perfis_diretor": {},
   "api_config": {
     "lightning_chat": {
-      "api_key": "16338b74-3f36-4c89-84db-a8e00b099058",
+      "api_keys": [
+        "16338b74-3f36-4c89-84db-a8e00b099058",
+        "CHAVE_CONTA_1_AQUI",
+        "CHAVE_CONTA_3_AQUI",
+        "CHAVE_CONTA_4_AQUI"
+      ],
       "base_url": "https://lightning.ai/api/v1/chat/completions"
     },
     "gemini": {
