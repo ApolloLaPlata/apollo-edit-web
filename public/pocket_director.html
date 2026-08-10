@@ -863,9 +863,30 @@
       let color = "#a7f3d0";
       if (type === "warn") color = "#fcd34d";
       if (type === "error") color = "#fca5a5";
-      box.innerHTML += <div style="color: ; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.05);">[] </div>;
+      box.innerHTML += `<div style="color: ${color}; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.05);">[${time}] ${message}</div>`;
       box.scrollTop = box.scrollHeight;
     };
+
+    // Sincronizar logs do backend na mesma tela
+    setInterval(async () => {
+      try {
+        const res = await fetch('/api/colmeia/logs', { timeout: 2000 });
+        if(res.ok) {
+          const logs = await res.text();
+          if (logs && logs.trim() !== '') {
+            const box = document.getElementById('leftLogsBox');
+            if (box && box.dataset.lastLogs !== logs) {
+              box.dataset.lastLogs = logs;
+              box.innerHTML = `<div style="color: #a7f3d0; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: pre-wrap; font-family: monospace;">${logs}</div>`;
+              box.scrollTop = box.scrollHeight;
+            }
+          }
+        }
+      } catch(e) {
+        // Ignora erros silenciosamente para não floodar
+      }
+    }, 2000);
+
   </script>
 </body>
 
