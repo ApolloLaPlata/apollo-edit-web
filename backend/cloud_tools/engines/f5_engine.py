@@ -40,7 +40,7 @@ class F5TTSEngine:
         print("[INIT] F5-TTS Pronto para Geração!")
 
     @modal.method()
-    def generate_voice(self, text: str, reference_audio_bytes: bytes = None):
+    def generate_voice(self, text: str, reference_audio_bytes: bytes = None, ref_text: str = ""):
         """
         Gera áudio a partir do texto. Zero-shot se referência for fornecida.
         """
@@ -51,7 +51,7 @@ class F5TTSEngine:
         print(f"[GEN] Recebido pedido F5-TTS. Texto: {text[:50]}...")
         
         ref_file_path = None
-        ref_text = "" # F5 infere sozinho ou a gente não passa texto de ref
+        # ref_text já é recebido por parâmetro
         
         if reference_audio_bytes:
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:

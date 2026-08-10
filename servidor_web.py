@@ -886,17 +886,13 @@ async def lightning_proxy(request: Request):
         import requests
         data = await request.json()
         
-        # Puxa a chave da configuração central de forma segura
-        from config_manager import ConfigManager
-        import os
-        cm = ConfigManager(os.path.join(os.path.dirname(__file__), "config.json"))
-        chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
-        api_keys = chat_cfg.get("api_keys", [])
-        if api_keys and isinstance(api_keys, list):
-            import random
-            backend_key = random.choice(api_keys)
+        from backend.cloud_tools.account_pool import account_pool
+        
+        acc = await account_pool.pick(role="general")
+        if acc:
+            backend_key = acc.api_key
         else:
-            backend_key = chat_cfg.get("api_key", "")
+            backend_key = ""
         
         auth_header = request.headers.get("Authorization", "")
         if not auth_header and backend_key:
@@ -1053,12 +1049,7 @@ async def chat_send(request: Request):
             import random
             used_api_key = random.choice(api_keys)
         else:
-            used_api_keys = chat_cfg.get("api_keys", [])
-        if api_keys and isinstance(api_keys, list):
-            import random
-            api_key = random.choice(api_keys)
-        else:
-            api_key = chat_cfg.get("api_key", "")
+            used_api_key = chat_cfg.get("api_key", "")
         base_url = chat_cfg.get("base_url", "https://lightning.ai/api/v1/chat/completions")
         if base_url.endswith("v1/"):
             base_url = "https://lightning.ai/api/v1/chat/completions"
@@ -5303,6 +5294,16 @@ async def mark_notifications_read(req: NotificationMarkRequest):
 @app.get("/api/studio/history")
 async def get_studio_history():
     from backend.financial_agent import economy_db
+
+@app.get("/api/colmeia/logs")
+async def colmeia_logs():
+    """Lê a memória ativa para exibir no painel esquerdo."""
+    mem_path = os.path.join(BASE_DIR, "MEMORIA_ATIVA_SISTEMA.md")
+    try:
+        with open(mem_path, "r", encoding="utf-8") as f:
+            return PlainTextResponse(f.read())
+    except Exception as e:
+        return PlainTextResponse(f"Erro ao ler a memória: {e}", status_code=500)
     jobs = economy_db.get_user_jobs("default_user", 50)
     return {"success": True, "history": jobs}
 
@@ -5317,12 +5318,12 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
     voice_config = {"voice_name": "default"}
     
     async def run_llm_and_tts(user_text):
-        from backend.cloud_tools.engines.f5_engine import F5TTSEngine
+        from backend.cloud_tools.engines.xtts_engine import XttsEngine
         import os
         import httpx
         
         try:
-            f5 = F5TTSEngine()
+            xtts = XttsEngine()
             
             # Buscar contexto do canal (ex: admin_config.json -> api_config/canais ou similar)
             from config_manager import ConfigManager
@@ -5363,9 +5364,9 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                         await websocket.send_text(json.dumps({"type": "llm_chunk", "text": chunk}))
                         if ref_bytes:
                             try:
-                                audio_chunk = await f5.generate_voice.remote.aio(chunk, ref_bytes)
-                              except Exception as f5_err:
-                                print(f"[WS] F5TTS Modal falhou: {f5_err}")
+                                audio_chunk = await xtts.generate_voice.remote.aio(chunk, ref_bytes)
+                            except Exception as xtts_err:
+                                print(f"[WS] XTTS Modal falhou: {xtts_err}")
                             if 'audio_chunk' in locals() and audio_chunk:
                                 # Converte WAV (audio_chunk) para MP3 na memÃ³ria usando ffmpeg para otimizar velocidade no front
                                 import subprocess
@@ -5388,7 +5389,11 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
         except asyncio.CancelledError:
             print(f"[WS] Geração interrompida (Task Cancelada) no canal {channel}")
         except Exception as e:
-            print(f"[WS] Erro no pipeline Lightning/TTS: {e}")
+            import traceback
+            trace_str = traceback.format_exc()
+            print(f"[WS] Erro no pipeline Lightning/TTS:\n{trace_str}")
+            with open("ws_error.log", "a", encoding="utf-8") as f:
+                f.write(f"Erro no run_llm_and_tts: {trace_str}\n")
             await websocket.send_text(json.dumps({"type": "error", "message": str(e)}))
 
     try:
@@ -5410,7 +5415,7 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                         if current_generation_task and not current_generation_task.done():
                             print("[WS] VAD Interrupt. Cortando...")
                             current_generation_task.cancel()
-                    elif data.get("type") == "text":
+                    elif data.get("type") == "user_text":
                         # Processa envio de texto direto
                         text_val = data.get("text", "")
                         print(f"[WS Usuário Texto - Canal {channel}]: {text_val}")
