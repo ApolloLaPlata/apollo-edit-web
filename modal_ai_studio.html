@@ -810,7 +810,7 @@ function clearPreview() {
         }
 
         function showTab(name) {
-    ['img','vid','audio'].forEach(t => {
+    ['img','vid','audio','music'].forEach(t => {
         document.getElementById('tab-'+t).style.display = (t === name) ? 'block' : 'none';
         document.querySelectorAll('.tab-btn').forEach((b,i) => {
             const tabs = ['img','vid','audio','music'];
