@@ -1,11 +1,11 @@
-"""
+﻿"""
 Apollo Modal Router
 ===================
-Este ├® o Roteador Central (Gateway).
-Ele recebe requisi├º├Áes JSON da sua API/Backend Node/PHP/etc.,
-identifica qual modelo (LTX 13B ou Wan) o usu├írio escolheu
-baseado no preset, e dispara o comando de forma ass├¡ncrona (ou aguarda)
-direto para as GPUs espec├¡ficas (L4 ou A100).
+Este â”œÂ® o Roteador Central (Gateway).
+Ele recebe requisiâ”œÂºâ”œÃes JSON da sua API/Backend Node/PHP/etc.,
+identifica qual modelo (LTX 13B ou Wan) o usuâ”œÃ­rio escolheu
+baseado no preset, e dispara o comando de forma assâ”œÂ¡ncrona (ou aguarda)
+direto para as GPUs especâ”œÂ¡ficas (L4 ou A100).
 # Modificado para forcar deploy
 """
 
@@ -25,7 +25,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imports top-level para garantir que o Modal fa├ºa o trace e os publique junto com o app
+# Imports top-level para garantir que o Modal faâ”œÂºa o trace e os publique junto com o app
 import backend.cloud_tools.engines.wan_engine
 import backend.cloud_tools.engines.ltx_engine
 import backend.cloud_tools.engines.flux_engine
@@ -54,7 +54,7 @@ router_image = (
 
 web_app = FastAPI(title="Apollo Render API")
 
-# Configura├º├úo de CORS para permitir requisi├º├Áes do Frontend React (localhost ou Vercel/Netlify)
+# Configuraâ”œÂºâ”œÃºo de CORS para permitir requisiâ”œÂºâ”œÃes do Frontend React (localhost ou Vercel/Netlify)
 web_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -176,13 +176,13 @@ def api_generate_video(req: VideoRequest):
         model = req.model.lower()
         preset = req.preset.lower()
         
-        # Limite agressivo sugerido para I2V no LTX (Preven├º├úo de VRAM OOM)
+        # Limite agressivo sugerido para I2V no LTX (Prevenâ”œÂºâ”œÃºo de VRAM OOM)
         if model == "ltx" and preset == "fast" and req.image_base64:
             if req.duration > 2:
                 return {
                     "status": "error", 
                     "error_type": "invalid_duration",
-                    "message": f"Modo FAST I2V suporta no m├íximo 2s. Use modo PRO para dura├º├Áes maiores."
+                    "message": f"Modo FAST I2V suporta no mâ”œÃ­ximo 2s. Use modo PRO para duraâ”œÂºâ”œÃes maiores."
                 }
         
         if model == "ltx":
@@ -200,7 +200,7 @@ def api_generate_video(req: VideoRequest):
         else:
             return {"status": "error", "message": f"Modelo desconhecido: {model}. Use 'ltx' ou 'wan'."}
             
-        # Spawn ass├¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
+        # Spawn assâ”œÂ¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
         job = engine.generate.spawn(
             prompt=req.prompt,
             image_base64=req.image_base64,
@@ -216,7 +216,7 @@ def api_generate_video(req: VideoRequest):
             while True:
                 try:
                     # Tenta pegar o resultado com timeout curto. 
-                    # Se n├úo terminou, cai no TimeoutError e envia um espa├ºo (heartbeat)
+                    # Se nâ”œÃºo terminou, cai no TimeoutError e envia um espaâ”œÂºo (heartbeat)
                     res = await fc.get.aio(timeout=5.0)
                     yield json.dumps(res)
                     break
@@ -555,7 +555,7 @@ def api_generate_audio_lab(req: AudioLabRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "error_type": "exception", "message": str(e)}
+        return {"status": "error", "error_type": "exception", "message": str(e), "traceback": traceback.format_exc()}
 
 @app.function(
     image=router_image,
@@ -578,3 +578,4 @@ def clean_antelope():
 @modal.asgi_app()
 def apollo_api():
     return web_app
+
