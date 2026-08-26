@@ -5668,37 +5668,6 @@ class ChatRequest(BaseModel):
 # Montar diretÃ³rios externos para apps estÃ¡ticos
 app.mount("/ext_apps", StaticFiles(directory=os.path.join(BASE_DIR, "Programas externos")), name="programas_externos")
 
-# Todo o conteÃƒÂºdo de web_ui serÃƒÂ¡ servido estaticamente (Deve ser a ÃƒÅ¡LTIMA rota)
-app.mount("/", StaticFiles(directory=WEB_UI_DIR), name="static")
-
-def start_server(workspace_name, workspace_path, port=8080):
-    """FunÃƒÂ§ÃƒÂ£o chamada pelo apollo_studio.py para rodar o uvicorn."""
-    global CURRENT_WORKSPACE, CURRENT_WORKSPACE_PATH
-    CURRENT_WORKSPACE = workspace_name
-    CURRENT_WORKSPACE_PATH = workspace_path
-    
-    # Iniciar o Cloud Sync Worker (Fase VIII)
-    try:
-        from cloud_sync_worker import CloudSyncWorker
-        worker = CloudSyncWorker()
-        worker.start()
-        print("Cloud Sync Worker (MÃ³dulo C) iniciado com sucesso no background.")
-    except Exception as e:
-        print(f"Erro ao iniciar Cloud Sync Worker: {e}")
-    
-    import uvicorn
-    # log_level = "warning" evita spamar o terminal
-    uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--workspace_name', type=str, default="ADM APOLLO EDIT WEB")
-    parser.add_argument('--workspace_path', type=str, default=os.path.join(BASE_DIR, "Workspaces", "ADM APOLLO EDIT WEB"))
-    args, _ = parser.parse_known_args()
-    
-    start_server(args.workspace_name, args.workspace_path)
-
 
 @app.post("/api/audio/lab_test")
 async def audio_lab_test(
@@ -5741,3 +5710,34 @@ async def audio_lab_test(
             
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+
+# Todo o conteÃƒÂºdo de web_ui serÃƒÂ¡ servido estaticamente (Deve ser a ÃƒÅ¡LTIMA rota)
+app.mount("/", StaticFiles(directory=WEB_UI_DIR), name="static")
+
+def start_server(workspace_name, workspace_path, port=8080):
+    """FunÃƒÂ§ÃƒÂ£o chamada pelo apollo_studio.py para rodar o uvicorn."""
+    global CURRENT_WORKSPACE, CURRENT_WORKSPACE_PATH
+    CURRENT_WORKSPACE = workspace_name
+    CURRENT_WORKSPACE_PATH = workspace_path
+    
+    # Iniciar o Cloud Sync Worker (Fase VIII)
+    try:
+        from cloud_sync_worker import CloudSyncWorker
+        worker = CloudSyncWorker()
+        worker.start()
+        print("Cloud Sync Worker (MÃ³dulo C) iniciado com sucesso no background.")
+    except Exception as e:
+        print(f"Erro ao iniciar Cloud Sync Worker: {e}")
+    
+    import uvicorn
+    # log_level = "warning" evita spamar o terminal
+    uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--workspace_name', type=str, default="ADM APOLLO EDIT WEB")
+    parser.add_argument('--workspace_path', type=str, default=os.path.join(BASE_DIR, "Workspaces", "ADM APOLLO EDIT WEB"))
+    args, _ = parser.parse_known_args()
+    
+    start_server(args.workspace_name, args.workspace_path)
