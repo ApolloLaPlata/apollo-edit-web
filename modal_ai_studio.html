@@ -587,12 +587,10 @@ Acordei cedo pra vencer..."></textarea>
                 </div>
                 
                 <div id="timeContainer" style="margin-top: 15px;">
-                    <div class="field-label">DuraÃ§Ã£o (Segundos)</div>
+                    <div class="field-label">Duração (Segundos)</div>
                     <input type="number" id="musicDuration" value="30" min="1" max="180" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                 </div>
-                    <textarea id="musicLyrics" placeholder="[Verse 1]
-Acordei cedo pra vencer..."></textarea>
-                </div>
+
                 
                 <div id="refAudioContainer" style="margin-top: 15px;">
                     <div class="field-label">Ãudio de ReferÃªncia (Opcional - Estilo ou ContinuaÃ§Ã£o)</div>
@@ -799,13 +797,23 @@ function clearPreview() {
             formData.append('duration', duration);
 
             try {
+                let refBase64 = null;
+                if (refFile) {
+                    refBase64 = await fileToBase64(refFile);
+                }
                 const url = '/api/studio/modal/generate/audio_lab';
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-apollo-lock': 'apollo-beta-key-2026' },
-                    body: JSON.stringify({ prompt, lyrics, model, duration })
+                    body: JSON.stringify({ prompt, lyrics, model, duration, reference_audio_base64: refBase64 })
                 });
-                const data = await response.json();
+                const rawText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch(e) {
+                    throw new Error(rawText.substring(0, 100));
+                }
                 document.getElementById('musicLoading').style.display = 'none';
                 
                 if (data.success || data.status === 'success') {
