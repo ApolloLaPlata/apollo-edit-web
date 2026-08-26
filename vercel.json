@@ -12,7 +12,7 @@
     "rewrites": [
         {
             "source": "/media/(.*)",
-            "destination": "http://163.176.135.59/media/"
+            "destination": "http://163.176.135.59/media/$1"
         },
         {
             "source": "/api/(.*)",
