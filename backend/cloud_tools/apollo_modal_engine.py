@@ -38,6 +38,8 @@ from backend.cloud_tools.engines.flux_engine import Flux2ComfyEngine_V2
 # Voz
 import backend.cloud_tools.engines.stt_engine
 import backend.cloud_tools.engines.tts_engine
+import backend.cloud_tools.engines.qwen_tts_clone_engine
+import backend.cloud_tools.engines.ace_step_comfy_engine
 
 from backend.cloud_tools.modal_app import app
 
@@ -61,6 +63,12 @@ web_app.add_middleware(
     allow_headers=["*"],
 )
 
+class AudioLabRequest(BaseModel):
+    prompt: str
+    lyrics: Optional[str] = None
+    model: str = "sa3" # "sa3", "minimax", "ace-step"
+    duration: int = 30
+    
 class VideoRequest(BaseModel):
     prompt: str
     image_base64: Optional[str] = None  # Imagem opcional para o Image-to-Video
@@ -83,6 +91,9 @@ class ImageRequest(BaseModel):
 class TTSRequest(BaseModel):
     text: str
     reference_audio_base64: Optional[str] = None
+    instruct: Optional[str] = None
+    engine: str = "xtts" # "xtts", "moss" ou "qwen"
+    ref_text: Optional[str] = None
 
 class UniversalRequest(BaseModel):
     workflow: dict
@@ -223,27 +234,59 @@ def api_generate_video(req: VideoRequest):
 @web_app.post("/generate/tts")
 def api_generate_tts(req: TTSRequest):
     try:
-        from backend.cloud_tools.engines.moss_engine import MossTTSEngine
-        engine = MossTTSEngine()
-        
-        print(f"[Router] Spawning MossTTSEngine (H100) -> Text: {req.text[:30]}...")
-        
-        ref_bytes = None
-        if req.reference_audio_base64:
-            import base64
-            ref_bytes = base64.b64decode(req.reference_audio_base64)
+        engine_choice = req.engine.lower()
+        if engine_choice == "qwen":
+            from backend.cloud_tools.engines.qwen_tts_clone_engine import QwenTtsCloneEngine
+            engine = QwenTtsCloneEngine()
+            print(f"[Router] Spawning QwenTtsCloneEngine -> Text: {req.text[:30]}...")
             
-        fc = engine.generate_voice.spawn(req.text, ref_bytes)
+            ref_text = req.ref_text
+            if not ref_text and req.reference_audio_base64:
+                from backend.cloud_tools.engines.stt_engine import WhisperTurboSTT
+                stt = WhisperTurboSTT()
+                print("[Router] Transcrevendo ref_audio para ICL do Qwen...")
+                import base64
+                ref_bytes = base64.b64decode(req.reference_audio_base64)
+                stt_res = stt.transcribe.remote(ref_bytes)
+                if isinstance(stt_res, dict) and stt_res.get("status") == "success":
+                    ref_text = stt_res.get("text", "")
+                else:
+                    return {"status": "error", "message": "Falha no WhisperTurboSTT"}
+
+            fc = engine.clone.spawn(
+                text=req.text,
+                ref_audio_b64=req.reference_audio_base64,
+                ref_text=ref_text or "",
+                language="Portuguese",
+                instruct=req.instruct or ""
+            )
+        else:
+            from backend.cloud_tools.engines.moss_engine import MossTTSEngine
+            engine = MossTTSEngine()
+            
+            print(f"[Router] Spawning MossTTSEngine (H100) -> Text: {req.text[:30]}...")
+            
+            ref_bytes = None
+            if req.reference_audio_base64:
+                import base64
+                ref_bytes = base64.b64decode(req.reference_audio_base64)
+                
+            fc = engine.generate_voice.spawn(req.text, ref_bytes)
         
         # Como o TTS pode demorar dezenas de segundos, precisamos de Streaming de ping
         async def stream_result():
+            import json
             while True:
                 try:
                     res = await fc.get.aio(timeout=5.0)
-                    # res ├® bytes de ├íudio. Devemos retornar em base64.
-                    import base64
-                    b64_audio = base64.b64encode(res).decode('utf-8')
-                    yield json.dumps({"status": "success", "audio_base64": b64_audio})
+                    if isinstance(res, dict):
+                        # Qwen return
+                        yield json.dumps(res)
+                    else:
+                        # Moss return (bytes)
+                        import base64
+                        b64_audio = base64.b64encode(res).decode('utf-8')
+                        yield json.dumps({"status": "success", "audio_base64": b64_audio})
                     break
                 except TimeoutError:
                     yield " "
@@ -468,6 +511,52 @@ def api_ping():
     }
 
 from backend.cloud_tools.engines.universal_engine import apollo_volume
+@web_app.post("/generate/audio_lab")
+def api_generate_audio_lab(req: AudioLabRequest):
+    try:
+        model = req.model.lower()
+        if model == "sa3":
+            from backend.cloud_tools.engines.stable_audio_engine import StableAudioEngine
+            engine = StableAudioEngine()
+            print(f"[Router] Spawning StableAudioEngine for SA3")
+            fc = engine.generate_audio.spawn(prompt=req.prompt, duration_s=float(req.duration))
+            res = fc.get()
+            if isinstance(res, bytes):
+                import base64
+                b64 = base64.b64encode(res).decode('utf-8')
+                return {"status": "success", "audio_base64": b64, "message": "SA3 Recebido da Nuvem!"}
+            return {"status": "error", "error_type": "generation_failed", "message": "Erro na geracao SA3"}
+            
+        elif model == "minimax":
+            from backend.cloud_tools.engines.minimax_engine import MinimaxEngine
+            engine = MinimaxEngine()
+            print(f"[Router] Spawning MinimaxEngine")
+            is_instrumental = not bool(req.lyrics)
+            fc = engine.generate.spawn(prompt=req.prompt, is_instrumental=is_instrumental, lyrics=req.lyrics or "", duration=float(req.duration))
+            res = fc.get()
+            if isinstance(res, bytes):
+                import base64
+                b64 = base64.b64encode(res).decode('utf-8')
+                return {"status": "success", "audio_base64": b64, "message": "MiniMax Recebido da Nuvem!"}
+            return {"status": "error", "error_type": "generation_failed", "message": "Erro na geracao MiniMax"}
+            
+        elif model == "ace-step":
+            from backend.cloud_tools.engines.ace_step_python_engine import AceStepPythonEngine
+            engine = AceStepPythonEngine()
+            print(f"[Router] Spawning AceStepPythonEngine")
+            fc = engine.generate.spawn(style_tags=req.prompt, lyrics=req.lyrics or "", length_seconds=req.duration)
+            res = fc.get()
+            if isinstance(res, dict) and "audio_base64" in res:
+                return {"status": "success", "audio_base64": res["audio_base64"], "message": "ACE-Step Recebido da Nuvem!"}
+            return {"status": "error", "error_type": "generation_failed", "message": "Erro na geracao ACE-Step"}
+            
+        else:
+            return {"status": "error", "error_type": "invalid_model", "message": f"Modelo {model} nao suportado."}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "error_type": "exception", "message": str(e)}
+
 @app.function(
     image=router_image,
     volumes={"/apollo_volume": apollo_volume}
