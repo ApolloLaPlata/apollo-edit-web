@@ -811,12 +811,12 @@ function clearPreview() {
                     document.getElementById('musicPlayer').src = data.audio_url;
                 } else {
                     document.getElementById('musicError').style.display = 'block';
-                    document.getElementById('musicError').textContent = data.error || 'Erro.';
+                    document.getElementById('musicError').textContent = JSON.stringify(data, null, 2);
                 }
             } catch (err) {
                 document.getElementById('musicLoading').style.display = 'none';
                 document.getElementById('musicError').style.display = 'block';
-                document.getElementById('musicError').textContent = err.message;
+                document.getElementById('musicError').textContent = 'CRASH FETCH: ' + err.message;
             }
         }
 
