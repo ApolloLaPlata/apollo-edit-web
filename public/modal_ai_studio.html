@@ -800,7 +800,7 @@ function clearPreview() {
                 if (refFile) {
                     refBase64 = await fileToBase64(refFile);
                 }
-                const url = '/api/studio/modal/generate/audio_lab';
+                const url = 'http://163.176.135.59/api/studio/modal/generate/audio_lab';
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-apollo-lock': 'apollo-beta-key-2026' },
@@ -959,7 +959,7 @@ function animateProgress(fillId, textId, startPct, endPct, duration, label) {
 
 // ─── PING ────────────────────────────────────────────────────────
 async function pingModal() {
-    const url = "/api/studio/modal/ping";
+    const url = "http://163.176.135.59/api/studio/modal/ping";
     log(`📡 Ping → ${url}`, 'info');
     
     document.getElementById('latencyBadge').textContent = '...';
@@ -991,7 +991,7 @@ async function generateImage() {
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
     const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
-    const url    = "/api/studio/modal/generate_image";
+    const url    = "http://163.176.135.59/api/studio/modal/generate_image";
     const status = document.getElementById('imgStatus');
 
     log(`✨ GERAR IMAGEM — Iniciando`, 'info');
@@ -1112,7 +1112,7 @@ async function generateVideo() {
     const aspect_ratio = document.getElementById('vidAspect') ? document.getElementById('vidAspect').value : 'horizontal';
     const duration_el = document.getElementById('vidDuration');
     const duration = duration_el ? duration_el.value : '5s';
-    const url    = "/api/studio/modal/generate_video";
+    const url    = "http://163.176.135.59/api/studio/modal/generate_video";
     const status = document.getElementById('vidStatus');
 
     log(`🎬 GERAR VÍDEO — Iniciando`, 'info');
@@ -1204,7 +1204,7 @@ async function transcribeAudio() {
 
     const status = document.getElementById('audioStatus');
     const result = document.getElementById('transcriptionResult');
-    const url    = "/api/studio/modal/transcribe";
+    const url    = "http://163.176.135.59/api/studio/modal/transcribe";
 
     log(`🎤 TRANSCRIÇÃO — Iniciando`, 'info');
     log(`→ Arquivo: ${file.name} (${(file.size/1024/1024).toFixed(2)} MB)`, 'info');
