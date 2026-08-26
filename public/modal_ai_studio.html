@@ -612,7 +612,7 @@
                     <div style="margin-top:10px; color:var(--cyan);">Processando via Modal...</div>
                 </div>
                 <div id="musicOutput" style="display:none; text-align: center;">
-                    <audio id="musicPlayer" controls style="width: 100%; margin-top: 10px;"></audio>
+                    <!-- Log Text vai aqui -->
                 </div>
                 <div id="musicError" style="display:none; color: var(--red); background: #ff475711; padding: 10px; border-radius: 8px; margin-top: 10px; font-family: var(--mono); font-size: 0.8rem;"></div>
             </div>
@@ -654,6 +654,8 @@
 
             <!-- Resultado: Vídeo -->
             <video id="previewVideo" controls></video>
+            <!-- Resultado: Audio -->
+            <audio id="previewAudio" controls style="display: none; width: 80%; box-shadow: 0 8px 40px #00d2ff22; border-radius: 12px;"></audio>
         </div>
 
         <!-- Terminal de debug -->
@@ -725,6 +727,7 @@ function showSpinner(label) {
     document.getElementById('previewPlaceholder').style.display = 'none';
     document.getElementById('previewImage').style.display = 'none';
     document.getElementById('previewVideo').style.display = 'none';
+    if(document.getElementById('previewAudio')) document.getElementById('previewAudio').style.display = 'none';
     document.getElementById('spinnerWrap').classList.add('active');
     document.getElementById('spinnerLabel').textContent = label;
     document.getElementById('timerDisplay').textContent = '00:00';
@@ -743,6 +746,9 @@ function clearPreview() {
     const vidNode = document.getElementById('previewVideo');
     vidNode.style.display = 'none';
     vidNode.src = '';
+
+    const audNode = document.getElementById('previewAudio');
+    if (audNode) { audNode.style.display = 'none'; audNode.src = ''; }
     
     document.getElementById('btnDownloadPreview').style.display = 'none';
     document.getElementById('spinnerWrap').classList.remove('active');
@@ -785,6 +791,7 @@ function clearPreview() {
             document.getElementById('musicLoading').style.display = 'block';
             document.getElementById('musicOutput').style.display = 'none';
             document.getElementById('musicError').style.display = 'none';
+            showSpinner('Gerando áudio. Isso pode levar até 90 segundos...');
             
             const duration = parseInt(document.getElementById('musicDuration').value);
             
@@ -809,16 +816,33 @@ function clearPreview() {
                 document.getElementById('musicLoading').style.display = 'none';
                 
                 if (data.status === 'success') {
+                    // Manda log pro lado esquerdo
                     document.getElementById('musicOutput').style.display = 'block';
-                    document.getElementById('musicPlayer').src = data.audio_url;
+                    document.getElementById('musicOutput').innerHTML = '<div style="color: #00d2ff; font-family: monospace; font-size: 0.9rem;">[OK] Áudio gerado com sucesso!<br><br>Status: ' + data.message + '</div>';
+                    
+                    // Esconde placeholder e spinner do lado direito
+                    document.getElementById('previewPlaceholder').style.display = 'none';
+                    hideSpinner();
+
+                    // Toca o audio no lado direito
+                    const audioSrc = data.audio_base64 ? 'data:audio/wav;base64,' + data.audio_base64 : data.audio_url;
+                    const audNode = document.getElementById('previewAudio');
+                    audNode.src = audioSrc;
+                    audNode.style.display = 'block';
+                    
+                    // Permite download
+                    currentImageData = data.audio_base64 || data.audio_url || "";
+                    document.getElementById('btnDownloadPreview').style.display = 'block';
                 } else {
                     document.getElementById('musicError').style.display = 'block';
                     document.getElementById('musicError').textContent = JSON.stringify(data, null, 2);
+                    hideSpinner();
                 }
             } catch (err) {
                 document.getElementById('musicLoading').style.display = 'none';
                 document.getElementById('musicError').style.display = 'block';
                 document.getElementById('musicError').textContent = 'CRASH FETCH: ' + err.message;
+                hideSpinner();
             }
         }
 
@@ -1225,13 +1249,24 @@ async function transcribeAudio() {
         }
 
         if (data.status === 'success') {
-            const elapsed = stopTimer();
-            hideSpinner();
-            status.className = 'log-box';
-            status.textContent = `✅ Transcrição concluída em ${elapsed}s!`;
-            result.textContent = data.text;
-            log(`✅ TRANSCRIÇÃO OK em ${elapsed}s — ${data.text.length} chars`, 'ok');
-        } else {
+                    // Manda log pro lado esquerdo
+                    document.getElementById('musicOutput').style.display = 'block';
+                    document.getElementById('musicOutput').innerHTML = '<div style="color: #00d2ff; font-family: monospace; font-size: 0.9rem;">[OK] Áudio gerado com sucesso!<br><br>Status: ' + data.message + '</div>';
+                    
+                    // Esconde placeholder e spinner do lado direito
+                    document.getElementById('previewPlaceholder').style.display = 'none';
+                    hideSpinner();
+
+                    // Toca o audio no lado direito
+                    const audioSrc = data.audio_base64 ? 'data:audio/wav;base64,' + data.audio_base64 : data.audio_url;
+                    const audNode = document.getElementById('previewAudio');
+                    audNode.src = audioSrc;
+                    audNode.style.display = 'block';
+                    
+                    // Permite download
+                    currentImageData = data.audio_base64 || data.audio_url || "";
+                    document.getElementById('btnDownloadPreview').style.display = 'block';
+                } else {
             throw new Error(data.message || JSON.stringify(data));
         }
     } catch(e) {
