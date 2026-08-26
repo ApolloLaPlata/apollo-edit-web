@@ -5705,6 +5705,7 @@ async def audio_lab_test(
     model: str = Form(...),
     prompt: str = Form(...),
     lyrics: str = Form(None),
+    duration: int = Form(30),
     ref_audio: UploadFile = File(None)
 ):
     import os

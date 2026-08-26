@@ -580,8 +580,16 @@
                 <div class="field-label">Prompt (Descreva o som ou a voz)</div>
                 <textarea id="musicPrompt" placeholder="Ex: Batida de trap sombria com graves fortes e sintetizadores..."></textarea>
                 
-                <div id="lyricsContainer" style="display:none; margin-top: 15px;">
-                    <div class="field-label">Letra da Música (Obrigatório para ACE-Step)</div>
+                <div id="lyricsContainer" style="margin-top: 15px;">
+                    <div class="field-label">Letra da Música (Opcional)</div>
+                    <textarea id="musicLyrics" placeholder="[Verse 1]
+Acordei cedo pra vencer..."></textarea>
+                </div>
+                
+                <div id="timeContainer" style="margin-top: 15px;">
+                    <div class="field-label">Duração (Segundos)</div>
+                    <input type="number" id="musicDuration" value="30" min="1" max="180" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                </div>
                     <textarea id="musicLyrics" placeholder="[Verse 1]
 Acordei cedo pra vencer..."></textarea>
                 </div>
@@ -760,10 +768,10 @@ function clearPreview() {
                 lyricsContainer.style.display = 'block';
                 refAudioContainer.style.display = 'block';
             } else if (model === 'minimax') {
-                lyricsContainer.style.display = 'none';
+                lyricsContainer.style.display = 'block';
                 refAudioContainer.style.display = 'none';
             } else {
-                lyricsContainer.style.display = 'none';
+                lyricsContainer.style.display = 'block';
                 refAudioContainer.style.display = 'block';
             }
         }
@@ -786,6 +794,9 @@ function clearPreview() {
             formData.append('prompt', prompt);
             if (lyrics) formData.append('lyrics', lyrics);
             if (refFile) formData.append('ref_audio', refFile);
+            
+            const duration = document.getElementById('musicDuration').value;
+            formData.append('duration', duration);
 
             try {
                 const response = await fetch('/api/audio/lab_test', {
