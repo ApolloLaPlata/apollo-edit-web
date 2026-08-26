@@ -806,13 +806,32 @@ function clearPreview() {
                     headers: { 'Content-Type': 'application/json', 'x-apollo-lock': 'apollo-beta-key-2026' },
                     body: JSON.stringify({ prompt, lyrics, model, duration, reference_audio_base64: refBase64 })
                 });
-                const rawText = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(rawText);
-                } catch(e) {
-                    throw new Error(rawText.substring(0, 100));
-                }
+                                  
+                  if (!response.ok) {
+                      const errText = await response.text();
+                      throw new Error(HTTP : );
+                  }
+                  
+                  const rawText = await response.text();
+                  let data = null;
+                  
+                  // Tratamento robusto para lidar com streaming NDJSON que pode vir do Oracle
+                  const lines = rawText.trim().split('
+');
+                  for (let i = lines.length - 1; i >= 0; i--) {
+                      if (lines[i].trim() === "") continue;
+                      try {
+                          const parsed = JSON.parse(lines[i]);
+                          if (parsed.status === 'success' || parsed.status === 'error') {
+                              data = parsed;
+                              break;
+                          }
+                      } catch(e) {}
+                  }
+                  
+                  if (!data) {
+                      throw new Error(Nenhum dado valido retornado: );
+                  }
                 document.getElementById('musicLoading').style.display = 'none';
                 
                 if (data.status === 'success') {
