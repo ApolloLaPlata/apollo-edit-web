@@ -809,7 +809,7 @@ function clearPreview() {
                                   
                   if (!response.ok) {
                       const errText = await response.text();
-                      throw new Error(HTTP : );
+                      throw new Error(`HTTP ${response.status}: ${errText.substring(0, 100)}`);
                   }
                   
                   const rawText = await response.text();
@@ -830,7 +830,7 @@ function clearPreview() {
                   }
                   
                   if (!data) {
-                      throw new Error(Nenhum dado valido retornado: );
+                      throw new Error(`Nenhum dado valido retornado: ${rawText.substring(0,100)}`);
                   }
                 document.getElementById('musicLoading').style.display = 'none';
                 
