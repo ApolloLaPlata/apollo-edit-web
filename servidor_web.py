@@ -6,6 +6,47 @@ import subprocess
 import threading
 import boto3
 from botocore.exceptions import ClientError
+
+import sys
+import logging
+import os
+from collections import deque
+
+class TailLogger:
+    def __init__(self, filename, max_lines=200):
+        self.filename = filename
+        self.max_lines = max_lines
+        self.terminal = sys.stdout
+        # clear file on startup
+        with open(self.filename, "w", encoding="utf-8") as f:
+            f.write("")
+            
+    def write(self, message):
+        try:
+            self.terminal.write(message)
+        except Exception:
+            try:
+                self.terminal.write(message.encode("cp1252", errors="replace").decode("cp1252"))
+            except:
+                pass
+        try:
+            with open(self.filename, "a", encoding="utf-8") as f:
+                f.write(message)
+        except:
+            pass
+            
+    def flush(self):
+        self.terminal.flush()
+        
+    def isatty(self):
+        return False
+        
+    def reconfigure(self, **kwargs):
+        pass
+
+sys.stdout = TailLogger("colmeia_execution.log")
+sys.stderr = sys.stdout
+
 from fastapi import FastAPI, Request, File, UploadFile, Form, HTTPException, WebSocket, WebSocketDisconnect, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
@@ -886,29 +927,49 @@ async def lightning_proxy(request: Request):
         import requests
         data = await request.json()
         
-        from backend.cloud_tools.account_pool import account_pool
-        
-        acc = await account_pool.pick(role="general")
-        if acc:
-            backend_key = acc.api_key
+        from config_manager import ConfigManager
+        import os
+        cm = ConfigManager(os.path.join(os.path.dirname(__file__), "admin_config.json"))
+        chat_cfg = cm.get("api_config", {}).get("lightning_chat", {})
+        api_keys = chat_cfg.get("api_keys", [])
+        if api_keys and isinstance(api_keys, list):
+            import random
+            if isinstance(api_keys[0], dict):
+                valid_keys = [k.get("key") for k in api_keys if isinstance(k, dict) and k.get("key")]
+                if valid_keys:
+                    api_keys = valid_keys
         else:
-            backend_key = ""
-        
-        auth_header = request.headers.get("Authorization", "")
-        if not auth_header and backend_key:
-            auth_header = f"Bearer {backend_key}"
+            api_keys = [chat_cfg.get("api_key", "")]
             
-        headers = {
-            "Authorization": auth_header,
-            "Content-Type": "application/json"
-        }
+        import httpx
         
-        response = requests.post(
-            "https://lightning.ai/api/v1/chat/completions",
-            json=data,
-            headers=headers,
-            timeout=30
-        )
+        response = None
+        for tentativa in range(4):
+            import random
+            backend_key = random.choice(api_keys)
+            print(f"[Proxy] Tentativa {tentativa+1}: Usando chave {backend_key[:10]}... (Rotatividade)")
+            
+            auth_header = request.headers.get("Authorization", "")
+            if not auth_header and backend_key:
+                auth_header = f"Bearer {backend_key}"
+                
+            headers = {
+                "Authorization": auth_header,
+                "Content-Type": "application/json"
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    "https://lightning.ai/api/v1/chat/completions",
+                    json=data,
+                    headers=headers,
+                    timeout=30
+                )
+                print(f"[Proxy] Recebeu status {response.status_code}")
+                if response.status_code != 402:
+                    break
+                print("[Proxy] Erro 402 (Saldo Esgotado) detectado. Trocando de chave...")
+
         
         try:
             resp_json = response.json()
@@ -5297,13 +5358,16 @@ async def get_studio_history():
 
 @app.get("/api/colmeia/logs")
 async def colmeia_logs():
-    """Lê a memória ativa para exibir no painel esquerdo."""
-    mem_path = os.path.join(BASE_DIR, "MEMORIA_ATIVA_SISTEMA.md")
+    """Lê o log de execução em tempo real para exibir no painel esquerdo."""
+    log_path = "colmeia_execution.log"
     try:
-        with open(mem_path, "r", encoding="utf-8") as f:
-            return PlainTextResponse(f.read())
+        if not os.path.exists(log_path):
+            return PlainTextResponse("Aguardando logs de execução...")
+        with open(log_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            return PlainTextResponse("".join(lines[-100:]))
     except Exception as e:
-        return PlainTextResponse(f"Erro ao ler a memória: {e}", status_code=500)
+        return PlainTextResponse(f"Erro ao ler logs de execução: {e}", status_code=500)
     jobs = economy_db.get_user_jobs("default_user", 50)
     return {"success": True, "history": jobs}
 
@@ -5318,18 +5382,19 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
     voice_config = {"voice_name": "default"}
     
     async def run_llm_and_tts(user_text):
-        from backend.cloud_tools.engines.xtts_engine import XttsEngine
-        import os
-        import httpx
-        
         try:
-            xtts = XttsEngine()
+            import os
+            import httpx
+            import base64
+            print("[WS] Configurando conexão XTTS...")
             
             # Buscar contexto do canal (ex: admin_config.json -> api_config/canais ou similar)
             from config_manager import ConfigManager
+            print("[WS] Lendo admin_config...")
             cm = ConfigManager(os.path.join(os.path.dirname(__file__), "admin_config.json"))
             channel_cfg = cm.get(channel, {})
             contexto = channel_cfg.get("channel_context", "")
+            print("[WS] Config lida com sucesso.")
             
             system_prompt = f"Você é a IA de comunicação em tempo real do canal '{channel}' do Apollo Edit Web. Fale em português do brasil com um tom muito natural e humano. Responda SEMPRE de forma ultra curta e rápida, em no máximo 1 ou 2 frases curtas, para manter a conversa fluida e não gastar tempo. {contexto}"
             
@@ -5341,9 +5406,11 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
             elif os.path.exists("web_ui/assets/peter_parker.wav"): # Fallback
                 with open("web_ui/assets/peter_parker.wav", "rb") as f:
                     ref_bytes = f.read()
+            print("[WS] Ref bytes carregados.")
                     
             # CHAMA O LIGHTNING AI PROXY INTERNO INVES DO VLLM
             proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
+            print(f"[WS] Chamando proxy URL: {proxy_url}")
             async with httpx.AsyncClient() as client:
                 resp = await client.post(proxy_url, json={
                     "model": "nvidia-nemotron-3-ultra-550b-a55b",
@@ -5352,6 +5419,7 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                         {"role": "user", "content": user_text}
                     ]
                 }, timeout=30)
+                print(f"[WS] Proxy respondeu com {resp.status_code}")
                 
                 if resp.status_code == 200:
                     data = resp.json()
@@ -5364,11 +5432,25 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                         await websocket.send_text(json.dumps({"type": "llm_chunk", "text": chunk}))
                         if ref_bytes:
                             try:
-                                audio_chunk = await xtts.generate_voice.remote.aio(chunk, ref_bytes)
+                                ref_b64 = base64.b64encode(ref_bytes).decode('utf-8')
+                                xtts_url = "https://apollolaplata--apollo-api-xtts.modal.run"
+                                print(f"[WS] Enviando chunk para XTTS ({len(chunk)} chars)...")
+                                async with httpx.AsyncClient() as xtts_client:
+                                    xtts_resp = await xtts_client.post(xtts_url, json={
+                                        "text": chunk,
+                                        "ref_audio_base64": ref_b64
+                                    }, timeout=60)
+                                    if xtts_resp.status_code == 200:
+                                        audio_chunk = xtts_resp.content
+                                    else:
+                                        audio_chunk = None
+                                        print(f"[WS] Erro XTTS: {xtts_resp.status_code} - {xtts_resp.text}")
                             except Exception as xtts_err:
                                 print(f"[WS] XTTS Modal falhou: {xtts_err}")
-                            if 'audio_chunk' in locals() and audio_chunk:
-                                # Converte WAV (audio_chunk) para MP3 na memÃ³ria usando ffmpeg para otimizar velocidade no front
+                                audio_chunk = None
+                                
+                            if audio_chunk:
+                                # O endpoint do modal ja retorna opus/ogg. Vamos apenas converter pra MP3 por seguranca
                                 import subprocess
                                 try:
                                     proc = subprocess.Popen(
@@ -5394,11 +5476,15 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
             print(f"[WS] Erro no pipeline Lightning/TTS:\n{trace_str}")
             with open("ws_error.log", "a", encoding="utf-8") as f:
                 f.write(f"Erro no run_llm_and_tts: {trace_str}\n")
-            await websocket.send_text(json.dumps({"type": "error", "message": str(e)}))
+            await websocket.send_text(json.dumps({"type": "error", "message": trace_str}))
 
     try:
         while True:
-            message = await websocket.receive()
+            try:
+                message = await websocket.receive()
+            except RuntimeError:
+                print(f"[WS] WebSocket fechado anormalmente no canal {channel}")
+                break
             
             if message.get("type") == "websocket.disconnect":
                 print(f"[WS] Client Disconnected normal do canal {channel}")
@@ -5613,3 +5699,44 @@ if __name__ == "__main__":
     
     start_server(args.workspace_name, args.workspace_path)
 
+
+@app.post("/api/audio/lab_test")
+async def audio_lab_test(
+    model: str = Form(...),
+    prompt: str = Form(...),
+    lyrics: str = Form(None),
+    ref_audio: UploadFile = File(None)
+):
+    import os
+    import time
+    from fastapi.responses import JSONResponse
+    
+    # 1. Salvar áudio de referência (se existir)
+    ref_path = None
+    if ref_audio:
+        os.makedirs("temp_audio", exist_ok=True)
+        ref_path = f"temp_audio/ref_{int(time.time())}_{ref_audio.filename}"
+        with open(ref_path, "wb") as f:
+            content = await ref_audio.read()
+            f.write(content)
+            
+    # 2. Lógica de Roteamento Individual para Testes
+    try:
+        # AQUI VOCÊ ENVIARÁ O REQUEST PARA O SEU MODAL DEPENDENDO DO MODELO
+        if model == "sa3":
+            # Ex: requests.post("sua_url_do_sa3_no_modal", json={"prompt": prompt})
+            return JSONResponse({"success": True, "message": "SA3 Recebido!", "audio_url": "/sua_url_falsa.wav", "debug_prompt": prompt})
+            
+        elif model == "ace-step":
+            # Ex: requests.post("sua_url_do_ace_no_modal", json={"prompt": prompt, "lyrics": lyrics})
+            return JSONResponse({"success": True, "message": "ACE-Step Recebido!", "audio_url": "/sua_url_falsa.wav"})
+            
+        elif model == "minimax":
+            # Ex: requests.post("sua_url_do_minimax_no_modal", json={"text": prompt})
+            return JSONResponse({"success": True, "message": "MiniMax Recebido!", "audio_url": "/sua_url_falsa.wav"})
+            
+        else:
+            return JSONResponse({"error": "Modelo desconhecido"}, status_code=400)
+            
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
