@@ -816,8 +816,7 @@ function clearPreview() {
                   let data = null;
                   
                   // Tratamento robusto para lidar com streaming NDJSON que pode vir do Oracle
-                  const lines = rawText.trim().split('
-');
+                  const lines = rawText.trim().split('\n');
                   for (let i = lines.length - 1; i >= 0; i--) {
                       if (lines[i].trim() === "") continue;
                       try {
