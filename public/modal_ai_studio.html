@@ -787,7 +787,7 @@ function clearPreview() {
             
             if (!prompt.trim()) { alert("Digite o prompt!"); return; }
             
-            document.getElementById('musicResultCard').style.display = 'block';
+            
             document.getElementById('musicLoading').style.display = 'block';
             document.getElementById('musicOutput').style.display = 'none';
             document.getElementById('musicError').style.display = 'none';
@@ -800,7 +800,7 @@ function clearPreview() {
                 if (refFile) {
                     refBase64 = await fileToBase64(refFile);
                 }
-                const url = 'http://163.176.135.59/api/studio/modal/generate/audio_lab';
+                const url = '/api/studio/modal/generate/audio_lab';
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-apollo-lock': 'apollo-beta-key-2026' },
@@ -816,9 +816,8 @@ function clearPreview() {
                 document.getElementById('musicLoading').style.display = 'none';
                 
                 if (data.status === 'success') {
-                    // Manda log pro lado esquerdo
-                    document.getElementById('musicOutput').style.display = 'block';
-                    document.getElementById('musicOutput').innerHTML = '<div style="color: #00d2ff; font-family: monospace; font-size: 0.9rem;">[OK] Áudio gerado com sucesso!<br><br>Status: ' + data.message + '</div>';
+                    // Log to terminal
+                    logTerminal('🚀 Áudio gerado com sucesso! ' + (data.message || ''));
                     
                     // Esconde placeholder e spinner do lado direito
                     document.getElementById('previewPlaceholder').style.display = 'none';
@@ -834,16 +833,13 @@ function clearPreview() {
                     currentImageData = data.audio_base64 || data.audio_url || "";
                     document.getElementById('btnDownloadPreview').style.display = 'block';
                 } else {
-                    document.getElementById('musicError').style.display = 'block';
-                    document.getElementById('musicError').textContent = JSON.stringify(data, null, 2);
+                    logTerminal('❌ ERRO MODAL: ' + JSON.stringify(data));
                     hideSpinner();
                 }
             } catch (err) {
-                document.getElementById('musicLoading').style.display = 'none';
-                document.getElementById('musicError').style.display = 'block';
-                document.getElementById('musicError').textContent = 'CRASH FETCH: ' + err.message;
-                hideSpinner();
-            }
+                  logTerminal('❌ CRASH FETCH: ' + err.message);
+                  hideSpinner();
+              }
         }
 
         function showTab(name) {
@@ -1249,9 +1245,8 @@ async function transcribeAudio() {
         }
 
         if (data.status === 'success') {
-                    // Manda log pro lado esquerdo
-                    document.getElementById('musicOutput').style.display = 'block';
-                    document.getElementById('musicOutput').innerHTML = '<div style="color: #00d2ff; font-family: monospace; font-size: 0.9rem;">[OK] Áudio gerado com sucesso!<br><br>Status: ' + data.message + '</div>';
+                    // Log to terminal
+                    logTerminal('🚀 Áudio gerado com sucesso! ' + (data.message || ''));
                     
                     // Esconde placeholder e spinner do lado direito
                     document.getElementById('previewPlaceholder').style.display = 'none';
@@ -1267,8 +1262,9 @@ async function transcribeAudio() {
                     currentImageData = data.audio_base64 || data.audio_url || "";
                     document.getElementById('btnDownloadPreview').style.display = 'block';
                 } else {
-            throw new Error(data.message || JSON.stringify(data));
-        }
+                    logTerminal('❌ ERRO MODAL: ' + JSON.stringify(data));
+                    hideSpinner();
+                }
     } catch(e) {
         const elapsed = stopTimer();
         hideSpinner();
