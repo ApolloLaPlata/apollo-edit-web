@@ -1126,7 +1126,7 @@ async function generateVideo() {
     const aspect_ratio = document.getElementById('vidAspect') ? document.getElementById('vidAspect').value : 'horizontal';
     const duration_el = document.getElementById('vidDuration');
     const duration = duration_el ? duration_el.value : '5s';
-    const url    = "http://163.176.135.59/api/studio/modal/generate_video";
+    const url = "/api/studio/modal/generate_video";
     const status = document.getElementById('vidStatus');
 
     log(`🎬 GERAR VÍDEO — Iniciando`, 'info');
