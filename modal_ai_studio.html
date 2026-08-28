@@ -613,6 +613,10 @@
                 </div>
                 <div id="musicOutput" style="display:none; text-align: center;">
                     <audio id="musicPlayer" controls style="width: 100%; margin-top: 10px;"></audio>
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                        <a id="btnDownloadMp3" href="#" download class="btn btn-primary btn-sm" style="font-weight: bold; display: none;">Baixar MP3</a>
+                        <a id="btnDownloadWav" href="#" download class="btn btn-ghost btn-sm" style="display: none;">Baixar WAV</a>
+                    </div>
                 </div>
                 <div id="musicError" style="display:none; color: var(--red); background: #ff475711; padding: 10px; border-radius: 8px; margin-top: 10px; font-family: var(--mono); font-size: 0.8rem;"></div>
             </div>
@@ -802,7 +806,12 @@ function clearPreview() {
                 const rawText = await response.text();
                 let data;
                 try {
-                    data = JSON.parse(rawText);
+                    const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0 && l.startsWith('{'));
+                    if (lines.length > 0) {
+                        data = JSON.parse(lines[lines.length - 1]);
+                    } else {
+                        data = JSON.parse(rawText);
+                    }
                 } catch(e) {
                     throw new Error(rawText.substring(0, 100));
                 }
@@ -811,6 +820,19 @@ function clearPreview() {
                 if (data.status === 'success') {
                     document.getElementById('musicOutput').style.display = 'block';
                     document.getElementById('musicPlayer').src = data.audio_url;
+                    currentAudioData = data.audio_url;
+                    
+                    const btnWav = document.getElementById('btnDownloadWav');
+                    btnWav.href = data.audio_url;
+                    btnWav.style.display = 'inline-block';
+                    
+                    const btnMp3 = document.getElementById('btnDownloadMp3');
+                    if (data.audio_mp3_url) {
+                        btnMp3.href = data.audio_mp3_url;
+                        btnMp3.style.display = 'inline-block';
+                    } else {
+                        btnMp3.style.display = 'none';
+                    }
                 } else {
                     document.getElementById('musicError').style.display = 'block';
                     document.getElementById('musicError').textContent = JSON.stringify(data, null, 2);
