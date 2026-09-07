@@ -1011,18 +1011,45 @@ async function generateVideo() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ prompt, image_base64: imageBase64, model, preset, aspect_ratio, duration })
         });
-        const rawText = await res.text();
-        let data;
-        try { 
-            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0 && l.startsWith('{'));
-            if (lines.length > 0) {
-                data = JSON.parse(lines[lines.length - 1]);
-            } else {
-                throw new Error("Nenhum JSON encontrado");
-            }
+        if (!res.ok) {
+            const errText = await res.text();
+            throw new Error( + '' + r'HTTP : ' + '' + r);
         }
-        catch(pe) {
-            throw new Error('Resposta inválida do servidor.');
+
+        const initialData = await res.json();
+        let data = null;
+
+        if (initialData.status === 'processing' && initialData.job_id) {
+            const jobId = initialData.job_id;
+            log( + '' + r'📦 Job enfileirado no backend (ID: ...). Iniciando polling...' + '' + r, 'info');
+            
+            let jobSuccess = false;
+            while (!jobSuccess) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                
+                const now = Math.floor((Date.now() - startTime)/1000);
+                log( + '' + r'💓 Consultando status... (s)' + '' + r, 'info');
+                document.getElementById('spinnerLabel').textContent =  + '' + r'Gerando Vídeo... s' + '' + r;
+                
+                const statusRes = await fetch( + '' + r'/api/studio/modal/status/' + '' + r);
+                if (!statusRes.ok) {
+                    throw new Error( + '' + r'Erro ao consultar status: HTTP ' + '' + r);
+                }
+                const statusData = await statusRes.json();
+                
+                if (statusData.status === 'success') {
+                    jobSuccess = true;
+                    if (typeof statusData.content === 'string') {
+                        data = JSON.parse(statusData.content);
+                    } else {
+                        data = statusData.content;
+                    }
+                } else if (statusData.status === 'error') {
+                    throw new Error(statusData.message || 'Erro na nuvem ao processar vídeo.');
+                }
+            }
+        } else {
+            data = initialData;
         }
 
         if (data.status === 'success' && data.video_base64) {

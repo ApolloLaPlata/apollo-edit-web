@@ -228,7 +228,7 @@ def api_generate_video(req: VideoRequest):
         else:
             return {"status": "error", "message": f"Modelo desconhecido: {model}. Use 'ltx' ou 'wan'."}
             
-        # Spawn assÃ¢â€Å“Ã‚Â¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
+        # Spawn assíncrono para evitar o limite de 150s do Modal HTTP Gateway
         job = engine.generate.spawn(
             prompt=req.prompt,
             image_base64=req.image_base64,
@@ -238,23 +238,11 @@ def api_generate_video(req: VideoRequest):
             seed=req.seed
         )
         
-        async def stream_result():
-            from modal.functions import FunctionCall
-            fc = FunctionCall.from_id(job.object_id)
-            while True:
-                try:
-                    # Tenta pegar o resultado com timeout curto. 
-                    # Se nÃ¢â€Å“ÃƒÂºo terminou, cai no TimeoutError e envia um espaÃ¢â€Å“Ã‚Âºo (heartbeat)
-                    res = await fc.get.aio(timeout=5.0)
-                    yield json.dumps(res)
-                    break
-                except TimeoutError:
-                    yield " "
-                except Exception as e:
-                    yield json.dumps({"status": "error", "message": f"Erro interno da Modal: {str(e)}"})
-                    break
-                    
-        return StreamingResponse(stream_result(), media_type="application/json")
+        return {
+            "status": "processing",
+            "job_id": job.object_id,
+            "message": "Geração de vídeo iniciada na nuvem."
+        }
 
     except Exception as e:
         return {"status": "error", "message": f"Erro interno de Roteamento: {str(e)}"}
@@ -564,6 +552,19 @@ def api_list_loras(user_id: str):
         
         lora_paths = [f"users/{user_id}/{lora}" for lora in loras]
         return {"status": "success", "loras": lora_paths}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@web_app.get("/status/{job_id}")
+async def api_status(job_id: str):
+    from modal.functions import FunctionCall
+    import json
+    try:
+        fc = FunctionCall.from_id(job_id)
+        res = await fc.get.aio(timeout=0.5)
+        return {"status": "success", "content": json.dumps(res)}
+    except TimeoutError:
+        return {"status": "processing"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 

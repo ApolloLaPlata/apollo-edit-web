@@ -4894,6 +4894,29 @@ class StudioGenerateRequest(BaseModel):
 class EnhanceVideoRequest(BaseModel):
     job_id: str
 
+@app.get("/api/studio/modal/status/{job_id}")
+async def modal_status_proxy(job_id: str):
+    from backend.cloud_tools.account_manager import AccountManager
+    import httpx
+    
+    am = AccountManager()
+    accounts = am.get_all_accounts()
+    valid_modal_accounts = [acc for acc in accounts if acc.get('provider') == 'modal' and acc.get('is_active', True) and acc.get('workspace')]
+    
+    if not valid_modal_accounts:
+        return {"status": "error", "message": "Nenhuma conta Modal ativa."}
+        
+    acc = valid_modal_accounts[0]
+    workspace = acc.get('workspace')
+    modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/status/{job_id}"
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(modal_url)
+            return response.json()
+    except Exception as e:
+        return {"status": "error", "message": f"Erro de conexão com Modal: {str(e)}"}
+
 @app.api_route("/api/studio/modal/{endpoint_name}", methods=["GET", "POST", "OPTIONS"])
 async def modal_proxy(endpoint_name: str, request: Request):
     from backend.cloud_tools.account_manager import AccountManager
