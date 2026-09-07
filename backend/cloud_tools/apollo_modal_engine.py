@@ -1,18 +1,18 @@
-﻿"""
+"""
 Apollo Modal Router
 ===================
-Este â”œÂ® o Roteador Central (Gateway).
-Ele recebe requisiâ”œÂºâ”œÃes JSON da sua API/Backend Node/PHP/etc.,
-identifica qual modelo (LTX 13B ou Wan) o usuâ”œÃ­rio escolheu
-baseado no preset, e dispara o comando de forma assâ”œÂ¡ncrona (ou aguarda)
-direto para as GPUs especâ”œÂ¡ficas (L4 ou A100).
+Este Ã¢â€Å“Ã‚Â® o Roteador Central (Gateway).
+Ele recebe requisiÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂes JSON da sua API/Backend Node/PHP/etc.,
+identifica qual modelo (LTX 13B ou Wan) o usuÃ¢â€Å“ÃƒÂ­rio escolheu
+baseado no preset, e dispara o comando de forma assÃ¢â€Å“Ã‚Â¡ncrona (ou aguarda)
+direto para as GPUs especÃ¢â€Å“Ã‚Â¡ficas (L4 ou A100).
 # Modificado para forcar deploy
 """
 
 import modal # force rebuild 5
 from typing import Optional
 from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
@@ -25,7 +25,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imports top-level para garantir que o Modal faâ”œÂºa o trace e os publique junto com o app
+# Imports top-level para garantir que o Modal faÃ¢â€Å“Ã‚Âºa o trace e os publique junto com o app
 import backend.cloud_tools.engines.wan_engine
 import backend.cloud_tools.engines.ltx_engine
 import backend.cloud_tools.engines.flux_engine
@@ -40,21 +40,26 @@ import backend.cloud_tools.engines.stt_engine
 import backend.cloud_tools.engines.tts_engine
 import backend.cloud_tools.engines.qwen_tts_clone_engine
 import backend.cloud_tools.engines.ace_step_comfy_engine
+import backend.cloud_tools.engines.stable_audio_engine
+import backend.cloud_tools.engines.minimax_engine
+import backend.cloud_tools.engines.ace_step_15_engine
+import backend.cloud_tools.engines.openvoice_engine
+import backend.cloud_tools.engines.qwen_image_engine
 
 from backend.cloud_tools.modal_app import app
 
 # FORCE_REBUILD = 5
 
 router_image = (
-    modal.Image.debian_slim()
-    .pip_install("fastapi[standard]", "pydantic", "requests")
+    modal.Image.debian_slim().apt_install('ffmpeg')
+    .pip_install("fastapi[standard]", "pydantic", "requests", "langdetect")
     .add_local_python_source("backend")
     .add_local_dir("E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/Comfyui Workflow API", remote_path="/workflows")
 )
 
 web_app = FastAPI(title="Apollo Render API")
 
-# Configuraâ”œÂºâ”œÃºo de CORS para permitir requisiâ”œÂºâ”œÃes do Frontend React (localhost ou Vercel/Netlify)
+# ConfiguraÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂºo de CORS para permitir requisiÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂes do Frontend React (localhost ou Vercel/Netlify)
 web_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -63,11 +68,53 @@ web_app.add_middleware(
     allow_headers=["*"],
 )
 
+
+class ConvertMp3Request(BaseModel):
+    audio_base64: str
+
+@web_app.post("/api/studio/modal/convert_mp3")
+async def convert_mp3_route(req: ConvertMp3Request, request: Request):
+    if request.headers.get("x-apollo-lock") != "apollo-beta-key-2026":
+        return {"error": "Unauthorized"}
+    try:
+        import base64
+        import subprocess
+        import os
+        import uuid
+        
+        wav_data = base64.b64decode(req.audio_base64)
+        unique_id = uuid.uuid4().hex
+        wav_path = f"/tmp/{unique_id}.wav"
+        mp3_path = f"/tmp/{unique_id}.mp3"
+        
+        with open(wav_path, "wb") as f:
+            f.write(wav_data)
+            
+        subprocess.run(["ffmpeg", "-y", "-i", wav_path, "-vn", "-ar", "44100", "-ac", "2", "-b:a", "192k", mp3_path], check=True, capture_output=True)
+        
+        with open(mp3_path, "rb") as f:
+            mp3_b64 = base64.b64encode(f.read()).decode("utf-8")
+            
+        try:
+            os.remove(wav_path)
+            os.remove(mp3_path)
+        except:
+            pass
+        
+        return {"status": "success", "audio_base64": mp3_b64}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
+
 class AudioLabRequest(BaseModel):
     prompt: str
     lyrics: Optional[str] = None
     model: str = "sa3" # "sa3", "minimax", "ace-step"
     duration: int = 30
+    
+class VoiceCloneRequest(BaseModel):
+    source_audio_b64: str
+    reference_audio_b64: str
     
 class VideoRequest(BaseModel):
     prompt: str
@@ -121,53 +168,29 @@ def api_generate_image(req: ImageRequest):
     import json
     try:
         model = req.model.lower()
-        if model != "flux2-universal":
-            return {"status": "error", "message": f"ERRO: Somente FLUX 2 DEV suportado (flux2-universal)."}
+        if model not in ["flux2-universal", "qwen-image"]:
+            return {"status": "error", "message": f"ERRO: Somente Qwen Image e FLUX suportados."}
             
-        if req.reference_images_base64:
-            from backend.cloud_tools.engines.flux_engine import Flux2ComfyEngine_V2
-            engine = Flux2ComfyEngine_V2()
-            print(f"[Router] Spawning Flux2ComfyEngine_V2 (Img2Img - PuLID) -> format: {req.format}")
-        else:
-            # Dummy comment to force deploy V5
-            from backend.cloud_tools.engines.flux_txt2img_engine import Flux2Txt2ImgEngine
-            engine = Flux2Txt2ImgEngine()
-            print(f"[Router] Spawning Flux2Txt2ImgEngine (Txt2Img) -> format: {req.format}")
+        from backend.cloud_tools.engines.qwen_image_engine import QwenImageEngine
+        engine = QwenImageEngine()
+        print(f"[Router] Spawning QwenImageEngine -> format: {req.format}, ref_count: {len(req.reference_images_base64) if req.reference_images_base64 else 0}")
         
-        # Resolve formato: usa req.format, com fallback para req.aspect_ratio
         resolved_format = req.format if req.format != "horizontal" else req.aspect_ratio
+        
         job = engine.generate.spawn(
             prompt=req.prompt,
+            images_b64=req.reference_images_base64,
             aspect_ratio=resolved_format,
-            seed=req.seed,
-            reference_images_base64=req.reference_images_base64,
-            input_image_b64=req.reference_images_base64[0] if req.reference_images_base64 else None,
-            use_upscale=req.use_upscale
+            use_upscale=req.use_upscale,
+            dynamic_steps=req.dynamic_steps
         )
         
-        async def stream_result_comfyui():
-            from modal.functions import FunctionCall
-            fc = FunctionCall.from_id(job.object_id)
-            final_res = None
-            while True:
-                try:
-                    final_res = await fc.get.aio(timeout=5.0)
-                    break
-                except TimeoutError:
-                    yield " \n"
-                except Exception as e:
-                    yield json.dumps({"status": "error", "message": f"Erro na Modal: {str(e)}"}) + "\n"
-                    return
-            
-            if final_res and final_res.get("status") == "success":
-                yield json.dumps(final_res) + "\n"
-            else:
-                yield json.dumps(final_res) + "\n"
-                
-        return StreamingResponse(stream_result_comfyui(), media_type="application/x-ndjson")
-    
+        return {"status": "success", "job_id": job.object_id}
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return {"status": "error", "message": f"Erro interno de Roteamento de Imagem: {str(e)}"}
+
 
 @web_app.post("/generate/video")
 def api_generate_video(req: VideoRequest):
@@ -176,13 +199,13 @@ def api_generate_video(req: VideoRequest):
         model = req.model.lower()
         preset = req.preset.lower()
         
-        # Limite agressivo sugerido para I2V no LTX (Prevenâ”œÂºâ”œÃºo de VRAM OOM)
+        # Limite agressivo sugerido para I2V no LTX (PrevenÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂºo de VRAM OOM)
         if model == "ltx" and preset == "fast" and req.image_base64:
             if req.duration > 2:
                 return {
                     "status": "error", 
                     "error_type": "invalid_duration",
-                    "message": f"Modo FAST I2V suporta no mâ”œÃ­ximo 2s. Use modo PRO para duraâ”œÂºâ”œÃes maiores."
+                    "message": f"Modo FAST I2V suporta no mÃ¢â€Å“ÃƒÂ­ximo 2s. Use modo PRO para duraÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂes maiores."
                 }
         
         if model == "ltx":
@@ -200,7 +223,7 @@ def api_generate_video(req: VideoRequest):
         else:
             return {"status": "error", "message": f"Modelo desconhecido: {model}. Use 'ltx' ou 'wan'."}
             
-        # Spawn assâ”œÂ¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
+        # Spawn assÃ¢â€Å“Ã‚Â¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
         job = engine.generate.spawn(
             prompt=req.prompt,
             image_base64=req.image_base64,
@@ -216,7 +239,7 @@ def api_generate_video(req: VideoRequest):
             while True:
                 try:
                     # Tenta pegar o resultado com timeout curto. 
-                    # Se nâ”œÃºo terminou, cai no TimeoutError e envia um espaâ”œÂºo (heartbeat)
+                    # Se nÃ¢â€Å“ÃƒÂºo terminou, cai no TimeoutError e envia um espaÃ¢â€Å“Ã‚Âºo (heartbeat)
                     res = await fc.get.aio(timeout=5.0)
                     yield json.dumps(res)
                     break
@@ -231,9 +254,35 @@ def api_generate_video(req: VideoRequest):
     except Exception as e:
         return {"status": "error", "message": f"Erro interno de Roteamento: {str(e)}"}
 
+def detect_language(text: str) -> str:
+    try:
+        from langdetect import detect
+        lang = detect(text)
+        mapping = {
+            "en": "english",
+            "pt": "portuguese",
+            "es": "spanish",
+            "fr": "french",
+            "de": "german",
+            "it": "italian",
+            "ja": "japanese",
+            "ko": "korean",
+            "zh-cn": "chinese",
+            "zh-tw": "chinese",
+            "ru": "russian"
+        }
+        return mapping.get(lang, "auto")
+    except Exception as e:
+        print(f"[Router] Falha ao detectar idioma: {e}")
+        return "auto"
+
 @web_app.post("/generate/tts")
 def api_generate_tts(req: TTSRequest):
     try:
+        # Garante que o texto termina com pontuacao para evitar alucinacoes (especialmente no Moss)
+        if req.text and req.text.strip() and req.text.strip()[-1] not in ".?!;:":
+            req.text = req.text.strip() + "."
+
         engine_choice = req.engine.lower()
         if engine_choice == "qwen":
             from backend.cloud_tools.engines.qwen_tts_clone_engine import QwenTtsCloneEngine
@@ -248,16 +297,22 @@ def api_generate_tts(req: TTSRequest):
                 import base64
                 ref_bytes = base64.b64decode(req.reference_audio_base64)
                 stt_res = stt.transcribe.remote(ref_bytes)
-                if isinstance(stt_res, dict) and stt_res.get("status") == "success":
+                if isinstance(stt_res, dict) and "text" in stt_res:
                     ref_text = stt_res.get("text", "")
+                    if not ref_text.strip():
+                        print("[Router] STT retornou texto vazio, usando '.' como fallback para o Qwen-TTS!")
+                        ref_text = "."
                 else:
-                    return {"status": "error", "message": "Falha no WhisperTurboSTT"}
+                    return {"status": "error", "message": f"Falha no WhisperTurboSTT: {stt_res}"}
+
+            detected_lang = detect_language(req.text)
+            print(f"[Router] Idioma detectado para Qwen: {detected_lang}")
 
             fc = engine.clone.spawn(
                 text=req.text,
                 ref_audio_b64=req.reference_audio_base64,
                 ref_text=ref_text or "",
-                language="Portuguese",
+                language=detected_lang,
                 instruct=req.instruct or ""
             )
         else:
@@ -267,11 +322,23 @@ def api_generate_tts(req: TTSRequest):
             print(f"[Router] Spawning MossTTSEngine (H100) -> Text: {req.text[:30]}...")
             
             ref_bytes = None
+            ref_text = req.ref_text
             if req.reference_audio_base64:
                 import base64
                 ref_bytes = base64.b64decode(req.reference_audio_base64)
+                if not ref_text:
+                    from backend.cloud_tools.engines.stt_engine import WhisperTurboSTT
+                    stt = WhisperTurboSTT()
+                    print("[Router] Transcrevendo ref_audio para ICL do Moss...")
+                    stt_res = stt.transcribe.remote(ref_bytes)
+                    if isinstance(stt_res, dict) and "text" in stt_res:
+                        ref_text = stt_res.get("text", "")
+                        if not ref_text.strip():
+                            ref_text = "."
+                    else:
+                        return {"status": "error", "message": f"Falha no WhisperTurboSTT: {stt_res}"}
                 
-            fc = engine.generate_voice.spawn(req.text, ref_bytes)
+            fc = engine.generate_voice.spawn(req.text, ref_bytes, ref_text)
         
         # Como o TTS pode demorar dezenas de segundos, precisamos de Streaming de ping
         async def stream_result():
@@ -514,18 +581,15 @@ from backend.cloud_tools.engines.universal_engine import apollo_volume
 @web_app.post("/generate/audio_lab")
 def api_generate_audio_lab(req: AudioLabRequest):
     try:
+        from fastapi.responses import StreamingResponse
         model = req.model.lower()
+        fc = None
+        
         if model == "sa3":
             from backend.cloud_tools.engines.stable_audio_engine import StableAudioEngine
             engine = StableAudioEngine()
             print(f"[Router] Spawning StableAudioEngine for SA3")
             fc = engine.generate_audio.spawn(prompt=req.prompt, duration_s=float(req.duration))
-            res = fc.get()
-            if isinstance(res, bytes):
-                import base64
-                b64 = base64.b64encode(res).decode('utf-8')
-                return {"status": "success", "audio_base64": b64, "message": "SA3 Recebido da Nuvem!"}
-            return {"status": "error", "error_type": "generation_failed", "message": "Erro na geracao SA3"}
             
         elif model == "minimax":
             from backend.cloud_tools.engines.minimax_engine import MinimaxEngine
@@ -533,28 +597,54 @@ def api_generate_audio_lab(req: AudioLabRequest):
             print(f"[Router] Spawning MinimaxEngine")
             is_instrumental = not bool(req.lyrics)
             fc = engine.generate.spawn(prompt=req.prompt, is_instrumental=is_instrumental, lyrics=req.lyrics or "", duration=float(req.duration))
-            res = fc.get()
-            if isinstance(res, bytes):
-                import base64
-                b64 = base64.b64encode(res).decode('utf-8')
-                return {"status": "success", "audio_base64": b64, "message": "MiniMax Recebido da Nuvem!"}
-            return {"status": "error", "error_type": "generation_failed", "message": "Erro na geracao MiniMax"}
             
         elif model == "ace-step":
-            from backend.cloud_tools.engines.ace_step_python_engine import AceStepPythonEngine
-            engine = AceStepPythonEngine()
-            print(f"[Router] Spawning AceStepPythonEngine")
-            fc = engine.generate.spawn(style_tags=req.prompt, lyrics=req.lyrics or "", length_seconds=req.duration)
-            res = fc.get()
-            if isinstance(res, dict) and "audio_base64" in res:
-                return {"status": "success", "audio_base64": res["audio_base64"], "message": "ACE-Step Recebido da Nuvem!"}
-            return {"status": "error", "error_type": "generation_failed", "message": "Erro na geracao ACE-Step"}
+            from backend.cloud_tools.engines.ace_step_15_engine import AceStep15Engine
+            engine = AceStep15Engine()
+            print(f"[Router] Spawning AceStep15Engine")
+            # AceStep 1.5 tem parametros fixos melhores q foram testados
+            fc = engine.generate.spawn(style_tags=req.prompt, lyrics=req.lyrics or "", length_seconds=req.duration, steps=64)
             
         else:
             return {"status": "error", "error_type": "invalid_model", "message": f"Modelo {model} nao suportado."}
+
+        async def stream_result():
+            try:
+                from modal.functions import FunctionCall
+                import asyncio
+                import json
+                import base64
+                
+                # Retrieve the FunctionCall by its ID
+                call_fc = FunctionCall.from_id(fc.object_id)
+                task = asyncio.create_task(call_fc.get.aio(timeout=1200))
+                
+                while not task.done():
+                    yield json.dumps({"status": "processing", "message": f"Processando áudio na nuvem... ({model})"}) + "\n"
+                    done, pending = await asyncio.wait([task], timeout=5.0)
+                    if done:
+                        break
+                        
+                res = task.result()
+                
+                if isinstance(res, bytes):
+                    b64 = base64.b64encode(res).decode('utf-8')
+                    yield json.dumps({"status": "success", "audio_base64": b64, "message": f"{model.upper()} Recebido da Nuvem!"}) + "\n"
+                elif isinstance(res, dict) and "audio_base64" in res:
+                    yield json.dumps({"status": "success", "audio_base64": res["audio_base64"], "message": f"{model.upper()} Recebido da Nuvem!"}) + "\n"
+                else:
+                    yield json.dumps({"status": "error", "error_type": "generation_failed", "message": f"Erro na geracao {model}: formato desconhecido"}) + "\n"
+                    
+            except Exception as e:
+                import traceback
+                import json
+                error_trace = traceback.format_exc()
+                yield json.dumps({"status": "error", "message": f"Erro interno AudioLab: {str(e)}", "trace": error_trace}) + "\n"
+
+        return StreamingResponse(stream_result(), media_type="application/x-ndjson")
+
     except Exception as e:
         import traceback
-        traceback.print_exc()
         return {"status": "error", "error_type": "exception", "message": str(e), "traceback": traceback.format_exc()}
 
 @app.function(
@@ -578,4 +668,40 @@ def clean_antelope():
 @modal.asgi_app()
 def apollo_api():
     return web_app
+
+
+from pydantic import BaseModel
+class TranscribeRequest(BaseModel):
+    audio_base64: str
+
+@web_app.post("/generate/voice_clone")
+def api_generate_voice_clone(req: VoiceCloneRequest):
+    try:
+        from backend.cloud_tools.engines.openvoice_engine import OpenVoiceEngine
+        engine = OpenVoiceEngine()
+        print(f"[Router] Spawning OpenVoiceEngine")
+        
+        fc = engine.clone_voice.spawn(source_audio_b64=req.source_audio_b64, reference_audio_b64=req.reference_audio_b64)
+        result_b64 = fc.get()
+        return {"success": True, "audio_base64": result_b64}
+    except Exception as e:
+        return {"error": str(e)}
+
+@web_app.post("/transcribe")
+def api_transcribe(req: TranscribeRequest):
+    try:
+        from backend.cloud_tools.engines.qwen_stt_engine import WhisperTurboSTT
+        stt = WhisperTurboSTT()
+        print("[Router] Spawning WhisperTurboSTT para Transcricao avulsa")
+        import base64
+        ref_bytes = base64.b64decode(req.audio_base64)
+        res = stt.transcribe.spawn(ref_bytes)
+        out = res.get()
+        if isinstance(out, dict) and out.get("status") == "success":
+            return {"status": "success", "text": out.get("text", "")}
+        return {"status": "error", "message": "Falha na transcriÃ§Ã£o (stt engine)"}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
+
 

@@ -88,6 +88,7 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
         remote_path = "generate/tts"
         
     modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/{remote_path}"
+    print(f"[PROXY DEBUG] Routing to: {modal_url}", flush=True)
     
     headers = {}
     if acc.get("proxy_secret"):
@@ -98,6 +99,60 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
             
     body = await request.body()
     
+    # --- INTERCEPT QWEN MULTI-PASS FOR LLM LIGHTNING ---
+    if remote_path == "generate/image":
+        try:
+            req_json = json.loads(body.decode("utf-8"))
+            images_b64 = req_json.get("reference_images_base64", [])
+            if req_json.get("model") == "qwen-image" and images_b64 and len(images_b64) > 1 and not req_json.get("dynamic_steps"):
+                num_imgs = len(images_b64)
+                print(f"[PROXY DEBUG] Detectado Qwen Multi-Pass com {num_imgs} imagens. Acionando LLM estrutural...", flush=True)
+                
+                # Load API key from admin_config.json
+                admin_cfg_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "admin_config.json"))
+                lit_key = ""
+                if os.path.exists(admin_cfg_path):
+                    with open(admin_cfg_path, 'r', encoding='utf-8') as f:
+                        c = json.load(f)
+                        keys = c.get("api_config", {}).get("api_keys", [])
+                        if keys:
+                            lit_key = keys[0]
+                
+                if lit_key:
+                    llm_prompt = f"""You are an expert AI prompt engineer. The user wants to generate an image using an iterative multi-pass process on Qwen.
+Global prompt: "{req_json.get('prompt')}"
+
+We have {num_imgs} character reference images, with zero-based indices from 0 to {num_imgs - 1}.
+Qwen supports up to 3 image inputs per generation pass. You must group the {num_imgs} images into sequential logical steps to accumulate them into a single final image.
+Return ONLY a valid JSON array of objects. Each object must have:
+- "prompt": string (The descriptive prompt for this pass. Pass 1 generates the base scene with the first characters. Pass 2+ must start with 'EDIT THIS SCENE. Keep existing elements exactly as they are...' and add the new elements).
+- "image_indices": array of integers (Which image indices to use in this pass, max 3 per pass).
+Make sure ALL {num_imgs} indices are used across the steps.
+Do not include any markdown formatting like ```json."""
+                    
+                    async with httpx.AsyncClient(timeout=10.0) as lc:
+                        llm_res = await lc.post(
+                            "https://lightning.ai/api/v1/chat/completions",
+                            headers={"Authorization": f"Bearer {lit_key}", "Content-Type": "application/json"},
+                            json={
+                                "model": "nvidia-nemotron-3-ultra-550b-a55b",
+                                "messages": [{"role": "user", "content": llm_prompt}]
+                            }
+                        )
+                        if llm_res.status_code == 200:
+                            content = llm_res.json()["choices"][0]["message"]["content"]
+                            s_idx = content.find('[')
+                            e_idx = content.rfind(']')
+                            if s_idx != -1 and e_idx != -1:
+                                dynamic_steps = json.loads(content[s_idx:e_idx+1])
+                                req_json["dynamic_steps"] = dynamic_steps
+                                body = json.dumps(req_json).encode("utf-8")
+                                print(f"[PROXY DEBUG] LLM Dynamic Steps Injetados com sucesso: {dynamic_steps}", flush=True)
+                        else:
+                            print(f"[PROXY DEBUG] Erro no LLM: {llm_res.text}", flush=True)
+        except Exception as e:
+            print(f"[PROXY DEBUG] Erro ao injetar LLM: {e}", flush=True)
+    # ---------------------------------------------------
 
     # Execucao com Streaming para repassar heartbeats e evitar 504 no Nginx
     client = httpx.AsyncClient(timeout=300.0)

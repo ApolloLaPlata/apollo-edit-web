@@ -426,7 +426,7 @@
                 <div class="card-title">🖼️ Gerador de Imagens <span class="badge" id="imgBadgeModel">FLUX.1-schnell L4</span></div>
                 <div class="field-label">Modelo</div>
                 <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState();">
-                    <option value="flux2-universal">FLUX.2 (Motor Universal - T2I / I2I)</option>
+                    <option value="qwen-image">Qwen 2.5 Image Edit (T2I / I2I / Multi-Characters)</option>
                 </select>
                 
                 <div class="field-label">Prompt (descreva a imagem em inglês)</div>
@@ -765,7 +765,7 @@ function updateGenButtonState() {
     const model = document.getElementById('imgModel').value;
     const btn = document.getElementById('btnGenImg');
     
-    if (files.length >= 2 && model === 'flux2-universal') {
+    if (files.length >= 2 && model === 'qwen-image') {
         btn.innerHTML = '✨ Gerar Cena Multi-Pass (LLM Text-Locking Ativado)';
         btn.style.background = 'linear-gradient(90deg, #ff0055, #7000ff)';
     } else {
@@ -853,7 +853,7 @@ async function generateImage() {
         'flux-dev':     'Aquecendo A10G • Carregando FLUX.1-dev...',
         'flux-pulid':   'Aquecendo A10G • Carregando FLUX PuLID...',
         'flux-translated': 'Aquecendo A10G • Preparando Workflow Img2Img...',
-        'flux2-universal': 'Aquecendo A10G • Carregando FLUX.2-Universal...'
+        'qwen-image': 'Aquecendo GPU (H100) ⚡ Carregando Qwen Image Edit Plus...'
     };
     showSpinner(modelLabels[model] || 'Aquecendo GPU...');
 
