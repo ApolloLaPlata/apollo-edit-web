@@ -6,8 +6,8 @@
         "workspace": "roxingo",
         "token_id": "ak-6pDTu1xBPp1jPG08LXK1K8",
         "token_secret": "as-f8CE8vvKRJdL8BODP1FSkj",
-        "is_active": false,
-        "last_balance": 0.0,
+        "is_active": true,
+        "last_balance": 30.0,
         "last_spend": 43.10025604999999
     },
     {
@@ -61,7 +61,7 @@
         "workspace": "historiasde7dias",
         "token_id": "ak-AXtOSYJJ0RTN3bItvgrma9",
         "token_secret": "as-8E1C4r7BsOE07iYcvXmOlx",
-        "is_active": true,
+        "is_active": false,
         "last_balance": 29.39335745,
         "last_spend": 0.60664255,
         "proxy_key": "wk-Y2wC64cedn5Y75ewJD4bxu",

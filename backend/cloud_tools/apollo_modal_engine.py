@@ -134,6 +134,7 @@ class ImageRequest(BaseModel):
     reference_images_base64: Optional[list[str]] = None
     use_upscale: bool = True  # Se False, retorna a imagem base sem upscale
     lora_name: Optional[str] = None
+    dynamic_steps: Optional[list] = None
 
 class TTSRequest(BaseModel):
     text: str
@@ -163,6 +164,10 @@ class TrainLoraRequest(BaseModel):
     images_b64: list[str]
     trigger_word: str = "ohwx"
 
+@web_app.post("/generate_image")
+def api_generate_image_legacy(req: ImageRequest):
+    return api_generate_image(req)
+
 @web_app.post("/generate/image")
 def api_generate_image(req: ImageRequest):
     import json
@@ -185,7 +190,7 @@ def api_generate_image(req: ImageRequest):
             dynamic_steps=req.dynamic_steps
         )
         
-        return {"status": "success", "job_id": job.object_id}
+        return {"status": "processing", "job_id": job.object_id}
     except Exception as e:
         import traceback
         traceback.print_exc()
