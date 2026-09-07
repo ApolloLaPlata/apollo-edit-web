@@ -35,7 +35,8 @@ wan_image = (
         "imageio",
         "imageio-ffmpeg",
         "av",
-        "Pillow"
+        "Pillow",
+        "fastapi[standard]"
     )
     .env({
         "HF_HUB_ENABLE_HF_TRANSFER": "1",

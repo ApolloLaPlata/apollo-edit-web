@@ -75,7 +75,7 @@ class WaterfallRouter:
             return await self._execute_openrouter(prompt, system_prompt, user_preferred_model)
 
         # O MODELO PADRÃO DA NOSSA INFRAESTRUTURA: Rápido e gratuito na Lightning
-        target_model = user_preferred_model if user_preferred_model else "meta-llama/Llama-3-70b-chat-hf"
+        target_model = user_preferred_model if user_preferred_model else "openai/gpt-4o"
 
         # TENTATIVA 1 a 4: RODÍZIO LIGHTNING AI (Primazia Absoluta)
         for attempt in range(4):

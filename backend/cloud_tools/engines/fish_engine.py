@@ -74,7 +74,7 @@ class FishTTSEngine:
         print("[INIT] Fish-Speech Pronto para Geração (Server Online)!")
 
     @modal.method()
-    def generate_voice(self, text: str, reference_audio_bytes: bytes = None):
+    def generate_voice(self, text: str, reference_audio_bytes: bytes = None, reference_text: str = ""):
         import httpx
         import ormsgpack
         
@@ -90,13 +90,10 @@ class FishTTSEngine:
         }
         
         if reference_audio_bytes:
-            from fish_speech.utils.schema import ServeReferenceAudio
-            # A API espera os audios como ServeReferenceAudio no formato MsgPack
-            # Mas como não importamos no cliente, apenas montamos a estrtura do Pydantic
             payload["references"] = [
                 {
                     "audio": reference_audio_bytes,
-                    "text": "" # No v1.5 API, text can be empty if it's promptless reference? Wait, fish speech needs reference text usually. We will leave empty and let it transcribe or fail. 
+                    "text": reference_text 
                 }
             ]
             

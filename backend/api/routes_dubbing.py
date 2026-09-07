@@ -1,4 +1,4 @@
-﻿import os
+import os
 import uuid
 import logging
 from fastapi import APIRouter, HTTPException, BackgroundTasks

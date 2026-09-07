@@ -38,13 +38,12 @@ moss_image = (
         "tiktoken==0.12.0",
         "huggingface_hub",
         "fastapi[standard]",
-        "accelerate>=0.26.0"
+        "accelerate>=0.26.0",
+        "torchcodec"
     )
     .run_commands(
         [
-            "python -c \"from huggingface_hub import snapshot_download; "
-            "print('[BUILD] Baixando Pesos do MOSS-TTS (25GB)... Isso pode demorar na primeira vez.'); "
-            "snapshot_download(repo_id='OpenMOSS-Team/MOSS-TTS', local_dir_use_symlinks=False)\""
+            "python -c \"from huggingface_hub import snapshot_download; print('[BUILD] Baixando Pesos do MOSS-TTS (25GB)...'); snapshot_download(repo_id='OpenMOSS-Team/MOSS-TTS', local_dir_use_symlinks=False)\""
         ]
     )
 )
@@ -80,7 +79,7 @@ class MossTTSEngine:
         print("[INIT] MOSS-TTS Pronto para Geração!")
 
     @modal.method()
-    def generate_voice(self, text: str, reference_audio_bytes: bytes = None):
+    def generate_voice(self, text: str, reference_audio_bytes: bytes = None, ref_text: str = ""):
         """
         Gera áudio a partir do texto fornecido.
         Se reference_audio_bytes for fornecido, tenta realizar a clonagem zero-shot.
@@ -88,28 +87,51 @@ class MossTTSEngine:
         import torch
         import torchaudio
         import io
-        import numpy as np
-        import soundfile as sf
+        import tempfile
+        import os
         
         print(f"[GEN] Recebido pedido TTS. Texto: {text[:50]}...")
         
-        inputs = {"conversations": [{"role": "user", "content": text}]}
-        
-        if reference_audio_bytes:
-            # Carregar o áudio de referência a partir de bytes
-            audio_io = io.BytesIO(reference_audio_bytes)
-            ref_audio, sr = torchaudio.load(audio_io)
-            inputs["reference_audio"] = ref_audio
-            inputs["reference_sample_rate"] = sr
-            
         with torch.no_grad():
-            # A API exata do MOSS-TTS depende da implementação do repositório.
-            # Baseado nos scripts padrões da comunidade para o pipeline deles:
-            input_features = self.processor(**inputs)
-            if hasattr(input_features, "to"):
-                input_features = input_features.to(self.device, dtype=self.dtype)
+            if reference_audio_bytes:
+                # O Moss-TTS exige o arquivo físico para a referência
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_ref:
+                    tmp_ref.write(reference_audio_bytes)
+                    ref_audio_path = tmp_ref.name
+                    
+                # Se não houver ref_text, transcreve com um fallback básico ou exige que seja enviado.
+                # Como a API do Moss exige ref_text + text, passamos o que vier.
+                full_text = ref_text + " " + text if ref_text else text
                 
-            outputs = self.model.generate(**input_features, max_new_tokens=4096)
+                conversations = [
+                    [
+                        self.processor.build_user_message(text=full_text, reference=[ref_audio_path]),
+                        self.processor.build_assistant_message(audio_codes_list=[ref_audio_path])
+                    ]
+                ]
+                
+                batch = self.processor(conversations, mode="continuation")
+            else:
+                conversations = [
+                    [
+                        self.processor.build_user_message(text=text)
+                    ]
+                ]
+                batch = self.processor(conversations, mode="generation")
+                
+            input_ids = batch["input_ids"].to(self.device)
+            attention_mask = batch["attention_mask"].to(self.device)
+                
+            outputs = self.model.generate(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                max_new_tokens=4096,
+            )
+            
+            # Limpa o arquivo temporário
+            if reference_audio_bytes and 'ref_audio_path' in locals():
+                os.remove(ref_audio_path)
+                
             messages = self.processor.decode(outputs)
             audio = messages[0].audio_codes_list[0]
             if audio.ndim == 1:
@@ -117,6 +139,7 @@ class MossTTSEngine:
             audio_data = audio.detach().cpu().to(torch.float32).numpy()
             
         # Converter para bytes WAV
+        import soundfile as sf
         out_io = io.BytesIO()
         sf.write(out_io, audio_data.T, samplerate=self.processor.model_config.sampling_rate, format='WAV')
         out_bytes = out_io.getvalue()
@@ -130,17 +153,22 @@ from fastapi import Request
 async def api_moss_tts(request: Request):
     try:
         from fastapi.responses import Response, JSONResponse
+        import base64
         
-        # Pode receber json
         data = await request.json()
         text = data.get("text", "")
+        ref_b64 = data.get("reference_audio_base64", "")
         
         if not text:
             return JSONResponse({"error": "No text provided"}, status_code=400)
             
+        ref_bytes = None
+        if ref_b64:
+            ref_bytes = base64.b64decode(ref_b64)
+            
         tts_service = MossTTSEngine()
         # O processamento do moss tts demora, então aguardamos a remote call
-        audio_bytes = tts_service.generate_voice.remote(text)
+        audio_bytes = tts_service.generate_voice.remote(text, reference_audio_bytes=ref_bytes)
         
         return Response(content=audio_bytes, media_type="audio/wav")
     except Exception as e:

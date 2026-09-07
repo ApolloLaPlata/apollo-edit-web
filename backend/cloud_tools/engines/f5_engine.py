@@ -69,26 +69,13 @@ class F5TTSEngine:
                 gen_text=text
             )
             
-            # CONVERSÃO OPUS 100% EM MEMÓRIA
-            # Usa o soundfile para garantir a conversão matemática correta do numpy array para WAV em memória
-            import subprocess
+            # Retorna o WAV puro em memória (0% perda)
             import io
             import soundfile as sf
             
             wav_io = io.BytesIO()
             sf.write(wav_io, wav, samplerate=sr, format='WAV')
-            wav_bytes = wav_io.getvalue()
-            
-            # Injeta o WAV da memória direto no FFmpeg para virar Opus (sem tocar o disco)
-            proc = subprocess.Popen(
-                ['ffmpeg', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '32k', '-vbr', 'on', '-f', 'ogg', 'pipe:1'],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.DEVNULL
-            )
-            opus_bytes, _ = proc.communicate(input=wav_bytes)
-            
-            return opus_bytes
+            return wav_io.getvalue()
         finally:
             if ref_file_path and os.path.exists(ref_file_path):
                 os.remove(ref_file_path)

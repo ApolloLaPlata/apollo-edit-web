@@ -20,14 +20,16 @@ def download_xtts():
 
 xtts_image = (
     modal.Image.debian_slim(python_version="3.11")
-    .apt_install("ffmpeg")
+    .apt_install("ffmpeg", "git")
+    .pip_install("audiosr==0.0.7")
     .pip_install(
-        "torch<2.6.0",
-        "torchaudio<2.6.0",
+        "numpy<2.0.0",
+        "torch==2.5.1",
+        "torchaudio==2.5.1",
+        "torchvision==0.20.1",
         "TTS==0.22.0",
         "soundfile",
         "fastapi[standard]",
-        "numpy<2.0.0",
         "transformers<4.35.0"
     )
     .run_function(download_xtts)
@@ -52,7 +54,7 @@ class XttsEngine:
         print("[INIT] XTTSv2 Pronto para Geração!")
 
     @modal.method()
-    def generate_voice(self, text: str, reference_audio_bytes: bytes = None, temperature: float = 0.75, speed: float = 1.0):
+    def generate_voice(self, text: str, reference_audio_bytes: bytes = None, temperature: float = 0.70, speed: float = 1.0, language: str = "pt", repetition_penalty: float = 3.0, top_p: float = 0.85, top_k: int = 50, upsample_audiosr: bool = False, audiosr_gs: float = 3.5):
         """
         Gera áudio a partir do texto. Requer referência para clonagem.
         Caso contrário, usa uma voz padrão ou precisamos embutir um áudio genérico.
@@ -60,38 +62,70 @@ class XttsEngine:
         import soundfile as sf
         import tempfile
         import os
+        import subprocess
         
-        print(f"[GEN] Recebido pedido XTTSv2. Texto: {text[:50]}...")
+        print(f"[GEN] Pedido XTTSv2 | Temp: {temperature} | RepPen ignorado na API base | Lang: {language} | Texto: {text[:50]}...")
         
-        # XTTSv2 OBRIGA ter um arquivo WAV de referência.
-        # Se não fornecido, usaríamos um áudio genérico. 
-        # Aqui vamos exigir o áudio por precaução, ou escrever um dummy se None.
         ref_file_path = None
-        
         if reference_audio_bytes:
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
                 f.write(reference_audio_bytes)
                 ref_file_path = f.name
         else:
-            # Não tem clonagem solicitada, mas XTTSv2 precisa de um speaker.
-            # Idealmente teríamos um áudio base PT-BR embutido, mas para simplificar:
             raise ValueError("XTTSv2 requer um áudio de referência (speaker) obrigatório.")
                 
         try:
-            # Geração com parâmetros avançados (Laboratório)
+            # Geração com parâmetros seguros homologados anteriormente.
             wav = self.tts.tts(
                 text=text, 
                 speaker_wav=ref_file_path, 
-                language="pt",
+                language=language,
                 temperature=temperature,
                 speed=speed
             )
             
-            # Converter para bytes WAV
-            out_io = io.BytesIO()
-            # O XTTSv2 usa 24000 de samplerate geralmente
-            sf.write(out_io, wav, samplerate=24000, format='WAV')
-            return out_io.getvalue()
+            if upsample_audiosr:
+                # Salvar o 24kHz temporariamente
+                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_24k:
+                    sf.write(tmp_24k.name, wav, samplerate=24000, format='WAV')
+                    in_wav = tmp_24k.name
+                
+                # Executar AudioSR em diretório temporário
+                import tempfile
+                import glob
+                out_dir = tempfile.mkdtemp()
+                
+                print(f"[AudioSR] Iniciando super-resolução para 48kHz (GS={audiosr_gs})...")
+                cmd = [
+                    "audiosr",
+                    "-i", in_wav,
+                    "-s", out_dir,
+                    "--model_name", "speech",
+                    "-d", "cuda",
+                    "--ddim_steps", "50",
+                    "-gs", str(audiosr_gs)
+                ]
+                subprocess.run(cmd, check=True)
+                
+                # Encontrar o arquivo de saída gerado no diretório (o AudioSR cria uma subpasta com a data)
+                import shutil
+                generated_files = glob.glob(os.path.join(out_dir, "**", "*.wav"), recursive=True)
+                if generated_files:
+                    with open(generated_files[0], "rb") as f_up:
+                        final_bytes = f_up.read()
+                else:
+                    print("[AudioSR] Falhou ao encontrar o arquivo upsampled. Retornando 24kHz original.")
+                    final_bytes = open(in_wav, "rb").read()
+                
+                shutil.rmtree(out_dir, ignore_errors=True)
+                os.remove(in_wav)
+                return final_bytes
+
+            else:
+                # Retorno padrão 24kHz
+                out_io = io.BytesIO()
+                sf.write(out_io, wav, samplerate=24000, format='WAV')
+                return out_io.getvalue()
         finally:
             if ref_file_path and os.path.exists(ref_file_path):
                 os.remove(ref_file_path)
@@ -111,16 +145,20 @@ class XttsEngine:
             data = request
             text = data.get("text", "")
             ref_b64 = data.get("ref_audio_base64", "")
-            temperature = data.get("temperature", 0.75)
+            temperature = data.get("temperature", 0.70)
             speed = data.get("speed", 1.0)
+            language = data.get("language", "pt")
+            repetition_penalty = data.get("repetition_penalty", 3.0)
+            top_p = data.get("top_p", 0.85)
+            top_k = data.get("top_k", 50)
             
             if not text:
                 return JSONResponse({"error": "No text provided"}, status_code=400)
                 
             ref_bytes = base64.b64decode(ref_b64) if ref_b64 else None
             
-            # Chama a geração WAV original
-            wav_bytes = self.generate_voice.local(text, ref_bytes, temperature, speed)
+            # Chama a geração WAV original com todos os novos parâmetros
+            wav_bytes = self.generate_voice.local(text, ref_bytes, temperature, speed, language, repetition_penalty, top_p, top_k)
             
             # Converter WAV para Opus in-memory via FFmpeg
             process = subprocess.Popen(

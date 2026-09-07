@@ -1,16 +1,16 @@
-﻿import os
+import os
 import modal
 import base64
 
-# Laboratório XTTS Puro - Teste de Extremos Emocionais
-# Vamos gerar 4 áudios testando a gramática e a temperatura (sem modelo secundário)
+# Laborat�rio XTTS Puro - Teste de Extremos Emocionais
+# Vamos gerar 4 �udios testando a gram�tica e a temperatura (sem modelo secund�rio)
 
 def run_tests():
-    # Referência neutra padrão (substitua por um path real se tiver)
+    # Refer�ncia neutra padr�o (substitua por um path real se tiver)
     ref_path = "public/reference_audio.wav"
     
     if not os.path.exists(ref_path):
-        print(f"ERRO: Não encontrei {ref_path}. Por favor, crie ou altere este caminho para rodar o laboratório.")
+        print(f"ERRO: N�o encontrei {ref_path}. Por favor, crie ou altere este caminho para rodar o laborat�rio.")
         return
 
     with open(ref_path, "rb") as f:
@@ -26,9 +26,9 @@ def run_tests():
         return
 
     test_cases = [
-        {"nome": "1_neutro.wav", "text": "A porta estava fechada, então eu voltei para casa.", "temp": 0.75, "speed": 1.0},
+        {"nome": "1_neutro.wav", "text": "A porta estava fechada, ent�o eu voltei para casa.", "temp": 0.75, "speed": 1.0},
         {"nome": "2_tristeza_extrema.wav", "text": "A porta... estava fechada... eu... eu voltei para casa...", "temp": 0.50, "speed": 0.85},
-        {"nome": "3_raiva_extrema.wav", "text": "A porta estava FECHADA! ENTÃO EU VOLTEI PARA CASA!!!", "temp": 0.90, "speed": 1.15},
+        {"nome": "3_raiva_extrema.wav", "text": "A porta estava FECHADA! ENT�O EU VOLTEI PARA CASA!!!", "temp": 0.90, "speed": 1.15},
         {"nome": "4_caotico.wav", "text": "A porta... FECHADA!? Voltei pra casa!!!", "temp": 1.0, "speed": 1.1}
     ]
 
@@ -36,7 +36,7 @@ def run_tests():
         print(f"-> Gerando {case['nome']} (Temp: {case['temp']}, Speed: {case['speed']})")
         print(f"   Texto: {case['text']}")
         try:
-            # Chama a função remota na GPU
+            # Chama a fun��o remota na GPU
             audio_bytes = engine.generate_voice.remote(
                 case["text"], 
                 ref_bytes, 

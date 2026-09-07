@@ -34,7 +34,6 @@ with tts_image.imports():
     image=tts_image,
     gpu="L4",
     timeout=300,
-    min_containers=1,
     enable_memory_snapshot=True,
 )
 class KokoroTTS:

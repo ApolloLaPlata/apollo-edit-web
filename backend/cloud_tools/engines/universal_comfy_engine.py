@@ -1,4 +1,4 @@
-import modal
+﻿import modal
 import os
 import urllib.request
 import json
@@ -168,6 +168,19 @@ class UniversalComfyEngine:
                     "render_time_seconds": round(render_time, 2)
                 }
             else:
-                yield {"type": "error", "message": f"Nó de output {output_node_id} não gerou imagens."}
+                yield {"type": "error", "message": f"NÃ³ de output {output_node_id} nÃ£o gerou imagens."}
         else:
-            yield {"type": "error", "message": "Histórico não encontrado."}
+            yield {"type": "error", "message": "HistÃ³rico nÃ£o encontrado."}
+
+@app.function(
+    gpu="h100", 
+    timeout=3600, 
+    image=comfy_universal_image, 
+    
+    
+)
+@modal.web_server(8188, startup_timeout=120)
+def serve_gui():
+    import subprocess
+    print("[ComfyUI GUI] Iniciando servidor publico na Modal...")
+    subprocess.check_call(["python", "main.py", "--listen", "0.0.0.0", "--port", "8188"], cwd="/comfyui")

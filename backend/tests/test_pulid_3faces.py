@@ -1,8 +1,8 @@
-﻿"""
+"""
 test_pulid_3faces.py
 ====================
-Teste de consistência máxima com PuLID + Flux.1-dev.
-Passa as 3 imagens de referência REAIS para o workflow_3_faces_no_masks.json
+Teste de consist�ncia m�xima com PuLID + Flux.1-dev.
+Passa as 3 imagens de refer�ncia REAIS para o workflow_3_faces_no_masks.json
 e gera a cena steampunk com identidade visual travada.
 """
 
@@ -16,10 +16,10 @@ import io
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-# ── Configuração ──────────────────────────────────────────────────────────────
+# -- Configura��o --------------------------------------------------------------
 MODAL_URL = "https://descarganews--apollo-render-router-apollo-api.modal.run"
 
-# Imagens de referência dos 3 personagens
+# Imagens de refer�ncia dos 3 personagens
 IMG_JINX       = r"C:\Users\v5est\Downloads\696191561_122139344121114074_799107263541253788_n.jpg"
 IMG_ELON       = r"C:\Users\v5est\Downloads\2elon_musk_sorvete_txt2img.png"
 IMG_CRYING_MAN = r"C:\Users\v5est\Downloads\Gemini_Generated_Image_trq27dtrq27dtrq2.png"
@@ -36,7 +36,7 @@ SCENE_PROMPT = (
     "photorealistic, 8k, dramatic lighting, atmospheric fog"
 )
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# -- Helpers -------------------------------------------------------------------
 def img_to_b64(path: str) -> str:
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
@@ -48,10 +48,10 @@ def save_b64_image(b64: str, path: str):
     img.save(path, quality=95)
     print(f"  [OK] Salvo: {path} ({img.size[0]}x{img.size[1]}px)")
 
-# ── Main ───────────────────────────────────────────────────────────────────────
+# -- Main -----------------------------------------------------------------------
 def main():
     print("=" * 60)
-    print("  TESTE: PuLID 3 Faces — Consistência Máxima")
+    print("  TESTE: PuLID 3 Faces � Consist�ncia M�xima")
     print("=" * 60)
 
     # 1. Carrega workflow
@@ -59,8 +59,8 @@ def main():
     with open(WORKFLOW_PATH, "r", encoding="utf-8") as f:
         workflow = json.load(f)
 
-    # 2. Converte imagens de referência para base64
-    print("[2] Carregando imagens de referência...")
+    # 2. Converte imagens de refer�ncia para base64
+    print("[2] Carregando imagens de refer�ncia...")
     b64_jinx  = img_to_b64(IMG_JINX)
     b64_elon  = img_to_b64(IMG_ELON)
     b64_crying = img_to_b64(IMG_CRYING_MAN)
@@ -69,7 +69,7 @@ def main():
     print(f"  [OK] Crying Man: {len(b64_crying)//1024} KB")
 
     # 3. Injeta no workflow
-    print("[3] Injetando referências e prompt no workflow...")
+    print("[3] Injetando refer�ncias e prompt no workflow...")
 
     # Prompt principal
     for node_id, node in workflow.items():
@@ -77,7 +77,7 @@ def main():
             if "text" in node.get("inputs", {}):
                 node["inputs"]["text"] = SCENE_PROMPT
 
-    # Imagens de referência nos nós APOLLO_INPUT_IMAGE_X
+    # Imagens de refer�ncia nos n�s APOLLO_INPUT_IMAGE_X
     def set_image(node_id, b64_data, filename):
         if node_id in workflow and workflow[node_id].get("class_type") == "LoadImage":
             workflow[node_id]["inputs"]["image"] = filename
@@ -86,7 +86,7 @@ def main():
     set_image("APOLLO_INPUT_IMAGE_2", b64_elon,   "ref_elon.png")
     set_image("APOLLO_INPUT_IMAGE_3", b64_crying,  "ref_crying.png")
 
-    # Seed e resolução
+    # Seed e resolu��o
     if "98:25" in workflow:
         workflow["98:25"]["inputs"]["noise_seed"] = 42
     if "98:47" in workflow:
@@ -137,7 +137,7 @@ def main():
         elapsed = time.time() - t0
         
         if result and result.get("status") == "success" and result.get("image_base64"):
-            print(f"\n  🎉 Gerado em {elapsed:.1f}s!")
+            print(f"\n  ?? Gerado em {elapsed:.1f}s!")
             save_b64_image(result["image_base64"], OUTPUT_PATH)
         else:
             print(f"\n  [ERROR] Falhou:")

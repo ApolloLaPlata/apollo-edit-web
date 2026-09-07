@@ -21,6 +21,7 @@ from backend.agents.pricing_scraper_agent import PricingScraperAgent
 from backend.agents.traffic_manager_agent import TrafficManagerAgent
 from backend.agents.trend_researcher_agent import TrendResearcherAgent
 from backend.agents.hive_bus import hive_bus
+from backend.api import routes_audio_lab
 from backend.api import routes_video, routes_admin, routes_whatsapp, routes_phantom, worker_routes, routes_economy, routes_ui_ws, routes_render, routes_auth, routes_payments, routes_webhooks, routes_subtitles, routes_podcast, routes_tts, routes_dubbing, routes_editor, routes_ai_director, routes_clip_factory, routes_auto_mapper, routes_dark_facil, routes_settings, routes_queue, routes_copilot
 # Sistema de Economia e Load Balancer
 from backend.financial_agent.coin_ledger import OPERATION_COSTS
@@ -135,7 +136,12 @@ app.add_middleware(
 )
 app.add_middleware(RateLimitMiddleware)
 
+from backend.api import routes_audio_lab
 from backend.api import routes_video, routes_admin, routes_whatsapp, routes_phantom, worker_routes, routes_economy, routes_ui_ws, routes_render, routes_auth, routes_payments, routes_webhooks, routes_subtitles, routes_podcast, routes_tts, routes_dubbing, routes_editor, routes_ai_director, routes_clip_factory, routes_auto_mapper, routes_dark_facil, routes_settings, routes_queue, routes_copilot, routes_youtube, routes_studio, routes_storage_gateway
+
+@app.get("/api/mobile/pending_approvals")
+def get_pending_approvals():
+    return {"status": "ok", "pending": []}
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -147,6 +153,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 # Registrando as Rotas de VÃ­deo (Site), Admin (Painel), WhatsApp, Workers, Phantom Fleet, Economia e UI WebSocket
+app.include_router(routes_audio_lab.router)
 app.include_router(routes_video.router)
 app.include_router(routes_subtitles.router)
 app.include_router(routes_editor.router)
@@ -174,6 +181,10 @@ app.include_router(routes_youtube.router)
 app.include_router(routes_studio.router)
 app.include_router(routes_storage_gateway.router)
 
+# Rotas de Modelos Musicais (YuE / ACE-Step)
+from backend.api import routes_audio
+app.include_router(routes_audio.router)
+
 @app.get("/")
 def read_root():
     return {"status": "online", "message": "Apollo Motor Central Operacional"}
@@ -197,7 +208,7 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
     # Rodando o servidor local na porta 8000
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True, reload_excludes=["logs/*", "*.log", "Workspaces/*", ".agents/*", "scratch/*", "backend/storage/*", "backend/storage/memories/*", "*.json"])
 
 
 

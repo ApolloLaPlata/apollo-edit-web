@@ -1,4 +1,4 @@
-﻿if __name__ == "__main__":
+if __name__ == "__main__":
     from backend.maestro.lightning_fleet import LightningFleetManager
     
     fleet = LightningFleetManager()

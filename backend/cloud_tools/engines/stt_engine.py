@@ -56,6 +56,21 @@ class WhisperTurboSTT:
                         _ = file_obj.read()
             print("Model files successfully cached in RAM!")
 
+    @modal.method()
+    def transcribe(self, audio_bytes: bytes, language: str = "pt"):
+        import tempfile
+        import os
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+            f.write(audio_bytes)
+            tmp_path = f.name
+        try:
+            segments, info = self.model.transcribe(tmp_path, beam_size=5, language=language, vad_filter=True)
+            text = " ".join([segment.text for segment in segments])
+            return {"text": text.strip()}
+        finally:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
     @modal.fastapi_endpoint(method="POST", label="apollo-api-transcribe")
     async def api_transcribe(self, request: Request):
         try:

@@ -104,7 +104,7 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
         try:
             req_json = json.loads(body.decode("utf-8"))
             images_b64 = req_json.get("reference_images_base64", [])
-            if req_json.get("model") == "qwen-image" and images_b64 and len(images_b64) > 1 and not req_json.get("dynamic_steps"):
+            if req_json.get("model") == "qwen-image" and images_b64 and len(images_b64) >= 1 and not req_json.get("dynamic_steps"):
                 num_imgs = len(images_b64)
                 print(f"[PROXY DEBUG] Detectado Qwen Multi-Pass com {num_imgs} imagens. Acionando LLM estrutural...", flush=True)
                 

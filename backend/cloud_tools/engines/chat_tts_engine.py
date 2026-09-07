@@ -1,88 +1,51 @@
-"""
-Motor TTS Focado em Conversação (ChatTTS) via Modal
-===================================================
-Otimizado para inflexões naturais, risadas e interjeições para o Pocket Director.
-"""
-
 import modal
-from backend.cloud_tools.modal_app import app
-import os
-import io
-from fastapi import Request
 
-chattts_image = (
-    modal.Image.debian_slim(python_version="3.11")
-    .apt_install("ffmpeg")
-    .pip_install(
-        "torch>=2.0.0",
-        "torchaudio",
-        "ChatTTS",
-        "soundfile",
-        "fastapi",
-        "requests"
-    )
+chat_tts_image = (
+    modal.Image.debian_slim(python_version="3.10")
+    .apt_install("git", "ffmpeg")
+    .pip_install("torch", "torchaudio", "transformers", "vector_quantize_pytorch", "vocos", "omegaconf", "pydantic", "fastapi", "huggingface_hub", "requests", "tqdm", "soundfile")
+    .run_commands("pip install git+https://github.com/2noise/ChatTTS")
+    .env({"HF_HOME": "/models/huggingface_cache"})
 )
 
-@app.cls(
-    image=chattts_image,
-    gpu="L4",
-    timeout=300,
-    min_containers=0,
-    enable_memory_snapshot=True,
-)
-class ConversationalTTS:
+try:
+    from backend.cloud_tools.modal_app import app
+except ImportError:
+    app = modal.App("apollo-api-chattts", image=chat_tts_image)
+
+vol = modal.Volume.from_name("apollo-voice-models", create_if_missing=True)
+
+@app.cls(gpu="L4", scaledown_window=120, image=chat_tts_image, volumes={"/models": vol})
+class ChatTTSEngine:
     @modal.enter()
-    def load_model(self):
-        import torch
-        print("Preloading ChatTTS...")
-        
-        if not torch.cuda.is_available():
-            print("Snapshot Build: Fazendo download compulsório do ChatTTS para RAM...")
-            import ChatTTS
-            chat = ChatTTS.Chat()
-            chat.load(compile=False, device='cpu') # Força download dos pesos
-            print("Pesos do ChatTTS baixados para RAM!")
-            
-        self.chat = None
+    def setup(self):
+        import ChatTTS
+        print("Initializing ChatTTS...")
+        self.chat = ChatTTS.Chat()
+        self.chat.load(compile=False)
+        print("ChatTTS ready!")
 
     @modal.method()
-    def synthesize_audio(self, text: str) -> bytes:
-        import ChatTTS
+    def generate_audio(self, text: str, temperature: float = 0.3, refine_prompt: str = "") -> bytes:
+        import torch
         import soundfile as sf
-        import io
-        import numpy as np
-
-        if self.chat is None:
-            print("First request: Instanciando ChatTTS na GPU...")
-            self.chat = ChatTTS.Chat()
-            self.chat.load(compile=False, device='cuda')
-
-        # ChatTTS aceita arrays de texto e retorna arrays de audio
-        texts = [text]
-        wavs = self.chat.infer(texts)
+        import tempfile
+        import os
         
-        audio_data = wavs[0]
+        print(f"Gerando áudio para o texto: {text} | Temp: {temperature} | Prompt: {refine_prompt}")
         
-        buffer = io.BytesIO()
-        sf.write(buffer, audio_data, 24000, format='WAV')
-        buffer.seek(0)
-        return buffer.read()
-
-@app.function(image=chattts_image)
-@modal.fastapi_endpoint(method="POST", label="apollo-api-chat-tts")
-async def api_chat_tts(request: Request):
-    try:
-        from fastapi.responses import Response, JSONResponse
-        data = await request.json()
-        text = data.get("text", "")
+        params_refine_text = {'prompt': refine_prompt} if refine_prompt else {}
+        params_infer_code = {'temperature': temperature}
         
-        if not text:
-            return JSONResponse({"error": "Texto não providenciado"}, status_code=400)
+        wavs = self.chat.infer([text], use_decoder=True, params_refine_text=params_refine_text, params_infer_code=params_infer_code)
+        audio_tensor = torch.from_numpy(wavs[0])
+        
+        temp_wav = tempfile.mktemp(suffix=".wav")
+        audio_data = audio_tensor.squeeze().numpy()
+        sf.write(temp_wav, audio_data, 24000)
+        
+        with open(temp_wav, "rb") as f:
+            audio_bytes = f.read()
             
-        tts_service = ConversationalTTS()
-        audio_bytes = await tts_service.synthesize_audio.remote.aio(text)
-        
-        return Response(content=audio_bytes, media_type="audio/wav")
-    except Exception as e:
-        from fastapi.responses import JSONResponse
-        return JSONResponse({"error": str(e)}, status_code=500)
+        os.remove(temp_wav)
+        return audio_bytes

@@ -1,4 +1,4 @@
-﻿import os
+import os
 from typing import Dict, Any, List, Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel

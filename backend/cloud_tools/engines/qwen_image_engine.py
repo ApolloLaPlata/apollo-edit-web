@@ -36,6 +36,12 @@ class QwenImageEngine:
         
         # Helper to run a ComfyUI pass via ArenaComfyEngine
         def run_pass(pass_prompt, img1=None, img2=None, img3=None, base_img=None):
+            if img1 and '<|image_1|>' not in pass_prompt:
+                pass_prompt = '<|image_1|> ' + pass_prompt
+            if img2 and '<|image_2|>' not in pass_prompt:
+                pass_prompt = '<|image_2|> ' + pass_prompt
+            if img3 and '<|image_3|>' not in pass_prompt:
+                pass_prompt = '<|image_3|> ' + pass_prompt
             if base_img is None:
                 from PIL import Image
                 import io

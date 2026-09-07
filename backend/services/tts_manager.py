@@ -6,6 +6,7 @@ _SELENIUM_LOCK = threading.Lock()
 
 from voicemaker_api import VoiceMakerAPI
 from gemini_tts_api import GeminiTTSProvider
+from elevenlabs_api import ElevenLabsProvider
 
 # OpenAIFMProvider requer selenium — import opcional para não quebrar o sistema se não instalado
 try:
@@ -16,11 +17,12 @@ except Exception as _e:
     print(f"⚠️ [TTS Manager] OpenAIFM não disponível (Selenium não instalado?): {_e}")
 
 class TTSManager:
-    """Gerenciador Unificado de TTS (Modelos 1, 2, 3, 4)"""
+    """Gerenciador Unificado de TTS (Modelos 1, 2, 3, 4, 5, 6)"""
     def __init__(self, config_manager):
         self.config = config_manager
         self.voicemaker = VoiceMakerAPI(self.config)
         self.gemini_tts = GeminiTTSProvider(self.config)
+        self.elevenlabs = ElevenLabsProvider(self.config)
         self.openaifm_tts = OpenAIFMProvider(self.config) if OPENAIFM_AVAILABLE else None
         # Estado de bloqueio do OpenAI.fm (limite de IP)
         self._openaifm_bloqueado = False
@@ -423,212 +425,228 @@ class TTSManager:
                 return True
 
         elif modelo_tts == 4:
-            import datetime
+            print(f"🎧 Roteando para XTTSv2 (Motor Maestro/Modelo 4) para o personagem {character_name}")
             
-            # ── Verificar se o OpenAI.fm está em período de bloqueio ──────────────────
-            if self._openaifm_bloqueado and self._openaifm_bloqueado_ate:
-                agora = datetime.datetime.now()
+            # 1. Aciona o Roteirista Dinâmico para fatiar o texto
+            from backend.services.xtts_roteirista import XTTSDynamicRoteirista
+            roteirista = XTTSDynamicRoteirista(self.config)
+            
+            print(f"🧠 [Motor Maestro] Fatiando o roteiro para XTTSv2...")
+            fatias = roteirista.fatiar_texto(text)
+            print(f"📊 [Motor Maestro] Roteiro dividido em {len(fatias)} blocos emocionais.")
+            
+            # 2. Inicializa o VoiceCloner para mapear os áudios dinâmicos do personagem
+            from backend.services.voice_cloner import VoiceCloner
+            voice_cloner = VoiceCloner(self.config)
+            char_dir = voice_cloner.get_character_path(character_name)
+            emotions_dir = os.path.join(char_dir, "emotions")
+            
+            # 3. Gera cada bloco separadamente na nuvem (Modal)
+            from backend.cloud_tools.engines.xtts_engine import XttsEngine
+            from backend.cloud_tools.engines.audio_stitcher import TTSPolicyEngine, AudioStitcher
+            
+            engine = XttsEngine()
+            
+            audio_blocks = []
+            pauses_ms = []
+            
+            import soundfile as sf
+            import io
+            import time
+            
+            for idx, bloco in enumerate(fatias):
+                txt = bloco["text"]
+                emot = bloco["emotion"]
+                arousal = bloco["arousal"]
+                pace = bloco["pace"]
                 
-                # Verificar se o IP mudou (usuário trocou servidor de VPN)
-                ip_atual = self._obter_ip_externo()
-                if ip_atual and self._openaifm_ip_bloqueado and ip_atual != self._openaifm_ip_bloqueado:
-                    print(f"🌐 [Modo 4] IP mudou! ({self._openaifm_ip_bloqueado} → {ip_atual})")
-                    print("✅ [Modo 4] VPN trocada detectada — limpando bloqueio e tentando OpenAI.fm!")
-                    self.resetar_bloqueio_openaifm()
-                    # Continua normalmente abaixo
-                elif agora < self._openaifm_bloqueado_ate:
-                    minutos_restantes = int((self._openaifm_bloqueado_ate - agora).total_seconds() / 60)
-                    print(f"⏳ [Modo 4] OpenAI.fm ainda em cooldown (IP: {ip_atual}). Restam ~{minutos_restantes} min.")
-                    print(f"   📱 Dica: troque o servidor da sua VPN agora para resetar este limite!")
-                    # Removido o fallback para modelo 3 a pedido do usuário
-                    # return self.generate_audio(character_name, text, output_path, _modelo_override=3, **kwargs)
-                else:
-                    self.resetar_bloqueio_openaifm()
-            # ─────────────────────────────────────────────────────────────────────────
-            
-            print(f"🎧 Roteando para OpenAI.fm Automático (Modelo 4) para o personagem {character_name}")
-            
-            if self.openaifm_tts is None:
-                print("❌ Modo 4 (OpenAI.fm) não está disponível. Instale o Selenium: pip install selenium webdriver-manager")
-                return False
-            
-            # Puxa o prompt base
-            instrucao_base = personagem.get("instrucao_base_tts", personagem.get("instrucao_base_google", "")).strip()
-            
-            # A emoção do script via gerador_podcast é lida em Effect
-            emocao_effect = kwargs.get("Effect", "")
-            # A instrução adicional preenchida textualmente na UI da Aba de Geração Solta
-            emocao_adicional = kwargs.get("emocao_adicional", "")
-            
-            # Emoção PRIMEIRO (maior peso no início do prompt), personalidade DEPOIS
-            partes_prompt = []
-            if emocao_adicional:
-                partes_prompt.append(f"[ESTADO EMOCIONAL PRIORITÁRIO: {emocao_adicional}]")
-            if emocao_effect and emocao_effect != "default":
-                partes_prompt.append(f"[Tom da Cena: {emocao_effect}]")
-            if instrucao_base:
-                partes_prompt.append(instrucao_base)
-            prompt_final = " ".join(partes_prompt)
+                print(f"🎙️ [Bloco {idx+1}/{len(fatias)}] Emoção: {emot.upper()} | Texto: {txt[:40]}...")
                 
-            voz_openaifm = personagem.get("voz_openaifm", "")
-            if not voz_openaifm:
-                print(f"❌ Nenhuma voz do OpenAI.fm foi cadastrada para o personagem '{character_name}'.")
-                return False
-            
-            # PASSO 1: definir o caminho do áudio BASE no diretório temp (intermediário, será deletado após RVC)
-            temp_dir = self.config.get_path("temp_dir") if self.config else "temp"
-            safe_name = character_name.replace(" ", "_").lower()
-            base_audio_path = os.path.join(os.path.abspath(temp_dir), f"openai_base_{safe_name}.wav")
-            
-            print(f"🧠 Enviando para Selenium OpenAI.fm com Vibe: '{prompt_final[:100]}...'")
-            print('⏳ [Modo 4] Aguardando liberação da Trava Web (Selenium)...')
-            with _SELENIUM_LOCK:
-                print('🔓 [Modo 4] Trava Web liberada! Abrindo navegador...')
-                success_base = self.openaifm_tts.generate_tts(
-                    text=text,
-                    voice_name=voz_openaifm,
-                    vibe_text=prompt_final,
-                    output_path=base_audio_path  # Salva no TEMP, não no destino final
-                )
-            
-            if not success_base or not os.path.exists(base_audio_path):
-                import datetime
-                ip_atual = self._obter_ip_externo()
-                print(f"❌ [Modo 4] Falha total na geração OpenAI.fm (IP: {ip_atual}).")
-                # Registra o bloqueio para detecção de mudança de VPN
-                self._openaifm_bloqueado = True
-                self._openaifm_bloqueado_ate = datetime.datetime.now() + datetime.timedelta(hours=8)
-                self._openaifm_ip_bloqueado = ip_atual
-                print(f"⏳ [Modo 4] IP marcado como bloqueado: {ip_atual}. Troque o servidor da VPN e tente gerar novamente.")
-                return False
-            
-            # PASSO 2: Encaminhar para Applio RVC (idêntico ao Modelo 3)
-            rvc_model = personagem.get("modelo_rvc", "")
-            pitch_rvc = float(personagem.get("pitch_rvc", 0))
-            index_rvc = personagem.get("index_rvc", "")
-            embedder_rvc = personagem.get("embedder_rvc", "contentvec")
-            index_rate = float(personagem.get("index_rate_rvc", 0.75))
-            
-            vps_config = self.config.get("vps_config", {})
-            rvc_mode = vps_config.get("rvc_mode", "local")
-            
-            if rvc_mode == "local":
-                applio_config = vps_config.get("applio_rvc_local", {})
-                print(f"📡 [Modo 4] Roteamento RVC: Usando Servidor Local (Pinokio)")
-            else:
-                applio_config = vps_config.get("applio_rvc", {})
-                print(f"📡 [Modo 4] Roteamento RVC: Usando Servidor Nuvem (VPS)")
+                # Acessa os parâmetros matemáticos precisos baseados na persona
+                params = TTSPolicyEngine.get_params(emot, arousal, pace)
                 
-            applio_url = applio_config.get("url", "").rstrip('/')
-            
-            if not rvc_model or not applio_url:
-                print("⚠️  Modelo Applio ou URL não configurados. Retornando apenas a voz base do OpenAI.fm.")
-                import shutil
-                if os.path.exists(output_path): os.remove(output_path)
-                shutil.move(base_audio_path, output_path)
-                return True
+                # Busca o áudio de referência emocional específico
+                # Faz fallback para o neutral, e depois para o teste_kokoro se não encontrar
+                specific_ref_path = os.path.join(emotions_dir, f"{emot}.wav")
+                if not os.path.exists(specific_ref_path):
+                    specific_ref_path = os.path.join(emotions_dir, "neutral.wav")
+                if not os.path.exists(specific_ref_path):
+                    # Fallback global de emergência caso a pasta do personagem não tenha sido populada
+                    specific_ref_path = "teste_kokoro.wav"
                 
-            print(f"🚀 [Modo 4] Conectando ao Applio RVC via Gradio Client em {applio_url}")
-            print(f"   Modelo: {rvc_model} | Index: {index_rvc} | Pitch: {pitch_rvc} | Embedder: {embedder_rvc} | Index Rate: {index_rate}")
-            try:
-                from gradio_client import Client, handle_file
-                
-                client = Client(applio_url)
-                
-                print("📤 [Modo 4] Fazendo upload do áudio base para o Applio...")
-                upload_result = client.predict(
-                    upload_audio=handle_file(base_audio_path),
-                    api_name="/save_to_wav2"
-                )
-                audio_path_on_server = upload_result[0]
-                output_path_on_server = upload_result[1]
-                print(f"✅ [Modo 4] Áudio carregado no servidor: {audio_path_on_server}")
-                
-                print(f"🎙️ [Modo 4] Iniciando conversão de voz com modelo {rvc_model} usando embedder {embedder_rvc}...")
-                
-                if rvc_mode == "local":
-                    rvc_model_path = f"logs\\weights\\{rvc_model}" if not rvc_model.startswith("logs") else rvc_model
-                    index_rvc_path = ""
-                    if index_rvc:
-                        try:
-                            parts = index_rvc.replace("\\", "/").split("/logs/")
-                            if len(parts) > 1:
-                                index_rvc_path = "logs\\" + parts[1].replace("/", "\\")
-                            else:
-                                index_rvc_path = index_rvc
-                        except:
-                            index_rvc_path = index_rvc
-
-                    infer_kwargs = {
-                        "terms_accepted": True, "param_1": pitch_rvc, "param_2": index_rate, "param_3": 1.0, "param_4": 0.33,
-                        "param_5": "rmvpe", "param_6": audio_path_on_server, "param_7": output_path_on_server,
-                        "param_8": rvc_model_path, "param_9": index_rvc_path, "param_10": False,
-                        "param_11": False, "param_12": 1.0, "param_13": False, "param_14": 155.0, "param_15": False,
-                        "param_16": 0.5, "param_17": "WAV", "param_18": embedder_rvc, "param_19": None, "param_20": False,
-                        "param_21": 1.0, "param_22": 1.0, "param_23": False, "param_24": False, "param_25": False, "param_26": False,
-                        "param_27": False, "param_28": False, "param_29": False, "param_30": False, "param_31": False,
-                        "param_32": False, "param_33": False, "param_34": 0.5, "param_35": 0.5, "param_36": 0.33, "param_37": 0.4,
-                        "param_38": 1.0, "param_39": 0.0, "param_40": 0.0, "param_41": -6.0, "param_42": 0.05,
-                        "param_43": 0.0, "param_44": 25.0, "param_45": 1.0, "param_46": 0.25, "param_47": 7.0,
-                        "param_48": 0.0, "param_49": 0.5, "param_50": 8.0, "param_51": -6.0, "param_52": 0.0,
-                        "param_53": 1.0, "param_54": 1.0, "param_55": 100.0, "param_56": 0.5, "param_57": 0.0,
-                        "param_58": 0.5, "param_59": 0, "api_name": "/enforce_terms"
-                    }
-                else:
-                    infer_kwargs = {
-                        "terms_accepted": True, "param_1": pitch_rvc, "param_2": index_rate, "param_3": 1.0, "param_4": 0.33,
-                        "param_5": 128.0, "param_6": "rmvpe", "param_7": audio_path_on_server, "param_8": output_path_on_server,
-                        "param_9": rvc_model, "param_10": index_rvc if index_rvc else "", "param_11": False,
-                        "param_12": False, "param_13": 1.0, "param_14": False, "param_15": 0.5, "param_16": "WAV",
-                        "param_17": None, "param_18": embedder_rvc, "param_19": None, "param_20": False, "param_21": 1.0,
-                        "param_22": 1.0, "param_23": False, "param_24": False, "param_25": False, "param_26": False, "param_27": False,
-                        "param_28": False, "param_29": False, "param_30": False, "param_31": False, "param_32": False, "param_33": False,
-                        "param_34": 0.5, "param_35": 0.5, "param_36": 0.33, "param_37": 0.4, "param_38": 1.0, "param_39": 0.0, "param_40": 0.0, "param_41": -6.0,
-                        "param_50": 8.0, "param_51": -6.0, "param_52": 0.0, "param_53": 1.0, "param_54": 1.0, "param_55": 100.0, "param_56": 0.5, "param_57": 0.0,
-                        "param_58": 0.5, "param_59": 0, "api_name": "/enforce_terms"
-                    }
-                    
                 try:
-                    print('⏳ [Modo 4] Aguardando liberação da Trava RVC...')
-                    with _RVC_LOCK:
-                        print('🔓 [Modo 4] Trava RVC liberada! Iniciando inferência...')
-                        infer_result = client.predict(**infer_kwargs)
-                    info_text = infer_result[0]
-                    audio_file = infer_result[1]
-                    print(f"✅ [Modo 4] Conversão RVC concluída! Info: {str(info_text)[:80]}")
-                    
-                    if audio_file and hasattr(audio_file, 'name'):
-                        import shutil
-                        shutil.copy2(audio_file.name, output_path)
-                    elif isinstance(audio_file, str) and os.path.exists(audio_file):
-                        import shutil
-                        shutil.copy2(audio_file, output_path)
-                    else:
-                        print("❌ [Modo 4] Formato de retorno de áudio desconhecido na API do Applio.")
-                        return False
+                    with open(specific_ref_path, "rb") as f:
+                        ref_bytes = f.read()
                         
+                    out_bytes = engine.generate_voice.remote(
+                        text=txt, 
+                        reference_audio_bytes=ref_bytes, 
+                        temperature=params["temperature"], 
+                        speed=params["speed"],
+                        language="pt",
+                        repetition_penalty=params["repetition_penalty"]
+                    )
+                    
+                    data, sr = sf.read(io.BytesIO(out_bytes))
+                    audio_blocks.append(data)
+                    pauses_ms.append(params["pause_after_ms"])
                 except Exception as e:
-                    if "403 Forbidden" in str(e) and output_path_on_server and os.path.exists(output_path_on_server):
-                        print(f"⚠️ [Modo 4] Applio gerou 403, recarregando direto do caminho local!")
-                        import shutil
-                        shutil.copy2(output_path_on_server, output_path)
-                        print(f"✅ [Modo 4] Conversão resgatada com sucesso!")
-                    else:
-                        raise e
+                    print(f"❌ Erro na geração do bloco {idx+1}: {e}")
+                    import traceback; traceback.print_exc()
+            
+            if not audio_blocks:
+                print("❌ Falha total: Nenhum bloco de áudio XTTS foi gerado.")
+                return False
                 
-                # Apaga o arquivo base temporário após inferência bem-sucedida
-                if os.path.exists(base_audio_path): os.remove(base_audio_path)
-                print("🎉 [Modo 4] Áudio OpenAI.fm + RVC clonado com sucesso!")
+            # 4. Stitching (União suave das peças) e Masterização
+            print("🪡 [Stitcher] Unindo fatias de áudio geradas na nuvem...")
+            sr_xtts = 24000  # XTTS output sample rate
+            master_audio = AudioStitcher.stitch_blocks(audio_blocks, pauses_ms, sr_xtts)
+            
+            import tempfile
+            temp_wav = os.path.join(tempfile.gettempdir(), f"xtts_temp_master_{int(time.time())}.wav")
+            sf.write(temp_wav, master_audio, samplerate=sr_xtts, format='WAV')
+            
+            # 5. Loudness Normalization EBU R128 para equiparar o volume global
+            try:
+                # Se output_path for mp3, converte no final
+                AudioStitcher.loudnorm_master(temp_wav, output_path, target_lufs=-16.0)
+                print(f"🎉 Áudio XTTSv2 Masterizado e finalizado com sucesso: {output_path}")
+            except Exception as e:
+                print(f"⚠️ Erro no loudnorm, salvando versão RAW do Sticher. Erro: {e}")
+                import subprocess
+                cmd_convert = [
+                    'ffmpeg', '-y',
+                    '-i', temp_wav,
+                    '-c:a', 'libmp3lame', '-b:a', '192k',
+                    '-ar', '44100', '-ac', '1',
+                    output_path
+                ]
+                subprocess.run(cmd_convert, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                
+            if os.path.exists(temp_wav):
+                os.remove(temp_wav)
+                
+            return True
+            
+        elif modelo_tts == 5:
+            print(f"🎧 Roteando para XTTSv2 Puro (Modelo 5) para o personagem {character_name}")
+            
+            from backend.cloud_tools.engines.xtts_engine import XttsEngine
+            from backend.cloud_tools.engines.audio_stitcher import TTSPolicyEngine
+            import os
+            import subprocess
+            import tempfile
+            
+            engine = XttsEngine()
+            
+            # Buscar áudio de referência. Tenta 'audio_ref_xtts', fallback para 'audio_ref_moss', fallback para VoiceCloner neutral
+            audio_ref = personagem.get("audio_ref_xtts", "")
+            if not audio_ref or not os.path.exists(audio_ref):
+                audio_ref = personagem.get("audio_ref_moss", "")
+                
+            if not audio_ref or not os.path.exists(audio_ref):
+                from backend.services.voice_cloner import VoiceCloner
+                voice_cloner = VoiceCloner(self.config)
+                char_dir = voice_cloner.get_character_path(character_name)
+                audio_ref = os.path.join(char_dir, "emotions", "neutral.wav")
+            
+            if not audio_ref or not os.path.exists(audio_ref):
+                print(f"❌ Áudio de referência XTTS não encontrado para {character_name}")
+                return False
+                
+            print(f"🎙️ Lendo referência XTTS (ideal 30s): {audio_ref}")
+            with open(audio_ref, "rb") as f:
+                ref_bytes = f.read()
+                
+            # Extrair emoção e aplicar matemática do TTSPolicyEngine
+            emocao_effect = kwargs.get("Effect", "neutral").lower()
+            emocao_adicional = kwargs.get("emocao_adicional", "").lower()
+            
+            # Junta os dois para checar palavras-chave
+            emocao_full = f"{emocao_effect} {emocao_adicional}"
+            
+            if any(t in emocao_full for t in ["feliz", "alegre", "animad"]):
+                emocao_mapped = "neutral" 
+                arousal = "high"
+                pace = "fast"
+            elif any(t in emocao_full for t in ["triste", "chorando", "choro", "depre"]):
+                emocao_mapped = "sad"
+                arousal = "low"
+                pace = "slow"
+            elif any(t in emocao_full for t in ["bravo", "irritad", "raiva", "ódio", "odio"]):
+                emocao_mapped = "angry"
+                arousal = "high"
+                pace = "fast"
+            elif any(t in emocao_full for t in ["ironic", "debochad", "sarcasm", "sarcast"]):
+                emocao_mapped = "ironic"
+                arousal = "medium"
+                pace = "normal"
+            else:
+                emocao_mapped = "neutral"
+                arousal = "medium"
+                pace = "normal"
+                
+            params = TTSPolicyEngine.get_params(emocao_mapped, arousal, pace)
+                
+            try:
+                print(f"☁️ Enviando texto para Modal XTTS (Emotion: {emocao_mapped}, Temp: {params['temperature']:.2f}, Speed: {params['speed']:.2f})...")
+                out_bytes = engine.generate_voice.remote(
+                    text=text, 
+                    reference_audio_bytes=ref_bytes,
+                    temperature=params["temperature"],
+                    speed=params["speed"],
+                    language="pt",
+                    repetition_penalty=params["repetition_penalty"]
+                )
+                
+                # Salva como arquivo .wav temporario
+                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav_file:
+                    temp_wav_file.write(out_bytes)
+                
+                # Converte silenciosamente de WAV 24kHz para MP3 192kbps (44.1kHz) 
+                # para que o podcast_engine possa concatenar e masterizar com segurança
+                print(f"🔄 Convertendo saída XTTS bruta para formato compatível (MP3)...")
+                cmd_convert = [
+                    'ffmpeg', '-y',
+                    '-i', temp_wav_file.name,
+                    '-c:a', 'libmp3lame', '-b:a', '192k',
+                    '-ar', '44100', '-ac', '1',
+                    output_path
+                ]
+                subprocess.run(cmd_convert, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                
+                if os.path.exists(temp_wav_file.name):
+                    os.remove(temp_wav_file.name)
+                    
+                print(f"🎉 XTTSv2 gerado e pronto para a pipeline do Podcast: {output_path}")
                 return True
                 
             except Exception as e:
-                print(f"❌ [Modo 4] Erro ao conectar/processar no Applio RVC: {e}")
+                print(f"❌ Erro na geração XTTSv2 Modal: {e}")
                 import traceback; traceback.print_exc()
-                print("🔄 [Modo 4] Fallback: devolvendo voz base sem clonagem RVC")
-                if os.path.exists(output_path): os.remove(output_path)
-                if os.path.exists(base_audio_path):
-                    os.rename(base_audio_path, output_path)
-                return True
+                return False
+
+        elif modelo_tts == 6:
+            print(f"🎧 Roteando para ElevenLabs (Modelo 6) para o personagem {character_name}")
+            # Puxa a voz configurada no config.json do personagem, usando voice_id ou voz_elevenlabs
+            voice_id = personagem.get("voz_elevenlabs", personagem.get("voice_id", ""))
+            
+            if not voice_id:
+                print(f"❌ [ElevenLabs] Nenhuma voz configurada para '{character_name}' no parâmetro 'voz_elevenlabs'.")
+                return False
+                
+            # Extraindo parâmetros extras da aba de config, se existirem
+            eleven_config = self.config.get("elevenlabs_config", {})
+            model_id = kwargs.get("model_id", eleven_config.get("model_id", "eleven_multilingual_v2"))
+            
+            return self.elevenlabs.generate_tts(
+                text=text,
+                voice_id=voice_id,
+                output_path=output_path,
+                model_id=model_id,
+                **kwargs
+            )
 
         else:
             print(f"❌ Modelo TTS roteado desconhecido ou inválido: {modelo_tts}")

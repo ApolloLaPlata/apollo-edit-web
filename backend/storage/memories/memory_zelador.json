@@ -1,10 +1,10 @@
 {
     "agent_id": "Zelador",
     "status": "cleaning",
-    "last_action": "2026-07-31 08:09:21",
+    "last_action": "2026-09-04 07:47:12",
     "alerts": [],
     "data": {
         "cleaned_files": 0,
-        "disk_free_gb": 46.0
+        "disk_free_gb": 50.24
     }
 }

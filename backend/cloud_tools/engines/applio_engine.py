@@ -53,7 +53,7 @@ image = (
     image=image,
     gpu="L4",  # L4 or A10G is great for training RVC
     volumes={"/applio/data": vol},
-    timeout=86400, scaledown_window=30
+    timeout=600, scaledown_window=30
   # 24 hours para permitir treinamentos longos
 )
 @modal.web_server(port=8000)

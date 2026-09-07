@@ -52,7 +52,7 @@ universal_comfy_image = (
     .run_commands([
         "python -c \"import re; f='/comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll/PulidFluxHook.py'; c=open(f).read(); c=re.sub(r'(attn_mask:\\s*Tensor\\s*=\\s*None,?)(\\s*\\)\\s*->\\s*Tensor:)', r'\\1\\n    **kwargs,\\2', c); open(f,'w').write(c); f2='/comfyui/custom_nodes/ComfyUI_PuLID_Flux_ll/pulidflux.py'; c2=open(f2).read(); c2=re.sub(r'os\\.makedirs\\(dir_path(?:,\\s*exist_ok=True)?\\)', 'try:\\n        __import__(\\'os\\').makedirs(dir_path, exist_ok=True)\\n    except Exception:\\n        pass', c2); open(f2,'w').write(c2); print('Patched!');\""
     ])
-    .env({
+    .run_commands(["git clone https://github.com/BigStationW/ComfyUi-TextEncodeQwenImageEditAdvanced.git /comfyui/custom_nodes/ComfyUi-TextEncodeQwenImageEditAdvanced && cd /comfyui/custom_nodes/ComfyUi-TextEncodeQwenImageEditAdvanced && pip install -r requirements.txt || true"]).env({
         "HF_HUB_OFFLINE": "0",
         "TRANSFORMERS_OFFLINE": "0",
         "HF_HUB_ENABLE_HF_TRANSFER": "1",
