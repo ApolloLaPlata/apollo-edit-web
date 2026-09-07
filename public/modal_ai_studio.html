@@ -418,7 +418,6 @@
             <button class="tab-btn active" onclick="showTab('img')">🖼️ Imagem</button>
             <button class="tab-btn" onclick="showTab('vid')">🎬 Vídeo</button>
             <button class="tab-btn" onclick="showTab('audio')">🎤 Áudio</button>
-            <button class="tab-btn" onclick="showTab('music')">🎵 Audio Lab</button>
         </div>
 
         <!-- TAB: IMAGEM -->
@@ -427,7 +426,7 @@
                 <div class="card-title">🖼️ Gerador de Imagens <span class="badge" id="imgBadgeModel">FLUX.1-schnell L4</span></div>
                 <div class="field-label">Modelo</div>
                 <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState();">
-                    <option value="flux2-universal">FLUX.2 (Motor Universal - T2I / I2I)</option>
+                    <option value="qwen-image">Qwen 2.5 Image Edit (T2I / I2I / Multi-Characters)</option>
                 </select>
                 
                 <div class="field-label">Prompt (descreva a imagem em inglês)</div>
@@ -439,11 +438,6 @@
                     <input type="file" id="imgRefFiles" accept="image/*" multiple onchange="updateImgRefNames()">
                     <span class="file-name" id="imgRefFileNames">Nenhuma imagem selecionada</span>
                 </div>
-                
-                <div class="field-label" style="margin-top:10px;">LoRA (Fábrica de Personagens)</div>
-                <select id="imgLoraSelect" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                    <option value="">Nenhum LoRA</option>
-                </select>
 
                 <div style="display:flex; gap:8px; margin-top: 10px; align-items:center;">
                     <div style="flex:1;">
@@ -565,59 +559,6 @@
             </div>
         </div>
 
-    <!-- TAB: AUDIO LAB (MUSIC & SFX) -->
-        <div id="tab-music" style="display:none;">
-            <div class="card">
-                <div class="card-title">🎵 Audio Lab <span class="badge" id="musicBadgeModel">Stable Audio 3</span></div>
-                
-                <div class="field-label">Escolha o Motor Acústico</div>
-                <select id="musicModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="updateMusicUI()">
-                    <option value="sa3">Stable Audio 3 Medium (Instrumental & SFX)</option>
-                    <option value="minimax">MiniMax (Voz Pura & Narração)</option>
-                    <option value="ace-step">ACE-Step (Música Completa & Letra)</option>
-                </select>
-                
-                <div class="field-label">Prompt (Descreva o som ou a voz)</div>
-                <textarea id="musicPrompt" placeholder="Ex: Batida de trap sombria com graves fortes e sintetizadores..."></textarea>
-                
-                <div id="lyricsContainer" style="margin-top: 15px;">
-                    <div class="field-label">Letra da Música (Opcional)</div>
-                    <textarea id="musicLyrics" placeholder="[Verse 1]\nAcordei cedo pra vencer..."></textarea>
-                </div>
-                
-                <div id="timeContainer" style="margin-top: 15px;">
-                    <div class="field-label">Duração (Segundos)</div>
-                    <input type="number" id="musicDuration" value="30" min="1" max="180" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                </div>
-
-                
-                <div id="refAudioContainer" style="margin-top: 15px;">
-                    <div class="field-label">Áudio de Referência (Opcional - Estilo ou Continuação)</div>
-                    <div class="file-input-wrap">
-                        <label for="musicRefFile" class="file-label">📁 Escolher arquivo</label>
-                        <span class="file-name" id="musicRefFileName">Nenhum selecionado...</span>
-                        <input type="file" id="musicRefFile" style="display:none;" accept="audio/*" onchange="document.getElementById('musicRefFileName').textContent = this.files[0] ? this.files[0].name : 'Nenhum selecionado...'">
-                    </div>
-                </div>
-                
-                <button class="generate-btn" id="btnGenMusic" onclick="generateMusicTest()" style="margin-top: 20px;">
-                    <span class="btn-icon">⚡</span> TESTAR GERAÇÃO DE ÁUDIO
-                </button>
-            </div>
-            
-            <div class="card" id="musicResultCard" style="display:none; margin-top: 20px;">
-                <div class="card-title">🎧 Resultado do Teste</div>
-                <div id="musicLoading" style="text-align:center; padding: 20px; display:none;">
-                    <div class="loader" style="margin:0 auto;"></div>
-                    <div style="margin-top:10px; color:var(--cyan);">Processando via Modal...</div>
-                </div>
-                <div id="musicOutput" style="display:none; text-align: center;">
-                    <!-- Log Text vai aqui -->
-                </div>
-                <div id="musicError" style="display:none; color: var(--red); background: #ff475711; padding: 10px; border-radius: 8px; margin-top: 10px; font-family: var(--mono); font-size: 0.8rem;"></div>
-            </div>
-        </div>
-
     </aside>
 
     <!-- ═══ PAINEL DE PREVIEW ═══ -->
@@ -654,8 +595,6 @@
 
             <!-- Resultado: Vídeo -->
             <video id="previewVideo" controls></video>
-            <!-- Resultado: Audio -->
-            <audio id="previewAudio" controls style="display: none; width: 80%; box-shadow: 0 8px 40px #00d2ff22; border-radius: 12px;"></audio>
         </div>
 
         <!-- Terminal de debug -->
@@ -676,8 +615,7 @@
     </main>
 </div>
 
-
-        <script>
+<script>
 // ─── ESTADO GLOBAL ──────────────────────────────────────────────────────────
 let currentImageData = null;
 let currentVideoData = null;
@@ -727,7 +665,6 @@ function showSpinner(label) {
     document.getElementById('previewPlaceholder').style.display = 'none';
     document.getElementById('previewImage').style.display = 'none';
     document.getElementById('previewVideo').style.display = 'none';
-    if(document.getElementById('previewAudio')) document.getElementById('previewAudio').style.display = 'none';
     document.getElementById('spinnerWrap').classList.add('active');
     document.getElementById('spinnerLabel').textContent = label;
     document.getElementById('timerDisplay').textContent = '00:00';
@@ -746,9 +683,6 @@ function clearPreview() {
     const vidNode = document.getElementById('previewVideo');
     vidNode.style.display = 'none';
     vidNode.src = '';
-
-    const audNode = document.getElementById('previewAudio');
-    if (audNode) { audNode.style.display = 'none'; audNode.src = ''; }
     
     document.getElementById('btnDownloadPreview').style.display = 'none';
     document.getElementById('spinnerWrap').classList.remove('active');
@@ -758,134 +692,11 @@ function clearPreview() {
     currentVideoData = null;
 }
 
-
-        function updateMusicUI() {
-            const model = document.getElementById('musicModel').value;
-            const modelText = document.getElementById('musicModel').options[document.getElementById('musicModel').selectedIndex].text;
-            document.getElementById('musicBadgeModel').textContent = modelText;
-            
-            const lyricsContainer = document.getElementById('lyricsContainer');
-            const refAudioContainer = document.getElementById('refAudioContainer');
-            
-            if (model === 'ace-step') {
-                lyricsContainer.style.display = 'block';
-                refAudioContainer.style.display = 'block';
-            } else if (model === 'minimax') {
-                lyricsContainer.style.display = 'block';
-                refAudioContainer.style.display = 'none';
-            } else {
-                lyricsContainer.style.display = 'block';
-                refAudioContainer.style.display = 'block';
-            }
-        }
-
-        async function generateMusicTest() {
-            const model = document.getElementById('musicModel').value;
-            const prompt = document.getElementById('musicPrompt').value;
-            const lyrics = document.getElementById('musicLyrics').value;
-            const refFile = document.getElementById('musicRefFile').files[0];
-            
-            if (!prompt.trim()) { alert("Digite o prompt!"); return; }
-            
-            
-            document.getElementById('musicLoading').style.display = 'block';
-            document.getElementById('musicOutput').style.display = 'none';
-            document.getElementById('musicError').style.display = 'none';
-            showSpinner('Gerando áudio. Isso pode levar até 90 segundos...');
-            
-            const duration = parseInt(document.getElementById('musicDuration').value);
-            
-            try {
-                let refBase64 = null;
-                if (refFile) {
-                    refBase64 = await fileToBase64(refFile);
-                }
-                const url = '/api/studio/modal/generate/audio_lab';
-                const response = await fetch(url, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'x-apollo-lock': 'apollo-beta-key-2026' },
-                  body: JSON.stringify({ prompt, lyrics, model, duration, reference_audio_base64: refBase64 })
-              });
-                                
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errText.substring(0, 100)}`);
-                }
-                
-                let data = null;
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    
-                    buffer = lines.pop();
-                    
-                    for (const line of lines) {
-                        if (line.trim() === '') continue;
-                        try {
-                            const parsed = JSON.parse(line);
-                            if (parsed.status === 'processing') {
-                                log(`⚡ [Modal] ${parsed.message}`, 'info');
-                            } else if (parsed.status === 'success' || parsed.status === 'error') {
-                                data = parsed;
-                            }
-                        } catch(e) {
-                            console.error("Erro no parse JSON do chunk:", e, line);
-                        }
-                    }
-                }
-                
-                if (buffer.trim() !== '') {
-                    try {
-                        const parsed = JSON.parse(buffer);
-                        if (parsed.status === 'success' || parsed.status === 'error') {
-                            data = parsed;
-                        }
-                    } catch(e) {}
-                }
-                
-                if (!data) {
-                    throw new Error(`Nenhum dado valido retornado no stream.`);
-                }
-                
-                document.getElementById('musicLoading').style.display = 'none';
-              
-                if (data.status === 'success') {
-                  log('🚀 Áudio gerado com sucesso! ' + (data.message || ''), 'ok');
-                  
-                  document.getElementById('previewPlaceholder').style.display = 'none';
-                  hideSpinner();
-
-                  const audioSrc = data.audio_base64 ? 'data:audio/wav;base64,' + data.audio_base64 : data.audio_url;
-                  const audNode = document.getElementById('previewAudio');
-                  audNode.src = audioSrc;
-                  audNode.style.display = 'block';
-                  
-                  currentImageData = data.audio_base64 || data.audio_url || "";
-                  document.getElementById('btnDownloadPreview').style.display = 'block';
-              } else {
-                  log('❌ ERRO MODAL: ' + (data.message || JSON.stringify(data)), 'error');
-                  document.getElementById('musicLoading').style.display = 'none';
-                  hideSpinner();
-              }
-          } catch (err) {
-                log('❌ CRASH FETCH: ' + err.message, 'error');
-                document.getElementById('musicLoading').style.display = 'none';
-                hideSpinner();
-            }
-        }
-
-        function showTab(name) {
-    ['img','vid','audio','music'].forEach(t => {
+function showTab(name) {
+    ['img','vid','audio'].forEach(t => {
         document.getElementById('tab-'+t).style.display = (t === name) ? 'block' : 'none';
         document.querySelectorAll('.tab-btn').forEach((b,i) => {
-            const tabs = ['img','vid','audio','music'];
+            const tabs = ['img','vid','audio'];
             b.classList.toggle('active', tabs[i] === name);
         });
     });
@@ -954,7 +765,7 @@ function updateGenButtonState() {
     const model = document.getElementById('imgModel').value;
     const btn = document.getElementById('btnGenImg');
     
-    if (files.length >= 2 && model === 'flux2-universal') {
+    if (files.length >= 2 && model === 'qwen-image') {
         btn.innerHTML = '✨ Gerar Cena Multi-Pass (LLM Text-Locking Ativado)';
         btn.style.background = 'linear-gradient(90deg, #ff0055, #7000ff)';
     } else {
@@ -1042,7 +853,7 @@ async function generateImage() {
         'flux-dev':     'Aquecendo A10G • Carregando FLUX.1-dev...',
         'flux-pulid':   'Aquecendo A10G • Carregando FLUX PuLID...',
         'flux-translated': 'Aquecendo A10G • Preparando Workflow Img2Img...',
-        'flux2-universal': 'Aquecendo A10G • Carregando FLUX.2-Universal...'
+        'qwen-image': 'Aquecendo GPU (H100) ⚡ Carregando Qwen Image Edit Plus...'
     };
     showSpinner(modelLabels[model] || 'Aquecendo GPU...');
 
@@ -1066,12 +877,10 @@ async function generateImage() {
         animateProgress('imgProgressFill','imgProgressText', 0, 30, 8000, 'Aguardando Modal Cloud');
         log(`⏳ Requisição enviada — aguardando resposta da Modal (pode levar 1-4 min no cold start)...`, 'warn');
 
-        const lora_name = document.getElementById('imgLoraSelect') ? document.getElementById('imgLoraSelect').value : '';
-
         const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, steps, aspect_ratio, model, reference_images_base64, use_upscale, lora_name })
+            body: JSON.stringify({ prompt, steps, aspect_ratio, model, reference_images_base64, use_upscale })
         });
 
         if (!res.ok) {
@@ -1079,31 +888,52 @@ async function generateImage() {
             throw new Error(`HTTP ${res.status}: ${errText}`);
         }
 
-        const resText = await res.text();
-        let jobData = null;
-        
-        const lines = resText.trim().split('\n');
-        for (let i = lines.length - 1; i >= 0; i--) {
-            if (lines[i].trim() === "") continue;
-            try {
-                const parsed = JSON.parse(lines[i]);
-                if (parsed.image_base64) {
-                    jobData = parsed;
-                    break; // Pega a última que tenha imagem (que será o upscale)
-                } else if (!jobData) {
-                    jobData = parsed;
-                }
-            } catch(e) {}
-        }
-        
-        if(!jobData) {
-            throw new Error(`Nenhum dado valido retornado pela Modal: ${resText}`);
-        }
-        if(jobData.status === "error") {
-            throw new Error(`Erro gerando na Modal: ${jobData.message || JSON.stringify(jobData)}`);
-        }
+        const initialData = await res.json();
+        if (initialData.status === "processing" && initialData.job_id) {
+            const jobId = initialData.job_id;
+            log(`📦 Job enfileirado no backend (ID: ${jobId.substring(0,6)}...). Iniciando polling...`, 'info');
             
-        const data = jobData;
+            let jobSuccess = false;
+            let jobData = null;
+            while (!jobSuccess) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                
+                const now = Math.floor((Date.now() - startTime)/1000);
+                log(`💓 Consultando status... (${now}s)`, 'info');
+                document.getElementById('spinnerLabel').textContent = `Gerando na Nuvem... ${now}s`;
+                
+                const statusRes = await fetch(`/api/studio/modal/status/${jobId}`);
+                if (!statusRes.ok) {
+                    throw new Error(`Erro ao consultar status: HTTP ${statusRes.status}`);
+                }
+                const statusData = await statusRes.json();
+                
+                if (statusData.status === "success") {
+                      jobSuccess = true;
+                      if (typeof statusData.content === 'string') {
+                          const lines = statusData.content.trim().split('\n');
+                          for (let i = lines.length - 1; i >= 0; i--) {
+                              if (lines[i].trim() === "") continue;
+                              try {
+                                  const parsed = JSON.parse(lines[i]);
+                                  if (parsed.image_base64) {
+                                      jobData = parsed;
+                                      break; // Pega a última que tenha imagem (que será o upscale)
+                                  } else if (!jobData) {
+                                      jobData = parsed;
+                                  }
+                              } catch(e) {}
+                          }
+                          if (!jobData) jobData = statusData.content;
+                      } else {
+                          jobData = statusData.content;
+                      }
+                  } else if (statusData.status === "error") {
+                      throw new Error(`Erro gerando na Modal: ${JSON.stringify(statusData.content)}`);
+                  }
+            }
+            
+            const data = jobData;
             if (data.type === "result" || data.status === "success" || data.image_base64) {
                 log(`📦 Recebimento de imagem concluído.`, 'ok');
                 const elapsedSec = stopTimer();
@@ -1126,6 +956,9 @@ async function generateImage() {
             } else {
                 throw new Error("Formato de resposta inesperado: " + JSON.stringify(data, null, 2));
             }
+        } else {
+            throw new Error("O servidor não retornou um Job ID: " + JSON.stringify(initialData, null, 2));
+        }
 
     } catch(e) {
         stopTimer();
@@ -1147,7 +980,7 @@ async function generateVideo() {
     const aspect_ratio = document.getElementById('vidAspect') ? document.getElementById('vidAspect').value : 'horizontal';
     const duration_el = document.getElementById('vidDuration');
     const duration = duration_el ? duration_el.value : '5s';
-    const url = "/api/studio/modal/generate_video";
+    const url    = "/api/studio/modal/generate_video";
     const status = document.getElementById('vidStatus');
 
     log(`🎬 GERAR VÍDEO — Iniciando`, 'info');
@@ -1284,26 +1117,15 @@ async function transcribeAudio() {
         }
 
         if (data.status === 'success') {
-                    // Log to terminal
-                    log('🚀 Áudio gerado com sucesso! ' + (data.message || ''));
-                    
-                    // Esconde placeholder e spinner do lado direito
-                    document.getElementById('previewPlaceholder').style.display = 'none';
-                    hideSpinner();
-
-                    // Toca o audio no lado direito
-                    const audioSrc = data.audio_base64 ? 'data:audio/wav;base64,' + data.audio_base64 : data.audio_url;
-                    const audNode = document.getElementById('previewAudio');
-                    audNode.src = audioSrc;
-                    audNode.style.display = 'block';
-                    
-                    // Permite download
-                    currentImageData = data.audio_base64 || data.audio_url || "";
-                    document.getElementById('btnDownloadPreview').style.display = 'block';
-                } else {
-                    log('❌ ERRO MODAL: ' + JSON.stringify(data));
-                    hideSpinner();
-                }
+            const elapsed = stopTimer();
+            hideSpinner();
+            status.className = 'log-box';
+            status.textContent = `✅ Transcrição concluída em ${elapsed}s!`;
+            result.textContent = data.text;
+            log(`✅ TRANSCRIÇÃO OK em ${elapsed}s — ${data.text.length} chars`, 'ok');
+        } else {
+            throw new Error(data.message || JSON.stringify(data));
+        }
     } catch(e) {
         const elapsed = stopTimer();
         hideSpinner();
@@ -1316,30 +1138,6 @@ async function transcribeAudio() {
     }
 }
 
-// ─── LORAS ───────────────────────────────────────────────────────────
-async function loadLoras() {
-    try {
-        const userId = "master_user_1"; // Hardcoded para este contexto por enquanto
-        const url = `/api/studio/modal/list_loras/${userId}`;
-        const res = await fetch(url);
-        if (res.ok) {
-            const data = await res.json();
-            const select = document.getElementById('imgLoraSelect');
-            if (data.loras && data.loras.length > 0) {
-                data.loras.forEach(lora => {
-                    const opt = document.createElement('option');
-                    opt.value = lora;
-                    opt.textContent = lora.split('/').pop().replace('.safetensors', '');
-                    select.appendChild(opt);
-                });
-                log(`🎭 ${data.loras.length} LoRAs carregados com sucesso.`, 'ok');
-            }
-        }
-    } catch (e) {
-        log(`❌ Erro ao carregar LoRAs: ${e.message}`, 'error');
-    }
-}
-
 // ─── INICIALIZAÇÃO ───────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     log('🚀 Apollo Modal AI Studio v2.0 carregado', 'ok');
@@ -1347,8 +1145,6 @@ document.addEventListener('DOMContentLoaded', () => {
     log('→ Dica: cole os logs abaixo no chat se algo falhar!', 'warn');
     // Auto-ping ao carregar
     setTimeout(pingModal, 1500);
-    // Carregar LoRAs da Fábrica de Personagens
-    loadLoras();
 
     // ─── Toggle Upscale Visual ─────────────────────────────────────
     const toggleUpscale = document.getElementById('toggleUpscale');
@@ -1381,3 +1177,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
