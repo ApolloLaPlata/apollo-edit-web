@@ -10,12 +10,12 @@ from backend.cloud_tools.engines.apollo_arena_comfy_engine import ArenaComfyEngi
 
 orchestrator_image = (
     modal.Image.debian_slim()
-    .pip_install("fastapi[standard]", "pydantic", "requests", "langdetect")
+    .pip_install("fastapi[standard]", "pydantic", "requests", "langdetect", "Pillow")
     .add_local_python_source("backend")
 )
 
 # This acts as a high-level orchestrator class on Modal (CPU only, avoiding GPU deadlock!)
-@app.cls(timeout=600, min_containers=1, image=orchestrator_image)
+@app.cls(timeout=1800, min_containers=1, image=orchestrator_image)
 class QwenImageEngine:
     
     @modal.enter()
@@ -36,23 +36,37 @@ class QwenImageEngine:
         
         # Helper to run a ComfyUI pass via ArenaComfyEngine
         def run_pass(pass_prompt, img1=None, img2=None, img3=None, base_img=None):
+            if base_img is None:
+                from PIL import Image
+                import io
+                blank = Image.new("RGB", (width, height), (255, 255, 255))
+                buf = io.BytesIO()
+                blank.save(buf, format="PNG")
+                base_img = base64.b64encode(buf.getvalue()).decode('utf-8')
+                
             seed = int(time.time()) % 1000000
             wf = {
+                "2":  { "class_type": "LoadImage", "inputs": { "image": "base_inpaint.png" }},
                 "3": { "class_type": "CLIPLoader", "inputs": { "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors", "type": "qwen_image" }},
                 "4": { "class_type": "VAELoader", "inputs": { "vae_name": "qwen_image_vae.safetensors" }},
+                "5":  { "class_type": "VAEEncode", "inputs": { "pixels": ["2", 0], "vae": ["4", 0] }},
                 "6":  { "class_type": "TextEncodeQwenImageEditPlus", "inputs": {
                     "clip": ["3", 0], "prompt": pass_prompt, "vae": ["4", 0]
                 }},
-                "7":  { "class_type": "Qwen2.5-VL-ModelLoader", "inputs": { "model_name": "qwen_image_edit_2511_bf16.safetensors" }},
-                "8":  { "class_type": "ModelSamplingFlux", "inputs": {
-                    "model": ["7", 0], "max_shift": 1.15, "base_shift": 0.5, "width": width, "height": height
+                "7":  { "class_type": "UNETLoader", "inputs": { "unet_name": "qwen_image_edit_2511_bf16.safetensors", "weight_dtype": "default" }},
+                "8":  { "class_type": "ModelSamplingAuraFlow", "inputs": {
+                    "model": ["7", 0], "shift": 3.1
+                }},
+                "9":  { "class_type": "CFGNorm", "inputs": {
+                    "model": ["8", 0],
+                    "strength": 1.0
                 }},
                 "10": { "class_type": "KSampler", "inputs": {
                     "seed": seed, "steps": 25, "cfg": 1, "sampler_name": "euler", "scheduler": "simple", "denoise": 1,
-                    "model": ["8", 0],
+                    "model": ["9", 0],
                     "positive": ["6", 0],
                     "negative": ["6", 0],
-                    "latent_image": ["6", 1]
+                    "latent_image": ["5", 0]
                 }},
                 "11": { "class_type": "VAEDecode", "inputs": {
                     "samples": ["10", 0], "vae": ["4", 0]
@@ -65,20 +79,17 @@ class QwenImageEngine:
             multi_dict = {}
             if img1:
                 wf["5a"] = { "class_type": "LoadImage", "inputs": { "image": "img1.png" }}
-                wf["5b"] = { "class_type": "FluxKontextImageScale", "inputs": { "image": ["5a", 0] }}
-                wf["6"]["inputs"]["image1"] = ["5b", 0]
+                wf["6"]["inputs"]["image1"] = ["5a", 0]
                 multi_dict["img1.png"] = img1
             
             if img2:
                 wf["9a"] = { "class_type": "LoadImage", "inputs": { "image": "img2.png" }}
-                wf["9b"] = { "class_type": "FluxKontextImageScale", "inputs": { "image": ["9a", 0] }}
-                wf["6"]["inputs"]["image2"] = ["9b", 0]
+                wf["6"]["inputs"]["image2"] = ["9a", 0]
                 multi_dict["img2.png"] = img2
                 
             if img3:
                 wf["13a"] = { "class_type": "LoadImage", "inputs": { "image": "img3.png" }}
-                wf["13b"] = { "class_type": "FluxKontextImageScale", "inputs": { "image": ["13a", 0] }}
-                wf["6"]["inputs"]["image3"] = ["13b", 0]
+                wf["6"]["inputs"]["image3"] = ["13a", 0]
                 multi_dict["img3.png"] = img3
 
             try:
@@ -123,7 +134,23 @@ class QwenImageEngine:
         # MODE 1: T2I (Text-to-Image)
         if len(images_b64) == 0:
             print("[QwenImageEngine] Mode: T2I (Pure, no dummy pixel)")
-            return run_pass(prompt)
+            
+            from PIL import Image
+            import io
+            width, height = 1024, 1024
+            if aspect_ratio == "horizontal": width, height = 1280, 720
+            elif aspect_ratio == "vertical": width, height = 720, 1280
+            
+            blank = Image.new("RGB", (width, height), (255, 255, 255))
+            buf = io.BytesIO()
+            blank.save(buf, format="PNG")
+            img1_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+            
+            # Precisamos do <|image_1|> no prompt para o TextEncodeQwenImageEditPlus processar
+            if "<|image_1|>" not in prompt:
+                prompt = "<|image_1|> " + prompt
+                
+            return run_pass(prompt, img1=img1_b64)
             
         # MODE 2: I2I (Single Character or Direct Edit)
         elif len(images_b64) == 1:
