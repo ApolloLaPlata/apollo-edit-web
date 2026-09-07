@@ -1013,7 +1013,7 @@ async function generateVideo() {
         });
         if (!res.ok) {
             const errText = await res.text();
-            throw new Error( + '' + r'HTTP : ' + '' + r);
+            throw new Error(`HTTP ${res.status}: ${errText}`);
         }
 
         const initialData = await res.json();
@@ -1021,19 +1021,19 @@ async function generateVideo() {
 
         if (initialData.status === 'processing' && initialData.job_id) {
             const jobId = initialData.job_id;
-            log( + '' + r'📦 Job enfileirado no backend (ID: ...). Iniciando polling...' + '' + r, 'info');
+            log(`📦 Job enfileirado no backend (ID: ${jobId}). Iniciando polling...`, 'info');
             
             let jobSuccess = false;
             while (!jobSuccess) {
                 await new Promise(resolve => setTimeout(resolve, 5000));
                 
                 const now = Math.floor((Date.now() - startTime)/1000);
-                log( + '' + r'💓 Consultando status... (s)' + '' + r, 'info');
-                document.getElementById('spinnerLabel').textContent =  + '' + r'Gerando Vídeo... s' + '' + r;
+                log(`💓 Consultando status... (${now}s)`, 'info');
+                document.getElementById('spinnerLabel').textContent = `Gerando Vídeo... ${now}s`;
                 
-                const statusRes = await fetch( + '' + r'/api/studio/modal/status/' + '' + r);
+                const statusRes = await fetch(`/api/studio/modal/status/${jobId}`);
                 if (!statusRes.ok) {
-                    throw new Error( + '' + r'Erro ao consultar status: HTTP ' + '' + r);
+                    throw new Error(`Erro ao consultar status: HTTP ${statusRes.status}`);
                 }
                 const statusData = await statusRes.json();
                 
