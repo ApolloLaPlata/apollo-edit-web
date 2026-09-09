@@ -23,7 +23,10 @@ class QwenImageEngine:
         self.arena = ArenaComfyEngine()
         
     @modal.method()
-    def generate(self, prompt: str, images_b64: list = None, aspect_ratio: str = "horizontal", use_upscale: bool = False, step_prompts: list = None, dynamic_steps: list = None):
+    def generate(self, prompt: str, images_b64: list = None, aspect_ratio: str = "horizontal", use_upscale: bool = False, step_prompts: list = None, dynamic_steps: list = None, negative_prompt: str = None):
+        if negative_prompt:
+            prompt += f"\nDO NOT DRAW: {negative_prompt}"
+
         if not images_b64:
             images_b64 = []
             
@@ -81,6 +84,13 @@ class QwenImageEngine:
                     "filename_prefix": "qwen_edit_out", "images": ["11", 0]
                 }}
             }
+            
+            if use_upscale:
+                wf["13"] = { "class_type": "UpscaleModelLoader", "inputs": { "model_name": "4x-UltraSharp.pth" } }
+                wf["14"] = { "class_type": "ImageUpscaleWithModel", "inputs": { "upscale_model": ["13", 0], "image": ["11", 0] } }
+                # Downscale em 0.5 para nao gerar imagens gigantes de 14 megapixels, mantendo a nitidez 2x (2560x1440)
+                wf["15"] = { "class_type": "ImageScaleBy", "inputs": { "upscale_method": "lanczos", "scale_by": 0.5, "image": ["14", 0] } }
+                wf["12"]["inputs"]["images"] = ["15", 0]
             
             multi_dict = {}
             if img1:
@@ -172,6 +182,9 @@ class QwenImageEngine:
             
             for step_idx, step in enumerate(dynamic_steps):
                 p_prompt = step.get("prompt", safe_prompt)
+                if negative_prompt and "DO NOT DRAW" not in p_prompt:
+                    p_prompt += f"\\nDO NOT DRAW: {negative_prompt}"
+                
                 indices = step.get("image_indices", [])
                 
                 # Qwen suporta maximo de 3 imagens por pass
