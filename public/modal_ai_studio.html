@@ -1522,6 +1522,28 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('musicProgressText').innerText = current + "/" + total;
         }
         
+        
+        function downloadAllBatchFiles() {
+            if (!window.batchGeneratedFiles || window.batchGeneratedFiles.length === 0) {
+                alert("Nenhuma música foi gerada para baixar.");
+                return;
+            }
+            logMusicMaster("Iniciando download em lote...");
+            let delay = 0;
+            window.batchGeneratedFiles.forEach((url, index) => {
+                setTimeout(() => {
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = url.split("/").pop(); // extrai o nome final do arquivo
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    logMusicMaster("Baixando arquivo " + (index + 1) + "...");
+                }, delay);
+                delay += 800; // 800ms delay para não travar o navegador
+            });
+        }
+
         async function generateMusicMaster() {
             const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
             const style = document.getElementById('musicStyle').value;
