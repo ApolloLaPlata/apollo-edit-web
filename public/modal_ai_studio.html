@@ -1418,6 +1418,23 @@ document.addEventListener('DOMContentLoaded', () => {
             batchRunning = true;
             let successCount = 0;
             
+            // Inicializar interface de lista para o Lote
+            window.batchGeneratedFiles = [];
+            document.getElementById('previewPlaceholder').style.display = 'none';
+            const preview = document.getElementById('previewContainer');
+            preview.style.display = 'block';
+            preview.innerHTML = `
+                <div style="padding: 20px;">
+                    <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados do Lote</h2>
+                    <div id="batchDownloadAllContainer" style="text-align:center; margin-bottom: 20px; display:none;">
+                        <button class="btn btn-primary" onclick="downloadAllBatchFiles()" style="font-size: 1.2rem; padding: 15px 30px; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);">
+                            💾 Baixar Todas as Músicas do Lote
+                        </button>
+                    </div>
+                    <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
+                </div>
+            `;
+            
             for (let i = 0; i < prompts.length; i++) {
                 if (!batchRunning) {
                     logBatch(`Processo cancelado na música ${i+1}.`);
@@ -1457,22 +1474,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         logBatch(`[${i+1}/${prompts.length}] ✅ Sucesso!`);
                         successCount++;
                         
-                        // Atualizar preview com a música gerada em lote
-                        const preview = document.getElementById('previewContainer');
-                        const statusBox = document.getElementById('batchStatus');
+                        // Guardar para o botão de Baixar Tudo
+                        window.batchGeneratedFiles.push(result.file_url);
                         
-                        preview.innerHTML = `
-                            <div style="padding: 20px; text-align: center;">
-                                <h3 style="color: white; margin-bottom: 20px;">🎵 Resultado Lote: ${p.substring(0,20)}...</h3>
-                                <audio controls autoplay style="width: 100%;">
-                                    <source src="${result.file_url}" type="audio/mpeg">
-                                </audio>
-                                <br><br>
-                                <a href="${result.file_url}" download class="btn btn-primary">Baixar Arquivo</a>
+                        // Adicionar nova faixa na lista visual
+                        const trackList = document.getElementById('batchTracksList');
+                        const index = window.batchGeneratedFiles.length;
+                        
+                        const trackHtml = `
+                            <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                                <div style="flex: 1;">
+                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
+                                    <audio controls style="width: 100%;">
+                                        <source src="${result.file_url}" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                                <a href="${result.file_url}" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
                             </div>
                         `;
-                        document.getElementById('previewPlaceholder').style.display = 'none';
-                        preview.style.display = 'block';
+                        trackList.insertAdjacentHTML('beforeend', trackHtml);
 
                         if (window.apolloTransferOS) { 
                             window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Lote: " + p.substring(0,20), null, { url: window.location.origin + result.file_url }); 
@@ -1480,8 +1500,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         logBatch(`[${i+1}/${prompts.length}] ❌ Erro: ${result.error}`);
                     }
-                } catch (e) {
-                    logBatch(`[${i+1}/${prompts.length}] ❌ Erro Rede: ${e.message}`);
+                } catch(e) {
+                    logBatch(`[${i+1}/${prompts.length}] ❌ Erro na requisição: ${e}`);
                 }
                 
                 updateBatchProgress(i+1, prompts.length);
@@ -1490,12 +1510,28 @@ document.addEventListener('DOMContentLoaded', () => {
             batchRunning = false;
             document.getElementById('btnGenerateBatch').style.display = 'block';
             document.getElementById('btnStopBatch').style.display = 'none';
+            logBatch(`Lote finalizado! ${successCount} geradas.`);
             
-            if (successCount === prompts.length) {
-                logBatch(`✅ Lote concluído! ${successCount} músicas geradas.`);
-            } else {
-                logBatch(`⚠️ Lote finalizado. ${successCount}/${prompts.length} com sucesso.`);
+            if (window.batchGeneratedFiles && window.batchGeneratedFiles.length > 0) {
+                document.getElementById('batchDownloadAllContainer').style.display = 'block';
             }
+        }
+        
+        function downloadAllBatchFiles() {
+            if (!window.batchGeneratedFiles || window.batchGeneratedFiles.length === 0) return;
+            
+            if (!confirm(`Baixar ${window.batchGeneratedFiles.length} arquivos simultaneamente? (O navegador pode pedir permissão)`)) return;
+
+            window.batchGeneratedFiles.forEach((url, idx) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = url.split('/').pop() || ("Lote_Track_" + (idx + 1) + ".mp3");
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, idx * 500);
+            });
         }
         
         function stopBatch() {
