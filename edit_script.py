@@ -1,4 +1,4 @@
-﻿import json
+import json
 
 with open('servidor_web.py', 'r', encoding='utf-8') as f:
     content = f.read()
@@ -28,9 +28,9 @@ if idx_start != -1 and idx_end != -1:
                 prompt = data.get('prompt', '')
                 
                 if not prompt:
-                    raise ValueError("Prompt não fornecido para gerar imagem.")
+                    raise ValueError("Prompt n�o fornecido para gerar imagem.")
                     
-                print(f"🎨 Gerando imagem B-Roll para: '{prompt}'...")
+                print(f"?? Gerando imagem B-Roll para: '{prompt}'...")
                 
                 import time
                 import requests
@@ -67,7 +67,7 @@ if idx_start != -1 and idx_end != -1:
                 source_used = ""
                 
                 # PLANO A: GEMINI (Imagen 3)
-                print(f"🔄 Tentando gerar com {len(gemini_keys)} chaves Gemini...")
+                print(f"?? Tentando gerar com {len(gemini_keys)} chaves Gemini...")
                 for idx, key in enumerate(gemini_keys):
                     try:
                         url = "https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict"
@@ -83,14 +83,14 @@ if idx_start != -1 and idx_end != -1:
                                 img_bytes = base64.b64decode(result['predictions'][0]['bytesBase64Encoded'])
                                 with open(filepath, 'wb') as f:
                                     f.write(img_bytes)
-                                print(f"✅ B-Roll gerado via Gemini (Chave {idx+1}) e salvo em: {filepath}")
+                                print(f"? B-Roll gerado via Gemini (Chave {idx+1}) e salvo em: {filepath}")
                                 success = True
                                 source_used = f"Gemini (Chave {idx+1})"
                                 break
                         else:
-                            print(f"⚠️  Falha no Gemini (Chave {idx+1}): {resp.status_code}")
+                            print(f"??  Falha no Gemini (Chave {idx+1}): {resp.status_code}")
                     except Exception as e:
-                        print(f"⚠️  Erro na chamada Gemini (Chave {idx+1}): {e}")
+                        print(f"??  Erro na chamada Gemini (Chave {idx+1}): {e}")
                 
                 if success:
                     web_path = filepath.replace('\\\\', '/')
@@ -104,11 +104,11 @@ if idx_start != -1 and idx_end != -1:
                         "message": f"Imagem gerada com sucesso via {source_used}!"
                     }).encode('utf-8'))
                 else:
-                    raise ValueError(f"Falha na geração via Gemini. (Verificou se há chaves configuradas?)")
+                    raise ValueError(f"Falha na gera��o via Gemini. (Verificou se h� chaves configuradas?)")
                     
             except Exception as e:
                 import traceback
-                print(f"🎨 ERRO na geração de imagem: {traceback.format_exc()}")
+                print(f"?? ERRO na gera��o de imagem: {traceback.format_exc()}")
                 self.send_response(500)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()

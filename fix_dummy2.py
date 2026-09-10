@@ -1,4 +1,4 @@
-﻿import os
+import os
 file = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\api\routes_ai_director.py'
 with open(file, 'r', encoding='utf-8') as f:
     content = f.read()

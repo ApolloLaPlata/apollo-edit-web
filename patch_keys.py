@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/servidor_web.py'
@@ -44,7 +44,7 @@ text = re.sub(
 )
 
 # Fix F5TTS fallback
-f5_old = r'except Exception as f5_err:\s+print\(f"\[WS\] F5TTS gerou erro \(Modal pode não estar rodando\): \{f5_err\}"\)'
+f5_old = r'except Exception as f5_err:\s+print\(f"\[WS\] F5TTS gerou erro \(Modal pode n�o estar rodando\): \{f5_err\}"\)'
 f5_new = r'''except Exception as f5_err:
                                 print(f"[WS] F5TTS gerou erro (Modal pode nao estar rodando). Fallback edge-tts: {f5_err}")
                                 import subprocess

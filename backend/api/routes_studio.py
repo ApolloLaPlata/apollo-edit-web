@@ -119,6 +119,8 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
                         c = json.load(f)
                         keys = c.get("api_config", {}).get("lightning_chat", {}).get("api_keys", [])
                         if keys:
+                            import random
+                            random.shuffle(keys)
                             lit_key = keys[0]
                 
                 if lit_key:
@@ -184,7 +186,7 @@ Make sure ALL {num_imgs} indices are used. No markdown blocks."""
                                     "https://lightning.ai/api/v1/chat/completions",
                                     headers={"Authorization": f"Bearer {k}", "Content-Type": "application/json"},
                                     json={
-                                        "model": "nvidia-nemotron-3-ultra-550b-a55b",
+                                        "model": "openai/gpt-4o",
                                         "messages": [{"role": "user", "content": llm_prompt}]
                                     }
                                 )

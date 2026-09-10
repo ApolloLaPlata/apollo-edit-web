@@ -1,4 +1,4 @@
-ï»¿import modal
+import modal
 import os
 
 flux2_comfy_image = (
@@ -32,7 +32,7 @@ flux2_comfy_image = (
         "HF_HUB_OFFLINE": "0",
         "TRANSFORMERS_OFFLINE": "0",
         "HF_HUB_ENABLE_HF_TRANSFER": "1",
-        "MODAL_CACHE_BUSTER": "2"   # nao alterar Ã”Ã‡Ã¶ evita rebuild Docker desnecessario
+        "MODAL_CACHE_BUSTER": "2"   # nao alterar ÔÇö evita rebuild Docker desnecessario
     })
 )
 
@@ -71,9 +71,9 @@ def download_comfy_models():
 
 
 # ============================================================
-# Flux2ComfyEngine_V2 Ã”Ã‡Ã¶ IMG2IMG via ComfyUI HTTP subprocess
+# Flux2ComfyEngine_V2 ÔÇö IMG2IMG via ComfyUI HTTP subprocess
 # PADRAO IDENTICO ao Flux2Txt2ImgEngine (que funciona)
-# O ExperimentalComfyServer in-process corrompâ”œÂ¡a o VAEEncode
+# O ExperimentalComfyServer in-process corromp+¡a o VAEEncode
 # ============================================================
 @app.cls(
     gpu="H100",
@@ -171,7 +171,7 @@ class Flux2ComfyEngine_V2:
             else:
                 print("[Flux2ComfyEngine_V2] AVISO: sem input_image_b64")
 
-            # 2. Carregar workflow e atualizar nos (por class_type Ã”Ã‡Ã¶ robusto a mudancas de IDs)
+            # 2. Carregar workflow e atualizar nos (por class_type ÔÇö robusto a mudancas de IDs)
             with open("/tmp/workflow.json", "r", encoding="utf-8") as f:
                 workflow = json.load(f)
             print(f"[Flux2ComfyEngine_V2] Workflow carregado: {len(workflow)} nos")
@@ -204,7 +204,7 @@ class Flux2ComfyEngine_V2:
                     nodes_updated.append(f"RandomNoise({node_id})=seed:{seed}")
             
             if style:
-                print(f"[Flux2ComfyEngine_V2] Ã”Â£Â¿ Estilo Lora selecionado: '{style}'. (A Injeâ”œÂºâ”œÃºo do LoraLoader no Grafo JSON serâ”œÃ­ ativada apâ”œâ”‚s download dos pesos .safetensors no volume)")
+                print(f"[Flux2ComfyEngine_V2] Ô£¿ Estilo Lora selecionado: '{style}'. (A Inje+º+úo do LoraLoader no Grafo JSON ser+í ativada ap+¦s download dos pesos .safetensors no volume)")
                 
             print(f"[Flux2ComfyEngine_V2] Nos atualizados: {nodes_updated}")
 

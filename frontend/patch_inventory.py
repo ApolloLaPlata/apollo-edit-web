@@ -1,8 +1,8 @@
-Ôªøimport os
+import os
 
 new_code = '''/**
- * Apollo La Plata - Ponte de Invent√°rio V2 (Packs e Magic Squares)
- * Permite copiar m√≠dias isoladas ou agrupar v√°rias m√≠dias em "Packs" din√¢micos.
+ * Apollo La Plata - Ponte de Invent·rio V2 (Packs e Magic Squares)
+ * Permite copiar mÌdias isoladas ou agrupar v·rias mÌdias em "Packs" din‚micos.
  */
 
 window.laplataInventory = {
@@ -12,7 +12,7 @@ window.laplataInventory = {
         currentFolder: null // null = root, senao = ID do pack aberto
     },
 
-    // Retorna todos os itens do invent√°rio
+    // Retorna todos os itens do invent·rio
     getItems: function() {
         try {
             const data = localStorage.getItem(this.KEY);
@@ -22,13 +22,13 @@ window.laplataInventory = {
         }
     },
 
-    // Salva itens no invent√°rio
+    // Salva itens no invent·rio
     saveItems: function(items) {
         localStorage.setItem(this.KEY, JSON.stringify(items));
         this.updateUI();
     },
 
-    // API Retrocompat√≠vel com V1
+    // API RetrocompatÌvel com V1
     // copy(base64Image) -> Adiciona como single image
     copy: function(payload, type = 'image', metadata = {}) {
         const items = this.getItems();
@@ -42,13 +42,13 @@ window.laplataInventory = {
         };
 
         // Se estivermos dentro de um pack, tentar adicionar dentro do pack (Opcional)
-        // Por padr√£o, sempre copia pro root
+        // Por padr„o, sempre copia pro root
         items.unshift(newItem); 
         
         this.saveItems(items);
 
         if (window.apolloNotifications) {
-            window.apolloNotifications.add("Copiado!", "Item enviado para a √Årea de Transfer√™ncia üéí", "system");
+            window.apolloNotifications.add("Copiado!", "Item enviado para a ¡rea de TransferÍncia ??", "system");
         }
         if (window.apolloCopilot) window.apolloCopilot.react("copy_inventory");
         if (window.apolloSFX) window.apolloSFX.play('click');
@@ -58,7 +58,7 @@ window.laplataInventory = {
     addPack: function(title, itemsArray, metadata = {}) {
         const items = this.getItems();
         
-        // Thumbnail do pack ser√° o primeiro item de imagem, ou um √≠cone padr√£o
+        // Thumbnail do pack ser· o primeiro item de imagem, ou um Ìcone padr„o
         let thumb = '';
         if (itemsArray.length > 0 && itemsArray[0].type === 'image') {
             thumb = itemsArray[0].data;
@@ -79,7 +79,7 @@ window.laplataInventory = {
         this.saveItems(items);
         
         if (window.apolloNotifications) {
-            window.apolloNotifications.add("Pack Salvo!", title + " enviado para a √Årea üéí", "system");
+            window.apolloNotifications.add("Pack Salvo!", title + " enviado para a ¡rea ??", "system");
         }
         if (window.apolloSFX) window.apolloSFX.play('success');
     },
@@ -184,7 +184,7 @@ window.laplataInventory = {
             #laplata-inventory-grid::-webkit-scrollbar { width: 5px; }
             #laplata-inventory-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 5px; }
 
-            /* O Quadradinho M√°gico */
+            /* O Quadradinho M·gico */
             .magic-square {
                 aspect-ratio: 1;
                 background: #1e293b;
@@ -245,7 +245,7 @@ window.laplataInventory = {
         panel.id = 'laplata-inventory-panel';
         panel.innerHTML = 
             <div id="laplata-inventory-header">
-                <h4><button class="inv-btn-back" id="inv-back-btn">‚¨Ö</button> üéí <span id="inv-title">Transfer√™ncia</span></h4>
+                <h4><button class="inv-btn-back" id="inv-back-btn">?</button> ?? <span id="inv-title">TransferÍncia</span></h4>
                 <button class="inv-btn-clear" id="laplata-inventory-clear">Limpar</button>
             </div>
             <div id="laplata-inventory-grid"></div>
@@ -254,7 +254,7 @@ window.laplataInventory = {
 
         const btn = document.createElement('div');
         btn.id = 'laplata-inventory-btn';
-        btn.innerHTML = üìã<div class="badge" id="laplata-inventory-badge">0</div>;
+        btn.innerHTML = ??<div class="badge" id="laplata-inventory-badge">0</div>;
         btn.onclick = () => {
             const isVisible = panel.style.display === 'flex';
             panel.style.display = isVisible ? 'none' : 'flex';
@@ -292,12 +292,12 @@ window.laplataInventory = {
                 titleSpan.innerText = pack.title || "Pack";
                 backBtn.style.display = 'inline-block';
             } else {
-                this.state.currentFolder = null; // Falha de seguran√ßa
+                this.state.currentFolder = null; // Falha de seguranÁa
             }
         } 
         
         if (!this.state.currentFolder) {
-            titleSpan.innerText = "Transfer√™ncia";
+            titleSpan.innerText = "TransferÍncia";
             backBtn.style.display = 'none';
         }
 
@@ -318,10 +318,10 @@ window.laplataInventory = {
 
             if (item.type === 'image') {
                 square.innerHTML = <img src="\"> <div class="tooltip">IMG</div>;
-                // Clique simples na imagem = copiar para clipboard (A√ß√£o retrocompativel)
+                // Clique simples na imagem = copiar para clipboard (AÁ„o retrocompativel)
                 square.onclick = () => {
                     // Para futuro: arrastar e soltar (Drag and Drop nativo)
-                    // Por enquanto s√≥ toca som
+                    // Por enquanto sÛ toca som
                     if(window.apolloSFX) window.apolloSFX.play('click');
                 };
             } 
@@ -330,7 +330,7 @@ window.laplataInventory = {
                 if (item.thumbnail) {
                     inner = <img src="\" style="opacity: 0.6;">;
                 } else {
-                    inner = <div class="pack-icon">üìÅ</div>;
+                    inner = <div class="pack-icon">??</div>;
                 }
                 
                 square.innerHTML = 

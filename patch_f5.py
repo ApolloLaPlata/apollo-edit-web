@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/servidor_web.py'
@@ -37,7 +37,7 @@ f5_old = r'''except Exception as f5_err:
 f5_new = r'''except Exception as f5_err:
                                 print(f"[WS] F5TTS Modal falhou: {f5_err}")
                             if 'audio_chunk' in locals() and audio_chunk:
-                                # Converte WAV (audio_chunk) para MP3 na memÃ³ria usando ffmpeg para otimizar velocidade no front
+                                # Converte WAV (audio_chunk) para MP3 na memória usando ffmpeg para otimizar velocidade no front
                                 import subprocess
                                 try:
                                     proc = subprocess.Popen(

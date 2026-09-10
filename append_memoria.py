@@ -1,22 +1,11 @@
-﻿import os
-
-new_section = '''
----
-
-## 🤖 7. Nova Arquitetura de Inteligência (Orquestração Swarm Multi-Agentes)
-O Apollo Edit Web evoluiu de prompts únicos para uma verdadeira linha de montagem cognitiva, dividida em níveis hierárquicos para garantir precisão e velocidade:
-1. **Atendente (Receituário):** Analisa a intenção e gera a Planta Baixa (estimativas de imagens e tempo).
-2. **Gerente:** Gera o Roteiro Master de acordo com o padrão do canal.
-3. **Analista Avançado (Fatiador):** Pica o roteiro em dezenas de tarefas técnicas (Prompts de imagens, Mapeamentos de 4 camadas: Vídeo, Template, Configuração, e Áudio LipSync/Narração).
-4. **Swarm (Minions Econômicos):** Modelos mais baratos rodam em paralelo para executar micro-tarefas rápidas e isoladas.
-5. **Corretor de Congruência (QA):** Testa as discrepâncias de tempo. Se o áudio Lip Sync se choca com a narração sem sentido, ele recusa a fatia e a devolve para o Gerente corrigir, montando os "Quadradinhos Mágicos" da Área de Transferência quando aprovado.
-
-*Documentação expandida sobre o fluxo visual da Timeline encontra-se em mapeamento_arquitetura.md.*
-'''
-
-try:
-    with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\MEMORIA_ATIVA_SISTEMA.md', 'a', encoding='utf-8') as f:
-        f.write(new_section)
-    print("Memoria ativa atualizada com sucesso.")
-except Exception as e:
-    print(f"Erro: {e}")
+# coding: utf-8
+import datetime
+path = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\MEMORIA_ATIVA_SISTEMA.md'
+with open(path, 'a', encoding='utf-8') as f:
+    date_str = datetime.datetime.now().strftime('%Y-%m-%d')
+    f.write(f"\n\n**{date_str} (Infraestrutura Qwen e Otimizacao do Flow)**\n")
+    f.write("- **Memoria Fotografica (Cache):** Adicionado hash local (vision_cache.json) na Oracle VPS para pular a requisicao do Florence-2 caso a mesma imagem seja reutilizada.\n")
+    f.write("- **Smart Padding:** Alterado metodo de colagem de imagens no routes_studio.py de 'Smart Crop' (destrutivo) para 'Padding Seguro' (preserva proporcoes originais sem cortar silhuetas ou detalhes de reference sheets).\n")
+    f.write("- **Gestao de Escala Modal:** Injetado asyncio.Semaphore(2) no Proxy para limitar conexoes simultaneas e evitar estouro de orcamento por cold starts/bugs.\n")
+    f.write("- **Negative Prompt & Dorama Sheets:** Prompt do Nemotron foi reescrito para distinguir Turnarounds de 1 personagem vs. Character Sheets de multiplos personagens (Doramas). Se detectado multiplos, o LLM remove 'SINGLE CHARACTER ONLY' e usa restricoes de separacao para evitar clonagem/fusao, e forca acao dinamica para evitar copia identica da pose. Tambem foi incluida geracao automatica de Negative Prompts baseados no estilo visual.\n")
+    f.write("- **Snapshot Modal:** Injetado o boot do subprocesso ComfyUI para dentro da fase de build da memoria (@modal.enter()) na Modal, permitindo um carregamento praticamente instantaneo de imagens/videos via Qwen.\n")

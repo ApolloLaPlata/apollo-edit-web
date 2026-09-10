@@ -68,6 +68,12 @@ class AbaInferenciaVideo(ctk.CTkFrame):
         # Opções
         self.skip_demucs_var = tk.BooleanVar(value=False)
         ctk.CTkSwitch(left_frame, text="Pular Demucs (Vídeo Seco)", variable=self.skip_demucs_var).pack(anchor='w', pady=(15, 2))
+        
+        self.motor_dublagem_var = tk.StringVar(value="rvc_local")
+        ctk.CTkLabel(left_frame, text="Motor de Dublagem:", font=("Segoe UI", 9, "bold")).pack(anchor='w', pady=(15, 2))
+        ctk.CTkRadioButton(left_frame, text="RVC (Local - Pinokio)", variable=self.motor_dublagem_var, value="rvc_local").pack(anchor='w', pady=2)
+        ctk.CTkRadioButton(left_frame, text="OpenVoice (Nuvem Modal)", variable=self.motor_dublagem_var, value="modal_openvoice").pack(anchor='w', pady=2)
+
 
         # Action Botao
         self.btn_process = ctk.CTkButton(left_frame, text="🚀 INICIAR DUBLAGEM", command=self.start_processing)
@@ -353,10 +359,15 @@ class AbaInferenciaVideo(ctk.CTkFrame):
                 
                 # Fetch FULL config for this character
                 personagens_full_config = self.config_manager.get("personagens", {})
-                char_config = personagens_full_config.get(char_name, {})
+                char_config = personagens_full_config.get(char_name, {}).copy()
+                char_config['motor_dublagem'] = self.motor_dublagem_var.get()
                 
-                if not char_config.get("modelo_rvc"):
+                if not char_config.get("modelo_rvc") and char_config['motor_dublagem'] == "rvc_local":
                     self.log(f"❌ ERRO: Personagem '{char_name}' sem 'modelo_rvc' configurado no Painel Mestre.")
+                    cena_idx += 1
+                    continue
+                elif not char_config.get("audio_ref_moss") and char_config['motor_dublagem'] == "modal_openvoice":
+                    self.log(f"❌ ERRO: Personagem '{char_name}' sem 'audio_ref_moss' (Referência de Voz) configurado para OpenVoice.")
                     cena_idx += 1
                     continue
                     

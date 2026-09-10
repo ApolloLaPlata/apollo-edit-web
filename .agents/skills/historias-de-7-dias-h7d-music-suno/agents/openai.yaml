@@ -1,0 +1,4 @@
+interface:
+  display_name: "H7D Music Suno"
+  short_description: "Prompts musicais H7D MUSIC com Style of Music e Exclude Styles."
+  default_prompt: "Crie prompts H7D MUSIC para Suno com nome, Style of Music e Exclude Styles."

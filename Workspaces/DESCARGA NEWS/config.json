@@ -13,7 +13,22 @@
         "y": "bottom",
         "offset": 25,
         "escala": 0.25
-      }
+      },
+      "voz_google_tts": "",
+      "voz_openaifm": "",
+      "modelo_rvc": "",
+      "index_rvc": "",
+      "pitch_rvc": 0,
+      "index_rate_rvc": 0.75,
+      "embedder_rvc": "contentvec",
+      "audio_ref_moss": "G:/YOUTUBE/DESCARGA NEWS NOTICIAS/EPISODIOS NOTICIAS/Descarga News - Episódio 1 (02 de Agosto de 2025)/fala 1_output.wav",
+      "video_normal": "",
+      "video_feliz": "",
+      "video_triste": "",
+      "video_raiva": "",
+      "tag_frente": "",
+      "perfil_legenda": "",
+      "instrucao_base_tts": ""
     },
     "Anonimo": {
       "video_source": "",
@@ -259,6 +274,8 @@
   },
   "global_tts_model": 2,
   "last_dirs": {
-    "fd_Selecionar_Imagens_de_Referência": "C:/Users/v5est/Downloads"
+    "fd_Selecionar_Imagens_de_Referência": "C:/Users/v5est/Downloads",
+    "fd_Selecione_o_áudio_de_referência_wav_mp3": "G:/YOUTUBE/DESCARGA NEWS NOTICIAS/EPISODIOS NOTICIAS/Descarga News - Episódio 1 (02 de Agosto de 2025)",
+    "fd_Salvar_Áudio_TTS_Como": "C:/Users/v5est/Downloads"
   }
 }

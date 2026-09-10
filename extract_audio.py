@@ -1,4 +1,4 @@
-Ôªøimport base64
+import base64
 import re
 
 html_path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/public/teste_audio.html'
@@ -14,6 +14,6 @@ if match:
     audio_bytes = base64.b64decode(b64_data)
     with open(out_path, 'wb') as f_out:
         f_out.write(audio_bytes)
-    print("√Åudio OGG salvo com sucesso em:", out_path)
+    print("¡udio OGG salvo com sucesso em:", out_path)
 else:
-    print("Base64 n√£o encontrado no HTML.")
+    print("Base64 n„o encontrado no HTML.")

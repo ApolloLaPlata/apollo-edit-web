@@ -1,4 +1,4 @@
-﻿import os
+import os
 import glob
 
 def reverse_dotnet_ansi(text):
@@ -26,8 +26,8 @@ def fix_all():
         with open(f, 'r', encoding='utf-8') as file:
             text = file.read()
         
-        # Only fix if we detect typical mojibake patterns (like Ã£ for ã)
-        if 'Ã' in text or '' in text or 'DŸ' in text or 'Â' in text:
+        # Only fix if we detect typical mojibake patterns (like ã for �)
+        if '�' in text or '' in text or 'D�' in text or '�' in text:
             fixed = reverse_dotnet_ansi(text)
             if fixed != text:
                 with open(f, 'w', encoding='utf-8-sig') as file:

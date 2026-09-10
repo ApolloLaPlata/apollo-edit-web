@@ -1,4 +1,4 @@
-﻿import re
+import re
 
 with open('config.html', 'r', encoding='utf-8') as f:
     c = f.read()

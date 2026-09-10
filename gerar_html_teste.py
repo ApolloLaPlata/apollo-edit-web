@@ -1,11 +1,11 @@
-Ôªøimport modal
+import modal
 import os
 import io
 import wave
 import struct
 import base64
 
-print("Gerando √°udio falso...")
+print("Gerando ·udio falso...")
 dummy_wav_path = "dummy_ref_opus.wav"
 with wave.open(dummy_wav_path, "w") as w:
     w.setnchannels(1)
@@ -22,11 +22,11 @@ try:
     cls = modal.Cls.from_name("apollo-render-router", "F5TTSEngine")
     f5 = cls()
     
-    print("Invocando gera√ß√£o de voz...")
-    texto_teste = "Ol√°! Este √© o teste definitivo do motor de voz otimizado. Eu fui gerada nativamente em formato Opus de trinta e dois kilobits por segundo direto na placa de v√≠deo, sem usar arquivos locais. A infraestrutura de voz est√° completa."
+    print("Invocando geraÁ„o de voz...")
+    texto_teste = "Ol·! Este È o teste definitivo do motor de voz otimizado. Eu fui gerada nativamente em formato Opus de trinta e dois kilobits por segundo direto na placa de vÌdeo, sem usar arquivos locais. A infraestrutura de voz est· completa."
     opus_bytes = f5.generate_voice.remote(texto_teste, ref_bytes)
     
-    print(f"Gerado {len(opus_bytes)} bytes de √°udio.")
+    print(f"Gerado {len(opus_bytes)} bytes de ·udio.")
     
     # Salva na pasta do Apollo Edit para ele testar no navegador ou cria o HTML local
     b64_audio = base64.b64encode(opus_bytes).decode('utf-8')
@@ -49,7 +49,7 @@ try:
             <br/>
             <audio controls autoplay>
                 <source src="data:audio/ogg;base64,{b64_audio}" type="audio/ogg">
-                Seu navegador n√£o suporta o formato de √°udio.
+                Seu navegador n„o suporta o formato de ·udio.
             </audio>
             <p style="font-size: 12px; color: #888; margin-top: 20px;">Tamanho do arquivo: {len(opus_bytes)} bytes</p>
         </div>

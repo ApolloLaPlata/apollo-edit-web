@@ -1,4 +1,4 @@
-﻿import codecs
+import codecs
 path = 'backend/cloud_tools/engines/flux_engine.py'
 with codecs.open(path, 'r', 'utf-8') as f:
     content = f.read()

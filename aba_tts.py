@@ -222,72 +222,78 @@ class AbaGeracaoTTS(ctk.CTkFrame):
         
         if not output_path:
             return
+            
+        self.status_var.set("🔄 Gerando áudio TTS...")
+        self.btn_gerar.configure(state='disabled')
+            
+        # Verifica se a API está disponível
+        if self.api is None:
+            print("❌ API não disponível, tentando criar nova instância...")
+            try:
+                from tts_manager import TTSManager
+                from config_manager import ConfigManager
+                config = ConfigManager()
+                self.api = TTSManager(config)
+                print("✅ Nova instância da API criada")
+            except Exception as e:
+                print(f"❌ Erro ao criar API: {e}")
+                self.status_var.set("❌ API não disponível")
+                messagebox.showerror("Erro", "API do VoiceMaker não está disponível. Verifique a configuração.")
+                self.btn_gerar.configure(state='normal')
+                return
+            
+        # Parâmetros da API
+        params = {
+            "Engine": self.engine_var.get(),
+            "LanguageCode": self.idioma_var.get(),
+            "Effect": self.efeito_var.get(),
+            "MasterVolume": str(self.volume_var.get()),
+            "MasterSpeed": str(self.velocidade_var.get()),
+            "MasterPitch": str(self.pitch_var.get()),
+            "SampleRate": self.sample_rate_var.get(),
+            "emocao_adicional": self.emocao_adicional_texto.get("1.0", tk.END).strip()
+        }
         
-        try:
-            self.status_var.set("🔄 Gerando áudio TTS...")
-            self.btn_gerar.configure(state='disabled')
-            
-            # Verifica se a API está disponível
-            if self.api is None:
-                print("❌ API não disponível, tentando criar nova instância...")
-                try:
-                    from tts_manager import TTSManager
-                    from config_manager import ConfigManager
-                    config = ConfigManager()
-                    self.api = TTSManager(config)
-                    print("✅ Nova instância da API criada")
-                except Exception as e:
-                    print(f"❌ Erro ao criar API: {e}")
-                    self.status_var.set("❌ API não disponível")
-                    messagebox.showerror("Erro", "API do VoiceMaker não está disponível. Verifique a configuração.")
-                    return
-            
-            # Parâmetros da API
-            params = {
-                "Engine": self.engine_var.get(),
-                "LanguageCode": self.idioma_var.get(),
-                "Effect": self.efeito_var.get(),
-                "MasterVolume": str(self.volume_var.get()),
-                "MasterSpeed": str(self.velocidade_var.get()),
-                "MasterPitch": str(self.pitch_var.get()),
-                "SampleRate": self.sample_rate_var.get(),
-                "emocao_adicional": self.emocao_adicional_texto.get("1.0", tk.END).strip()
-            }
-            
-            # Gera o áudio
-            print(f"🎤 Gerando TTS com voz: {voice_id}")
-            print(f"📝 Texto: {texto[:50]}...")
-            print(f"⚙️ Parâmetros: {params}")
-            
-            success = self.api.generate_audio(personagem, texto, output_path, **params)
-            
-            if success:
-                try:
-                    from database_manager import db
-                    # Puxa o ID do canal se disponível (via ConfigManager singleton)
-                    canal_id = None
-                    try:
-                        from config_manager import ConfigManager
-                        config = ConfigManager()
-                        if config.workspace_dir:
-                            canal_id = db.get_canal_id(os.path.basename(config.workspace_dir))
-                    except:
-                        pass
-                    db.set_memoria("ultimo_audio_tts", output_path, canal_id=canal_id)
-                except Exception as db_err:
-                    print(f"⚠️ Erro ao salvar na Memória Ativa: {db_err}")
+        # Gera o áudio
+        print(f"🎙️ Gerando TTS com voz: {voice_id}")
+        print(f"📄 Texto: {texto[:50]}...")
+        print(f"⚙️ Parâmetros: {params}")
 
-                self.status_var.set(f"✅ Áudio gerado com sucesso: {os.path.basename(output_path)}")
-                messagebox.showinfo("Sucesso", f"Áudio TTS gerado com sucesso!\nSalvo em: {output_path}")
-            else:
-                self.status_var.set("❌ Erro ao gerar áudio TTS")
-                messagebox.showerror("Erro", "Falha ao gerar áudio TTS")
+        def _thread_generate():
+            try:
+                success = self.api.generate_audio(personagem, texto, output_path, **params)
                 
-        except Exception as e:
-            self.status_var.set(f"❌ Erro: {str(e)}")
-            messagebox.showerror("Erro", f"Erro ao gerar áudio: {str(e)}")
-        finally:
-            self.btn_gerar.configure(state='normal')
+                if success:
+                    try:
+                        from database_manager import db
+                        # Puxa o ID do canal se disponível (via ConfigManager singleton)
+                        canal_id = None
+                        try:
+                            from config_manager import ConfigManager
+                            config = ConfigManager()
+                            if config.workspace_dir:
+                                canal_id = db.get_canal_id(os.path.basename(config.workspace_dir))
+                        except:
+                            pass
+                        db.set_memoria("ultimo_audio_tts", output_path, canal_id=canal_id)
+                    except Exception as db_err:
+                        print(f"⚠️ Erro ao salvar na Memória Ativa: {db_err}")
+
+                    self.after(0, lambda: self.status_var.set(f"✅ Áudio gerado com sucesso: {os.path.basename(output_path)}"))
+                    self.after(0, lambda: messagebox.showinfo("Sucesso", f"Áudio TTS gerado com sucesso!\nSalvo em: {output_path}"))
+                else:
+                    self.after(0, lambda: self.status_var.set("❌ Erro ao gerar áudio TTS"))
+                    self.after(0, lambda: messagebox.showerror("Erro", "Falha ao gerar áudio TTS"))
+                    
+            except Exception as e:
+                self.after(0, lambda: self.status_var.set(f"❌ Erro: {str(e)}"))
+                self.after(0, lambda: messagebox.showerror("Erro", f"Erro ao gerar áudio: {str(e)}"))
+            finally:
+                self.after(0, lambda: self.btn_gerar.configure(state='normal'))
+                
+        # Inicia a thread
+        import threading
+        threading.Thread(target=_thread_generate, daemon=True).start()
 
     def testar_google_tts(self):
         """Testa explicitamente o Google/Gemini TTS consultando as configurações"""

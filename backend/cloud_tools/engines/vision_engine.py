@@ -3,22 +3,21 @@ import os
 import io
 import base64
 
-# A imagem do Modal contendo as bibliotecas necessarias para o Florence-2
-vision_image = modal.Image.debian_slim().pip_install(
-    "torch",
-    "torchvision",
-    "transformers",
-    "Pillow",
-    "einops",
-    "accelerate"
+cache_vol = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
+
+vision_image = (
+    modal.Image.debian_slim()
+    .pip_install("packaging", "ninja", "torch", "torchvision")
+        .pip_install("transformers==4.40.1", "Pillow", "einops", "accelerate", "timm")
+    
 )
 
 # App dedicado para a Vision Engine
 app = modal.App("apollo-vision-engine")
 
-@app.cls(image=vision_image, gpu="T4", timeout=300)
+@app.cls(image=vision_image, gpu="T4", timeout=300, volumes={"/root/.cache/huggingface": cache_vol}, enable_memory_snapshot=True)
 class FlorenceVisionEngine:
-    @modal.enter()
+    @modal.enter(snap=True)
     def setup(self):
         import torch
         from transformers import AutoProcessor, AutoModelForCausalLM 
@@ -40,6 +39,11 @@ class FlorenceVisionEngine:
         Analisa a imagem e retorna a transcricao textual do que ela contem.
         task_prompt padrao: <MORE_DETAILED_CAPTION>
         """
+        import torch
+        if torch.cuda.is_available() and self.model.device.type != "cuda":
+            print("[VisionEngine] Movendo modelo do CPU para CUDA (pos-snapshot)...")
+            self.model = self.model.to("cuda")
+            
         from PIL import Image
         import torch
         
@@ -79,3 +83,9 @@ class FlorenceVisionEngine:
         except Exception as e:
             print(f"[VisionEngine] Erro ao analisar imagem: {e}")
             return f"Erro na analise visual: {str(e)}"
+
+
+
+
+
+

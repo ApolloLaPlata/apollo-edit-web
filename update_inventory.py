@@ -1,8 +1,8 @@
-Ôªøimport os
+import os
 
 new_js = '''/**
- * Apollo La Plata - Ponte de Invent√°rio V2 (Packs e Magic Squares)
- * Permite copiar m√≠dias isoladas ou agrupar v√°rias m√≠dias em "Packs" din√¢micos.
+ * Apollo La Plata - Ponte de Invent·rio V2 (Packs e Magic Squares)
+ * Permite copiar mÌdias isoladas ou agrupar v·rias mÌdias em "Packs" din‚micos.
  * V3: Suporte a comandos OS (Copiar, Colar, Recortar, Deletar, Ctrl+Z, Novo Texto)
  */
 
@@ -43,7 +43,7 @@ window.laplataInventory = {
             localStorage.setItem(this.KEY, previousState);
             this.state.selectedId = null;
             this.updateUI();
-            if (window.showToast) window.showToast('A√ß√£o desfeita (Ctrl+Z)', 'info');
+            if (window.showToast) window.showToast('AÁ„o desfeita (Ctrl+Z)', 'info');
         } else {
             if (window.showToast) window.showToast('Nada para desfazer', 'error');
         }
@@ -116,7 +116,7 @@ window.laplataInventory = {
         };
         items.unshift(newItem); 
         this.saveItems(items);
-        if (window.apolloNotifications) window.apolloNotifications.add("Copiado!", "Item salvo üéí", "system");
+        if (window.apolloNotifications) window.apolloNotifications.add("Copiado!", "Item salvo ??", "system");
         if (window.apolloSFX) window.apolloSFX.play('click');
     },
 
@@ -182,7 +182,7 @@ window.laplataInventory = {
         panel.id = 'laplata-inventory-panel';
         panel.innerHTML = 
             <div id="laplata-inventory-header">
-                <h4><button class="inv-toolbar-btn" style="flex:0; margin-right:5px; display:none;" id="inv-back-btn">‚¨Ö</button> üéí <span id="inv-title">Transfer√™ncia</span></h4>
+                <h4><button class="inv-toolbar-btn" style="flex:0; margin-right:5px; display:none;" id="inv-back-btn">?</button> ?? <span id="inv-title">TransferÍncia</span></h4>
                 <button class="inv-toolbar-btn" style="flex:0; background:#ef4444;" id="laplata-inventory-clear">Limpar</button>
             </div>
             <div class="inv-toolbar">
@@ -199,7 +199,7 @@ window.laplataInventory = {
 
         const btn = document.createElement('div');
         btn.id = 'laplata-inventory-btn';
-        btn.innerHTML = üìã<div class="badge" id="laplata-inventory-badge">0</div>;
+        btn.innerHTML = ??<div class="badge" id="laplata-inventory-badge">0</div>;
         btn.onclick = () => {
             const isVisible = panel.style.display === 'flex';
             panel.style.display = isVisible ? 'none' : 'flex';
@@ -256,7 +256,7 @@ window.laplataInventory = {
         } 
         
         if (!this.state.currentFolder) {
-            titleSpan.innerText = "Transfer√™ncia";
+            titleSpan.innerText = "TransferÍncia";
             backBtn.style.display = 'none';
         }
 
@@ -280,9 +280,9 @@ window.laplataInventory = {
             if (item.type === 'image') {
                 square.innerHTML = <img src="\"><div class="tooltip">IMG</div>;
             } else if (item.type === 'text' || item.type === 'mapping') {
-                square.innerHTML = <div class="pack-icon">üìÑ</div><div class="tooltip">\</div>;
+                square.innerHTML = <div class="pack-icon">??</div><div class="tooltip">\</div>;
             } else if (item.type === 'pack') {
-                let inner = item.thumbnail ? <img src="\" style="opacity: 0.6;"> : <div class="pack-icon">üìÅ</div>;
+                let inner = item.thumbnail ? <img src="\" style="opacity: 0.6;"> : <div class="pack-icon">??</div>;
                 square.innerHTML = \<div class="pack-badge">\</div><div class="tooltip">\</div>;
                 square.ondblclick = () => {
                     if(window.apolloSFX) window.apolloSFX.play('success');
@@ -291,7 +291,7 @@ window.laplataInventory = {
                     this.updateUI();
                 };
             } else {
-                square.innerHTML = <div class="pack-icon">üì¶</div><div class="tooltip">\</div>;
+                square.innerHTML = <div class="pack-icon">??</div><div class="tooltip">\</div>;
             }
 
             // Click selects item

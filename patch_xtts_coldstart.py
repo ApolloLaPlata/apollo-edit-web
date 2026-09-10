@@ -1,11 +1,11 @@
-ï»¿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/cloud_tools/engines/xtts_engine.py'
 with open(path, 'r', encoding='utf-8') as f:
     text = f.read()
 
-# Substituir a definiÃ§Ã£o da imagem para incluir o download do modelo
+# Substituir a definição da imagem para incluir o download do modelo
 old_image = r'''xtts_image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("ffmpeg")
@@ -44,13 +44,13 @@ xtts_image = (
 
 text = text.replace(old_image, new_image)
 
-# Mudar de T4 para L4 para acelerar a execuÃ§Ã£o de 9s para ~3s
+# Mudar de T4 para L4 para acelerar a execução de 9s para ~3s
 text = text.replace('gpu="T4"', 'gpu="L4"')
 
-# Remover o volume pois o modelo jÃ¡ estarÃ¡ bakeado na imagem (Volumes deixam o cold start mais lento)
+# Remover o volume pois o modelo já estará bakeado na imagem (Volumes deixam o cold start mais lento)
 text = text.replace(', volumes={"/root/.local/share/tts": xtts_cache}', '')
 
 with open(path, 'w', encoding='utf-8') as f:
     f.write(text)
 
-print("xtts_engine.py otimizado para Cold Start ZERO e InferÃªncia L4!")
+print("xtts_engine.py otimizado para Cold Start ZERO e Inferência L4!")

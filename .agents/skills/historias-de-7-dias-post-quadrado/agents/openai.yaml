@@ -1,0 +1,4 @@
+interface:
+  display_name: "H7D Post Quadrado"
+  short_description: "Posts 1:1 para comunidade/feed com prompt, legenda e hashtags."
+  default_prompt: "Crie um post quadrado 1:1 para o H7D com prompt de imagem, legenda e hashtags."

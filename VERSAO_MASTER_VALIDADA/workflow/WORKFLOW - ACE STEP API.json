@@ -1,0 +1,66 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 718692283672215,
+      "steps": 50,
+      "cfg": 4,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": ["45", 0],
+      "positive": ["14", 0],
+      "negative": ["44", 0],
+      "latent_image": ["17", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "14": {
+    "inputs": {
+      "text_1": "funk, pop, soul, rock, melodic, guitar, drums, bass, keyboard, percussion, 105 BPM, energetic, upbeat, groovy, vibrant, dynamic",
+      "text_2": "[Verse]\nI don't care about the view\n'Cause I exist for me and you\nI live my whole life in this planter",
+      "guidance": 1,
+      "clip": ["40", 1]
+    },
+    "class_type": "TextEncodeAceStepAudio"
+  },
+  "17": {
+    "inputs": {
+      "length": 30,
+      "batch_size": 1
+    },
+    "class_type": "EmptyAceStepLatentAudio"
+  },
+  "18": {
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["40", 2]
+    },
+    "class_type": "VAEDecodeAudio"
+  },
+  "19": {
+    "inputs": {
+      "filename_prefix": "audio/ComfyUI",
+      "audio": ["18", 0]
+    },
+    "class_type": "SaveAudio"
+  },
+  "40": {
+    "inputs": {
+      "ckpt_name": "ace_step_v1_3.5b.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "44": {
+    "inputs": {
+      "conditioning": ["14", 0]
+    },
+    "class_type": "ConditioningZeroOut"
+  },
+  "45": {
+    "inputs": {
+      "shift": 4.0,
+      "model": ["40", 0]
+    },
+    "class_type": "ModelSamplingSD3"
+  }
+}

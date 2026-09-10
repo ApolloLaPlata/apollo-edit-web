@@ -1,11 +1,11 @@
-ï»¿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/servidor_web.py'
 with open(path, 'r', encoding='utf-8') as f:
     text = f.read()
 
-# Substituir importaÃ§Ã£o e instanciaÃ§Ã£o
+# Substituir importação e instanciação
 text = text.replace(
     'from backend.cloud_tools.engines.f5_engine import F5TTSEngine',
     'from backend.cloud_tools.engines.xtts_engine import XttsEngine'

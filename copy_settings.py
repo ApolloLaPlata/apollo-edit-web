@@ -1,4 +1,4 @@
-﻿import os
+import os
 import shutil
 
 source = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\COPIA BACKUP TUTORIAL DAS COISAS\APOLLO_EDIT_WEB 14\temp_restore\config_manager.py'

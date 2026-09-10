@@ -135,42 +135,75 @@
         <p style="color: var(--text-muted); margin-bottom: 40px; max-width: 600px;">Descreva a música ou os efeitos sonoros que você deseja. Nosso sistema de IA processará seu pedido usando seus créditos de combustível e enviará o resultado diretamente para o seu Bagageiro.</p>
         
         <div style="background: var(--paper-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 100%; max-width: 700px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-            <textarea id="music-prompt" rows="4" placeholder="Ex: Uma trilha sonora épica de suspense com tambores tribais e violinos frenéticos, 120 BPM..." style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 15px; font-family: 'Inter'; font-size: 16px; outline: none; resize: vertical; margin-bottom: 20px;"></textarea>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Motor de Inteligência Artificial</label>
+                <select id="music-engine" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 15px; font-family: 'Inter'; font-size: 16px; outline: none; margin-bottom: 20px;">
+                    <option value="acestep">ACE-Step 1.5 (Melhor para batidas e estilos musicais)</option>
+                    <option value="sa3">Stable Audio 3 (Melhor para Efeitos Sonoros e Sound Design)</option>
+                    <option value="minimax">MiniMax Music3 (Melhor para Vocais e Músicas Completas)</option>
+                </select>
+                <label style="display: block; color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Descreva o som desejado</label>
+                <textarea id="music-prompt" rows="4" placeholder="Ex: Uma trilha sonora épica de suspense com tambores tribais e violinos frenéticos, 120 BPM..." style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 15px; font-family: 'Inter'; font-size: 16px; outline: none; resize: vertical; margin-bottom: 20px;"></textarea>
+            </div>
             
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="text-align: left;">
-                    <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Duração (Segundos)</label>
-                    <input type="number" id="music-duration" value="15" min="5" max="120" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; padding: 8px; width: 80px; text-align: center; font-family: 'Inter';">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <label style="color: var(--text-muted); font-size: 14px;">Duração (s):</label>
+                    <input type="number" id="music-duration" value="30" min="5" max="120" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; padding: 8px; width: 80px; text-align: center; font-family: 'Inter';">
                 </div>
-                <div style="text-align: left;">
-                    <span style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px;">Custo Estimado</span>
-                    <span style="font-size: 16px; font-weight: bold; color: #ec4899;">⛽ 30 Créditos</span>
-                </div>
-                <button id="btn-generate-music" class="btn-pro primary" style="padding: 12px 30px; font-size: 16px; border-radius: 8px;" onclick="simulateAIGeneration()">🎵 Gerar Música</button>
+                <button id="btn-generate-music" class="btn-pro primary" style="padding: 12px 30px; font-size: 16px; border-radius: 8px;" onclick="simulateAIGeneration()">🎧 Gerar Música</button>
             </div>
         </div>
     </main>
 
     <script>
-        function simulateAIGeneration() {
-            const prompt = document.getElementById('music-prompt').value;
-            if (!prompt) return alert('Por favor, descreva a música primeiro.');
+        async function simulateAIGeneration() {
+            const prompt = document.getElementById("music-prompt").value;
+            const duration = document.getElementById("music-duration").value;
+            const engine = document.getElementById("music-engine").value;
             
-            const btn = document.getElementById('btn-generate-music');
-            btn.innerText = "⏳ Processando...";
-            btn.style.background = "#555";
+            if (!prompt) {
+                if (window.showToast) window.showToast("Por favor, digite um prompt", "#ff3366");
+                return;
+            }
+            
+            const btn = document.getElementById("btn-generate-music");
+            btn.innerText = "⏳ Gerando...";
+            btn.style.background = "linear-gradient(135deg, #475569, #334155)";
             btn.style.pointerEvents = "none";
             
-            if (window.showToast) window.showToast("Iniciando motor de IA... Consumindo combustível", "#ec4899");
+            if (window.showToast) window.showToast("Iniciando motor na Nuvem (Conta 9)...", "#ec4899");
             
-            setTimeout(() => {
+            try {
+                const response = await fetch("http://localhost:8000/api/audio/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        duration: duration,
+                        engine: engine
+                    })
+                });
+
+                if (!response.ok) throw new Error("Falha na geração do áudio");
+                const result = await response.json();
+
                 btn.innerText = "🎵 Gerar Música";
                 btn.style.background = "";
                 btn.style.pointerEvents = "all";
-                if (window.apolloTransferOS) { window.apolloTransferOS.addItem("audio", "musica_ia.wav", "Gerador de Musica", null, { url: "/dummy_music.m4a" }); }
-
+                
+                if (window.apolloTransferOS) { 
+                    window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Gerador de Musica", null, { url: "http://localhost:8000" + result.file_url }); 
+                }
                 if (window.showToast) window.showToast("✅ Geração Concluída! Arquivo salvo no Bagageiro.", "#00ffcc");
-            }, 3000);
+                
+            } catch(e) {
+                console.error(e);
+                if (window.showToast) window.showToast("❌ Erro ao gerar música", "red");
+                btn.innerText = "🎵 Gerar Música";
+                btn.style.background = "";
+                btn.style.pointerEvents = "all";
+            }
         }
     </script>
 

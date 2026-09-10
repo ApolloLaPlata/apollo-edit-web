@@ -1,0 +1,4 @@
+interface:
+  display_name: "H7D Mascotes"
+  short_description: "Consistencia de Darius, Hugo, Joye e Ephy em voz, funcao e visual."
+  default_prompt: "Aplique os mascotes narradores do H7D mantendo falas, vozes e visual consistentes."

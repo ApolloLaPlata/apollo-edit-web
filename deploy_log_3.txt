@@ -1,0 +1,50 @@
+[modal-client] 2026-08-15T03:21:41-0500 Warning: function name 'apollo_api' collision! Overriding existing function [backend.cloud_tools.engines.universal_engine].apollo_api with new function [backend.cloud_tools.apollo_modal_engine].apollo_api
+✓ Created objects.
+├── 🔨 Created mount PythonPackage:backend
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\image_flux2_text_to_image_upscale.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\FLUX 2 DEV\texto_flux2\image_flux2_text_to_image.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\flux_upscale_ultrasharp.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\apollo_flux2_klein_upscale.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow API
+├── 🔨 Created mount PythonPackage:backend
+├── 🔨 Created web function api_f5_tts => 
+│   https://descarganews--apollo-api-f5-tts.modal.run
+├── 🔨 Created function MossTTSEngine.*.
+├── 🔨 Created function F5TTSEngine.*.
+├── 🔨 Created function Wan21Engine.*.
+├── 🔨 Created web function api_llm_stream => 
+│   https://descarganews--apollo-api-llm-stream.modal.run
+├── 🔨 Created function WhisperTurboSTT.*.
+├── 🔨 Created function download_comfy_models.
+├── 🔨 Created web function api_moss_tts => 
+│   https://descarganews--apollo-api-moss-tts.modal.run
+├── 🔨 Created function LTX13BEngine.*.
+├── 🔨 Created function BlogUniversalComfyEngine.*.
+├── 🔨 Created function Flux2Txt2ImgEngine.*.
+├── 🔨 Created web function api_tts => 
+│   https://descarganews--apollo-api-tts.modal.run
+├── 🔨 Created function download_flux_diffusers.
+├── 🔨 Created function VLLMEngine.*.
+├── 🔨 Created function KokoroTTS.*.
+├── 🔨 Created function FluxLoraTrainer.*.
+├── 🔨 Created function UniversalComfyEngine.*.
+├── 🔨 Created function Flux2ComfyEngine_V2.*.
+├── 🔨 Created function QwenTtsCloneEngine.*.
+├── 🔨 Created function AceStepComfyEngine.*.
+├── 🔨 Created function download_xtts.
+├── 🔨 Created web function apollo_api => 
+│   https://descarganews--apollo-render-router-apollo-api.modal.run
+├── 🔨 Created function clean_antelope.
+├── 🔨 Created Web Function URL for WhisperTurboSTT.api_transcribe => 
+│   https://descarganews--apollo-api-transcribe.modal.run
+├── 🔨 Created function XttsEngine.*.
+└── 🔨 Created Web Function URL for XttsEngine.api_xtts => 
+    https://descarganews--apollo-api-xtts.modal.run
+✓ App deployed in 10.203s! 🎉
+
+View Deployment: 
+https://modal.com/apps/descarganews/main/deployed/apollo-render-router

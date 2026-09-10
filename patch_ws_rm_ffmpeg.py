@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/servidor_web.py'
@@ -6,7 +6,7 @@ with open(path, 'r', encoding='utf-8') as f:
     text = f.read()
 
 old_block = r'''if 'audio_chunk' in locals\(\) and audio_chunk:
-                                  # Converte WAV \(audio_chunk\) para MP3 na memÃ³ria usando ffmpeg para otimizar velocidade no front
+                                  # Converte WAV \(audio_chunk\) para MP3 na memória usando ffmpeg para otimizar velocidade no front
                                   import subprocess
                                   try:
                                       proc = subprocess\.Popen\(
@@ -23,7 +23,7 @@ old_block = r'''if 'audio_chunk' in locals\(\) and audio_chunk:
                                       await websocket\.send_bytes\(audio_chunk\)'''
 
 new_block = r'''if 'audio_chunk' in locals() and audio_chunk:
-                                  # O Modal já devolveu o buffer em MP3, enviamos direto!
+                                  # O Modal j� devolveu o buffer em MP3, enviamos direto!
                                   await websocket.send_bytes(audio_chunk)'''
 
 text = re.sub(old_block, new_block, text)

@@ -1,4 +1,4 @@
-﻿import modal
+import modal
 
 app = modal.App("apollolaplata")
 

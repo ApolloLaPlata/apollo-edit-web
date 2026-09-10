@@ -1,17 +1,17 @@
-Ôªø# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/cloud_tools/engines/f5_engine.py'
 with open(path, 'r', encoding='utf-8') as f:
     text = f.read()
 
-old_block = r'''            # Salvar como WAV e converter para Opus \(OGG\) na nuvem - M√°xima Otimiza√ß√£o de Peso
+old_block = r'''            # Salvar como WAV e converter para Opus \(OGG\) na nuvem - M·xima OtimizaÁ„o de Peso
             import subprocess
             wav_path = tempfile.mktemp\(suffix="\.wav"\)
             opus_path = tempfile.mktemp\(suffix="\.ogg"\)
             sf.write\(wav_path, wav, samplerate=sr, format='WAV'\)
             
-            # Opus a 32kbps √© incrivelmente leve para voz \(cerca de metade do MP3 64k\)
+            # Opus a 32kbps È incrivelmente leve para voz \(cerca de metade do MP3 64k\)
             subprocess.run\(
                 \['ffmpeg', '-y', '-i', wav_path, '-c:a', 'libopus', '-b:a', '32k', '-f', 'ogg', opus_path\],
                 stdout=subprocess.DEVNULL,
@@ -26,12 +26,12 @@ old_block = r'''            # Salvar como WAV e converter para Opus \(OGG\) na n
             
             return opus_bytes'''
 
-new_block = r'''            # CONVERS√ÉO DIRETA EM MEM√ìRIA (Numpy Array -> OPUS)
+new_block = r'''            # CONVERS√O DIRETA EM MEM”RIA (Numpy Array -> OPUS)
             # Sem passar por WAV, para otimizar processamento na Nuvem!
             import subprocess
             import numpy as np
             
-            # 1. Converte o array matem√°tico (float) da IA direto para PCM 16-bit bruto
+            # 1. Converte o array matem·tico (float) da IA direto para PCM 16-bit bruto
             pcm_bytes = (wav * 32767).astype(np.int16).tobytes()
             
             # 2. Injeta o PCM direto no encoder Opus (em RAM, sem tocar o disco)

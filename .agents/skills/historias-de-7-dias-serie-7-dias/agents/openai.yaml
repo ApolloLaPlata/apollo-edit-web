@@ -1,0 +1,4 @@
+interface:
+  display_name: "H7D Serie 7 Dias"
+  short_description: "Arcos semanais em 7 episodios com ganchos, roteiro e prompts."
+  default_prompt: "Estruture uma serie H7D de 7 dias com sinopse, episodios, ganchos e pacote de producao."

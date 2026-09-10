@@ -1,4 +1,4 @@
-﻿import modal
+import modal
 import os
 import sys
 

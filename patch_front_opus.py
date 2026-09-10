@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/public/pocket_app.js'
@@ -17,8 +17,8 @@ new_block = r'''      this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           this.handleServerEvent(data);
         } else if (event.data instanceof Blob || event.data instanceof ArrayBuffer) {
-          // Áudio Opus recebido da nuvem via WebSocket
-          console.log("ðŸŽ§ Áudio Opus recebido! Tocando...");
+          // �udio Opus recebido da nuvem via WebSocket
+          console.log("🎧 �udio Opus recebido! Tocando...");
           const blob = event.data instanceof Blob ? event.data : new Blob([event.data], {type: 'audio/ogg; codecs=opus'});
           const audioUrl = URL.createObjectURL(blob);
           const audio = new Audio(audioUrl);

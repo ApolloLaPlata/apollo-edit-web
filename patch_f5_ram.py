@@ -1,16 +1,16 @@
-Ôªø# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/cloud_tools/engines/f5_engine.py'
 with open(path, 'r', encoding='utf-8') as f:
     text = f.read()
 
-old_block = r'''            # CONVERS√ÉO DIRETA EM MEM√ìRIA \(Numpy Array -> OPUS\)
+old_block = r'''            # CONVERS√O DIRETA EM MEM”RIA \(Numpy Array -> OPUS\)
             # Sem passar por WAV, para otimizar processamento na Nuvem!
             import subprocess
             import numpy as np
             
-            # 1\. Converte o array matem√°tico \(float\) da IA direto para PCM 16-bit bruto
+            # 1\. Converte o array matem·tico \(float\) da IA direto para PCM 16-bit bruto
             pcm_bytes = \(wav \* 32767\)\.astype\(np\.int16\)\.tobytes\(\)
             
             # 2\. Injeta o PCM direto no encoder Opus \(em RAM, sem tocar o disco\)
@@ -25,8 +25,8 @@ old_block = r'''            # CONVERS√ÉO DIRETA EM MEM√ìRIA \(Numpy Array -> OPU
             
             return opus_bytes'''
 
-new_block = r'''            # CONVERS√ÉO OPUS 100% EM MEM√ìRIA
-            # Usa o soundfile para garantir a convers√£o matem√°tica correta do numpy array para WAV em mem√≥ria
+new_block = r'''            # CONVERS√O OPUS 100% EM MEM”RIA
+            # Usa o soundfile para garantir a convers„o matem·tica correta do numpy array para WAV em memÛria
             import subprocess
             import io
             import soundfile as sf
@@ -35,7 +35,7 @@ new_block = r'''            # CONVERS√ÉO OPUS 100% EM MEM√ìRIA
             sf.write(wav_io, wav, samplerate=sr, format='WAV')
             wav_bytes = wav_io.getvalue()
             
-            # Injeta o WAV da mem√≥ria direto no FFmpeg para virar Opus (sem tocar o disco)
+            # Injeta o WAV da memÛria direto no FFmpeg para virar Opus (sem tocar o disco)
             proc = subprocess.Popen(
                 ['ffmpeg', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '32k', '-vbr', 'on', '-f', 'ogg', 'pipe:1'],
                 stdin=subprocess.PIPE,

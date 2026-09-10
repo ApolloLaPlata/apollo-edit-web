@@ -1,20 +1,33 @@
-# MEMÃƒâ€œRIA CENTRAL - APOLLO EDIT WEB
+# MEMÃƒÆ’Ã¢â‚¬Å“RIA CENTRAL - APOLLO EDIT WEB
 
 
 
 ## 1. MANIFESTO DA APOLLO
 
-*VisÃƒÂ£o, PrincÃƒÂ­pios e Regras Permanentes.*
+*VisÃƒÆ’Ã‚Â£o, PrincÃƒÆ’Ã‚Â­pios e Regras Permanentes.*
 
-- **O Pivot CapCut (Dark Channels):** A interface definitiva focar primariamente na geraÃƒÂ§ÃƒÂ£o 100% gratuita e fluida de vÃƒÂ­deos genricos (estilo CapCut Mobile), visando a captaÃƒÂ§ÃƒÂ£o massiva do pÃƒÂºblico de Canais Dark.
+- **O Pivot CapCut (Dark Channels):** A interface definitiva focar primariamente na geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o 100% gratuita e fluida de vÃƒÆ’Ã‚Â­deos genricos (estilo CapCut Mobile), visando a captaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o massiva do pÃƒÆ’Ã‚Âºblico de Canais Dark.
 
-- **Complexidade AbstraÃƒÂ­da (LoRA Under The Hood):** As funcionalidades avanÃƒÂ§adas (como Treinamento de LoRAs de personagem, vdeo e ÃƒÂ¡udio) no serÃƒÂ£o jogadas na cara do usuÃƒÂ¡rio novato. Elas rodarÃƒÂ£o 100% por debaixo dos panos: o usuÃƒÂ¡rio paga crÃƒÂ©ditos e a consistncia visual  entregue sem que ele precise configurar parÃƒÂ¢metros complexos.
+- **Complexidade AbstraÃƒÆ’Ã‚Â­da (LoRA Under The Hood):** As funcionalidades avanÃƒÆ’Ã‚Â§adas (como Treinamento de LoRAs de personagem, vdeo e ÃƒÆ’Ã‚Â¡udio) no serÃƒÆ’Ã‚Â£o jogadas na cara do usuÃƒÆ’Ã‚Â¡rio novato. Elas rodarÃƒÆ’Ã‚Â£o 100% por debaixo dos panos: o usuÃƒÆ’Ã‚Â¡rio paga crÃƒÆ’Ã‚Â©ditos e a consistncia visual  entregue sem que ele precise configurar parÃƒÆ’Ã‚Â¢metros complexos.
 
-- **VisÃƒÂ£o Central:** Apollo Edit Web  uma infraestrutura de produÃƒÂ§ÃƒÂ£o de vdeo em escala (CapCut Killer para IA), focada no nicho Pro/Criador AvanÃƒÂ§ado.
+- **VisÃƒÆ’Ã‚Â£o Central:** Apollo Edit Web  uma infraestrutura de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de vdeo em escala (CapCut Killer para IA), focada no nicho Pro/Criador AvanÃƒÆ’Ã‚Â§ado.
 
-- **Filosofia:** AbstraÃƒÂ§ÃƒÂ£o mÃƒÂ¡xima de complexidade (UX Mobile-First) com poder absoluto no backend (Modal Cloud + ComfyUI).
+- **Filosofia:** AbstraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o mÃƒÆ’Ã‚Â¡xima de complexidade (UX Mobile-First) com poder absoluto no backend (Modal Cloud + ComfyUI).
 
-- **Regra de Ouro:** NÃƒÂ£o desenvolver novas funcionalidades de IA enquanto o mapeamento lÃƒÂ³gico/arquitetura no estiver fechado.
+- **Regra de Ouro:** NÃƒÆ’Ã‚Â£o desenvolver novas funcionalidades de IA enquanto o mapeamento lÃƒÆ’Ã‚Â³gico/arquitetura no estiver fechado.
+
+**2026-08-09 (Correção Crítica no WebSocket e Proxy de IA)**
+- **Bug Identificado:** O front-end retornava `ALERTA 'Lightning falhou'`. A causa era a função `lightning_proxy` na VPS que, ao tentar fazer o rodízio de chaves (`random.choice(api_keys)`), acabava selecionando o novo formato em dicionário (`{"key": "sk-lit-...", "status": "active"}`) e tentava fazer um *slicing* `[:10]` para log. Isso gerava um `TypeError` não tratado que explodia a rota com erro HTTP 500, caindo no bloco genérico "Lightning falhou" do WebSocket.
+- **Erro Real do Usuário (Apollo Pocket):** A interface do celular (Pocket Director) continuava repetindo bolhas vazias contendo apenas o `timestamp`. O motivo é que o front-end apontava para um PROCESSO SEPARADO no PM2 (`apollo-pocket`), o qual possui suas chaves *hardcoded* no `backend/config.py`. Estas chaves estavam antigas e retornavam HTTP 401, causando falha no backend `voice_engine.py` e gerando as bolhas vazias.
+- **Bug Consecutivo (WebSocket Offline):** Ao usar `pm2 restart apollo-pocket`, o processo antigo ainda segurava a porta 8099 durante o shutdown, forçando o novo processo a subir na porta 8100. Como o Nginx estava cravado apontando para `proxy_pass http://localhost:8099/`, o WebSocket do frontend recebia 502 Bad Gateway e ficava exibindo "Offline".
+- **Ações Tomadas:**
+  1. Patch aplicado na função `lightning_proxy` no `servidor_web.py` para converter os dicionários de volta para strings.
+  2. Bloco `try/except RuntimeError` adicionado em torno do `websocket.receive()`.
+  3. Atualizadas as chaves `LIGHTNING_KEYS` no arquivo `E:\MEUS PROGRAMAS\APOLLO_POCKET_DIRECTOR\backend\config.py` e copiado para a VPS via SCP.
+  4. Feito um stop total (`pm2 stop apollo-pocket`), sleep e start, garantindo que o Uvicorn subisse perfeitamente na porta 8099. O frontend agora conectou ao WebSocket com sucesso.
+  5. Adicionado `logging.FileHandler` no `backend/app.py` do Pocket para gravar no mesmo `colmeia_execution.log` do `apollo-web`. Isso restaura o painel 'ENGINE LOGS' no frontend.
+  6. Substituído o imenso `SYSTEM_PROMPT` administrativo no `voice_engine.py` por um perfil simples de Assistente de Usuário e removida a injeção do RAG. Código espelhado na VPS e reiniciado.
+  7. **Correção de Queda (Offline):** Ao remover o RAG (Etapa 6), o import do `context_manager` foi removido por acidente, gerando um `NameError` que derrubava o WebSocket e deixava o usuário Offline. O import foi restaurado e a VPS reiniciada via `fuser -k` para garantir a porta 8099.
 
 
 
@@ -26,15 +39,15 @@
 
 - **Fase 2:** Mecnica e Motores (FLUX, LTX, Wan, Integrao LoRA Dynamics).
 
-- **Fase 3:** UX (Timeline Flutuante, Storyboard, EdiÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica).
+- **Fase 3:** UX (Timeline Flutuante, Storyboard, EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica).
 
-- **Fase 4:** LanÃƒÂ§amento Gradual e Dogfooding (Testes com os prÃƒÂ³prios canais da rede).
+- **Fase 4:** LanÃƒÆ’Ã‚Â§amento Gradual e Dogfooding (Testes com os prÃƒÆ’Ã‚Â³prios canais da rede).
 
 
 
-## 3. ARQUITETURA TÃƒâ€°CNICA
+## 3. ARQUITETURA TÃƒÆ’Ã¢â‚¬Â°CNICA
 
-*DecisÃƒÂµes tÃƒÂ©cnicas, diagramas e padrÃƒÂµes.*
+*DecisÃƒÆ’Ã‚Âµes tÃƒÆ’Ã‚Â©cnicas, diagramas e padrÃƒÆ’Ã‚Âµes.*
 
 - **Frontend:** Vercel (Vanilla JS, HTML Desacoplado, CSS Custom).
 
@@ -50,111 +63,120 @@
 
 
 
-## 4. MEMÃƒâ€œRIA ATIVA (HISTÃƒâ€œRICO E EVOLUÃƒâ€¡ÃƒÆ’O)
+## 4. MEMORIA ATIVA (HISTORICO)
 
-*Registro cronolgico de decisÃƒÂµes, reuniÃƒÂµes, mudanÃƒÂ§as de rumo e liÃƒÂ§ÃƒÂµes aprendidas.*
+### [TESTE DE ESTRUTURA E ARQUITETURA] - 2026-08-25
+- **Fase 1 (SaaS "Caixa Fechada"):** O usurio validou o modelo de negcios (Vdeos genericos financiados por anuncios/creditos). A interface atual em Next.js e uma placa de ensaio descartavel e sera totalmente reescrita (Mobile-First, simples) apois os testes.
+- **Homologacao de Audio (Motores):** 
+  - **ACE-Step:** Consagrado para Vozes (Rap, Vocais em PT-BR) devido  sua superioridade no sotaque brasileiro e suporte a Audio de Referencia (Voice Cloning).
+  - **MiniMax-Music3:** Consagrado para Instrumentais (EDM, Acustico, Beats Longos) devido sua qualidade cristalina e capacidade nativa de longa duracao (com bypass de letras vazias). O Vocal PT-BR dele sofre de instabilidade de sotaque (influencia luso-africana).
+- **Proximos Passos (Audio):** Desenvolver a rota /lab-audio na placa de ensaio Next.js para unificar os motores visualmente. Em seguida, testar Stable Audio 3 para SFX.
 
+ÃƒÆ’Ã¢â‚¬Å“RIA ATIVA (HISTÃƒÆ’Ã¢â‚¬Å“RICO E EVOLUÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O)
 
-
-# Ã°Å¸Â§Â  MemÃƒÂ³ria Ativa do Sistema: Apollo Studio
-
-## ÃƒÅ¡ltima AtualizaÃƒÂ§ÃƒÂ£o: 2026-06-14 Ã¢â‚¬â€ Foco em MecÃƒÂ¢nica/Backend e Faseamento de LanÃƒÂ§amento
-
-
-
-Este documento atua como o cÃƒÂ©rebro central e histÃƒÂ³rico de decisÃƒÂµes do projeto. Se vocÃƒÂª estÃƒÂ¡ lendo isso, ÃƒÂ© para que nenhum contexto seja perdido em futuras iteraÃƒÂ§ÃƒÂµes.
-
+*Registro cronolgico de decisÃƒÆ’Ã‚Âµes, reuniÃƒÆ’Ã‚Âµes, mudanÃƒÆ’Ã‚Â§as de rumo e liÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes aprendidas.*
 
 
 
+# ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Â  MemÃƒÆ’Ã‚Â³ria Ativa do Sistema: Apollo Studio
 
-### Ã°Å¸â€™Â¡ CorreÃƒÂ§ÃƒÂ£o CrÃƒÂ­tica de Curso (Pausa no Motor de MÃƒÂ­dia)
-
-- **Regra Absoluta:** As imagens de fluxograma do passado estÃƒÂ£o OBSOLETAS (sÃƒÂ£o baseadas em 100% ComfyUI, que nÃƒÂ£o ÃƒÂ© mais o caso com a chegada de Flux, Loras, nano banana, upload direto, etc). A geraÃƒÂ§ÃƒÂ£o de mÃƒÂ­dia tem extrema complexidade e ramificaÃƒÂ§ÃƒÂµes infinitas (linha A, linha B, etc).
-
-- **AÃƒÂ§ÃƒÂ£o:** NENHUM cÃƒÂ³digo de geraÃƒÂ§ÃƒÂ£o, orquestraÃƒÂ§ÃƒÂ£o de IA ou de Front-end deve ser escrito atÃƒÂ© que o Diretor termine o novo mapeamento lÃƒÂ³gico detalhado.
-
-- **Foco ÃƒÅ¡nico:** A IA deve focar seu tempo APENAS em construir infraestrutura tÃƒÂ©cnica invisÃƒÂ­vel do Backend (Pagamentos, AutenticaÃƒÂ§ÃƒÂ£o, Banco de Dados, SincronizaÃƒÂ§ÃƒÂ£o, SeguranÃƒÂ§a, Webhooks).
+## ÃƒÆ’Ã…Â¡ltima AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 2026-06-14 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Foco em MecÃƒÆ’Ã‚Â¢nica/Backend e Faseamento de LanÃƒÆ’Ã‚Â§amento
 
 
 
-### Ã°Å¸â€™Â¡ Registro EstratÃƒÂ©gico (14 de Junho de 2026)
-
-*Nota do criador do sistema sobre a direÃƒÂ§ÃƒÂ£o e prioridades:*
-
-- **Prioridade Atual (Back-end e MecÃƒÂ¢nica):** O foco total agora ÃƒÂ© garantir que o motor do sistema funcione impecavelmente (botÃƒÂµes, rotas, geraÃƒÂ§ÃƒÂ£o de imagens, interaÃƒÂ§ÃƒÂµes de IA). O back-end ÃƒÂ© a espinha dorsal.
-
-- **Front-end e UX/UI (PrÃƒÂ³xima Fase):** O design serÃƒÂ¡ caprichado, desenhado e fatiado "ÃƒÂ  mÃƒÂ£o" no futuro para ficar com uma apresentaÃƒÂ§ÃƒÂ£o visual e prÃƒÂ¡tica impecÃƒÂ¡vel, mas somente apÃƒÂ³s toda a fundaÃƒÂ§ÃƒÂ£o mecÃƒÂ¢nica estar sÃƒÂ³lida.
-
-- **EstratÃƒÂ©gia de LanÃƒÂ§amento (Faseamento):** NÃƒÂ£o ÃƒÂ© obrigatÃƒÂ³rio lanÃƒÂ§ar a plataforma com 100% das ferramentas ativas de uma vez. O sistema serÃƒÂ¡ lanÃƒÂ§ado gradualmente, liberando ferramentas aos poucos e mantendo atualizaÃƒÂ§ÃƒÂµes constantes no futuro para engajar os usuÃƒÂ¡rios.
-
-- **OrquestraÃƒÂ§ÃƒÂ£o Cloud vs Local:** A longo prazo, o motor Python rodarÃƒÂ¡ em um servidor externo (ex: Oracle Cloud). O sistema precisa prever uma ponte onde a cÃƒÂ³pia local seja usada para desenvolvimento (comigo, o Antigravity) e as atualizaÃƒÂ§ÃƒÂµes sejam sincronizadas com o servidor remoto.
-
-# Ã°Å¸Â§Â  MemÃƒÂ³ria Ativa do Sistema: Apollo Studio
-
-## ÃƒÅ¡ltima AtualizaÃƒÂ§ÃƒÂ£o: 2026-06-14 Ã¢â‚¬â€ Foco em MecÃƒÂ¢nica/Backend e Faseamento de LanÃƒÂ§amento
+Este documento atua como o cÃƒÆ’Ã‚Â©rebro central e histÃƒÆ’Ã‚Â³rico de decisÃƒÆ’Ã‚Âµes do projeto. Se vocÃƒÆ’Ã‚Âª estÃƒÆ’Ã‚Â¡ lendo isso, ÃƒÆ’Ã‚Â© para que nenhum contexto seja perdido em futuras iteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
 
 
 
-Este documento atua como o cÃƒÂ©rebro central e histÃƒÂ³rico de decisÃƒÂµes do projeto. Se vocÃƒÂª estÃƒÂ¡ lendo isso, ÃƒÂ© para que nenhum contexto seja perdido em futuras iteraÃƒÂ§ÃƒÂµes.
+
+
+### ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¡ CorreÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o CrÃƒÆ’Ã‚Â­tica de Curso (Pausa no Motor de MÃƒÆ’Ã‚Â­dia)
+
+- **Regra Absoluta:** As imagens de fluxograma do passado estÃƒÆ’Ã‚Â£o OBSOLETAS (sÃƒÆ’Ã‚Â£o baseadas em 100% ComfyUI, que nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© mais o caso com a chegada de Flux, Loras, nano banana, upload direto, etc). A geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de mÃƒÆ’Ã‚Â­dia tem extrema complexidade e ramificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes infinitas (linha A, linha B, etc).
+
+- **AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** NENHUM cÃƒÆ’Ã‚Â³digo de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, orquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de IA ou de Front-end deve ser escrito atÃƒÆ’Ã‚Â© que o Diretor termine o novo mapeamento lÃƒÆ’Ã‚Â³gico detalhado.
+
+- **Foco ÃƒÆ’Ã…Â¡nico:** A IA deve focar seu tempo APENAS em construir infraestrutura tÃƒÆ’Ã‚Â©cnica invisÃƒÆ’Ã‚Â­vel do Backend (Pagamentos, AutenticaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, Banco de Dados, SincronizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, SeguranÃƒÆ’Ã‚Â§a, Webhooks).
 
 
 
-### Ã°Å¸â€™Â¡ Registro EstratÃƒÂ©gico (14 de Junho de 2026)
+### ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¡ Registro EstratÃƒÆ’Ã‚Â©gico (14 de Junho de 2026)
 
-*Nota do criador do sistema sobre a direÃƒÂ§ÃƒÂ£o e prioridades:*
+*Nota do criador do sistema sobre a direÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e prioridades:*
 
-- **Prioridade Atual (Back-end e MecÃƒÂ¢nica):** O foco total agora ÃƒÂ© garantir que o motor do sistema funcione impecavelmente (botÃƒÂµes, rotas, geraÃƒÂ§ÃƒÂ£o de imagens, interaÃƒÂ§ÃƒÂµes de IA). O back-end ÃƒÂ© a espinha dorsal.
+- **Prioridade Atual (Back-end e MecÃƒÆ’Ã‚Â¢nica):** O foco total agora ÃƒÆ’Ã‚Â© garantir que o motor do sistema funcione impecavelmente (botÃƒÆ’Ã‚Âµes, rotas, geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagens, interaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de IA). O back-end ÃƒÆ’Ã‚Â© a espinha dorsal.
 
-- **Front-end e UX/UI (PrÃƒÂ³xima Fase):** O design serÃƒÂ¡ caprichado, desenhado e fatiado "ÃƒÂ  mÃƒÂ£o" no futuro para ficar com uma apresentaÃƒÂ§ÃƒÂ£o visual e prÃƒÂ¡tica impecÃƒÂ¡vel, mas somente apÃƒÂ³s toda a fundaÃƒÂ§ÃƒÂ£o mecÃƒÂ¢nica estar sÃƒÂ³lida.
+- **Front-end e UX/UI (PrÃƒÆ’Ã‚Â³xima Fase):** O design serÃƒÆ’Ã‚Â¡ caprichado, desenhado e fatiado "ÃƒÆ’Ã‚Â  mÃƒÆ’Ã‚Â£o" no futuro para ficar com uma apresentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o visual e prÃƒÆ’Ã‚Â¡tica impecÃƒÆ’Ã‚Â¡vel, mas somente apÃƒÆ’Ã‚Â³s toda a fundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o mecÃƒÆ’Ã‚Â¢nica estar sÃƒÆ’Ã‚Â³lida.
 
-- **EstratÃƒÂ©gia de LanÃƒÂ§amento (Faseamento):** NÃƒÂ£o ÃƒÂ© obrigatÃƒÂ³rio lanÃƒÂ§ar a plataforma com 100% das ferramentas ativas de uma vez. O sistema serÃƒÂ¡ lanÃƒÂ§ado gradualmente, liberando ferramentas aos poucos e mantendo atualizaÃƒÂ§ÃƒÂµes constantes no futuro para engajar os usuÃƒÂ¡rios.
+- **EstratÃƒÆ’Ã‚Â©gia de LanÃƒÆ’Ã‚Â§amento (Faseamento):** NÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© obrigatÃƒÆ’Ã‚Â³rio lanÃƒÆ’Ã‚Â§ar a plataforma com 100% das ferramentas ativas de uma vez. O sistema serÃƒÆ’Ã‚Â¡ lanÃƒÆ’Ã‚Â§ado gradualmente, liberando ferramentas aos poucos e mantendo atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes constantes no futuro para engajar os usuÃƒÆ’Ã‚Â¡rios.
 
-- **OrquestraÃƒÂ§ÃƒÂ£o Cloud vs Local:** A longo prazo, o motor Python rodarÃƒÂ¡ em um servidor externo (ex: Oracle Cloud). O sistema precisa prever uma ponte onde a cÃƒÂ³pia local seja usada para desenvolvimento (comigo, o Antigravity) e as atualizaÃƒÂ§ÃƒÂµes sejam sincronizadas com o servidor remoto.
+- **OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Cloud vs Local:** A longo prazo, o motor Python rodarÃƒÆ’Ã‚Â¡ em um servidor externo (ex: Oracle Cloud). O sistema precisa prever uma ponte onde a cÃƒÆ’Ã‚Â³pia local seja usada para desenvolvimento (comigo, o Antigravity) e as atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes sejam sincronizadas com o servidor remoto.
+
+# ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Â  MemÃƒÆ’Ã‚Â³ria Ativa do Sistema: Apollo Studio
+
+## ÃƒÆ’Ã…Â¡ltima AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 2026-06-14 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Foco em MecÃƒÆ’Ã‚Â¢nica/Backend e Faseamento de LanÃƒÆ’Ã‚Â§amento
+
+
+
+Este documento atua como o cÃƒÆ’Ã‚Â©rebro central e histÃƒÆ’Ã‚Â³rico de decisÃƒÆ’Ã‚Âµes do projeto. Se vocÃƒÆ’Ã‚Âª estÃƒÆ’Ã‚Â¡ lendo isso, ÃƒÆ’Ã‚Â© para que nenhum contexto seja perdido em futuras iteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
+
+
+
+### ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¡ Registro EstratÃƒÆ’Ã‚Â©gico (14 de Junho de 2026)
+
+*Nota do criador do sistema sobre a direÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e prioridades:*
+
+- **Prioridade Atual (Back-end e MecÃƒÆ’Ã‚Â¢nica):** O foco total agora ÃƒÆ’Ã‚Â© garantir que o motor do sistema funcione impecavelmente (botÃƒÆ’Ã‚Âµes, rotas, geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagens, interaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de IA). O back-end ÃƒÆ’Ã‚Â© a espinha dorsal.
+
+- **Front-end e UX/UI (PrÃƒÆ’Ã‚Â³xima Fase):** O design serÃƒÆ’Ã‚Â¡ caprichado, desenhado e fatiado "ÃƒÆ’Ã‚Â  mÃƒÆ’Ã‚Â£o" no futuro para ficar com uma apresentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o visual e prÃƒÆ’Ã‚Â¡tica impecÃƒÆ’Ã‚Â¡vel, mas somente apÃƒÆ’Ã‚Â³s toda a fundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o mecÃƒÆ’Ã‚Â¢nica estar sÃƒÆ’Ã‚Â³lida.
+
+- **EstratÃƒÆ’Ã‚Â©gia de LanÃƒÆ’Ã‚Â§amento (Faseamento):** NÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© obrigatÃƒÆ’Ã‚Â³rio lanÃƒÆ’Ã‚Â§ar a plataforma com 100% das ferramentas ativas de uma vez. O sistema serÃƒÆ’Ã‚Â¡ lanÃƒÆ’Ã‚Â§ado gradualmente, liberando ferramentas aos poucos e mantendo atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes constantes no futuro para engajar os usuÃƒÆ’Ã‚Â¡rios.
+
+- **OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Cloud vs Local:** A longo prazo, o motor Python rodarÃƒÆ’Ã‚Â¡ em um servidor externo (ex: Oracle Cloud). O sistema precisa prever uma ponte onde a cÃƒÆ’Ã‚Â³pia local seja usada para desenvolvimento (comigo, o Antigravity) e as atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes sejam sincronizadas com o servidor remoto.
 
 - **Expectativa de Roadmap Realista (~3 meses):** 
 
-  - MÃƒÂªs 1: FundaÃƒÂ§ÃƒÂ£o MecÃƒÂ¢nica (Todos os botÃƒÂµes, iframes, ferramentas e IAs funcionando localmente).
+  - MÃƒÆ’Ã‚Âªs 1: FundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o MecÃƒÆ’Ã‚Â¢nica (Todos os botÃƒÆ’Ã‚Âµes, iframes, ferramentas e IAs funcionando localmente).
 
-  - MÃƒÂªs 2: ConfiguraÃƒÂ§ÃƒÂ£o e estabilizaÃƒÂ§ÃƒÂ£o de APIs e Servidores (Oracle/Cloud).
+  - MÃƒÆ’Ã‚Âªs 2: ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e estabilizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de APIs e Servidores (Oracle/Cloud).
 
-  - MÃƒÂªs 3: UX/UI e Fatiamento de Front-end desenhado ÃƒÂ  mÃƒÂ£o.
+  - MÃƒÆ’Ã‚Âªs 3: UX/UI e Fatiamento de Front-end desenhado ÃƒÆ’Ã‚Â  mÃƒÆ’Ã‚Â£o.
 
-- **Lore do Metaverso Apollo (O Jogo):** O jogo serÃƒÂ¡ focado no personagem original **"Roxingo"** (criado hÃƒÂ¡ mais de 15 anos). Ele ÃƒÂ© um anti-herÃƒÂ³i com uma mÃƒÂ¡scara simbionte alienÃƒÂ­gena, poderes de borracha e sarcasmo metalinguÃƒÂ­stico (quebra da quarta parede). A visÃƒÂ£o final para o jogo ÃƒÂ© ambiciosa: um **Action Roguelite 3D** (com combates dinÃƒÂ¢micos e fluidos lembrando *Spider-Man*), onde ele absorve poderes dos inimigos. Contudo, devido ÃƒÂ  complexidade massiva de desenvolver um jogo 3D de aÃƒÂ§ÃƒÂ£o, o foco prioritÃƒÂ¡rio atual permanecerÃƒÂ¡ na plataforma **Apollo Edit Web**, deixando o jogo para um momento futuro ou iniciando com uma versÃƒÂ£o Mobile/2D mais simples.
+- **Lore do Metaverso Apollo (O Jogo):** O jogo serÃƒÆ’Ã‚Â¡ focado no personagem original **"Roxingo"** (criado hÃƒÆ’Ã‚Â¡ mais de 15 anos). Ele ÃƒÆ’Ã‚Â© um anti-herÃƒÆ’Ã‚Â³i com uma mÃƒÆ’Ã‚Â¡scara simbionte alienÃƒÆ’Ã‚Â­gena, poderes de borracha e sarcasmo metalinguÃƒÆ’Ã‚Â­stico (quebra da quarta parede). A visÃƒÆ’Ã‚Â£o final para o jogo ÃƒÆ’Ã‚Â© ambiciosa: um **Action Roguelite 3D** (com combates dinÃƒÆ’Ã‚Â¢micos e fluidos lembrando *Spider-Man*), onde ele absorve poderes dos inimigos. Contudo, devido ÃƒÆ’Ã‚Â  complexidade massiva de desenvolver um jogo 3D de aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, o foco prioritÃƒÆ’Ã‚Â¡rio atual permanecerÃƒÆ’Ã‚Â¡ na plataforma **Apollo Edit Web**, deixando o jogo para um momento futuro ou iniciando com uma versÃƒÆ’Ã‚Â£o Mobile/2D mais simples.
 
-- **PreservaÃƒÂ§ÃƒÂ£o da Identidade (Roxingo vs Apollo Avatars):** Foi decidido **NÃƒÆ’O** diluir a imagem do Roxingo transformando-o em um "avatar genÃƒÂ©rico customizÃƒÂ¡vel" dentro do Apollo Edit Web. O Roxingo ÃƒÂ© uma Propriedade Intelectual (IP) ÃƒÂºnica, com histÃƒÂ³ria e personalidade prÃƒÂ³prias. Se os usuÃƒÂ¡rios pudessem criar "seus prÃƒÂ³prios Roxingos" de vÃƒÂ¡rias cores para correr de carro e trocar armaduras, isso destruiria o peso do personagem original. Portanto, os sistemas de personalizaÃƒÂ§ÃƒÂ£o do Apollo (Pilotos, Carros, Gasolina, Cristais, Skins) serÃƒÂ£o focados em **Avatares GenÃƒÂ©ricos dos UsuÃƒÂ¡rios**. O Roxingo serÃƒÂ¡ preservado como o protagonista absoluto dos seus prÃƒÂ³prios jogos futuros e da lore dos canais, mantendo sua aura de exclusividade.
+- **PreservaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Identidade (Roxingo vs Apollo Avatars):** Foi decidido **NÃƒÆ’Ã†â€™O** diluir a imagem do Roxingo transformando-o em um "avatar genÃƒÆ’Ã‚Â©rico customizÃƒÆ’Ã‚Â¡vel" dentro do Apollo Edit Web. O Roxingo ÃƒÆ’Ã‚Â© uma Propriedade Intelectual (IP) ÃƒÆ’Ã‚Âºnica, com histÃƒÆ’Ã‚Â³ria e personalidade prÃƒÆ’Ã‚Â³prias. Se os usuÃƒÆ’Ã‚Â¡rios pudessem criar "seus prÃƒÆ’Ã‚Â³prios Roxingos" de vÃƒÆ’Ã‚Â¡rias cores para correr de carro e trocar armaduras, isso destruiria o peso do personagem original. Portanto, os sistemas de personalizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Apollo (Pilotos, Carros, Gasolina, Cristais, Skins) serÃƒÆ’Ã‚Â£o focados em **Avatares GenÃƒÆ’Ã‚Â©ricos dos UsuÃƒÆ’Ã‚Â¡rios**. O Roxingo serÃƒÆ’Ã‚Â¡ preservado como o protagonista absoluto dos seus prÃƒÆ’Ã‚Â³prios jogos futuros e da lore dos canais, mantendo sua aura de exclusividade.
 
-- **ProduÃƒÂ§ÃƒÂ£o de ConteÃƒÂºdo e Dogfooding:** Os canais do criador estÃƒÂ£o pausados. A geraÃƒÂ§ÃƒÂ£o de roteiros sairÃƒÂ¡ do Codex (caro/instÃƒÂ¡vel) para mÃƒÂºltiplos chats especializados. SerÃƒÂ£o abertos chats dedicados para cada canal, lendo os arquivos `.md` (skills) criados pelo Codex. O Antigravity (este chat) focarÃƒÂ¡ na construÃƒÂ§ÃƒÂ£o do cÃƒÂ³digo do Apollo, enquanto os chats satÃƒÂ©lites atuarÃƒÂ£o como roteiristas e mapeadores de template, possivelmente usando o Tinker pela praticidade atual, atÃƒÂ© que a plataforma Apollo esteja pronta.
+- **ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ConteÃƒÆ’Ã‚Âºdo e Dogfooding:** Os canais do criador estÃƒÆ’Ã‚Â£o pausados. A geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de roteiros sairÃƒÆ’Ã‚Â¡ do Codex (caro/instÃƒÆ’Ã‚Â¡vel) para mÃƒÆ’Ã‚Âºltiplos chats especializados. SerÃƒÆ’Ã‚Â£o abertos chats dedicados para cada canal, lendo os arquivos `.md` (skills) criados pelo Codex. O Antigravity (este chat) focarÃƒÆ’Ã‚Â¡ na construÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do cÃƒÆ’Ã‚Â³digo do Apollo, enquanto os chats satÃƒÆ’Ã‚Â©lites atuarÃƒÆ’Ã‚Â£o como roteiristas e mapeadores de template, possivelmente usando o Tinker pela praticidade atual, atÃƒÆ’Ã‚Â© que a plataforma Apollo esteja pronta.
 
-- **Foco do Escopo e 'Joguinhos de Espera':** Para evitar *Scope Creep* (inchaÃƒÂ§o irrealista do projeto), foi decidido que a plataforma Apollo Edit Web **NÃƒÆ’O** terÃƒÂ¡ RPGs ou jogos de aÃƒÂ§ÃƒÂ£o complexos embutidos. O foco do Apollo ÃƒÂ© ser uma esteira de produÃƒÂ§ÃƒÂ£o de conteÃƒÂºdo (ediÃƒÂ§ÃƒÂ£o, IA, renderizaÃƒÂ§ÃƒÂ£o). A gamificaÃƒÂ§ÃƒÂ£o serÃƒÂ¡ restrita a **Joguinhos de Espera (Waiting Games)** simples (estilo arcade/minigames). O usuÃƒÂ¡rio joga esses minigames na prÃƒÂ³pria tela de carregamento para ganhar "Cristais" enquanto aguarda a pesada renderizaÃƒÂ§ÃƒÂ£o de um vÃƒÂ­deo na nuvem. Isso mantÃƒÂ©m a plataforma focada na sua utilidade principal e alivia a ansiedade do usuÃƒÂ¡rio sem sugar o tempo de desenvolvimento.
+- **Foco do Escopo e 'Joguinhos de Espera':** Para evitar *Scope Creep* (inchaÃƒÆ’Ã‚Â§o irrealista do projeto), foi decidido que a plataforma Apollo Edit Web **NÃƒÆ’Ã†â€™O** terÃƒÆ’Ã‚Â¡ RPGs ou jogos de aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o complexos embutidos. O foco do Apollo ÃƒÆ’Ã‚Â© ser uma esteira de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de conteÃƒÆ’Ã‚Âºdo (ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, IA, renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o). A gamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ restrita a **Joguinhos de Espera (Waiting Games)** simples (estilo arcade/minigames). O usuÃƒÆ’Ã‚Â¡rio joga esses minigames na prÃƒÆ’Ã‚Â³pria tela de carregamento para ganhar "Cristais" enquanto aguarda a pesada renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um vÃƒÆ’Ã‚Â­deo na nuvem. Isso mantÃƒÆ’Ã‚Â©m a plataforma focada na sua utilidade principal e alivia a ansiedade do usuÃƒÆ’Ã‚Â¡rio sem sugar o tempo de desenvolvimento.
 
 
 
 **5. Arquitetura Swarm de Testes (QA em Tempo Real):**
 
-- **A Ponte de Feedback (QA):** Foi estabelecido o arquivo `MEMORIA_PONTE_APOLLO.md`. Se um roteirista autÃƒÂ´nomo, durante a produÃƒÂ§ÃƒÂ£o de um vÃƒÂ­deo, identificar que falta um recurso no site de ediÃƒÂ§ÃƒÂ£o, ele registra o pedido na Ponte. O Arquiteto (este chat focado no cÃƒÂ³digo) lÃƒÂª a Ponte e implementa a funcionalidade no `servidor_web.py`.
+- **A Ponte de Feedback (QA):** Foi estabelecido o arquivo `MEMORIA_PONTE_APOLLO.md`. Se um roteirista autÃƒÆ’Ã‚Â´nomo, durante a produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um vÃƒÆ’Ã‚Â­deo, identificar que falta um recurso no site de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, ele registra o pedido na Ponte. O Arquiteto (este chat focado no cÃƒÆ’Ã‚Â³digo) lÃƒÆ’Ã‚Âª a Ponte e implementa a funcionalidade no `servidor_web.py`.
 
-- **A SimulaÃƒÂ§ÃƒÂ£o de UsuÃƒÂ¡rios Reais:** Essa arquitetura espelha exatamente como os usuÃƒÂ¡rios finais agirÃƒÂ£o no futuro. Os roteiristas autÃƒÂ´nomos simulam clientes exigentes pedindo melhorias no editor, e o Arquiteto coordena essas demandas em cÃƒÂ³digo. Ãƒâ€° uma pesquisa de qualidade (QA) viva e em tempo real.
+- **A SimulaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de UsuÃƒÆ’Ã‚Â¡rios Reais:** Essa arquitetura espelha exatamente como os usuÃƒÆ’Ã‚Â¡rios finais agirÃƒÆ’Ã‚Â£o no futuro. Os roteiristas autÃƒÆ’Ã‚Â´nomos simulam clientes exigentes pedindo melhorias no editor, e o Arquiteto coordena essas demandas em cÃƒÆ’Ã‚Â³digo. ÃƒÆ’Ã¢â‚¬Â° uma pesquisa de qualidade (QA) viva e em tempo real.
 
 
 
-**6. O Novo Pipeline de ProduÃƒÂ§ÃƒÂ£o (A Arquitetura de 7 Fases):**
+**6. O Novo Pipeline de ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (A Arquitetura de 7 Fases):**
 
-A visÃƒÂ£o do fluxo de produÃƒÂ§ÃƒÂ£o amadureceu. A "Fase 1" original foi empurrada para frente para dar espaÃƒÂ§o ÃƒÂ  verdadeira "Ignition" (A IgniÃƒÂ§ÃƒÂ£o) do sistema:
+A visÃƒÆ’Ã‚Â£o do fluxo de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o amadureceu. A "Fase 1" original foi empurrada para frente para dar espaÃƒÆ’Ã‚Â§o ÃƒÆ’Ã‚Â  verdadeira "Ignition" (A IgniÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) do sistema:
 
-- **Fase 1 (O Start / O Chatbot Universal):** A porta de entrada. Um Chatbot onipresente (Site, WhatsApp) que conhece todo o canal do usuÃƒÂ¡rio. Ele recebe o "Gatilho" (prompt manual, agendamento) e monta a "Receita" (formato, data de postagem, copiloto escolhido).
+- **Fase 1 (O Start / O Chatbot Universal):** A porta de entrada. Um Chatbot onipresente (Site, WhatsApp) que conhece todo o canal do usuÃƒÆ’Ã‚Â¡rio. Ele recebe o "Gatilho" (prompt manual, agendamento) e monta a "Receita" (formato, data de postagem, copiloto escolhido).
 
-- **Fase 2 (A GeraÃƒÂ§ÃƒÂ£o / Antigravity + n8n):** Os Copilotos/Roteiristas recebem a Receita da Fase 1 e produzem o roteiro, os prompts de imagem e a lÃƒÂ³gica visual.
+- **Fase 2 (A GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o / Antigravity + n8n):** Os Copilotos/Roteiristas recebem a Receita da Fase 1 e produzem o roteiro, os prompts de imagem e a lÃƒÆ’Ã‚Â³gica visual.
 
-- **Fase 3 (GeraÃƒÂ§ÃƒÂ£o de MÃƒÂ­dias / Motores de IA):** A etapa pesada. Aqui as APIs (Lightning AI, OpenAI, ElevenLabs, etc.) pegam o roteiro da Fase 2 e criam os arquivos fÃƒÂ­sicos: Ã¯Â¿Â½udios (TTS), Imagens e pequenos clipes de VÃƒÂ­deo.
+- **Fase 3 (GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de MÃƒÆ’Ã‚Â­dias / Motores de IA):** A etapa pesada. Aqui as APIs (Lightning AI, OpenAI, ElevenLabs, etc.) pegam o roteiro da Fase 2 e criam os arquivos fÃƒÆ’Ã‚Â­sicos: ÃƒÂ¯Ã‚Â¿Ã‚Â½udios (TTS), Imagens e pequenos clipes de VÃƒÆ’Ã‚Â­deo.
 
-- **Fase 4 (RenderizaÃƒÂ§ÃƒÂ£o FFmpeg / A FÃƒÂ¡brica):** A montagem bruta do audiovisual (cortes, legendas, junÃƒÂ§ÃƒÂ£o do ÃƒÂ¡ÃƒÂ¡udio com as imagens geradas na Fase 3).
+- **Fase 4 (RenderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o FFmpeg / A FÃƒÆ’Ã‚Â¡brica):** A montagem bruta do audiovisual (cortes, legendas, junÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio com as imagens geradas na Fase 3).
 
-- **Fase 5 (Filtros de IA / PÃƒÂ³s-ProduÃƒÂ§ÃƒÂ£o):** Uma camada opcional onde o vÃƒÂ­deo bruto da Fase 4 passa por uma IA de vÃƒÂ­deo (ex: Runway, Sora, Luma) para ganhar estilos ou filtros globais.
+- **Fase 5 (Filtros de IA / PÃƒÆ’Ã‚Â³s-ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):** Uma camada opcional onde o vÃƒÆ’Ã‚Â­deo bruto da Fase 4 passa por uma IA de vÃƒÆ’Ã‚Â­deo (ex: Runway, Sora, Luma) para ganhar estilos ou filtros globais.
 
-- **Fase 6 (AprovaÃƒÂ§ÃƒÂ£o Humana / Human-in-the-Loop):** Uma etapa vital. O sistema 100% automÃƒÂ¡tico ÃƒÂ© perigoso. O vÃƒÂ­deo fica "estacionado" aguardando o usuÃƒÂ¡rio assistir e clicar em "Aprovado".
+- **Fase 6 (AprovaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Humana / Human-in-the-Loop):** Uma etapa vital. O sistema 100% automÃƒÆ’Ã‚Â¡tico ÃƒÆ’Ã‚Â© perigoso. O vÃƒÆ’Ã‚Â­deo fica "estacionado" aguardando o usuÃƒÆ’Ã‚Â¡rio assistir e clicar em "Aprovado".
 
-- **Fase 7 (A Postagem):** ApÃƒÂ³s aprovaÃƒÂ§ÃƒÂ£o (ou se configurado como AutomÃƒÂ¡tico Extremo), o vÃƒÂ­deo ÃƒÂ© enviado para a rede social via API, Agendamento ou atravÃƒÂ©s da nossa ExtensÃƒÂ£o de Navegador (A Isca MercadolÃƒÂ³gica).
+- **Fase 7 (A Postagem):** ApÃƒÆ’Ã‚Â³s aprovaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (ou se configurado como AutomÃƒÆ’Ã‚Â¡tico Extremo), o vÃƒÆ’Ã‚Â­deo ÃƒÆ’Ã‚Â© enviado para a rede social via API, Agendamento ou atravÃƒÆ’Ã‚Â©s da nossa ExtensÃƒÆ’Ã‚Â£o de Navegador (A Isca MercadolÃƒÆ’Ã‚Â³gica).
 
 
 
@@ -168,83 +190,83 @@ A visÃƒÂ£o do fluxo de produÃƒÂ§ÃƒÂ£o amadureceu. A "Fase 1" origina
 
 ## 1. Nomenclatura e Paradigma
 
-- O projeto chama-se **Apollo Edit Web** (NÃƒÂ£o Apollo Studio).
+- O projeto chama-se **Apollo Edit Web** (NÃƒÆ’Ã‚Â£o Apollo Studio).
 
-- Paradigma 100% Web/Cloud: O sistema ÃƒÂ© web-based. NÃƒÂ£o existem instalaÃƒÂ§ÃƒÂµes locais no PC do usuÃƒÂ¡rio (ex: Whisper local nÃƒÂ£o existe). Tudo funciona via nuvem ao clique de um botÃƒÂ£o.
+- Paradigma 100% Web/Cloud: O sistema ÃƒÆ’Ã‚Â© web-based. NÃƒÆ’Ã‚Â£o existem instalaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes locais no PC do usuÃƒÆ’Ã‚Â¡rio (ex: Whisper local nÃƒÆ’Ã‚Â£o existe). Tudo funciona via nuvem ao clique de um botÃƒÆ’Ã‚Â£o.
 
-- O processamento pesado (ex: FFMpeg) rodarÃƒÂ¡ externamente (ex: Google Colab) para nÃƒÂ£o engasgar o servidor principal caso 100 usuÃƒÂ¡rios tentem renderizar vÃƒÂ­deos ao mesmo tempo.
-
-
-
-## 2. Abordagem de APIs e RotaÃƒÂ§ÃƒÂ£o
-
-- O site ÃƒÂ© massivamente baseado em **Chaves de API**.
-
-- **Imagens e Thumbnails**: SerÃƒÂ¡ utilizado a API do Nano Banana e ChatGPT para geraÃƒÂ§ÃƒÂ£o de imagens (descartar ComfyUI Cloud por nÃƒÂ£o ser pago atualmente). Se necessÃƒÂ¡rio, cobra-se o uso do Nano Banana.
-
-- **B-Rolls (Pexels/Pixabay) e Pesquisa (Apify/Brave)**: Sendo limitadas/gratuitas, usaremos um esquema de **rotaÃƒÂ§ÃƒÂ£o de chaves API** quando as cotas excederem, garantindo que usuÃƒÂ¡rios free nÃƒÂ£o fiquem travados.
-
-- **Pesquisa Premium**: O uso do Grok serÃƒÂ¡ tarifado no sistema de economia.
+- O processamento pesado (ex: FFMpeg) rodarÃƒÆ’Ã‚Â¡ externamente (ex: Google Colab) para nÃƒÆ’Ã‚Â£o engasgar o servidor principal caso 100 usuÃƒÆ’Ã‚Â¡rios tentem renderizar vÃƒÆ’Ã‚Â­deos ao mesmo tempo.
 
 
 
-## 3. Arquitetura de RoteirizaÃƒÂ§ÃƒÂ£o (O Sistema de Mapas)
+## 2. Abordagem de APIs e RotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
 
-O site automatiza processos manuais operando em etapas. A aba de Roteiros serÃƒÂ¡ guiada por duas frentes de IA:
+- O site ÃƒÆ’Ã‚Â© massivamente baseado em **Chaves de API**.
 
-- **RobÃƒÂ´s TÃƒÂ©cnicos Internos**: RobÃƒÂ´s genÃƒÂ©ricos treinados especificamente para fazer 'mapeamento' do roteiro, gerar mapeamento de templates baseados no banco de dados do cliente, gerar tÃƒÂ­tulos e descriÃƒÂ§ÃƒÂµes. Eles NÃƒÆ’O interferem no conteÃƒÂºdo/narrativa. O mapeamento de templates exigirÃƒÂ¡ uma carga educacional para o usuÃƒÂ¡rio entender como indicar o uso dos templates.
+- **Imagens e Thumbnails**: SerÃƒÆ’Ã‚Â¡ utilizado a API do Nano Banana e ChatGPT para geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagens (descartar ComfyUI Cloud por nÃƒÆ’Ã‚Â£o ser pago atualmente). Se necessÃƒÆ’Ã‚Â¡rio, cobra-se o uso do Nano Banana.
 
-- **RobÃƒÂ´s de ConteÃƒÂºdo (Roteirista)**: DÃƒÂ£o o 'peso da linguagem' ao roteiro. Os usuÃƒÂ¡rios poderÃƒÂ£o treinar seus prÃƒÂ³prios roteiristas via campos de texto, OU usar os **Roteiristas Personalizados/Copilotos** fornecidos pela plataforma (ex: especialista em Terror, Drama, FinanÃƒÂ§as).
+- **B-Rolls (Pexels/Pixabay) e Pesquisa (Apify/Brave)**: Sendo limitadas/gratuitas, usaremos um esquema de **rotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de chaves API** quando as cotas excederem, garantindo que usuÃƒÆ’Ã‚Â¡rios free nÃƒÆ’Ã‚Â£o fiquem travados.
 
-
-
-## 4. Ecossistema e Venda de ExtensÃƒÂµes
-
-- A ferramenta de **PublicaÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica no YouTube** nÃƒÂ£o farÃƒÂ¡ parte do core gratuito. Ela ÃƒÂ© uma extensÃƒÂ£o externa que serÃƒÂ¡ **vendida ÃƒÂ  parte** no site, assim como a extensÃƒÂ£o 'Metr'.
+- **Pesquisa Premium**: O uso do Grok serÃƒÆ’Ã‚Â¡ tarifado no sistema de economia.
 
 
 
-## 5. GamificaÃƒÂ§ÃƒÂ£o e Economia (EvoluÃƒÂ§ÃƒÂ£o: O Metaverso Apollo)
+## 3. Arquitetura de RoteirizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (O Sistema de Mapas)
 
-- **Minigames de Carregamento:** Jogos casuais (ex: Candy Rush, Tetris) rodam durante o tempo de render para prender o usuÃƒÂ¡rio. TerÃƒÂ£o uma pÃƒÂ¡gina dedicada (Ad-supported) onde quebrar recordes gera recompensas incrementais (CombustÃƒÂ­vel/Cristais).
+O site automatiza processos manuais operando em etapas. A aba de Roteiros serÃƒÆ’Ã‚Â¡ guiada por duas frentes de IA:
+
+- **RobÃƒÆ’Ã‚Â´s TÃƒÆ’Ã‚Â©cnicos Internos**: RobÃƒÆ’Ã‚Â´s genÃƒÆ’Ã‚Â©ricos treinados especificamente para fazer 'mapeamento' do roteiro, gerar mapeamento de templates baseados no banco de dados do cliente, gerar tÃƒÆ’Ã‚Â­tulos e descriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes. Eles NÃƒÆ’Ã†â€™O interferem no conteÃƒÆ’Ã‚Âºdo/narrativa. O mapeamento de templates exigirÃƒÆ’Ã‚Â¡ uma carga educacional para o usuÃƒÆ’Ã‚Â¡rio entender como indicar o uso dos templates.
+
+- **RobÃƒÆ’Ã‚Â´s de ConteÃƒÆ’Ã‚Âºdo (Roteirista)**: DÃƒÆ’Ã‚Â£o o 'peso da linguagem' ao roteiro. Os usuÃƒÆ’Ã‚Â¡rios poderÃƒÆ’Ã‚Â£o treinar seus prÃƒÆ’Ã‚Â³prios roteiristas via campos de texto, OU usar os **Roteiristas Personalizados/Copilotos** fornecidos pela plataforma (ex: especialista em Terror, Drama, FinanÃƒÆ’Ã‚Â§as).
+
+
+
+## 4. Ecossistema e Venda de ExtensÃƒÆ’Ã‚Âµes
+
+- A ferramenta de **PublicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica no YouTube** nÃƒÆ’Ã‚Â£o farÃƒÆ’Ã‚Â¡ parte do core gratuito. Ela ÃƒÆ’Ã‚Â© uma extensÃƒÆ’Ã‚Â£o externa que serÃƒÆ’Ã‚Â¡ **vendida ÃƒÆ’Ã‚Â  parte** no site, assim como a extensÃƒÆ’Ã‚Â£o 'Metr'.
+
+
+
+## 5. GamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e Economia (EvoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: O Metaverso Apollo)
+
+- **Minigames de Carregamento:** Jogos casuais (ex: Candy Rush, Tetris) rodam durante o tempo de render para prender o usuÃƒÆ’Ã‚Â¡rio. TerÃƒÆ’Ã‚Â£o uma pÃƒÆ’Ã‚Â¡gina dedicada (Ad-supported) onde quebrar recordes gera recompensas incrementais (CombustÃƒÆ’Ã‚Â­vel/Cristais).
 
 - **Apollo Games (Jogos Web Nativos):** 
 
-  - **Jogo do Carro:** Um jogo de corrida (estilo Mario Kart) onde o usuÃƒÂ¡rio usa exatamente o carro e as peÃƒÂ§as (GPUs, Nitro) tunadas na sua Garagem.
+  - **Jogo do Carro:** Um jogo de corrida (estilo Mario Kart) onde o usuÃƒÆ’Ã‚Â¡rio usa exatamente o carro e as peÃƒÆ’Ã‚Â§as (GPUs, Nitro) tunadas na sua Garagem.
 
-  - **Jogo do Avatar:** Um RPG/Roguelite de aÃƒÂ§ÃƒÂ£o para justificar o uso de roupas, espadas, capacetes comprados na loja.
+  - **Jogo do Avatar:** Um RPG/Roguelite de aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para justificar o uso de roupas, espadas, capacetes comprados na loja.
 
-- **NÃƒÂ­vel Global e Ã¯Â¿Â½rvore de Habilidades (Skill Tree):**
+- **NÃƒÆ’Ã‚Â­vel Global e ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore de Habilidades (Skill Tree):**
 
-  - O NÃƒÂ­vel do jogador ÃƒÂ© a soma de 3 Pilares: **TrofÃƒÂ©u (EstatÃƒÂ­sticas de EdiÃƒÂ§ÃƒÂ£o/Render) + Level do RPG + Level da Corrida**.
+  - O NÃƒÆ’Ã‚Â­vel do jogador ÃƒÆ’Ã‚Â© a soma de 3 Pilares: **TrofÃƒÆ’Ã‚Â©u (EstatÃƒÆ’Ã‚Â­sticas de EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o/Render) + Level do RPG + Level da Corrida**.
 
-  - A cada NÃƒÂ­vel, o usuÃƒÂ¡rio ganha Skill Points.
+  - A cada NÃƒÆ’Ã‚Â­vel, o usuÃƒÆ’Ã‚Â¡rio ganha Skill Points.
 
-  - **Skill Tree:** O usuÃƒÂ¡rio aloca pontos em 3 grandes ÃƒÂ¡rvores. 
+  - **Skill Tree:** O usuÃƒÆ’Ã‚Â¡rio aloca pontos em 3 grandes ÃƒÆ’Ã‚Â¡rvores. 
 
-    - *Ã¯Â¿Â½rvore do Editor:* Concede vantagens REAIS no SaaS (Ex: 20% de economia no combustÃƒÂ­vel de render, 30 cristais mensais, descontos em GPUs virtuais).
+    - *ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore do Editor:* Concede vantagens REAIS no SaaS (Ex: 20% de economia no combustÃƒÆ’Ã‚Â­vel de render, 30 cristais mensais, descontos em GPUs virtuais).
 
-    - *Ã¯Â¿Â½rvore do RPG:* Habilidades mÃƒÂ¡gicas no jogo do Avatar.
+    - *ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore do RPG:* Habilidades mÃƒÆ’Ã‚Â¡gicas no jogo do Avatar.
 
-    - *Ã¯Â¿Â½rvore da Corrida:* Nitro e velocidade no jogo do Carro para farmar mais recursos.
+    - *ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore da Corrida:* Nitro e velocidade no jogo do Carro para farmar mais recursos.
 
-- Tudo isso amarra o uso da IA ÃƒÂ  retenÃƒÂ§ÃƒÂ£o do usuÃƒÂ¡rio. Ferramentas open-source ficam de fora, mas o core business da Apollo usa essa economia gamificada para escalar.
+- Tudo isso amarra o uso da IA ÃƒÆ’Ã‚Â  retenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do usuÃƒÆ’Ã‚Â¡rio. Ferramentas open-source ficam de fora, mas o core business da Apollo usa essa economia gamificada para escalar.
 
 
 
 > **[REALITY CHECK - JUNHO 2026] Gerenciamento de Escopo:**
 
-> A visÃƒÂ£o completa dos "Apollo Games" (RPG Complexo, Corrida 3D elaborada) foi catalogada como **VisÃƒÂ£o de Longo Prazo (Fase 3)**.
+> A visÃƒÆ’Ã‚Â£o completa dos "Apollo Games" (RPG Complexo, Corrida 3D elaborada) foi catalogada como **VisÃƒÆ’Ã‚Â£o de Longo Prazo (Fase 3)**.
 
-> Criar jogos complexos do zero tira o foco do *Core Business* (EdiÃƒÂ§ÃƒÂ£o de VÃƒÂ­deo) e pode afundar o projeto. 
+> Criar jogos complexos do zero tira o foco do *Core Business* (EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de VÃƒÆ’Ã‚Â­deo) e pode afundar o projeto. 
 
-> **DecisÃƒÂ£o Atual (Fase 1 e 2):** 
+> **DecisÃƒÆ’Ã‚Â£o Atual (Fase 1 e 2):** 
 
-> 1. Foco total na ferramenta de ediÃƒÂ§ÃƒÂ£o e no roteamento de APIs.
+> 1. Foco total na ferramenta de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e no roteamento de APIs.
 
-## Ã°Å¸Å½Â¯ Objetivo de NegÃƒÂ³cio
+## ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ Objetivo de NegÃƒÆ’Ã‚Â³cio
 
-O **Apollo Studio** nÃƒÂ£o ÃƒÂ© apenas uma ferramenta de inteligÃƒÂªncia artificial de uso local Ã¯Â¿Â½ foi pivotado para ser uma **Plataforma SaaS** (Software as a Service) altamente escalÃƒÂ¡vel. O foco ÃƒÂ© fornecer uma infraestrutura de criaÃƒÂ§ÃƒÂ£o e automaÃƒÂ§ÃƒÂ£o de conteÃƒÂºdo em massa (vÃƒÂ­deos, notÃƒÂ­cias, roteiros, dublagens) onde os clientes assinam planos e consomem "CrÃƒÂ©ditos" para usar inteligÃƒÂªncias interligadas.
+O **Apollo Studio** nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© apenas uma ferramenta de inteligÃƒÆ’Ã‚Âªncia artificial de uso local ÃƒÂ¯Ã‚Â¿Ã‚Â½ foi pivotado para ser uma **Plataforma SaaS** (Software as a Service) altamente escalÃƒÆ’Ã‚Â¡vel. O foco ÃƒÆ’Ã‚Â© fornecer uma infraestrutura de criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e automaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de conteÃƒÆ’Ã‚Âºdo em massa (vÃƒÆ’Ã‚Â­deos, notÃƒÆ’Ã‚Â­cias, roteiros, dublagens) onde os clientes assinam planos e consomem "CrÃƒÆ’Ã‚Â©ditos" para usar inteligÃƒÆ’Ã‚Âªncias interligadas.
 
 
 
@@ -252,15 +274,15 @@ O **Apollo Studio** nÃƒÂ£o ÃƒÂ© apenas uma ferramenta de inteligÃƒÂª
 
 
 
-## Ã¢Å“â€¦ O QUE FOI FEITO NESTA SESSÃƒÆ’O (2026-06-01) Ã¯Â¿Â½ MIGRAÃƒâ€¡ÃƒÆ’O COMPLETA
+## ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ O QUE FOI FEITO NESTA SESSÃƒÆ’Ã†â€™O (2026-06-01) ÃƒÂ¯Ã‚Â¿Ã‚Â½ MIGRAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O COMPLETA
 
 
 
-### Tarefa: Migrar Central de NotÃƒÂ­cias do React para Vanilla JS puro
+### Tarefa: Migrar Central de NotÃƒÆ’Ã‚Â­cias do React para Vanilla JS puro
 
 
 
-Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora ÃƒÂ© uma SPA completa em HTML + Vanilla JS puro, sem dependÃƒÂªncia de React.
+Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora ÃƒÆ’Ã‚Â© uma SPA completa em HTML + Vanilla JS puro, sem dependÃƒÆ’Ã‚Âªncia de React.
 
 
 
@@ -272,21 +294,21 @@ Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora Ãƒ
 
 | `web_ui/noticias.html` | HTML principal com todas as tabs implementadas. Cores violeta aplicadas nos novos componentes. |
 
-| `web_ui/noticias_core.js` | Core JS (3565 linhas). ContÃƒÂ©m: `saveSettings()`, `loadSettings()` (novo!), `renderScriptsHistory()`, `clearScriptsHistory()`, `toggleScriptAudio()`, monitor (versÃƒÂ£o simulada Ã¯Â¿Â½ sobreposta pelo monitor_logic.js), radar, miner. |
+| `web_ui/noticias_core.js` | Core JS (3565 linhas). ContÃƒÆ’Ã‚Â©m: `saveSettings()`, `loadSettings()` (novo!), `renderScriptsHistory()`, `clearScriptsHistory()`, `toggleScriptAudio()`, monitor (versÃƒÆ’Ã‚Â£o simulada ÃƒÂ¯Ã‚Â¿Ã‚Â½ sobreposta pelo monitor_logic.js), radar, miner. |
 
-| `web_ui/scripts_logic.js` | Gerador de roteiros com perfis de canal, geraÃƒÂ§ÃƒÂ£o via AI, histÃƒÂ³rico automÃƒÂ¡tico, TTS. |
+| `web_ui/scripts_logic.js` | Gerador de roteiros com perfis de canal, geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o via AI, histÃƒÆ’Ã‚Â³rico automÃƒÆ’Ã‚Â¡tico, TTS. |
 
-| `web_ui/strategy_logic.js` | EstratÃƒÂ©gia de canal via AI. |
+| `web_ui/strategy_logic.js` | EstratÃƒÆ’Ã‚Â©gia de canal via AI. |
 
 | `web_ui/dashboard_logic.js` | Painel geral de analytics. |
 
-| `web_ui/radar_logic.js` | Radar YouTube com categorias clicÃƒÂ¡veis. |
+| `web_ui/radar_logic.js` | Radar YouTube com categorias clicÃƒÆ’Ã‚Â¡veis. |
 
-| `web_ui/studio_logic.js` | Canvas de ediÃƒÂ§ÃƒÂ£o de imagem (drag & drop de texto). |
+| `web_ui/studio_logic.js` | Canvas de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagem (drag & drop de texto). |
 
-| `web_ui/channel_logic.js` | Ã¢Ëœâ€¦ CORRIGIDO: usa `api_key_or`, `api_key_grok`, `engine`, `input_text` Ã¯Â¿Â½ formato correto do `NoticiasReq`. |
+| `web_ui/channel_logic.js` | ÃƒÂ¢Ã‹Å“Ã¢â‚¬Â¦ CORRIGIDO: usa `api_key_or`, `api_key_grok`, `engine`, `input_text` ÃƒÂ¯Ã‚Â¿Ã‚Â½ formato correto do `NoticiasReq`. |
 
-| `web_ui/monitor_logic.js` | Ã¢Ëœâ€¦ NOVO: RequisiÃƒÂ§ÃƒÂ£o real ao backend (`monitorar-perfil`). Parse robusto do JSON retornado pela IA. Trata `data.data` e fallback `data.texto`. |
+| `web_ui/monitor_logic.js` | ÃƒÂ¢Ã‹Å“Ã¢â‚¬Â¦ NOVO: RequisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o real ao backend (`monitorar-perfil`). Parse robusto do JSON retornado pela IA. Trata `data.data` e fallback `data.texto`. |
 
 | `api_key_openai` | `api_key_openai` | OpenAI / ChatGPT |
 
@@ -314,7 +336,7 @@ Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora Ãƒ
 
 
 
-> **ATENÃƒâ€¡ÃƒÆ’O:** O campo OpenRouter ÃƒÂ© salvo com a chave `openrouter_api_key` (nÃƒÂ£o `api_key_openrouter`!). O `loadSettings()` jÃƒÂ¡ trata essa inconsistÃƒÂªncia.
+> **ATENÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O:** O campo OpenRouter ÃƒÆ’Ã‚Â© salvo com a chave `openrouter_api_key` (nÃƒÆ’Ã‚Â£o `api_key_openrouter`!). O `loadSettings()` jÃƒÆ’Ã‚Â¡ trata essa inconsistÃƒÆ’Ã‚Âªncia.
 
 
 
@@ -322,25 +344,25 @@ Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora Ãƒ
 
 
 
-## Ã¢Å¡Â Ã¯Â¿Â½ RestriÃƒÂ§ÃƒÂµes e HistÃƒÂ³rico de Problemas (LiÃƒÂ§ÃƒÂµes Aprendidas)
+## ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¿Ã‚Â½ RestriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes e HistÃƒÆ’Ã‚Â³rico de Problemas (LiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes Aprendidas)
 
 
 
 ### Encoding dos Arquivos
 
-- **CRÃ¯Â¿Â½TICO:** Arquivos legados em `web_ui/` (`.html`, `.js`, `.css`) estÃƒÂ£o em `latin-1`, NÃƒÆ’O em UTF-8.
+- **CRÃƒÂ¯Ã‚Â¿Ã‚Â½TICO:** Arquivos legados em `web_ui/` (`.html`, `.js`, `.css`) estÃƒÆ’Ã‚Â£o em `latin-1`, NÃƒÆ’Ã†â€™O em UTF-8.
 
 - Sempre abrir/salvar com `encoding='latin-1'` em scripts Python.
 
-- Caracteres acentuados aparecem corrompidos no terminal (ex: `Roteiros` vira `Roteir\xf3s`) Ã¯Â¿Â½ isso ÃƒÂ© normal, nÃƒÂ£o ÃƒÂ© bug.
+- Caracteres acentuados aparecem corrompidos no terminal (ex: `Roteiros` vira `Roteir\xf3s`) ÃƒÂ¯Ã‚Â¿Ã‚Â½ isso ÃƒÆ’Ã‚Â© normal, nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© bug.
 
 
 
-### Conflito de FunÃƒÂ§ÃƒÂµes JS
+### Conflito de FunÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes JS
 
-- `noticias_core.js` tem versÃƒÂµes antigas/simuladas de algumas funÃƒÂ§ÃƒÂµes (ex: `handleStartMonitoring` com mock data).
+- `noticias_core.js` tem versÃƒÆ’Ã‚Âµes antigas/simuladas de algumas funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes (ex: `handleStartMonitoring` com mock data).
 
-- Os arquivos `_logic.js` sÃƒÂ£o carregados DEPOIS do `noticias_core.js` no HTML Ã¢â€ â€™ funÃƒÂ§ÃƒÂµes com mesmo nome nos `_logic.js` sobrepÃƒÂµem as antigas automaticamente.
+- Os arquivos `_logic.js` sÃƒÆ’Ã‚Â£o carregados DEPOIS do `noticias_core.js` no HTML ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes com mesmo nome nos `_logic.js` sobrepÃƒÆ’Ã‚Âµem as antigas automaticamente.
 
 - **Ordem de carregamento no HTML** (importante manter):
 
@@ -362,11 +384,11 @@ Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora Ãƒ
 
 
 
-### Formato Correto da RequisiÃƒÂ§ÃƒÂ£o ÃƒÂ  IA
+### Formato Correto da RequisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â  IA
 
 - O `servidor_web.py` usa o modelo Pydantic `NoticiasReq`.
 
-- **NUNCA** usar campos `api_key` ou `dados` Ã¯Â¿Â½ eles nÃƒÂ£o existem no modelo.
+- **NUNCA** usar campos `api_key` ou `dados` ÃƒÂ¯Ã‚Â¿Ã‚Â½ eles nÃƒÆ’Ã‚Â£o existem no modelo.
 
 - **SEMPRE** usar: `api_key_or` (OpenRouter), `api_key_grok` (Grok), `engine`, `input_text`, `prompt_type`.
 
@@ -376,19 +398,19 @@ Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora Ãƒ
 
 ### Rate Limits Mortais
 
-- Scripts pesados como o `build_i18n.py` enfrentaram bloqueios massivos do Google Gemini (Status 429) por dispararem rajadas de requisiÃƒÂ§ÃƒÂµes superando o limite de 15 req/min.
+- Scripts pesados como o `build_i18n.py` enfrentaram bloqueios massivos do Google Gemini (Status 429) por dispararem rajadas de requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes superando o limite de 15 req/min.
 
-- **SoluÃƒÂ§ÃƒÂ£o Adotada**: Scripts futuros que operarem em massa DEVERÃƒÆ’O possuir um "Rate Limiter" interno (ex: `time.sleep`) ou rotaÃƒÂ§ÃƒÂ£o de chaves.
+- **SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Adotada**: Scripts futuros que operarem em massa DEVERÃƒÆ’Ã†â€™O possuir um "Rate Limiter" interno (ex: `time.sleep`) ou rotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de chaves.
 
 
 
 ### Frontend Desacoplado
 
-- Para evitar vulnerabilidades, a interface do dono (`/apollo-master`) nÃƒÂ£o compartilha contexto com os clientes.
+- Para evitar vulnerabilidades, a interface do dono (`/apollo-master`) nÃƒÆ’Ã‚Â£o compartilha contexto com os clientes.
 
 - Possui `APIRouter` independente (`admin_api.py`) no Python.
 
-- **NÃƒÂ£o usar SSR Pesado**: Frontend usa HTMLs desacoplados hidratados com Vanilla JS (nÃƒÂ£o React/Next).
+- **NÃƒÆ’Ã‚Â£o usar SSR Pesado**: Frontend usa HTMLs desacoplados hidratados com Vanilla JS (nÃƒÆ’Ã‚Â£o React/Next).
 
 
 
@@ -396,39 +418,39 @@ Todos os 9+ componentes foram migrados com sucesso. O `noticias.html` agora Ãƒ
 
 
 
-## Ã¯Â¿Â½Ã¯Â¿Â½ Mapa de Tab IDs Ã¯Â¿Â½ noticias.html
+## ÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½ Mapa de Tab IDs ÃƒÂ¯Ã‚Â¿Ã‚Â½ noticias.html
 
 
 
 ```
 
-#tab-news       Ã¢â€ â€™ NotÃƒÂ­cias (caÃƒÂ§a de pautas)
+#tab-news       ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ NotÃƒÆ’Ã‚Â­cias (caÃƒÆ’Ã‚Â§a de pautas)
 
-#tab-miner      Ã¢â€ â€™ MineraÃƒÂ§ÃƒÂ£o Viral no YouTube
+#tab-miner      ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ MineraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Viral no YouTube
 
-#tab-radar      Ã¢â€ â€™ Radar YouTube (em alta)
+#tab-radar      ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Radar YouTube (em alta)
 
-#tab-scripts    Ã¢â€ â€™ Central de Roteiros
+#tab-scripts    ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Central de Roteiros
 
-#tab-studio     Ã¢â€ â€™ EstÃƒÂºdio de Imagens
+#tab-studio     ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ EstÃƒÆ’Ã‚Âºdio de Imagens
 
-#tab-strategy   Ã¢â€ â€™ EstratÃƒÂ©gia do Canal
+#tab-strategy   ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ EstratÃƒÆ’Ã‚Â©gia do Canal
 
-#tab-analytics  Ã¢â€ â€™ Dashboard/Analytics (placeholder)
+#tab-analytics  ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Dashboard/Analytics (placeholder)
 
-#tab-channel    Ã¢â€ â€™ Meu Canal (vÃƒÂ­deos salvos)
+#tab-channel    ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Meu Canal (vÃƒÆ’Ã‚Â­deos salvos)
 
-#tab-monitor    Ã¢â€ â€™ Monitor AÃƒÂ§ÃƒÂ£o Vivo (scraping de perfil)
+#tab-monitor    ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Monitor AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Vivo (scraping de perfil)
 
-#tab-history    Ã¢â€ â€™ Arquivo de Roteiros (histÃƒÂ³rico)
+#tab-history    ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Arquivo de Roteiros (histÃƒÆ’Ã‚Â³rico)
 
-#tab-settings   Ã¢â€ â€™ ConfiguraÃƒÂ§ÃƒÂµes do Sistema
+#tab-settings   ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes do Sistema
 
 ```
 
 
 
-A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ definida em `noticias_core.js`.
+A funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de troca de tab ÃƒÆ’Ã‚Â© `switchTab(tabId)` ÃƒÂ¯Ã‚Â¿Ã‚Â½ definida em `noticias_core.js`.
 
 
 
@@ -436,19 +458,19 @@ A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ 
 
 
 
-## Ã¯Â¿Â½ MÃƒÂ³dulos Funcionais Previstos (PrÃƒÂ³ximos Passos)
+## ÃƒÂ¯Ã‚Â¿Ã‚Â½ MÃƒÆ’Ã‚Â³dulos Funcionais Previstos (PrÃƒÆ’Ã‚Â³ximos Passos)
 
 
 
-1. **Motor de NotÃƒÂ­cias Automatizado**: Sistema agendado que busca, traduz, roteiriza e prepara conteÃƒÂºdos globais automaticamente, consumindo mÃƒÂºltiplas APIs simultaneamente.
+1. **Motor de NotÃƒÆ’Ã‚Â­cias Automatizado**: Sistema agendado que busca, traduz, roteiriza e prepara conteÃƒÆ’Ã‚Âºdos globais automaticamente, consumindo mÃƒÆ’Ã‚Âºltiplas APIs simultaneamente.
 
-2. **Avatar Maker / Clone Vocais**: Ferramentas acessÃƒÂ­veis a partir do `hub.html` que vÃƒÂ£o interagir com as chaves configuradas do Master Panel.
+2. **Avatar Maker / Clone Vocais**: Ferramentas acessÃƒÆ’Ã‚Â­veis a partir do `hub.html` que vÃƒÆ’Ã‚Â£o interagir com as chaves configuradas do Master Panel.
 
-3. **Gerenciador Financeiro**: Gateway de pagamento e compra de crÃƒÂ©ditos automÃƒÂ¡tica usando Webhooks (provÃƒÂ¡vel Stripe ou Mercado Pago).
+3. **Gerenciador Financeiro**: Gateway de pagamento e compra de crÃƒÆ’Ã‚Â©ditos automÃƒÆ’Ã‚Â¡tica usando Webhooks (provÃƒÆ’Ã‚Â¡vel Stripe ou Mercado Pago).
 
-4. **Analytics Real do YouTube**: IntegraÃƒÂ§ÃƒÂ£o com YouTube Data API v3 para mÃƒÂ©tricas reais na aba `tab-analytics` (atualmente placeholder).
+4. **Analytics Real do YouTube**: IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com YouTube Data API v3 para mÃƒÆ’Ã‚Â©tricas reais na aba `tab-analytics` (atualmente placeholder).
 
-5. **Monitor AÃƒÂ§ÃƒÂ£o Vivo Ã¯Â¿Â½ Melhoria**: O endpoint `monitorar-perfil` atualmente pede ÃƒÂ  IA para "extrair" dados de uma URL Ã¯Â¿Â½ o que depende da IA ter acesso ÃƒÂ  web. **Melhor abordagem futura**: usar Apify ou Playwright no backend para scraping real, e usar a IA apenas para anÃƒÂ¡lise dos dados extraÃƒÂ­dos.
+5. **Monitor AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Vivo ÃƒÂ¯Ã‚Â¿Ã‚Â½ Melhoria**: O endpoint `monitorar-perfil` atualmente pede ÃƒÆ’Ã‚Â  IA para "extrair" dados de uma URL ÃƒÂ¯Ã‚Â¿Ã‚Â½ o que depende da IA ter acesso ÃƒÆ’Ã‚Â  web. **Melhor abordagem futura**: usar Apify ou Playwright no backend para scraping real, e usar a IA apenas para anÃƒÆ’Ã‚Â¡lise dos dados extraÃƒÆ’Ã‚Â­dos.
 
 
 
@@ -456,31 +478,31 @@ A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ 
 
 
 
-## Ã¯Â¿Â½ PrÃƒÂ³ximos Passos Imediatos (Retomar aqui!)
+## ÃƒÂ¯Ã‚Â¿Ã‚Â½ PrÃƒÆ’Ã‚Â³ximos Passos Imediatos (Retomar aqui!)
 
 
 
-1. **Testar no navegador** Ã¯Â¿Â½ iniciar o servidor `servidor_web.py` e testar:
+1. **Testar no navegador** ÃƒÂ¯Ã‚Â¿Ã‚Â½ iniciar o servidor `servidor_web.py` e testar:
 
    - Aba Monitor: inserir URL de perfil Kwai/TikTok, verificar se os dados chegam.
 
-   - Aba HistÃƒÂ³rico: gerar um roteiro e confirmar que aparece no histÃƒÂ³rico.
+   - Aba HistÃƒÆ’Ã‚Â³rico: gerar um roteiro e confirmar que aparece no histÃƒÆ’Ã‚Â³rico.
 
-   - Aba ConfiguraÃƒÂ§ÃƒÂµes: salvar chaves, recarregar pÃƒÂ¡gina, confirmar que `loadSettings()` preenche os campos.
+   - Aba ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes: salvar chaves, recarregar pÃƒÆ’Ã‚Â¡gina, confirmar que `loadSettings()` preenche os campos.
 
-   - Aba Meu Canal: salvar um vÃƒÂ­deo no Miner, ir para Meu Canal, testar anÃƒÂ¡lise.
-
-
-
-2. **PossÃƒÂ­vel bug a investigar**: A aba `tab-analytics` (linha 921 no HTML) tem um segundo bloco duplicado Ã¯Â¿Â½ existe um bloco `tab-analytics` na linha 187 que pode ser legacy/conflitante. Verificar se precisa remover.
+   - Aba Meu Canal: salvar um vÃƒÆ’Ã‚Â­deo no Miner, ir para Meu Canal, testar anÃƒÆ’Ã‚Â¡lise.
 
 
 
-3. **Motor de NotÃƒÂ­cias Automatizado**: PrÃƒÂ³ximo grande mÃƒÂ³dulo. Deve:
+2. **PossÃƒÆ’Ã‚Â­vel bug a investigar**: A aba `tab-analytics` (linha 921 no HTML) tem um segundo bloco duplicado ÃƒÂ¯Ã‚Â¿Ã‚Â½ existe um bloco `tab-analytics` na linha 187 que pode ser legacy/conflitante. Verificar se precisa remover.
 
-   - Ter fila de processamento (jÃƒÂ¡ existe `fila.html` e `fila.js`)
 
-   - Usar rotaÃƒÂ§ÃƒÂ£o de chaves Gemini (jÃƒÂ¡ suportado em `config.json`)
+
+3. **Motor de NotÃƒÆ’Ã‚Â­cias Automatizado**: PrÃƒÆ’Ã‚Â³ximo grande mÃƒÆ’Ã‚Â³dulo. Deve:
+
+   - Ter fila de processamento (jÃƒÆ’Ã‚Â¡ existe `fila.html` e `fila.js`)
+
+   - Usar rotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de chaves Gemini (jÃƒÆ’Ã‚Â¡ suportado em `config.json`)
 
    - Escrever resultados no banco SQLite
 
@@ -490,11 +512,11 @@ A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ 
 
 
 
-## Ã°Å¸â€œâ€¹ Checklist de SaÃƒÂºde do Sistema
+## ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ Checklist de SaÃƒÆ’Ã‚Âºde do Sistema
 
 
 
-- [x] `servidor_web.py` rodando na porta padrÃƒÂ£o
+- [x] `servidor_web.py` rodando na porta padrÃƒÆ’Ã‚Â£o
 
 - [x] `noticias.html` carregando sem erros de console
 
@@ -502,49 +524,49 @@ A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ 
 
 - [x] `loadSettings()` preenchendo campos do localStorage
 
-- [x] `renderScriptsHistory()` mostrando histÃƒÂ³rico salvo
+- [x] `renderScriptsHistory()` mostrando histÃƒÆ’Ã‚Â³rico salvo
 
 - [x] Cores violeta em todos os novos componentes
 
-- [ ] Monitor AÃƒÂ§ÃƒÂ£o Vivo Ã¯Â¿Â½ testar com URL real
+- [ ] Monitor AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Vivo ÃƒÂ¯Ã‚Â¿Ã‚Â½ testar com URL real
 
-- [ ] Aba Meu Canal Ã¯Â¿Â½ testar anÃƒÂ¡lise com OpenRouter key configurada
+- [ ] Aba Meu Canal ÃƒÂ¯Ã‚Â¿Ã‚Â½ testar anÃƒÆ’Ã‚Â¡lise com OpenRouter key configurada
 
 - [ ] Verificar duplicata do `tab-analytics` no HTML (linhas 187 e 921)
 
 
 
-## 6. Diferencial e Identidade Core (AutomaÃƒÂ§ÃƒÂ£o + IA)
+## 6. Diferencial e Identidade Core (AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o + IA)
 
-- **NÃƒÂ£o ÃƒÂ© um CapCut:** O Apollo Edit Web nÃƒÂ£o ÃƒÂ© para ediÃƒÂ§ÃƒÂµes finas e milimÃƒÂ©tricas. Ãƒâ€° focado em **ediÃƒÂ§ÃƒÂ£o em lote, em grande quantidade e altamente personalizada** (ou genÃƒÂ©rica, caso o usuÃƒÂ¡rio nÃƒÂ£o queira configurar nada).
+- **NÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um CapCut:** O Apollo Edit Web nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© para ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes finas e milimÃƒÆ’Ã‚Â©tricas. ÃƒÆ’Ã¢â‚¬Â° focado em **ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em lote, em grande quantidade e altamente personalizada** (ou genÃƒÆ’Ã‚Â©rica, caso o usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o queira configurar nada).
 
-- O grande diferencial ÃƒÂ© misturar IA com automaÃƒÂ§ÃƒÂ£o pesada, cobrindo uma lacuna que editores normais nÃƒÂ£o atendem. Ele permite que o usuÃƒÂ¡rio traga seus arquivos locais e os insira num funil automatizado.
+- O grande diferencial ÃƒÆ’Ã‚Â© misturar IA com automaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pesada, cobrindo uma lacuna que editores normais nÃƒÆ’Ã‚Â£o atendem. Ele permite que o usuÃƒÆ’Ã‚Â¡rio traga seus arquivos locais e os insira num funil automatizado.
 
 
 
-## 7. A DinÃƒÂ¢mica dos 'Quadradinhos MÃƒÂ¡gicos'
+## 7. A DinÃƒÆ’Ã‚Â¢mica dos 'Quadradinhos MÃƒÆ’Ã‚Â¡gicos'
 
-- A 'Ã¯Â¿Â½rea de TransferÃƒÂªncia' flutuante funciona como um inventÃƒÂ¡rio de janelas do Windows.
+- A 'ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia' flutuante funciona como um inventÃƒÆ’Ã‚Â¡rio de janelas do Windows.
 
-- Nela ficam os **Quadradinhos MÃƒÂ¡gicos**: objetos visuais que representam mÃƒÂ­dias (fotos, vÃƒÂ­deos, ÃƒÂ¡udios) ou pacotes de IA consumÃƒÂ­veis (Lote do Nano Banana, ChatGPT, ElevenLabs, etc).
+- Nela ficam os **Quadradinhos MÃƒÆ’Ã‚Â¡gicos**: objetos visuais que representam mÃƒÆ’Ã‚Â­dias (fotos, vÃƒÆ’Ã‚Â­deos, ÃƒÆ’Ã‚Â¡udios) ou pacotes de IA consumÃƒÆ’Ã‚Â­veis (Lote do Nano Banana, ChatGPT, ElevenLabs, etc).
 
-- **InteraÃƒÂ§ÃƒÂ£o:** O usuÃƒÂ¡rio pode clicar nesses quadradinhos, ver preview, escutar ÃƒÂ¡udios (em um player flutuante), arrastar para as ferramentas, ou atÃƒÂ© selecionar mÃƒÂºltiplos para dar play ao mesmo tempo.
+- **InteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** O usuÃƒÆ’Ã‚Â¡rio pode clicar nesses quadradinhos, ver preview, escutar ÃƒÆ’Ã‚Â¡udios (em um player flutuante), arrastar para as ferramentas, ou atÃƒÆ’Ã‚Â© selecionar mÃƒÆ’Ã‚Âºltiplos para dar play ao mesmo tempo.
 
 - O visual deve ser **100% Gamificado**: caixinhas brilhando, se mexendo e encaixando com efeitos visuais e feedback, como em um videogame.
 
 
 
-## 8. Elementos de RPG e MonetizaÃƒÂ§ÃƒÂ£o
+## 8. Elementos de RPG e MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o
 
 
 
-## 14. O 'Mascot Forge' (CriaÃƒÂ§ÃƒÂ£o de Copilotos Customizados) e Mercado UGC
+## 14. O 'Mascot Forge' (CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Copilotos Customizados) e Mercado UGC
 
-- **CriaÃƒÂ§ÃƒÂ£o pelo UsuÃƒÂ¡rio (UGC):** ExistirÃƒÂ¡ uma aba premium (acessada atravÃƒÂ©s de Cristais) onde o usuÃƒÂ¡rio pode 'forjar' o seu prÃƒÂ³prio robÃƒÂ´ do zero.
+- **CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pelo UsuÃƒÆ’Ã‚Â¡rio (UGC):** ExistirÃƒÆ’Ã‚Â¡ uma aba premium (acessada atravÃƒÆ’Ã‚Â©s de Cristais) onde o usuÃƒÆ’Ã‚Â¡rio pode 'forjar' o seu prÃƒÆ’Ã‚Â³prio robÃƒÆ’Ã‚Â´ do zero.
 
-- **Fluxo de CriaÃƒÂ§ÃƒÂ£o:** O usuÃƒÂ¡rio joga uma imagem de referÃƒÂªncia, escreve a personalidade (System Prompt) desejada, e a nossa IA gera o design base e as sprites de expressÃƒÂ£o (triste, raiva, alerta, palmas). O usuÃƒÂ¡rio aprova, compila, e o robÃƒÂ´ estÃƒÂ¡ pronto.
+- **Fluxo de CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** O usuÃƒÆ’Ã‚Â¡rio joga uma imagem de referÃƒÆ’Ã‚Âªncia, escreve a personalidade (System Prompt) desejada, e a nossa IA gera o design base e as sprites de expressÃƒÆ’Ã‚Â£o (triste, raiva, alerta, palmas). O usuÃƒÆ’Ã‚Â¡rio aprova, compila, e o robÃƒÆ’Ã‚Â´ estÃƒÆ’Ã‚Â¡ pronto.
 
-- **Mercado ComunitÃƒÂ¡rio (Marketplace):** Os copilotos criados pelos usuÃƒÂ¡rios (ex: mascote do Trump, personagem de anime, etc) poderÃƒÂ£o ser **vendidos para outros usuÃƒÂ¡rios** dentro da plataforma. Isso cria um ecossistema econÃƒÂ´mico sustentÃƒÂ¡vel onde a comunidade gera os prÃƒÂ³prios cosmÃƒÂ©ticos e roda a economia do jogo.
+- **Mercado ComunitÃƒÆ’Ã‚Â¡rio (Marketplace):** Os copilotos criados pelos usuÃƒÆ’Ã‚Â¡rios (ex: mascote do Trump, personagem de anime, etc) poderÃƒÆ’Ã‚Â£o ser **vendidos para outros usuÃƒÆ’Ã‚Â¡rios** dentro da plataforma. Isso cria um ecossistema econÃƒÆ’Ã‚Â´mico sustentÃƒÆ’Ã‚Â¡vel onde a comunidade gera os prÃƒÆ’Ã‚Â³prios cosmÃƒÆ’Ã‚Â©ticos e roda a economia do jogo.
 
 ---
 
@@ -554,29 +576,29 @@ A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ 
 
 
 
-## 15. Sistema de MissÃƒÂµes e GamificaÃƒÂ§ÃƒÂ£o (Quests DiÃƒÂ¡rias)
+## 15. Sistema de MissÃƒÆ’Ã‚Âµes e GamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Quests DiÃƒÆ’Ã‚Â¡rias)
 
-- **Quests:** Implementado em pollo_quests.js. O sistema injeta um botÃƒÂ£o '?? MISSÃƒâ€¢ES' no canto esquerdo da tela.
+- **Quests:** Implementado em pollo_quests.js. O sistema injeta um botÃƒÆ’Ã‚Â£o '?? MISSÃƒÆ’Ã¢â‚¬Â¢ES' no canto esquerdo da tela.
 
-- **Micro-economia:** MissÃƒÂµes (ex: Gerar 3 vÃƒÂ­deos) enchem uma barra de progresso. AÃƒÂ§ÃƒÂ£o concluir, o usuÃƒÂ¡rio pode clicar em 'Resgatar' e receber CombustÃƒÂ­vel (Gasolina) ou Cristais.
+- **Micro-economia:** MissÃƒÆ’Ã‚Âµes (ex: Gerar 3 vÃƒÆ’Ã‚Â­deos) enchem uma barra de progresso. AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o concluir, o usuÃƒÆ’Ã‚Â¡rio pode clicar em 'Resgatar' e receber CombustÃƒÆ’Ã‚Â­vel (Gasolina) ou Cristais.
 
-- O sistema trabalha em conjunto com as NotificaÃƒÂ§ÃƒÂµes, gerando alertas no sino superior sempre que uma missÃƒÂ£o ÃƒÂ© completada.
+- O sistema trabalha em conjunto com as NotificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes, gerando alertas no sino superior sempre que uma missÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© completada.
 
 
 
-## 16. NotificaÃƒÂ§ÃƒÂµes AssÃƒÂ­ncronas (O Sino Global)
+## 16. NotificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes AssÃƒÆ’Ã‚Â­ncronas (O Sino Global)
 
-- Implementado em pollo_notifications.js, rodando em todas as pÃƒÂ¡ginas via injeÃƒÂ§ÃƒÂ£o.
+- Implementado em pollo_notifications.js, rodando em todas as pÃƒÆ’Ã‚Â¡ginas via injeÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
-- O Sino de notificaÃƒÂ§ÃƒÂµes recebe alertas de processos concluÃƒÂ­dos no servidor (ex: tÃƒÂ©rmino de renderizaÃƒÂ§ÃƒÂ£o) independentemente da tela em que o usuÃƒÂ¡rio esteja navegando. O sino ganha uma animaÃƒÂ§ÃƒÂ£o e a lista de alertas ÃƒÂ© guardada no Dropdown do cabeÃƒÂ§alho.
+- O Sino de notificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes recebe alertas de processos concluÃƒÆ’Ã‚Â­dos no servidor (ex: tÃƒÆ’Ã‚Â©rmino de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) independentemente da tela em que o usuÃƒÆ’Ã‚Â¡rio esteja navegando. O sino ganha uma animaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e a lista de alertas ÃƒÆ’Ã‚Â© guardada no Dropdown do cabeÃƒÆ’Ã‚Â§alho.
 
 
 
 ## 17. Sound Design (SFX UI) e Onboarding
 
-- **Ã¯Â¿Â½udio Nativo:** InjeÃƒÂ§ÃƒÂ£o de pollo_sfx.js utilizando Web Audio API para nÃƒÂ£o onerar carregamento de mp3. Gera bipes tecnolÃƒÂ³gicos ao clicar em botÃƒÂµes gerais e um 'plim-plim' de sucesso em botÃƒÂµes especiais ou resgate de missÃƒÂµes.
+- **ÃƒÂ¯Ã‚Â¿Ã‚Â½udio Nativo:** InjeÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de pollo_sfx.js utilizando Web Audio API para nÃƒÆ’Ã‚Â£o onerar carregamento de mp3. Gera bipes tecnolÃƒÆ’Ã‚Â³gicos ao clicar em botÃƒÆ’Ã‚Âµes gerais e um 'plim-plim' de sucesso em botÃƒÆ’Ã‚Âµes especiais ou resgate de missÃƒÆ’Ã‚Âµes.
 
-- **Tour Guiado:** O pollo_tour.js cria um modal escuro (overlay) com buracos brilhantes direcionando a atenÃƒÂ§ÃƒÂ£o de um usuÃƒÂ¡rio novato na sua primeira visita (destaca o CabeÃƒÂ§alho, a Ã¯Â¿Â½rea de TransferÃƒÂªncia e a Mascote). Controlado por localStorage (apollo_has_seen_tour).
+- **Tour Guiado:** O pollo_tour.js cria um modal escuro (overlay) com buracos brilhantes direcionando a atenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um usuÃƒÆ’Ã‚Â¡rio novato na sua primeira visita (destaca o CabeÃƒÆ’Ã‚Â§alho, a ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia e a Mascote). Controlado por localStorage (apollo_has_seen_tour).
 
 
 
@@ -586,65 +608,65 @@ A funÃƒÂ§ÃƒÂ£o de troca de tab ÃƒÂ© `switchTab(tabId)` Ã¯Â¿Â½ 
 
 
 
-## Ã°Å¸Â¤â€“ 7. Nova Arquitetura de InteligÃƒÂªncia (OrquestraÃƒÂ§ÃƒÂ£o Swarm Multi-Agentes)
+## ÃƒÂ°Ã…Â¸Ã‚Â¤Ã¢â‚¬â€œ 7. Nova Arquitetura de InteligÃƒÆ’Ã‚Âªncia (OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Swarm Multi-Agentes)
 
-O Apollo Edit Web evoluiu de prompts ÃƒÂºnicos para uma verdadeira linha de montagem cognitiva, dividida em nÃƒÂ­veis hierÃƒÂ¡rquicos para garantir precisÃƒÂ£o e velocidade:
+O Apollo Edit Web evoluiu de prompts ÃƒÆ’Ã‚Âºnicos para uma verdadeira linha de montagem cognitiva, dividida em nÃƒÆ’Ã‚Â­veis hierÃƒÆ’Ã‚Â¡rquicos para garantir precisÃƒÆ’Ã‚Â£o e velocidade:
 
-1. **Atendente (ReceituÃƒÂ¡rio):** Analisa a intenÃƒÂ§ÃƒÂ£o e gera a Planta Baixa (estimativas de imagens e tempo).
+1. **Atendente (ReceituÃƒÆ’Ã‚Â¡rio):** Analisa a intenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e gera a Planta Baixa (estimativas de imagens e tempo).
 
-2. **Gerente:** Gera o Roteiro Master de acordo com o padrÃƒÂ£o do canal.
+2. **Gerente:** Gera o Roteiro Master de acordo com o padrÃƒÆ’Ã‚Â£o do canal.
 
-3. **Analista AvanÃƒÂ§ado (Fatiador):** Pica o roteiro em dezenas de tarefas tÃƒÂ©cnicas (Prompts de imagens, Mapeamentos de 4 camadas: VÃƒÂ­deo, Template, ConfiguraÃƒÂ§ÃƒÂ£o, e Ã¯Â¿Â½udio LipSync/NarraÃƒÂ§ÃƒÂ£o).
+3. **Analista AvanÃƒÆ’Ã‚Â§ado (Fatiador):** Pica o roteiro em dezenas de tarefas tÃƒÆ’Ã‚Â©cnicas (Prompts de imagens, Mapeamentos de 4 camadas: VÃƒÆ’Ã‚Â­deo, Template, ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, e ÃƒÂ¯Ã‚Â¿Ã‚Â½udio LipSync/NarraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o).
 
-4. **Swarm (Minions EconÃƒÂ´micos):** Modelos mais baratos rodam em paralelo para executar micro-tarefas rÃƒÂ¡pidas e isoladas.
+4. **Swarm (Minions EconÃƒÆ’Ã‚Â´micos):** Modelos mais baratos rodam em paralelo para executar micro-tarefas rÃƒÆ’Ã‚Â¡pidas e isoladas.
 
-5. **Corretor de CongruÃƒÂªncia (QA):** Testa as discrepÃƒÂ¢ncias de tempo. Se o ÃƒÂ¡ÃƒÂ¡udio Lip Sync se choca com a narraÃƒÂ§ÃƒÂ£o sem sentido, ele recusa a fatia e a devolve para o Gerente corrigir, montando os "Quadradinhos MÃƒÂ¡gicos" da Ã¯Â¿Â½rea de TransferÃƒÂªncia quando aprovado.
-
-
-
-*DocumentaÃƒÂ§ÃƒÂ£o expandida sobre o fluxo visual da Timeline encontra-se em mapeamento_arquitetura.md.*
+5. **Corretor de CongruÃƒÆ’Ã‚Âªncia (QA):** Testa as discrepÃƒÆ’Ã‚Â¢ncias de tempo. Se o ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio Lip Sync se choca com a narraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o sem sentido, ele recusa a fatia e a devolve para o Gerente corrigir, montando os "Quadradinhos MÃƒÆ’Ã‚Â¡gicos" da ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia quando aprovado.
 
 
 
-
-
-## 18. EvoluÃƒÂ§ÃƒÂ£o da Interface (UI/UX) - ÃƒÅ¡ltimas AtualizaÃƒÂ§ÃƒÂµes
-
-- **HUD Ã¯Â¿Â½rea de TransferÃƒÂªncia / Bagageiro:** A interface foi unificada em uma janela flutuante elegante no canto inferior direito. Adicionado suporte funcional a Drag & Drop de arquivos direto do SO para o navegador (arquivos sÃƒÂ£o validados em atÃƒÂ© 10MB e inseridos na HUD).
-
-- **OtimizaÃƒÂ§ÃƒÂ£o de EspaÃƒÂ§o:** RemoÃƒÂ§ÃƒÂ£o de painÃƒÂ©is legados massivos (Garagem do Apollo) e itens desatualizados (Plugins Extras) para entregar uma navegaÃƒÂ§ÃƒÂ£o mais limpa e gamificada.
-
-- **Acesso ÃƒÂ s Ferramentas (Mapeador Manual):** A ferramenta central de mapeamento manual foi consolidada na Barra Lateral Esquerda, sob a aba de Equipamentos.
-
-- **Workflow de InicializaÃƒÂ§ÃƒÂ£o:** Melhoria no pollo_studio.py para forÃƒÂ§ar quebra de cache (?v=2) ao instanciar o navegador no localhost:8080, facilitando a vida do usuÃƒÂ¡rio em deploys contÃƒÂ­nuos.
+*DocumentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o expandida sobre o fluxo visual da Timeline encontra-se em mapeamento_arquitetura.md.*
 
 
 
 
 
-### 18.1. Detalhamento TÃƒÂ©cnico das ÃƒÅ¡ltimas ImplementaÃƒÂ§ÃƒÂµes do Bagageiro / Ã¯Â¿Â½rea de TransferÃƒÂªncia
+## 18. EvoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Interface (UI/UX) - ÃƒÆ’Ã…Â¡ltimas AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes
 
-- **Motor de Drag and Drop Nativo (	ransfer_hud.js):** ConstruÃƒÂ­do com eventos dragover, dragenter, dragleave e drop. AÃƒÂ§ÃƒÂ£o soltar arquivos, o sistema intercepta o upload, faz checagem de limite de tamanho local (10MB) e usa FileReader para ler o arquivo na hora (renderizando ÃƒÂ­cones dinÃƒÂ¢micos baseados no tipo mime: image, ÃƒÂ¡udio, video).
+- **HUD ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia / Bagageiro:** A interface foi unificada em uma janela flutuante elegante no canto inferior direito. Adicionado suporte funcional a Drag & Drop de arquivos direto do SO para o navegador (arquivos sÃƒÆ’Ã‚Â£o validados em atÃƒÆ’Ã‚Â© 10MB e inseridos na HUD).
 
-- **UI/UX Reativa:** Efeitos de 'glow' (brilho roxo) ao arrastar itens por cima da ÃƒÂ¡rea, gerando o feeling imersivo. CriaÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica das divs hud-item (os \Quadradinhos MÃƒÂ¡gicos\) populando o grid da Ã¯Â¿Â½rea de TransferÃƒÂªncia visualmente sem recarregar a pÃƒÂ¡gina.
+- **OtimizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de EspaÃƒÆ’Ã‚Â§o:** RemoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de painÃƒÆ’Ã‚Â©is legados massivos (Garagem do Apollo) e itens desatualizados (Plugins Extras) para entregar uma navegaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o mais limpa e gamificada.
 
-- **Limpeza de UI no hub.html:** OtimizaÃƒÂ§ÃƒÂ£o agressiva removendo botÃƒÂµes legados (A Garagem do Apollo Inteira, botÃƒÂµes de Plugins Extras) garantindo um design focado. MovimentaÃƒÂ§ÃƒÂ£o estratÃƒÂ©gica de ferramentas essenciais (Mapeador Manual) para a hierarquia da Barra Lateral Esquerda.
+- **Acesso ÃƒÆ’Ã‚Â s Ferramentas (Mapeador Manual):** A ferramenta central de mapeamento manual foi consolidada na Barra Lateral Esquerda, sob a aba de Equipamentos.
 
-- **SoluÃƒÂ§ÃƒÂ£o Definitiva de Cache (Anti-Ghosting de UI):** AtualizaÃƒÂ§ÃƒÂ£o no lanÃƒÂ§ador core (pollo_studio.py) forÃƒÂ§ando o carregamento do localhost:8080/?v=2 nativamente no Windows. Garante que atualizaÃƒÂ§ÃƒÂµes front-end HTML/JS aplicadas pelo Apollo nÃƒÂ£o fiquem presas no cache de 24h padrÃƒÂ£o dos navegadores Edge/Chrome locais.
-
-
+- **Workflow de InicializaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** Melhoria no pollo_studio.py para forÃƒÆ’Ã‚Â§ar quebra de cache (?v=2) ao instanciar o navegador no localhost:8080, facilitando a vida do usuÃƒÆ’Ã‚Â¡rio em deploys contÃƒÆ’Ã‚Â­nuos.
 
 
 
-## 19. RefatoraÃƒÂ§ÃƒÂ£o Visual e Pipeline de UI (Pausado)
 
-- **Design Manual (Photoshop/Figma):** A prototipaÃƒÂ§ÃƒÂ£o visual dos botÃƒÂµes, ÃƒÂ¡reas centrais e sidebar via cÃƒÂ³digo foi temporariamente suspensa para a pÃƒÂ¡gina hub.html. O usuÃƒÂ¡rio assumirÃƒÂ¡ o design das telas, botÃƒÂµes, ÃƒÂ­cones e grids manualmente em ferramentas de ediÃƒÂ§ÃƒÂ£o grÃƒÂ¡fica.
 
-- **Abordagem Futura:** Uma vez que o mockup manual estiver finalizado (textos, botÃƒÂµes, proporÃƒÂ§ÃƒÂµes exatas), os assets e o layout base serÃƒÂ£o fornecidos para que o sistema recrie o CSS/HTML o mais prÃƒÂ³ximo possÃƒÂ­vel, mantendo o site leve e usando backgrounds em cÃƒÂ³digo (sem sobrecarregar com imagens).
+### 18.1. Detalhamento TÃƒÆ’Ã‚Â©cnico das ÃƒÆ’Ã…Â¡ltimas ImplementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes do Bagageiro / ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia
 
-- **Layout Central (MissÃƒÂµes, Roleta, Mercado):** Ficaram com colunas quebradas devido ÃƒÂ  limitaÃƒÂ§ÃƒÂ£o de espaÃƒÂ§o nas grades auto-ajustÃƒÂ¡veis (grid-template-columns). O novo design oficial resolverÃƒÂ¡ essa disposiÃƒÂ§ÃƒÂ£o espacial.
+- **Motor de Drag and Drop Nativo (	ransfer_hud.js):** ConstruÃƒÆ’Ã‚Â­do com eventos dragover, dragenter, dragleave e drop. AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o soltar arquivos, o sistema intercepta o upload, faz checagem de limite de tamanho local (10MB) e usa FileReader para ler o arquivo na hora (renderizando ÃƒÆ’Ã‚Â­cones dinÃƒÆ’Ã‚Â¢micos baseados no tipo mime: image, ÃƒÆ’Ã‚Â¡udio, video).
 
-- A inteligÃƒÂªncia do Apollo focarÃƒÂ¡ nas funcionalidades de Mapeamento, RobÃƒÂ´ e AutomaÃƒÂ§ÃƒÂ£o enquanto a camada de UI pura aguarda os novos designs.
+- **UI/UX Reativa:** Efeitos de 'glow' (brilho roxo) ao arrastar itens por cima da ÃƒÆ’Ã‚Â¡rea, gerando o feeling imersivo. CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o automÃƒÆ’Ã‚Â¡tica das divs hud-item (os \Quadradinhos MÃƒÆ’Ã‚Â¡gicos\) populando o grid da ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia visualmente sem recarregar a pÃƒÆ’Ã‚Â¡gina.
+
+- **Limpeza de UI no hub.html:** OtimizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o agressiva removendo botÃƒÆ’Ã‚Âµes legados (A Garagem do Apollo Inteira, botÃƒÆ’Ã‚Âµes de Plugins Extras) garantindo um design focado. MovimentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o estratÃƒÆ’Ã‚Â©gica de ferramentas essenciais (Mapeador Manual) para a hierarquia da Barra Lateral Esquerda.
+
+- **SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Definitiva de Cache (Anti-Ghosting de UI):** AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o no lanÃƒÆ’Ã‚Â§ador core (pollo_studio.py) forÃƒÆ’Ã‚Â§ando o carregamento do localhost:8080/?v=2 nativamente no Windows. Garante que atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes front-end HTML/JS aplicadas pelo Apollo nÃƒÆ’Ã‚Â£o fiquem presas no cache de 24h padrÃƒÆ’Ã‚Â£o dos navegadores Edge/Chrome locais.
+
+
+
+
+
+## 19. RefatoraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Visual e Pipeline de UI (Pausado)
+
+- **Design Manual (Photoshop/Figma):** A prototipaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o visual dos botÃƒÆ’Ã‚Âµes, ÃƒÆ’Ã‚Â¡reas centrais e sidebar via cÃƒÆ’Ã‚Â³digo foi temporariamente suspensa para a pÃƒÆ’Ã‚Â¡gina hub.html. O usuÃƒÆ’Ã‚Â¡rio assumirÃƒÆ’Ã‚Â¡ o design das telas, botÃƒÆ’Ã‚Âµes, ÃƒÆ’Ã‚Â­cones e grids manualmente em ferramentas de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o grÃƒÆ’Ã‚Â¡fica.
+
+- **Abordagem Futura:** Uma vez que o mockup manual estiver finalizado (textos, botÃƒÆ’Ã‚Âµes, proporÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes exatas), os assets e o layout base serÃƒÆ’Ã‚Â£o fornecidos para que o sistema recrie o CSS/HTML o mais prÃƒÆ’Ã‚Â³ximo possÃƒÆ’Ã‚Â­vel, mantendo o site leve e usando backgrounds em cÃƒÆ’Ã‚Â³digo (sem sobrecarregar com imagens).
+
+- **Layout Central (MissÃƒÆ’Ã‚Âµes, Roleta, Mercado):** Ficaram com colunas quebradas devido ÃƒÆ’Ã‚Â  limitaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de espaÃƒÆ’Ã‚Â§o nas grades auto-ajustÃƒÆ’Ã‚Â¡veis (grid-template-columns). O novo design oficial resolverÃƒÆ’Ã‚Â¡ essa disposiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o espacial.
+
+- A inteligÃƒÆ’Ã‚Âªncia do Apollo focarÃƒÆ’Ã‚Â¡ nas funcionalidades de Mapeamento, RobÃƒÆ’Ã‚Â´ e AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o enquanto a camada de UI pura aguarda os novos designs.
 
 
 
@@ -652,13 +674,13 @@ O Apollo Edit Web evoluiu de prompts ÃƒÂºnicos para uma verdadeira linha de 
 
 - **Custo Ancorado:** O lastro da economia (Gasolina, Cristal, GPU) tem base na cotacao do Dolar e no custo de API real de IA (Fal.ai, RunComfy). As flutuacoes sao absorvidas pela plataforma (Banco Central/Nos) para proteger a UI e UX do usuario, tancando prejuizos temporarios ou fazendo promocoes para manter a competitividade.
 
-- **Tokenizacao de IA (Commodities):** O usuario nao compra a "execucao da API" solta; ele compra um "Quadradinho de IA" (Ex: Fita Wan 2.2, Caixa de LTX) na nossa Loja Oficial pagando com as moedas genericas. NÃƒÂ£o momento da compra, a plataforma ja assegura a margem de lucro, nao importando quando o item sera usado.
+- **Tokenizacao de IA (Commodities):** O usuario nao compra a "execucao da API" solta; ele compra um "Quadradinho de IA" (Ex: Fita Wan 2.2, Caixa de LTX) na nossa Loja Oficial pagando com as moedas genericas. NÃƒÆ’Ã‚Â£o momento da compra, a plataforma ja assegura a margem de lucro, nao importando quando o item sera usado.
 
 - **O Cambio e o Banco:** O usuario compra as moedas basicas com dinheiro real e pode fazer o cambio entre elas no Banco (Gasolina <-> Cristal <-> Placa de GPU) com taxas controladas pelo sistema.
 
 - **Mercado Negro (Livre Mercado):** Usuarios sao desencorajados a revender itens nao usados de volta pro Banco (taxa de recompra propositalmente desvantajosa). Isso incentiva a revenda entre jogadores no Mercado Negro, criando especulacao e retencao de usuarios.
 
-- **UX do Bagageiro preservada:** Os "Quadradinhos de IA" ficam armazenados no Bagageiro do usuario. AÃƒÂ§ÃƒÂ£o querer gerar, ele arrasta o item para cima da foto na Mesa de Trabalho, consumindo-o e disparando o webhook da API.
+- **UX do Bagageiro preservada:** Os "Quadradinhos de IA" ficam armazenados no Bagageiro do usuario. AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o querer gerar, ele arrasta o item para cima da foto na Mesa de Trabalho, consumindo-o e disparando o webhook da API.
 
 
 
@@ -674,59 +696,59 @@ O Apollo Edit Web evoluiu de prompts ÃƒÂºnicos para uma verdadeira linha de 
 
 ---
 
-## [ATUALIZAÃƒâ€¡ÃƒÆ’O DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
 
 
 
-**1. Scraper de PreÃƒÂ§os AutÃƒÂ´nomo (pricing_scraper_agent.py):**
+**1. Scraper de PreÃƒÆ’Ã‚Â§os AutÃƒÆ’Ã‚Â´nomo (pricing_scraper_agent.py):**
 
 - Vasculha a API do OpenRouter em busca de novos modelos de IA.
 
 - Cadastra novos modelos diretamente com status 'Ativo' (Autonomia Total).
 
-- Captura Rate Limits (TPM/RPM) e atualiza preÃƒÂ§os de input/output dinamicamente.
+- Captura Rate Limits (TPM/RPM) e atualiza preÃƒÆ’Ã‚Â§os de input/output dinamicamente.
 
 
 
 **2. Gestor Financeiro / Analista de Mercado:**
 
-- Motor de PrecificaÃƒÂ§ÃƒÂ£o DinÃƒÂ¢mica integrado ÃƒÂ  tabela models_pricing atravÃƒÂ©s da coluna margin_multiplier.
+- Motor de PrecificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o DinÃƒÆ’Ã‚Â¢mica integrado ÃƒÆ’Ã‚Â  tabela models_pricing atravÃƒÆ’Ã‚Â©s da coluna margin_multiplier.
 
-- Calcula o Custo da Gasolina baseado na demanda (se um modelo estÃƒÂ¡ ocioso, a margem cai para 10%; se estÃƒÂ¡ concorrido, sobe atÃƒÂ© 100%).
+- Calcula o Custo da Gasolina baseado na demanda (se um modelo estÃƒÆ’Ã‚Â¡ ocioso, a margem cai para 10%; se estÃƒÆ’Ã‚Â¡ concorrido, sobe atÃƒÆ’Ã‚Â© 100%).
 
 
 
 **3. Diretor de Marketing (marketing_agent.py):**
 
-- Observa as aÃƒÂ§ÃƒÂµes do Diretor Financeiro.
+- Observa as aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes do Diretor Financeiro.
 
-- Gera chamadas publicitÃƒÂ¡rias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
+- Gera chamadas publicitÃƒÆ’Ã‚Â¡rias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
 
-- IntegraÃƒÂ§ÃƒÂ£o preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
+- IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
 
-- Salva anÃƒÂºncios criados na tabela d_campaigns.
+- Salva anÃƒÆ’Ã‚Âºncios criados na tabela d_campaigns.
 
 
 
-**4. Gestor de TrÃƒÂ¡fego AI (traffic_manager_agent.py):**
+**4. Gestor de TrÃƒÆ’Ã‚Â¡fego AI (traffic_manager_agent.py):**
 
 - Monitora os endpoints de telemetria criados no servidor_web.py (/view e /click).
 
 - Calcula o CTR (Click-Through Rate) dos banners injetados no sistema.
 
-- Desativa campanhas de baixa performance (CTR < 0.5% apÃƒÂ³s 200 views).
+- Desativa campanhas de baixa performance (CTR < 0.5% apÃƒÆ’Ã‚Â³s 200 views).
 
 
 
-**5. Sistema de RotaÃƒÂ§ÃƒÂ£o de AnÃƒÂºncios UI (noticias_scripts.html):**
+**5. Sistema de RotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de AnÃƒÆ’Ã‚Âºncios UI (noticias_scripts.html):**
 
-- ImplementaÃƒÂ§ÃƒÂ£o de um rodÃƒÂ­zio Javascript que puxa campanhas ativas.
+- ImplementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um rodÃƒÆ’Ã‚Â­zio Javascript que puxa campanhas ativas.
 
-- AlternÃƒÂ¢ncia visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da pÃƒÂ¡gina.
+- AlternÃƒÆ’Ã‚Â¢ncia visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da pÃƒÆ’Ã‚Â¡gina.
 
 
 
-*Nota TÃƒÂ©cnica: Todos os planos de implementaÃƒÂ§ÃƒÂ£o, walkthroughs e documentos criados por IA estÃƒÂ£o agora salvos localmente na pasta /docs/arquivos_ia/ dentro da base de cÃƒÂ³digo.*
+*Nota TÃƒÆ’Ã‚Â©cnica: Todos os planos de implementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, walkthroughs e documentos criados por IA estÃƒÆ’Ã‚Â£o agora salvos localmente na pasta /docs/arquivos_ia/ dentro da base de cÃƒÆ’Ã‚Â³digo.*
 
 
 
@@ -734,33 +756,33 @@ O Apollo Edit Web evoluiu de prompts ÃƒÂºnicos para uma verdadeira linha de 
 
 ## [DIRETRIZ DE OURO: QUALIDADE PREMIUM INTERNA] (Data: 07/06/2026)
 
-O Diretor Geral estabeleceu a seguinte regra inviolÃƒÂ¡vel para o Ecossistema Apollo:
+O Diretor Geral estabeleceu a seguinte regra inviolÃƒÆ’Ã‚Â¡vel para o Ecossistema Apollo:
 
-- **Para o UsuÃƒÂ¡rio Final:** A economia ÃƒÂ© ditada pelo poder de compra (Gasolina, Cristais). Ele usa o que ele pode pagar.
+- **Para o UsuÃƒÆ’Ã‚Â¡rio Final:** A economia ÃƒÆ’Ã‚Â© ditada pelo poder de compra (Gasolina, Cristais). Ele usa o que ele pode pagar.
 
 - **Para o Funcionamento Interno do Site (Nossos Agentes): NUNCA economizar.**
 
-Se o Diretor de Marketing precisar criar um banner publicitÃƒÂ¡rio, ele usarÃƒÂ¡ a melhor IA do mercado (DALL-E 3, Midjourney, Claude 3.5 Sonnet, Gemini 1.5 Pro). O site nÃƒÂ£o pode ter material de baixa qualidade em nenhum momento. Nossos Agentes Internos (Scraper, Analista, Gestor de TrÃƒÂ¡fego) tÃƒÂªm orÃƒÂ§amento e autorizaÃƒÂ§ÃƒÂ£o para rodar nas mÃƒÂ¡quinas mais parrudas disponÃƒÂ­veis para garantir um ecossistema hiper-premium. Tudo do bom e do melhor para os bastidores da Apollo.
+Se o Diretor de Marketing precisar criar um banner publicitÃƒÆ’Ã‚Â¡rio, ele usarÃƒÆ’Ã‚Â¡ a melhor IA do mercado (DALL-E 3, Midjourney, Claude 3.5 Sonnet, Gemini 1.5 Pro). O site nÃƒÆ’Ã‚Â£o pode ter material de baixa qualidade em nenhum momento. Nossos Agentes Internos (Scraper, Analista, Gestor de TrÃƒÆ’Ã‚Â¡fego) tÃƒÆ’Ã‚Âªm orÃƒÆ’Ã‚Â§amento e autorizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para rodar nas mÃƒÆ’Ã‚Â¡quinas mais parrudas disponÃƒÆ’Ã‚Â­veis para garantir um ecossistema hiper-premium. Tudo do bom e do melhor para os bastidores da Apollo.
 
 
 
 ---
 
-## [DIRETRIZ DE ARQUITETURA AVANÃƒâ€¡ADA: O ROTEADOR GATEWAY LLM] (Data: 07/06/2026)
+## [DIRETRIZ DE ARQUITETURA AVANÃƒÆ’Ã¢â‚¬Â¡ADA: O ROTEADOR GATEWAY LLM] (Data: 07/06/2026)
 
 
 
 **O Problema do 'Corta Tesouro' e Roteamento Inteligente:**
 
-Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de InteligÃƒÂªncia Artificial da Apollo nÃƒÂ£o serÃƒÂ¡ apenas baseada em strings fixas ('high' ou 'low'). O sistema adotarÃƒÂ¡ um **Gateway de Triagem baseado em IA Gratuita**.
+Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de InteligÃƒÆ’Ã‚Âªncia Artificial da Apollo nÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ apenas baseada em strings fixas ('high' ou 'low'). O sistema adotarÃƒÆ’Ã‚Â¡ um **Gateway de Triagem baseado em IA Gratuita**.
 
 
 
-**Fluxo de DecisÃƒÂ£o (O IntermediÃƒÂ¡rio):**
+**Fluxo de DecisÃƒÆ’Ã‚Â£o (O IntermediÃƒÆ’Ã‚Â¡rio):**
 
-1. **Triador Gratuito (O Porteiro):** Todas as requisiÃƒÂ§ÃƒÂµes iniciais passarÃƒÂ£o primeiro por um modelo super-rÃƒÂ¡pido e gratuito (ex: LLaMA 3/4 ou Gemini Free).
+1. **Triador Gratuito (O Porteiro):** Todas as requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes iniciais passarÃƒÆ’Ã‚Â£o primeiro por um modelo super-rÃƒÆ’Ã‚Â¡pido e gratuito (ex: LLaMA 3/4 ou Gemini Free).
 
-2. **AnÃƒÂ¡lise de Complexidade:** Esse 'Porteiro' vai ler o prompt do usuÃƒÂ¡rio/sistema e decidir: *Essa requisiÃƒÂ§ÃƒÂ£o ÃƒÂ© simples ou complexa? Exige raciocÃƒÂ­nio avanÃƒÂ§ado?*
+2. **AnÃƒÆ’Ã‚Â¡lise de Complexidade:** Esse 'Porteiro' vai ler o prompt do usuÃƒÆ’Ã‚Â¡rio/sistema e decidir: *Essa requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© simples ou complexa? Exige raciocÃƒÆ’Ã‚Â­nio avanÃƒÆ’Ã‚Â§ado?*
 
 - **O Spread (Margem de Seguranca):** O saque ocorrera sempre com um desagio (spread) massivo. Exemplo: se o usuario compra 100 GPUs por R$50, o Banco so compra de volta por R$30. Isso garante que a plataforma sempre lucre em cada ciclo de conversao, financiando a operacao Play-to-Earn sem risco de quebra.
 
@@ -768,59 +790,59 @@ Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de Inte
 
 ---
 
-## [ATUALIZAÃƒâ€¡ÃƒÆ’O DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE ARQUITETURA - AGENTES DE PERFORMANCE E MARKETING] (Data: 07/06/2026)
 
 
 
-**1. Scraper de PreÃƒÂ§os AutÃƒÂ´nomo (pricing_scraper_agent.py):**
+**1. Scraper de PreÃƒÆ’Ã‚Â§os AutÃƒÆ’Ã‚Â´nomo (pricing_scraper_agent.py):**
 
 - Vasculha a API do OpenRouter em busca de novos modelos de IA.
 
 - Cadastra novos modelos diretamente com status 'Ativo' (Autonomia Total).
 
-- Captura Rate Limits (TPM/RPM) e atualiza preÃƒÂ§os de input/output dinamicamente.
+- Captura Rate Limits (TPM/RPM) e atualiza preÃƒÆ’Ã‚Â§os de input/output dinamicamente.
 
 
 
 **2. Gestor Financeiro / Analista de Mercado:**
 
-- Motor de PrecificaÃƒÂ§ÃƒÂ£o DinÃƒÂ¢mica integrado ÃƒÂ  tabela models_pricing atravÃƒÂ©s da coluna margin_multiplier.
+- Motor de PrecificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o DinÃƒÆ’Ã‚Â¢mica integrado ÃƒÆ’Ã‚Â  tabela models_pricing atravÃƒÆ’Ã‚Â©s da coluna margin_multiplier.
 
-- Calcula o Custo da Gasolina baseado na demanda (se um modelo estÃƒÂ¡ ocioso, a margem cai para 10%; se estÃƒÂ¡ concorrido, sobe atÃƒÂ© 100%).
+- Calcula o Custo da Gasolina baseado na demanda (se um modelo estÃƒÆ’Ã‚Â¡ ocioso, a margem cai para 10%; se estÃƒÆ’Ã‚Â¡ concorrido, sobe atÃƒÆ’Ã‚Â© 100%).
 
 
 
 **3. Diretor de Marketing (marketing_agent.py):**
 
-- Observa as aÃƒÂ§ÃƒÂµes do Diretor Financeiro.
+- Observa as aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes do Diretor Financeiro.
 
-- Gera chamadas publicitÃƒÂ¡rias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
+- Gera chamadas publicitÃƒÆ’Ã‚Â¡rias HTML/CSS (Gradients, Emojis, Cyberpunk) usando LLM via OpenRouter.
 
-- IntegraÃƒÂ§ÃƒÂ£o preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
+- IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o preparada para APIs de Imagem Reais (DALL-E 3 / fal.ai).
 
-- Salva anÃƒÂºncios criados na tabela  d_campaigns.
+- Salva anÃƒÆ’Ã‚Âºncios criados na tabela  d_campaigns.
 
 
 
-**4. Gestor de TrÃƒÂ¡fego AI (traffic_manager_agent.py):**
+**4. Gestor de TrÃƒÆ’Ã‚Â¡fego AI (traffic_manager_agent.py):**
 
 - Monitora os endpoints de telemetria criados no servidor_web.py (/view e /click).
 
 - Calcula o CTR (Click-Through Rate) dos banners injetados no sistema.
 
-- Desativa campanhas de baixa performance (CTR < 0.5% apÃƒÂ³s 200 views).
+- Desativa campanhas de baixa performance (CTR < 0.5% apÃƒÆ’Ã‚Â³s 200 views).
 
 
 
-**5. Sistema de RotaÃƒÂ§ÃƒÂ£o de AnÃƒÂºncios UI (noticias_scripts.html):**
+**5. Sistema de RotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de AnÃƒÆ’Ã‚Âºncios UI (noticias_scripts.html):**
 
-- ImplementaÃƒÂ§ÃƒÂ£o de um rodÃƒÂ­zio Javascript que puxa campanhas ativas.
+- ImplementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um rodÃƒÆ’Ã‚Â­zio Javascript que puxa campanhas ativas.
 
-- AlternÃƒÂ¢ncia visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da pÃƒÂ¡gina.
+- AlternÃƒÆ’Ã‚Â¢ncia visual a cada 30 segundos, disparando telemetria em background sem necessitar de recarregamento da pÃƒÆ’Ã‚Â¡gina.
 
 
 
-*Nota TÃƒÂ©cnica: Todos os planos de implementaÃƒÂ§ÃƒÂ£o, walkthroughs e documentos criados por IA estÃƒÂ£o agora salvos localmente na pasta /docs/arquivos_ia/ dentro da base de cÃƒÂ³digo.*
+*Nota TÃƒÆ’Ã‚Â©cnica: Todos os planos de implementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, walkthroughs e documentos criados por IA estÃƒÆ’Ã‚Â£o agora salvos localmente na pasta /docs/arquivos_ia/ dentro da base de cÃƒÆ’Ã‚Â³digo.*
 
 
 
@@ -828,81 +850,81 @@ Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de Inte
 
 ## [DIRETRIZ DE OURO: QUALIDADE PREMIUM INTERNA] (Data: 07/06/2026)
 
-O Diretor Geral estabeleceu a seguinte regra inviolÃƒÂ¡vel para o Ecossistema Apollo:
+O Diretor Geral estabeleceu a seguinte regra inviolÃƒÆ’Ã‚Â¡vel para o Ecossistema Apollo:
 
-- **Para o UsuÃƒÂ¡rio Final:** A economia ÃƒÂ© ditada pelo poder de compra (Gasolina, Cristais). Ele usa o que ele pode pagar.
+- **Para o UsuÃƒÆ’Ã‚Â¡rio Final:** A economia ÃƒÆ’Ã‚Â© ditada pelo poder de compra (Gasolina, Cristais). Ele usa o que ele pode pagar.
 
 - **Para o Funcionamento Interno do Site (Nossos Agentes): NUNCA economizar.**
 
-Se o Diretor de Marketing precisar criar um banner publicitÃƒÂ¡rio, ele usarÃƒÂ¡ a melhor IA do mercado (DALL-E 3, Midjourney, Claude 3.5 Sonnet, Gemini 1.5 Pro). O site nÃƒÂ£o pode ter material de baixa qualidade em nenhum momento. Nossos Agentes Internos (Scraper, Analista, Gestor de TrÃƒÂ¡fego) tÃƒÂªm orÃƒÂ§amento e autorizaÃƒÂ§ÃƒÂ£o para rodar nas mÃƒÂ¡quinas mais parrudas disponÃƒÂ­veis para garantir um ecossistema hiper-premium. Tudo do bom e do melhor para os bastidores da Apollo.
+Se o Diretor de Marketing precisar criar um banner publicitÃƒÆ’Ã‚Â¡rio, ele usarÃƒÆ’Ã‚Â¡ a melhor IA do mercado (DALL-E 3, Midjourney, Claude 3.5 Sonnet, Gemini 1.5 Pro). O site nÃƒÆ’Ã‚Â£o pode ter material de baixa qualidade em nenhum momento. Nossos Agentes Internos (Scraper, Analista, Gestor de TrÃƒÆ’Ã‚Â¡fego) tÃƒÆ’Ã‚Âªm orÃƒÆ’Ã‚Â§amento e autorizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para rodar nas mÃƒÆ’Ã‚Â¡quinas mais parrudas disponÃƒÆ’Ã‚Â­veis para garantir um ecossistema hiper-premium. Tudo do bom e do melhor para os bastidores da Apollo.
 
 
 
 ---
 
-## [DIRETRIZ DE ARQUITETURA AVANÃƒâ€¡ADA: O ROTEADOR GATEWAY LLM] (Data: 07/06/2026)
+## [DIRETRIZ DE ARQUITETURA AVANÃƒÆ’Ã¢â‚¬Â¡ADA: O ROTEADOR GATEWAY LLM] (Data: 07/06/2026)
 
 
 
 **O Problema do 'Corta Tesouro' e Roteamento Inteligente:**
 
-Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de InteligÃƒÂªncia Artificial da Apollo nÃƒÂ£o serÃƒÂ¡ apenas baseada em strings fixas ('high' ou 'low'). O sistema adotarÃƒÂ¡ um **Gateway de Triagem baseado em IA Gratuita**.
+Conforme definido pelo Diretor Geral, a arquitetura futura de roteamento de InteligÃƒÆ’Ã‚Âªncia Artificial da Apollo nÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ apenas baseada em strings fixas ('high' ou 'low'). O sistema adotarÃƒÆ’Ã‚Â¡ um **Gateway de Triagem baseado em IA Gratuita**.
 
 
 
-**Fluxo de DecisÃƒÂ£o (O IntermediÃƒÂ¡rio):**
+**Fluxo de DecisÃƒÆ’Ã‚Â£o (O IntermediÃƒÆ’Ã‚Â¡rio):**
 
-1. **Triador Gratuito (O Porteiro):** Todas as requisiÃƒÂ§ÃƒÂµes iniciais passarÃƒÂ£o primeiro por um modelo super-rÃƒÂ¡pido e gratuito (ex: LLaMA 3/4 ou Gemini Free).
+1. **Triador Gratuito (O Porteiro):** Todas as requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes iniciais passarÃƒÆ’Ã‚Â£o primeiro por um modelo super-rÃƒÆ’Ã‚Â¡pido e gratuito (ex: LLaMA 3/4 ou Gemini Free).
 
-2. **AnÃƒÂ¡lise de Complexidade:** Esse 'Porteiro' vai ler o prompt do usuÃƒÂ¡rio/sistema e decidir: *Essa requisiÃƒÂ§ÃƒÂ£o ÃƒÂ© simples ou complexa? Exige raciocÃƒÂ­nio avanÃƒÂ§ado?*
+2. **AnÃƒÆ’Ã‚Â¡lise de Complexidade:** Esse 'Porteiro' vai ler o prompt do usuÃƒÆ’Ã‚Â¡rio/sistema e decidir: *Essa requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© simples ou complexa? Exige raciocÃƒÆ’Ã‚Â­nio avanÃƒÆ’Ã‚Â§ado?*
 
-3. **Filtro de Contexto:** O Porteiro tambÃƒÂ©m atua como o 'Corta Tesouro', resumindo histÃƒÂ³ricos longos e removendo lixo para enxugar os tokens.
+3. **Filtro de Contexto:** O Porteiro tambÃƒÆ’Ã‚Â©m atua como o 'Corta Tesouro', resumindo histÃƒÆ’Ã‚Â³ricos longos e removendo lixo para enxugar os tokens.
 
 4. **Despacho Final:**
 
-   - Se for simples: O prÃƒÂ³prio Porteiro (ou outro modelo free) responde e finaliza a tarefa. Custo Zero.
+   - Se for simples: O prÃƒÆ’Ã‚Â³prio Porteiro (ou outro modelo free) responde e finaliza a tarefa. Custo Zero.
 
-   - Se for complexo: O Porteiro encaminha a requisiÃƒÂ§ÃƒÂ£o limpa e otimizada (com poucos tokens) para a Elite (ChatGPT-4o, Grok 3, Gemini 3.5 Pro, Claude 4.6).
+   - Se for complexo: O Porteiro encaminha a requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o limpa e otimizada (com poucos tokens) para a Elite (ChatGPT-4o, Grok 3, Gemini 3.5 Pro, Claude 4.6).
 
 
 
 **Vantagem Competitiva:**
 
-Essa arquitetura garante lucro absoluto. Nunca gastaremos 1 centavo de dÃƒÂ³lar em tarefas triviais, e as tarefas crÃƒÂ­ticas receberÃƒÂ£o a inteligÃƒÂªncia mÃƒÂ¡xima sem o desperdÃƒÂ­cio de contexto inchado.
+Essa arquitetura garante lucro absoluto. Nunca gastaremos 1 centavo de dÃƒÆ’Ã‚Â³lar em tarefas triviais, e as tarefas crÃƒÆ’Ã‚Â­ticas receberÃƒÆ’Ã‚Â£o a inteligÃƒÆ’Ã‚Âªncia mÃƒÆ’Ã‚Â¡xima sem o desperdÃƒÆ’Ã‚Â­cio de contexto inchado.
 
 
 
 ---
 
-## [NOVA DIRETRIZ DE SEGURANÃƒâ€¡A: CYBER SECURITY & ANTI-FRAUDE] (Data: 07/06/2026)
+## [NOVA DIRETRIZ DE SEGURANÃƒÆ’Ã¢â‚¬Â¡A: CYBER SECURITY & ANTI-FRAUDE] (Data: 07/06/2026)
 
 
 
-Para proteger a plataforma de responsabilidades criminais, lavagem de dinheiro e distribuiÃƒÂ§ÃƒÂ£o de malwares, foi estabelecido o mÃƒÂ³dulo de **Defesa Ativa (Safe Mode P2P)**:
+Para proteger a plataforma de responsabilidades criminais, lavagem de dinheiro e distribuiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de malwares, foi estabelecido o mÃƒÆ’Ã‚Â³dulo de **Defesa Ativa (Safe Mode P2P)**:
 
 
 
-**1. O Fim do Hospedeiro de VÃƒÂ­rus (Mercado Nativo):**
+**1. O Fim do Hospedeiro de VÃƒÆ’Ã‚Â­rus (Mercado Nativo):**
 
-- **Bloqueio de Links Externos:** Ãƒâ€° estritamente proibida a comercializaÃƒÂ§ÃƒÂ£o de links de terceiros (Google Drive, Mega) ou arquivos pesados opacos (ex: .mp4, .zip).
+- **Bloqueio de Links Externos:** ÃƒÆ’Ã¢â‚¬Â° estritamente proibida a comercializaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de links de terceiros (Google Drive, Mega) ou arquivos pesados opacos (ex: .mp4, .zip).
 
-- **Venda de "CÃƒÂ©rebros" (Arquivos .json):** O Mercado Livre agora vende unicamente *cÃƒÂ³digos nativos da plataforma*, como Roteiristas Customizados, Presets de UI e Mapeamentos MatemÃƒÂ¡ticos de Timeline. Como o peso do cÃƒÂ³digo ÃƒÂ© insignificante (KB) e 100% nativo, a instalaÃƒÂ§ÃƒÂ£o na conta do comprador ÃƒÂ© *imediata* e o risco de contÃƒÂ¡gio viral ou material ilÃƒÂ­cito cai para zero.
-
-
-
-**2. A Banda de PreÃƒÂ§os (Escudo contra Lavagem de Dinheiro):**
-
-- **Sem KYC BurocrÃƒÂ¡tico:** Mantendo a alma libertÃƒÂ¡ria e descentralizada, os usuÃƒÂ¡rios sÃƒÂ£o livres para sacar dinheiro sem enviar pilhas de documentos estatais, desde que respeitem as leis da fÃƒÂ­sica da plataforma.
-
-- **Teto de Lucro MatemÃƒÂ¡tico:** O sistema impede manipulaÃƒÂ§ÃƒÂµes de preÃƒÂ§o. O PreÃƒÂ§o MÃƒÂ­nimo de um item deve cobrir o seu custo de forja + Taxas da plataforma (evita dumping). O PreÃƒÂ§o MÃƒÂ¡ximo ÃƒÂ© *travado em 100% de margem de lucro*. Se o item custa 100, nÃƒÂ£o pode ser vendido por 20.000. Isso estraÃƒÂ§alha a viabilidade de esquemas de lavagem de grandes fortunas.
+- **Venda de "CÃƒÆ’Ã‚Â©rebros" (Arquivos .json):** O Mercado Livre agora vende unicamente *cÃƒÆ’Ã‚Â³digos nativos da plataforma*, como Roteiristas Customizados, Presets de UI e Mapeamentos MatemÃƒÆ’Ã‚Â¡ticos de Timeline. Como o peso do cÃƒÆ’Ã‚Â³digo ÃƒÆ’Ã‚Â© insignificante (KB) e 100% nativo, a instalaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o na conta do comprador ÃƒÆ’Ã‚Â© *imediata* e o risco de contÃƒÆ’Ã‚Â¡gio viral ou material ilÃƒÆ’Ã‚Â­cito cai para zero.
 
 
 
-**3. O Xerife do Mercado (FiscalizaÃƒÂ§ÃƒÂ£o IA em Tempo Real):**
+**2. A Banda de PreÃƒÆ’Ã‚Â§os (Escudo contra Lavagem de Dinheiro):**
 
-- **O Agente 6 (Auditor):** Uma IA dedicada monitora silenciosamente o banco de dados e a aba de SeguranÃƒÂ§a em tempo real.
+- **Sem KYC BurocrÃƒÆ’Ã‚Â¡tico:** Mantendo a alma libertÃƒÆ’Ã‚Â¡ria e descentralizada, os usuÃƒÆ’Ã‚Â¡rios sÃƒÆ’Ã‚Â£o livres para sacar dinheiro sem enviar pilhas de documentos estatais, desde que respeitem as leis da fÃƒÆ’Ã‚Â­sica da plataforma.
 
-- **TolerÃƒÂ¢ncia Zero:** Se a IA detectar comportamento anÃƒÂ´malo (ex: TrÃƒÂ¡fego Ping-Pong, onde UsuÃƒÂ¡rio A compra 50 itens de preÃƒÂ§o mÃƒÂ¡ximo do UsuÃƒÂ¡rio B numa madrugada), as carteiras das duas contas sÃƒÂ£o **congeladas instantaneamente** e os saques sÃƒÂ£o bloqueados. O caso ÃƒÂ© isolado para revisÃƒÂ£o manual do Diretor (Administrador), garantindo seguranÃƒÂ§a jurÃƒÂ­dica automÃƒÂ¡tica sem intervenÃƒÂ§ÃƒÂ£o humana constante.
+- **Teto de Lucro MatemÃƒÆ’Ã‚Â¡tico:** O sistema impede manipulaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de preÃƒÆ’Ã‚Â§o. O PreÃƒÆ’Ã‚Â§o MÃƒÆ’Ã‚Â­nimo de um item deve cobrir o seu custo de forja + Taxas da plataforma (evita dumping). O PreÃƒÆ’Ã‚Â§o MÃƒÆ’Ã‚Â¡ximo ÃƒÆ’Ã‚Â© *travado em 100% de margem de lucro*. Se o item custa 100, nÃƒÆ’Ã‚Â£o pode ser vendido por 20.000. Isso estraÃƒÆ’Ã‚Â§alha a viabilidade de esquemas de lavagem de grandes fortunas.
+
+
+
+**3. O Xerife do Mercado (FiscalizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o IA em Tempo Real):**
+
+- **O Agente 6 (Auditor):** Uma IA dedicada monitora silenciosamente o banco de dados e a aba de SeguranÃƒÆ’Ã‚Â§a em tempo real.
+
+- **TolerÃƒÆ’Ã‚Â¢ncia Zero:** Se a IA detectar comportamento anÃƒÆ’Ã‚Â´malo (ex: TrÃƒÆ’Ã‚Â¡fego Ping-Pong, onde UsuÃƒÆ’Ã‚Â¡rio A compra 50 itens de preÃƒÆ’Ã‚Â§o mÃƒÆ’Ã‚Â¡ximo do UsuÃƒÆ’Ã‚Â¡rio B numa madrugada), as carteiras das duas contas sÃƒÆ’Ã‚Â£o **congeladas instantaneamente** e os saques sÃƒÆ’Ã‚Â£o bloqueados. O caso ÃƒÆ’Ã‚Â© isolado para revisÃƒÆ’Ã‚Â£o manual do Diretor (Administrador), garantindo seguranÃƒÆ’Ã‚Â§a jurÃƒÆ’Ã‚Â­dica automÃƒÆ’Ã‚Â¡tica sem intervenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o humana constante.
 
 
 
@@ -912,219 +934,219 @@ Para proteger a plataforma de responsabilidades criminais, lavagem de dinheiro e
 
 
 
-A arquitetura financeira e de renderizaÃƒÂ§ÃƒÂ£o da Apollo sofreu um upgrade crucial. AÃƒÂ§ÃƒÂ£o invÃƒÂ©s de depender 100% de APIs terceirizadas pagas (Nano Banana, Fal.ai, etc), a Apollo foi promovida a **Orquestradora de MicrosserviÃƒÂ§os**, controlando sua prÃƒÂ³pria nuvem Serverless usando crÃƒÂ©ditos na **Lightning AI**.
+A arquitetura financeira e de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Apollo sofreu um upgrade crucial. AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o invÃƒÆ’Ã‚Â©s de depender 100% de APIs terceirizadas pagas (Nano Banana, Fal.ai, etc), a Apollo foi promovida a **Orquestradora de MicrosserviÃƒÆ’Ã‚Â§os**, controlando sua prÃƒÆ’Ã‚Â³pria nuvem Serverless usando crÃƒÆ’Ã‚Â©ditos na **Lightning AI**.
 
 
 
-**1. Desacoplamento e "CÃƒÂ³digo Puro" (Fim do ComfyUI):**
+**1. Desacoplamento e "CÃƒÆ’Ã‚Â³digo Puro" (Fim do ComfyUI):**
 
-- Para garantir "Cold Starts" (partidas a frio) que demoram apenas segundos em vez de minutos, banimos o uso de interfaces grÃƒÂ¡ficas hospedadas (Gradio, ComfyUI, etc).
+- Para garantir "Cold Starts" (partidas a frio) que demoram apenas segundos em vez de minutos, banimos o uso de interfaces grÃƒÆ’Ã‚Â¡ficas hospedadas (Gradio, ComfyUI, etc).
 
-- Os Studios na Lightning AI rodam em **Headless Mode** (sem cabeÃƒÂ§a). Instalamos apenas o Python, o PyTorch, uma API super rÃƒÂ¡pida (FastAPI) e o modelo final (.safetensors). O peso da instalaÃƒÂ§ÃƒÂ£o cai para meros 2~4GB por mÃƒÂ¡quina.
-
-
-
-**2. A Frota (SeparaÃƒÂ§ÃƒÂ£o CirÃƒÂºrgica e DivisÃƒÂ£o de Trabalho):**
-
-- A lentidÃƒÂ£o no carregamento ("Cold Start") ÃƒÂ© diretamente proporcional ÃƒÂ  quantidade de dados no HD. Portanto, dividimos os 200GB em micro-mÃƒÂ¡quinas de 2GB a 4GB, cada uma rodando um ÃƒÂºnico modelo.
-
-- **O Cloud Admin (UsuÃƒÂ¡rio):** Garimpa os servidores (ex: T4 na AWS a $0.19) e cria as mÃƒÂ¡quinas nuas.
-
-- **A IA (Engenheira):** Entra na mÃƒÂ¡quina e escreve os cÃƒÂ³digos `FastAPI` conectando-a ÃƒÂ  Apollo.
-
-- **Tipos de MÃƒÂ¡quinas:**
-
-  - **Studio de Imagem:** Roda numa T4 (ex: $0.19/h na AWS). Focado em rodar Flux.Schnell super-rÃƒÂ¡pido.
-
-  - **Studio de VÃƒÂ­deo:** Roda numa L4/T4 focado em LTX-Video.
-
-  - **LaboratÃƒÂ³rio de Voz (GrÃƒÂ¡tis):** Roda na CPU gratuita da Lightning AI, dedicada ÃƒÂ  **InferÃƒÂªncia (TTS e GeraÃƒÂ§ÃƒÂ£o RVC)**. Como a CPU ÃƒÂ© de graÃƒÂ§a, fica ligada horas processando textos sem custo financeiro (nota: CPU nÃƒÂ£o presta para treino, apenas para geraÃƒÂ§ÃƒÂ£o rÃƒÂ¡pida de ÃƒÂ¡ÃƒÂ¡udio).
+- Os Studios na Lightning AI rodam em **Headless Mode** (sem cabeÃƒÆ’Ã‚Â§a). Instalamos apenas o Python, o PyTorch, uma API super rÃƒÆ’Ã‚Â¡pida (FastAPI) e o modelo final (.safetensors). O peso da instalaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o cai para meros 2~4GB por mÃƒÆ’Ã‚Â¡quina.
 
 
 
-**3. AutomaÃƒÂ§ÃƒÂ£o Apollo (Ligar/Processar/Desligar):**
+**2. A Frota (SeparaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o CirÃƒÆ’Ã‚Âºrgica e DivisÃƒÆ’Ã‚Â£o de Trabalho):**
 
-- O servidor Backend da Apollo usa a API da Lightning AI para manipular as mÃƒÂ¡quinas no painel invisivelmente.
+- A lentidÃƒÆ’Ã‚Â£o no carregamento ("Cold Start") ÃƒÆ’Ã‚Â© diretamente proporcional ÃƒÆ’Ã‚Â  quantidade de dados no HD. Portanto, dividimos os 200GB em micro-mÃƒÆ’Ã‚Â¡quinas de 2GB a 4GB, cada uma rodando um ÃƒÆ’Ã‚Âºnico modelo.
 
-- O usuÃƒÂ¡rio pede uma imagem -> A Apollo envia comando de `Start` para o Studio -> O Studio liga -> Recebe o Prompt via porta 8000 -> Devolve a Imagem -> A Apollo envia o comando de `Stop`.
+- **O Cloud Admin (UsuÃƒÆ’Ã‚Â¡rio):** Garimpa os servidores (ex: T4 na AWS a $0.19) e cria as mÃƒÆ’Ã‚Â¡quinas nuas.
 
-- **Impacto:** Essa arquitetura nos permite processar quase toda a demanda do **Free Tier** a "Custo Zero" (consumindo apenas os crÃƒÂ©ditos gratuitos/mensais do Lightning), viabilizando margens de lucro extremas na plataforma e escalabilidade gigantesca.
+- **A IA (Engenheira):** Entra na mÃƒÆ’Ã‚Â¡quina e escreve os cÃƒÆ’Ã‚Â³digos `FastAPI` conectando-a ÃƒÆ’Ã‚Â  Apollo.
+
+- **Tipos de MÃƒÆ’Ã‚Â¡quinas:**
+
+  - **Studio de Imagem:** Roda numa T4 (ex: $0.19/h na AWS). Focado em rodar Flux.Schnell super-rÃƒÆ’Ã‚Â¡pido.
+
+  - **Studio de VÃƒÆ’Ã‚Â­deo:** Roda numa L4/T4 focado em LTX-Video.
+
+  - **LaboratÃƒÆ’Ã‚Â³rio de Voz (GrÃƒÆ’Ã‚Â¡tis):** Roda na CPU gratuita da Lightning AI, dedicada ÃƒÆ’Ã‚Â  **InferÃƒÆ’Ã‚Âªncia (TTS e GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o RVC)**. Como a CPU ÃƒÆ’Ã‚Â© de graÃƒÆ’Ã‚Â§a, fica ligada horas processando textos sem custo financeiro (nota: CPU nÃƒÆ’Ã‚Â£o presta para treino, apenas para geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o rÃƒÆ’Ã‚Â¡pida de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio).
+
+
+
+**3. AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Apollo (Ligar/Processar/Desligar):**
+
+- O servidor Backend da Apollo usa a API da Lightning AI para manipular as mÃƒÆ’Ã‚Â¡quinas no painel invisivelmente.
+
+- O usuÃƒÆ’Ã‚Â¡rio pede uma imagem -> A Apollo envia comando de `Start` para o Studio -> O Studio liga -> Recebe o Prompt via porta 8000 -> Devolve a Imagem -> A Apollo envia o comando de `Stop`.
+
+- **Impacto:** Essa arquitetura nos permite processar quase toda a demanda do **Free Tier** a "Custo Zero" (consumindo apenas os crÃƒÆ’Ã‚Â©ditos gratuitos/mensais do Lightning), viabilizando margens de lucro extremas na plataforma e escalabilidade gigantesca.
 
 
 
 ---
 
-## [ATUALIZAÃƒâ€¡ÃƒÆ’O DE ARQUITETURA - O GACHA ERP E PADRÃƒÆ’O DA INDÃƒÅ¡STRIA] (Data: 08/06/2026)
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE ARQUITETURA - O GACHA ERP E PADRÃƒÆ’Ã†â€™O DA INDÃƒÆ’Ã…Â¡STRIA] (Data: 08/06/2026)
 
 
 
-**1. O PadrÃƒÂ£o da IndÃƒÂºstria (SeguranÃƒÂ§a e Off-Shore):**
+**1. O PadrÃƒÆ’Ã‚Â£o da IndÃƒÆ’Ã‚Âºstria (SeguranÃƒÆ’Ã‚Â§a e Off-Shore):**
 
-- **Pen Drive:** Cloudflare R2 (Egress Zero) ou Amazon S3 para armazenar vÃƒÂ­deos e assets pesados. Nada de Google Drive para evitar limite de trÃƒÂ¡fego.
+- **Pen Drive:** Cloudflare R2 (Egress Zero) ou Amazon S3 para armazenar vÃƒÆ’Ã‚Â­deos e assets pesados. Nada de Google Drive para evitar limite de trÃƒÆ’Ã‚Â¡fego.
 
-- **Banco de Dados/SeguranÃƒÂ§a:** Supabase/Firebase. Gerencia autenticaÃƒÂ§ÃƒÂ£o e impede que o UsuÃƒÂ¡rio A roube vÃƒÂ­deos do UsuÃƒÂ¡rio B.
+- **Banco de Dados/SeguranÃƒÆ’Ã‚Â§a:** Supabase/Firebase. Gerencia autenticaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e impede que o UsuÃƒÆ’Ã‚Â¡rio A roube vÃƒÆ’Ã‚Â­deos do UsuÃƒÆ’Ã‚Â¡rio B.
 
-- **Pagamentos P2P e Global:** IntegraÃƒÂ§ÃƒÂ£o voltada para Crypto (BTCPay Server / Coinbase Commerce) para blindar a empresa de bloqueios judiciais domÃƒÂ©sticos e aceitar pagamentos globais. CartÃƒÂµes virtuais corporativos amarrados nas APIs com limite fixo protegem contra ataques e loops infinitos.
+- **Pagamentos P2P e Global:** IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o voltada para Crypto (BTCPay Server / Coinbase Commerce) para blindar a empresa de bloqueios judiciais domÃƒÆ’Ã‚Â©sticos e aceitar pagamentos globais. CartÃƒÆ’Ã‚Âµes virtuais corporativos amarrados nas APIs com limite fixo protegem contra ataques e loops infinitos.
 
 
 
 **2. Tokenomics Gamificado (A Nova Economia de 4 Pilares):**
 
-- **O Dinheiro PadrÃƒÂ£o (Apollo Coins):** Moeda genÃƒÂ©rica (dourada, estilo Mario) comprada com dinheiro real ou ganha em missÃƒÂµes/roletas. Ela circula livremente e ÃƒÂ© usada para comprar os recursos de processamento atravÃƒÂ©s do **Banco (Casa de CÃƒÂ¢mbio)**.
+- **O Dinheiro PadrÃƒÆ’Ã‚Â£o (Apollo Coins):** Moeda genÃƒÆ’Ã‚Â©rica (dourada, estilo Mario) comprada com dinheiro real ou ganha em missÃƒÆ’Ã‚Âµes/roletas. Ela circula livremente e ÃƒÆ’Ã‚Â© usada para comprar os recursos de processamento atravÃƒÆ’Ã‚Â©s do **Banco (Casa de CÃƒÆ’Ã‚Â¢mbio)**.
 
 - **Os 4 Recursos de Consumo (As Trilhas):**
 
-  1. **CombustÃƒÂ­vel de FFmpeg:** Focado em processamento pesado em nuvem (montagem de vÃƒÂ­deo).
+  1. **CombustÃƒÆ’Ã‚Â­vel de FFmpeg:** Focado em processamento pesado em nuvem (montagem de vÃƒÆ’Ã‚Â­deo).
 
-  2. **Cristal de API:** Focado em chamadas de APIs externas (ex: GeraÃƒÂ§ÃƒÂ£o de Imagem, Fal.ai).
+  2. **Cristal de API:** Focado em chamadas de APIs externas (ex: GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Imagem, Fal.ai).
 
   3. **Placa de GPU:** Focado no uso bruto de servidores de GPU (ex: Lightning AI, RunPod).
 
-  4. **Chip de LLM:** Focado em processamento de texto/chats (ChatGPT, DeepSeek, etc). Isolado porque tem um custo ÃƒÂ­nfimo se comparado ÃƒÂ  imagem. O sistema tira a mÃƒÂ©dia dos custos globais de IA e cobra com uma margem de lucro embutida.
+  4. **Chip de LLM:** Focado em processamento de texto/chats (ChatGPT, DeepSeek, etc). Isolado porque tem um custo ÃƒÆ’Ã‚Â­nfimo se comparado ÃƒÆ’Ã‚Â  imagem. O sistema tira a mÃƒÆ’Ã‚Â©dia dos custos globais de IA e cobra com uma margem de lucro embutida.
 
-- **Packs vs PreÃƒÂ§o Spot:** O usuÃƒÂ¡rio ÃƒÂ© estimulado a comprar "Packs" fechados de recursos no Banco, que possuem um valor altamente descontado. Caso ele decida gerar algo sem saldo no seu Pack correspondente, o site desconta diretamente da carteira de Apollo Coins pelo PreÃƒÂ§o Atualizado do dia (PreÃƒÂ§o Spot, que ÃƒÂ© cerca de 20% mais caro).
+- **Packs vs PreÃƒÆ’Ã‚Â§o Spot:** O usuÃƒÆ’Ã‚Â¡rio ÃƒÆ’Ã‚Â© estimulado a comprar "Packs" fechados de recursos no Banco, que possuem um valor altamente descontado. Caso ele decida gerar algo sem saldo no seu Pack correspondente, o site desconta diretamente da carteira de Apollo Coins pelo PreÃƒÆ’Ã‚Â§o Atualizado do dia (PreÃƒÆ’Ã‚Â§o Spot, que ÃƒÆ’Ã‚Â© cerca de 20% mais caro).
 
-- **Mercado Negro:** Os usuÃƒÂ¡rios nÃƒÂ£o devem devolver sobras para o Banco. O sistema estimula a venda/troca de packs no Mercado Negro entre jogadores.
+- **Mercado Negro:** Os usuÃƒÆ’Ã‚Â¡rios nÃƒÆ’Ã‚Â£o devem devolver sobras para o Banco. O sistema estimula a venda/troca de packs no Mercado Negro entre jogadores.
 
 
 
-**3. O Montador em Nuvem e AceleraÃƒÂ§ÃƒÂ£o NVENC (Burst):**
+**3. O Montador em Nuvem e AceleraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o NVENC (Burst):**
 
 - Descartado o uso de FFmpeg no PC do cliente (que travaria celulares e notebooks fracos). A colagem de templates e o Diretor IA rodam **100% na Nuvem**.
 
-- **Exploit EconÃƒÂ´mico:** Enquanto CPUs grandes (8x, 16x) custam caro (.51 - .99), usaremos instÃƒÂ¢ncias de **T4 (AWS a .19/h)**. A T4 jÃƒÂ¡ vem com 4 CPUs e, principalmente, permite usar aceleraÃƒÂ§ÃƒÂ£o via hardware NVENC no FFmpeg, exportando vÃƒÂ­deos imensamente mais rÃƒÂ¡pido pelo triplo da economia.
+- **Exploit EconÃƒÆ’Ã‚Â´mico:** Enquanto CPUs grandes (8x, 16x) custam caro (.51 - .99), usaremos instÃƒÆ’Ã‚Â¢ncias de **T4 (AWS a .19/h)**. A T4 jÃƒÆ’Ã‚Â¡ vem com 4 CPUs e, principalmente, permite usar aceleraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o via hardware NVENC no FFmpeg, exportando vÃƒÆ’Ã‚Â­deos imensamente mais rÃƒÆ’Ã‚Â¡pido pelo triplo da economia.
 
 
 
-**4. O Verdadeiro Pulo do Gato (VRAM e SSD EfÃƒÂªmeros):**
+**4. O Verdadeiro Pulo do Gato (VRAM e SSD EfÃƒÆ’Ã‚Âªmeros):**
 
-- A mÃƒÂ¡quina da Lightning AI funciona como um "Job Runner" extremo. O modelo ÃƒÂ© baixado do Hugging Face, carregado na VRAM, o vÃƒÂ­deo ÃƒÂ© gerado, e imediatamente apÃƒÂ³s a geraÃƒÂ§ÃƒÂ£o o modelo ÃƒÂ© **destruÃƒÂ­do da VRAM e deletado fisicamente do Disco RÃƒÂ­gido (SSD) da mÃƒÂ¡quina**.
+- A mÃƒÆ’Ã‚Â¡quina da Lightning AI funciona como um "Job Runner" extremo. O modelo ÃƒÆ’Ã‚Â© baixado do Hugging Face, carregado na VRAM, o vÃƒÆ’Ã‚Â­deo ÃƒÆ’Ã‚Â© gerado, e imediatamente apÃƒÆ’Ã‚Â³s a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o o modelo ÃƒÆ’Ã‚Â© **destruÃƒÆ’Ã‚Â­do da VRAM e deletado fisicamente do Disco RÃƒÆ’Ã‚Â­gido (SSD) da mÃƒÆ’Ã‚Â¡quina**.
 
-- **Motivo Absoluto:** O storage na nuvem cobra por Gigabyte armazenado 24/7. Deletar o cache do Hugging Face (~/.cache/huggingface) impede que o disco lote e evita o pagamento de volumes massivos (ex: 300GB) de storage, trocando o custo financeiro de infraestrutura por tempo de download (o cliente espera 2 minutos, mas a plataforma economiza milhares de dÃƒÂ³lares).
+- **Motivo Absoluto:** O storage na nuvem cobra por Gigabyte armazenado 24/7. Deletar o cache do Hugging Face (~/.cache/huggingface) impede que o disco lote e evita o pagamento de volumes massivos (ex: 300GB) de storage, trocando o custo financeiro de infraestrutura por tempo de download (o cliente espera 2 minutos, mas a plataforma economiza milhares de dÃƒÆ’Ã‚Â³lares).
 
 
 
 ---
 
-## [ARQUITETURA DE UI/UX E GAMIFICAÃƒâ€¡ÃƒÆ’O GACHA (HistÃƒÂ³rico Consolidado)] (Data: 08/06/2026)
+## [ARQUITETURA DE UI/UX E GAMIFICAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O GACHA (HistÃƒÆ’Ã‚Â³rico Consolidado)] (Data: 08/06/2026)
 
 
 
-Para garantir que o design visual e as mecÃƒÂ¢nicas de RPG nunca se percam, as seguintes regras de tela e gamificaÃƒÂ§ÃƒÂ£o sÃƒÂ£o imutÃƒÂ¡veis:
+Para garantir que o design visual e as mecÃƒÆ’Ã‚Â¢nicas de RPG nunca se percam, as seguintes regras de tela e gamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o sÃƒÆ’Ã‚Â£o imutÃƒÆ’Ã‚Â¡veis:
 
 
 
-**1. O Perfil do Piloto (HUD de 4 Quinas e Ã¯Â¿Â½rvore de EvoluÃƒÂ§ÃƒÂ£o):**
+**1. O Perfil do Piloto (HUD de 4 Quinas e ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore de EvoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):**
 
 - O layout "Trophy + Character + Car" foi descartado. 
 
-- **HUD Centralizado:** Fica no topo da tela. NÃƒÂ£o centro, o Rosto do Jogador (ou bandeira). AÃƒÂ§ÃƒÂ£o redor dele, 4 "Quinas" (quadrantes formando um quadro) representando visualmente as 4 Trilhas de Economia (CombustÃƒÂ­vel, Cristal, GPU, Chip LLM).
+- **HUD Centralizado:** Fica no topo da tela. NÃƒÆ’Ã‚Â£o centro, o Rosto do Jogador (ou bandeira). AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o redor dele, 4 "Quinas" (quadrantes formando um quadro) representando visualmente as 4 Trilhas de Economia (CombustÃƒÆ’Ã‚Â­vel, Cristal, GPU, Chip LLM).
 
-- **Ranking (KM Rodados):** Todo recurso gasto no site (processamento ou API) gera "QuilÃƒÂ´metros Rodados". O KM acumulado define o NÃƒÂ­vel Geral do jogador (Max Lvl 100).
+- **Ranking (KM Rodados):** Todo recurso gasto no site (processamento ou API) gera "QuilÃƒÆ’Ã‚Â´metros Rodados". O KM acumulado define o NÃƒÆ’Ã‚Â­vel Geral do jogador (Max Lvl 100).
 
-- **Ã¯Â¿Â½rvore de Habilidades de Desconto (RPG):** AÃƒÂ§ÃƒÂ£o subir de nÃƒÂ­vel, o jogador ganha pontos para evoluir 1 das 4 Trilhas. Cada nÃƒÂ­vel upado na trilha garante um **Desconto Permanente** para aquele recurso especÃƒÂ­fico. (Ex: Trilha Maximizada concede 50% de desconto sob a nossa margem de lucro total de 30%, ou seja, nosso lucro cai para 15% naquele usuÃƒÂ¡rio hardcore).
+- **ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore de Habilidades de Desconto (RPG):** AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o subir de nÃƒÆ’Ã‚Â­vel, o jogador ganha pontos para evoluir 1 das 4 Trilhas. Cada nÃƒÆ’Ã‚Â­vel upado na trilha garante um **Desconto Permanente** para aquele recurso especÃƒÆ’Ã‚Â­fico. (Ex: Trilha Maximizada concede 50% de desconto sob a nossa margem de lucro total de 30%, ou seja, nosso lucro cai para 15% naquele usuÃƒÆ’Ã‚Â¡rio hardcore).
 
-- **EvoluÃƒÂ§ÃƒÂ£o Visual (BifurcaÃƒÂ§ÃƒÂµes EstÃƒÂ©ticas):** AÃƒÂ§ÃƒÂ£o gastar um ponto de evoluÃƒÂ§ÃƒÂ£o, o usuÃƒÂ¡rio deve escolher entre **2 variantes visuais** para aquela quina do HUD. AÃƒÂ§ÃƒÂ£o evoluir novamente no futuro, a variante escolhida sofrerÃƒÂ¡ nova mutaÃƒÂ§ÃƒÂ£o de design (ex: Roda diferente para a gasolina, Luzes de led na GPU), refletindo visualmente a trilha comercial que o usuÃƒÂ¡rio ÃƒÂ© mais focado.
-
-
-
-**2. A Interface da Ã¯Â¿Â½rea de Trabalho:**
-
-- **Bagageiro (Ã¯Â¿Â½rea de TransferÃƒÂªncia):** Onde os arquivos brutos ficam (recortar, apagar, download). Ãƒâ€° aqui que o usuÃƒÂ¡rio joga itens fora (lixeira) ou move para outras ÃƒÂ¡reas. Funciona com Drag and Drop.
-
-- **BotÃƒÂµes e Abas Nativas:** "Garagem" (Showroom das peÃƒÂ§as do carro), "PeÃƒÂ§as", "Chassi" (Scripts/Textos/Mapeamentos), "Nitro IA" (GeraÃƒÂ§ÃƒÂ£o), "MÃƒÂ­dia/FX" (Packs de efeitos e transiÃƒÂ§ÃƒÂµes).
+- **EvoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Visual (BifurcaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes EstÃƒÆ’Ã‚Â©ticas):** AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o gastar um ponto de evoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, o usuÃƒÆ’Ã‚Â¡rio deve escolher entre **2 variantes visuais** para aquela quina do HUD. AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o evoluir novamente no futuro, a variante escolhida sofrerÃƒÆ’Ã‚Â¡ nova mutaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de design (ex: Roda diferente para a gasolina, Luzes de led na GPU), refletindo visualmente a trilha comercial que o usuÃƒÆ’Ã‚Â¡rio ÃƒÆ’Ã‚Â© mais focado.
 
 
 
-**3. O RobÃƒÂ´ e InteraÃƒÂ§ÃƒÂµes:**
+**2. A Interface da ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de Trabalho:**
 
-- O assistente de IA deve ter cara de "chat de quadrinhos" (balÃƒÂ£o de diÃƒÂ¡logo) e flutuar pela tela.
+- **Bagageiro (ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de TransferÃƒÆ’Ã‚Âªncia):** Onde os arquivos brutos ficam (recortar, apagar, download). ÃƒÆ’Ã¢â‚¬Â° aqui que o usuÃƒÆ’Ã‚Â¡rio joga itens fora (lixeira) ou move para outras ÃƒÆ’Ã‚Â¡reas. Funciona com Drag and Drop.
 
-- Ele faz **comentÃƒÂ¡rios contextuais e automÃƒÂ¡ticos** se o jogador cometer muitos erros ou clicar no lugar errado (como um copiloto de jogo dando dicas).
-
-
-
-**4. Roleta e MissÃƒÂµes (Engajamento DiÃƒÂ¡rio):**
-
-- **Roleta da Sorte:** Uma roleta visual gigante (tela cheia) onde o usuÃƒÂ¡rio ganha itens gratuitos diariamente (Cristais Brancos, CombustÃƒÂ­vel).
-
-- **MissÃƒÂµes:** Barras de progresso horizontais. Quando completas, o botÃƒÂ£o fica vermelho e libera o resgate da recompensa.
+- **BotÃƒÆ’Ã‚Âµes e Abas Nativas:** "Garagem" (Showroom das peÃƒÆ’Ã‚Â§as do carro), "PeÃƒÆ’Ã‚Â§as", "Chassi" (Scripts/Textos/Mapeamentos), "Nitro IA" (GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o), "MÃƒÆ’Ã‚Â­dia/FX" (Packs de efeitos e transiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes).
 
 
 
-**5. Identidade do Canal (Branding do UsuÃƒÂ¡rio):**
+**3. O RobÃƒÆ’Ã‚Â´ e InteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes:**
 
-- O Topo ÃƒÂ  esquerda deve ter a Logo do Canal (Gigante e Quadrada) para dar status e respeito ÃƒÂ  marca do usuÃƒÂ¡rio.
+- O assistente de IA deve ter cara de "chat de quadrinhos" (balÃƒÆ’Ã‚Â£o de diÃƒÆ’Ã‚Â¡logo) e flutuar pela tela.
 
-- O botÃƒÂ£o de "Setup/ConfiguraÃƒÂ§ÃƒÂµes do Canal" fica discreto ao lado, mas a Logo ÃƒÂ© a protagonista.
+- Ele faz **comentÃƒÆ’Ã‚Â¡rios contextuais e automÃƒÆ’Ã‚Â¡ticos** se o jogador cometer muitos erros ou clicar no lugar errado (como um copiloto de jogo dando dicas).
 
-- A paleta de cores geral da plataforma pode mudar para refletir a estÃƒÂ©tica do Canal selecionado pelo usuÃƒÂ¡rio.
+
+
+**4. Roleta e MissÃƒÆ’Ã‚Âµes (Engajamento DiÃƒÆ’Ã‚Â¡rio):**
+
+- **Roleta da Sorte:** Uma roleta visual gigante (tela cheia) onde o usuÃƒÆ’Ã‚Â¡rio ganha itens gratuitos diariamente (Cristais Brancos, CombustÃƒÆ’Ã‚Â­vel).
+
+- **MissÃƒÆ’Ã‚Âµes:** Barras de progresso horizontais. Quando completas, o botÃƒÆ’Ã‚Â£o fica vermelho e libera o resgate da recompensa.
+
+
+
+**5. Identidade do Canal (Branding do UsuÃƒÆ’Ã‚Â¡rio):**
+
+- O Topo ÃƒÆ’Ã‚Â  esquerda deve ter a Logo do Canal (Gigante e Quadrada) para dar status e respeito ÃƒÆ’Ã‚Â  marca do usuÃƒÆ’Ã‚Â¡rio.
+
+- O botÃƒÆ’Ã‚Â£o de "Setup/ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes do Canal" fica discreto ao lado, mas a Logo ÃƒÆ’Ã‚Â© a protagonista.
+
+- A paleta de cores geral da plataforma pode mudar para refletir a estÃƒÆ’Ã‚Â©tica do Canal selecionado pelo usuÃƒÆ’Ã‚Â¡rio.
 
 
 
 ---
 
-## [ARQUITETURA DO MOTOR CENTRAL E INTEGRAÃƒâ€¡Ãƒâ€¢ES (HistÃƒÂ³rico Resgatado - Dias Anteriores)] (Data: 08/06/2026)
+## [ARQUITETURA DO MOTOR CENTRAL E INTEGRAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã¢â‚¬Â¢ES (HistÃƒÆ’Ã‚Â³rico Resgatado - Dias Anteriores)] (Data: 08/06/2026)
 
 
 
-AlÃƒÂ©m do front-end gamificado, o cÃƒÂ©rebro administrativo (Apollo Studio / Painel Admin) possui engrenagens definidas em sessÃƒÂµes anteriores que sÃƒÂ£o inegociÃƒÂ¡veis:
+AlÃƒÆ’Ã‚Â©m do front-end gamificado, o cÃƒÆ’Ã‚Â©rebro administrativo (Apollo Studio / Painel Admin) possui engrenagens definidas em sessÃƒÆ’Ã‚Âµes anteriores que sÃƒÆ’Ã‚Â£o inegociÃƒÆ’Ã‚Â¡veis:
 
 
 
-**1. Chaves de API Globais (O CoraÃƒÂ§ÃƒÂ£o do Sistema):**
+**1. Chaves de API Globais (O CoraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Sistema):**
 
-- O sistema nÃƒÂ£o exige que os usuÃƒÂ¡rios finais tenham suas prÃƒÂ³prias chaves de API (VoiceMaker, Gemini, Hugging Face, etc.).
+- O sistema nÃƒÆ’Ã‚Â£o exige que os usuÃƒÆ’Ã‚Â¡rios finais tenham suas prÃƒÆ’Ã‚Â³prias chaves de API (VoiceMaker, Gemini, Hugging Face, etc.).
 
-- Todas as chaves do sistema sÃƒÂ£o configuradas **uma ÃƒÂºnica vez no Painel Admin**. Esse tanque central alimenta todo o ecossistema, incluindo os canais dos clientes e as geraÃƒÂ§ÃƒÂµes internas.
+- Todas as chaves do sistema sÃƒÆ’Ã‚Â£o configuradas **uma ÃƒÆ’Ã‚Âºnica vez no Painel Admin**. Esse tanque central alimenta todo o ecossistema, incluindo os canais dos clientes e as geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes internas.
 
 
 
 **2. A Ponte do WhatsApp (Apollo Prime Bridge):**
 
-- O servidor possui uma integraÃƒÂ§ÃƒÂ£o via WhatsApp rodando paralelamente (Porta 5001). 
+- O servidor possui uma integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o via WhatsApp rodando paralelamente (Porta 5001). 
 
-- O bot (Apollo Prime) responde a eventos de falta de configuraÃƒÂ§ÃƒÂ£o (ex: "Chave da API do Gemini nÃƒÂ£o estÃƒÂ¡ configurada") e interage diretamente pelo WhatsApp com o Diretor/Admin, atuando como um monitor ativo de infraestrutura.
+- O bot (Apollo Prime) responde a eventos de falta de configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (ex: "Chave da API do Gemini nÃƒÆ’Ã‚Â£o estÃƒÆ’Ã‚Â¡ configurada") e interage diretamente pelo WhatsApp com o Diretor/Admin, atuando como um monitor ativo de infraestrutura.
 
 
 
-**3. O EstÃƒÂºdio de CriaÃƒÂ§ÃƒÂ£o (As Abas Nativas do Motor):**
+**3. O EstÃƒÆ’Ã‚Âºdio de CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (As Abas Nativas do Motor):**
 
-A engenharia de base do Apollo Studio engloba os seguintes mÃƒÂ³dulos independentes que devem ser respeitados no design final:
+A engenharia de base do Apollo Studio engloba os seguintes mÃƒÆ’Ã‚Â³dulos independentes que devem ser respeitados no design final:
 
-- Gerar Ã¯Â¿Â½udio (TTS com VoiceMaker/Bark)
+- Gerar ÃƒÂ¯Ã‚Â¿Ã‚Â½udio (TTS com VoiceMaker/Bark)
 
-- Gerar VÃƒÂ­deo do Narrador
+- Gerar VÃƒÆ’Ã‚Â­deo do Narrador
 
 - Gerador de Legendas
 
 - Podcast
 
-- Ajustador de MÃƒÂ­dia
+- Ajustador de MÃƒÆ’Ã‚Â­dia
 
 - Dublagem Externa
 
-- FÃƒÂ¡brica de MÃƒÂºsicas
+- FÃƒÆ’Ã‚Â¡brica de MÃƒÆ’Ã‚Âºsicas
 
-- Tanque de CombustÃƒÂ­vel (GestÃƒÂ£o de consumo de crÃƒÂ©ditos)
+- Tanque de CombustÃƒÆ’Ã‚Â­vel (GestÃƒÆ’Ã‚Â£o de consumo de crÃƒÆ’Ã‚Â©ditos)
 
 
 
 ---
 
-## [FERRAMENTAS DE EDIÃƒâ€¡ÃƒÆ’O DE IA (Timeline e EstÃƒÂºdio)] (Data: 08/06/2026)
+## [FERRAMENTAS DE EDIÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE IA (Timeline e EstÃƒÆ’Ã‚Âºdio)] (Data: 08/06/2026)
 
 
 
-AlÃƒÂ©m da interface Gacha e do Motor Central, as ferramentas prÃƒÂ¡ticas de ediÃƒÂ§ÃƒÂ£o que o usuÃƒÂ¡rio usa no dia a dia seguem o padrÃƒÂ£o de IA generativa prÃƒÂ¡tica e rÃƒÂ¡pida:
+AlÃƒÆ’Ã‚Â©m da interface Gacha e do Motor Central, as ferramentas prÃƒÆ’Ã‚Â¡ticas de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o que o usuÃƒÆ’Ã‚Â¡rio usa no dia a dia seguem o padrÃƒÆ’Ã‚Â£o de IA generativa prÃƒÆ’Ã‚Â¡tica e rÃƒÆ’Ã‚Â¡pida:
 
 
 
 **1. Editor de Imagem IA (Estilo Inpainting):**
 
-- Ferramenta prÃƒÂ¡tica inspirada em Flux Complete / Photoshop AI.
+- Ferramenta prÃƒÆ’Ã‚Â¡tica inspirada em Flux Complete / Photoshop AI.
 
-- O usuÃƒÂ¡rio seleciona uma ÃƒÂ¡rea da imagem (mÃƒÂ¡scara) e manda a IA substituir ou sobrepor elementos na hora, sem a complexidade de um Photoshop nativo.
+- O usuÃƒÆ’Ã‚Â¡rio seleciona uma ÃƒÆ’Ã‚Â¡rea da imagem (mÃƒÆ’Ã‚Â¡scara) e manda a IA substituir ou sobrepor elementos na hora, sem a complexidade de um Photoshop nativo.
 
 
 
@@ -1132,99 +1154,99 @@ AlÃƒÂ©m da interface Gacha e do Motor Central, as ferramentas prÃƒÂ¡tica
 
 - Um bloco de notas integrado (Chassi) focado 100% em escrita.
 
-- O usuÃƒÂ¡rio pode pedir para a IA escrever, editar, traduzir ou deletar textos em tempo real. Os textos gerados podem ser enviados para a parte inferior do vÃƒÂ­deo ou transformados em arquivos novos.
+- O usuÃƒÆ’Ã‚Â¡rio pode pedir para a IA escrever, editar, traduzir ou deletar textos em tempo real. Os textos gerados podem ser enviados para a parte inferior do vÃƒÆ’Ã‚Â­deo ou transformados em arquivos novos.
 
 
 
-**3. Tratamento de Ã¯Â¿Â½udio com IA:**
+**3. Tratamento de ÃƒÂ¯Ã‚Â¿Ã‚Â½udio com IA:**
 
-- Sistema inteligente capaz de realizar "corte automÃƒÂ¡tico de silÃƒÂªncios" (Silence Remover).
+- Sistema inteligente capaz de realizar "corte automÃƒÆ’Ã‚Â¡tico de silÃƒÆ’Ã‚Âªncios" (Silence Remover).
 
-- Tratamento automÃƒÂ¡tico de ÃƒÂ¡ÃƒÂ¡udio e geraÃƒÂ§ÃƒÂ£o de mÃƒÂºsica por IA integrados na timeline, com capacidade de recortar e deletar.
+- Tratamento automÃƒÆ’Ã‚Â¡tico de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio e geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de mÃƒÆ’Ã‚Âºsica por IA integrados na timeline, com capacidade de recortar e deletar.
 
 
 
-**4. O Fluxo de ExportaÃƒÂ§ÃƒÂ£o (RetroalimentaÃƒÂ§ÃƒÂ£o):**
+**4. O Fluxo de ExportaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (RetroalimentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):**
 
-- Sempre que qualquer material for exportado ou finalizado (um ÃƒÂ¡ÃƒÂ¡udio tratado, uma imagem com inpainting, um texto), o arquivo resultante volta automaticamente para a **Ã¯Â¿Â½rea de Bagagem (TransferÃƒÂªncia)**, com botÃƒÂ£o disponÃƒÂ­vel para Download na mÃƒÂ¡quina do usuÃƒÂ¡rio.
+- Sempre que qualquer material for exportado ou finalizado (um ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio tratado, uma imagem com inpainting, um texto), o arquivo resultante volta automaticamente para a **ÃƒÂ¯Ã‚Â¿Ã‚Â½rea de Bagagem (TransferÃƒÆ’Ã‚Âªncia)**, com botÃƒÆ’Ã‚Â£o disponÃƒÆ’Ã‚Â­vel para Download na mÃƒÆ’Ã‚Â¡quina do usuÃƒÆ’Ã‚Â¡rio.
 
 
 
 ---
 
-## [ATUALIZAÃƒâ€¡ÃƒÆ’O DE INFRAESTRUTURA - PULO DO GATO 2.0] (Data: 08/06/2026)
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE INFRAESTRUTURA - PULO DO GATO 2.0] (Data: 08/06/2026)
 
 
 
 **O Pulo do Gato 2.0 (Smart Cache TTL):**
 
-- O custo do Storage na Lightning AI ÃƒÂ© muito barato (aprox. .10 a .15 por GB/mÃƒÂªs). Deletar os modelos a cada geraÃƒÂ§ÃƒÂ£o destrÃƒÂ³i a UX por forÃƒÂ§ar downloads repetidos.
+- O custo do Storage na Lightning AI ÃƒÆ’Ã‚Â© muito barato (aprox. .10 a .15 por GB/mÃƒÆ’Ã‚Âªs). Deletar os modelos a cada geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o destrÃƒÆ’Ã‚Â³i a UX por forÃƒÆ’Ã‚Â§ar downloads repetidos.
 
-- A **VRAM** continua sendo limpa imediatamente apÃƒÂ³s cada geraÃƒÂ§ÃƒÂ£o para evitar travamentos de OOM.
+- A **VRAM** continua sendo limpa imediatamente apÃƒÆ’Ã‚Â³s cada geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para evitar travamentos de OOM.
 
-- O **Disco RÃƒÂ­gido (SSD / HuggingFace Cache)** passou a usar o modelo *Smart Cache TTL*. Um Faxineiro (Rotina AssÃƒÂ­ncrona no FastAPI) roda no servidor a cada 4 horas e apaga os arquivos fÃƒÂ­sicos. Isso reduz a fatura de Storage a centavos por dia, mas garante que requisiÃƒÂ§ÃƒÂµes em curtos perÃƒÂ­odos de tempo recebam os modelos de forma instantÃƒÂ¢nea.
+- O **Disco RÃƒÆ’Ã‚Â­gido (SSD / HuggingFace Cache)** passou a usar o modelo *Smart Cache TTL*. Um Faxineiro (Rotina AssÃƒÆ’Ã‚Â­ncrona no FastAPI) roda no servidor a cada 4 horas e apaga os arquivos fÃƒÆ’Ã‚Â­sicos. Isso reduz a fatura de Storage a centavos por dia, mas garante que requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes em curtos perÃƒÆ’Ã‚Â­odos de tempo recebam os modelos de forma instantÃƒÆ’Ã‚Â¢nea.
 
 
 
 ---
 
-## [ATUALIZAÃƒâ€¡ÃƒÆ’O DE INFRAESTRUTURA - PULO DO GATO 3.0 E ROTEAMENTO] (Data: 08/06/2026)
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE INFRAESTRUTURA - PULO DO GATO 3.0 E ROTEAMENTO] (Data: 08/06/2026)
 
 
 
 **1. O Cacheiro (TTL Granular e Independente):**
 
-- Apagar o HD cegamente a cada X horas prejudica modelos baixados nos ÃƒÂºltimos minutos. O **Pulo do Gato 3.0** evoluiu para um Garbage Collector com vidas independentes.
+- Apagar o HD cegamente a cada X horas prejudica modelos baixados nos ÃƒÆ’Ã‚Âºltimos minutos. O **Pulo do Gato 3.0** evoluiu para um Garbage Collector com vidas independentes.
 
-- A mÃƒÂ¡quina cria um Registro de Acesso (DicionÃƒÂ¡rio RAM). Toda vez que um modelo (ex: Flux, Lora, Qwen) ÃƒÂ© usado, seu "cronÃƒÂ´metro de validade" reseta para **6 horas** (parÃƒÂ¢metro mutÃƒÂ¡vel pelo Admin).
+- A mÃƒÆ’Ã‚Â¡quina cria um Registro de Acesso (DicionÃƒÆ’Ã‚Â¡rio RAM). Toda vez que um modelo (ex: Flux, Lora, Qwen) ÃƒÆ’Ã‚Â© usado, seu "cronÃƒÆ’Ã‚Â´metro de validade" reseta para **6 horas** (parÃƒÆ’Ã‚Â¢metro mutÃƒÆ’Ã‚Â¡vel pelo Admin).
 
-- Um *Faxineiro Scanner* roda a cada hora, varre a lista, e deleta **exclusivamente a pasta local (HuggingFace Cache)** do arquivo que venceu o prazo, mantendo modelos ativos seguros no HD e a fatura de Storage microscÃƒÂ³pica.
+- Um *Faxineiro Scanner* roda a cada hora, varre a lista, e deleta **exclusivamente a pasta local (HuggingFace Cache)** do arquivo que venceu o prazo, mantendo modelos ativos seguros no HD e a fatura de Storage microscÃƒÆ’Ã‚Â³pica.
 
 
 
 **2. O Maestro do Fluxo (Load Balancing com Afinidade de Rota):**
 
-- Para mÃƒÂ¡xima otimizaÃƒÂ§ÃƒÂ£o e evitar redundÃƒÂ¢ncia, o Servidor Principal (Apollo Studio/Admin) atuarÃƒÂ¡ como o **Maestro**.
+- Para mÃƒÆ’Ã‚Â¡xima otimizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e evitar redundÃƒÆ’Ã‚Â¢ncia, o Servidor Principal (Apollo Studio/Admin) atuarÃƒÆ’Ã‚Â¡ como o **Maestro**.
 
-- O Maestro possui consciÃƒÂªncia global do que estÃƒÂ¡ cacheado em cada HD/Conta da Lightning AI.
+- O Maestro possui consciÃƒÆ’Ã‚Âªncia global do que estÃƒÆ’Ã‚Â¡ cacheado em cada HD/Conta da Lightning AI.
 
-- Se a *MÃƒÂ¡quina 1* tem o modelo 'Flux' vivo no Cache, toda nova solicitaÃƒÂ§ÃƒÂ£o de 'Flux' serÃƒÂ¡ magicamente roteada para a *MÃƒÂ¡quina 1* atÃƒÂ© esgotar seus crÃƒÂ©ditos de uso/conta.
+- Se a *MÃƒÆ’Ã‚Â¡quina 1* tem o modelo 'Flux' vivo no Cache, toda nova solicitaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de 'Flux' serÃƒÆ’Ã‚Â¡ magicamente roteada para a *MÃƒÆ’Ã‚Â¡quina 1* atÃƒÆ’Ã‚Â© esgotar seus crÃƒÆ’Ã‚Â©ditos de uso/conta.
 
-- Essa "Afinidade de Rota" isola as demandas e zera o tempo de download, provendo velocidade ultra-rÃƒÂ¡pida sem inchar mÃƒÂºltiplas mÃƒÂ¡quinas com o mesmo arquivo de 25GB.
+- Essa "Afinidade de Rota" isola as demandas e zera o tempo de download, provendo velocidade ultra-rÃƒÆ’Ã‚Â¡pida sem inchar mÃƒÆ’Ã‚Âºltiplas mÃƒÆ’Ã‚Â¡quinas com o mesmo arquivo de 25GB.
 
 
 
 ---
 
-## [ARQUITETURA DE ESCALONAMENTO E RESILIÃƒÅ NCIA (BIG TECH PATTERNS)] (Data: 08/06/2026)
+## [ARQUITETURA DE ESCALONAMENTO E RESILIÃƒÆ’Ã…Â NCIA (BIG TECH PATTERNS)] (Data: 08/06/2026)
 
 
 
-Para que a plataforma suporte picos de trÃƒÂ¡fego (viralizaÃƒÂ§ÃƒÂ£o) sem travar o Servidor Principal (Maestro) e sem perder dinheiro, as 4 estratÃƒÂ©gias a seguir sÃƒÂ£o mandatÃƒÂ³rias na evoluÃƒÂ§ÃƒÂ£o do Back-end:
+Para que a plataforma suporte picos de trÃƒÆ’Ã‚Â¡fego (viralizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) sem travar o Servidor Principal (Maestro) e sem perder dinheiro, as 4 estratÃƒÆ’Ã‚Â©gias a seguir sÃƒÆ’Ã‚Â£o mandatÃƒÆ’Ã‚Â³rias na evoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Back-end:
 
 
 
-**1. O PadrÃƒÂ£o "Circuit Breaker" (O Disjuntor):**
+**1. O PadrÃƒÆ’Ã‚Â£o "Circuit Breaker" (O Disjuntor):**
 
-Se uma mÃƒÂ¡quina escrava (Lightning) ou API externa cair, o Maestro desarma a rota para ela instantaneamente. O usuÃƒÂ¡rio recebe um aviso ("Fornalha esfriando") em vez de ficar com a tela congelada aguardando um timeout, protegendo a estabilidade do site.
+Se uma mÃƒÆ’Ã‚Â¡quina escrava (Lightning) ou API externa cair, o Maestro desarma a rota para ela instantaneamente. O usuÃƒÆ’Ã‚Â¡rio recebe um aviso ("Fornalha esfriando") em vez de ficar com a tela congelada aguardando um timeout, protegendo a estabilidade do site.
 
 
 
-**2. ComunicaÃƒÂ§ÃƒÂ£o AssÃƒÂ­ncrona (Webhooks):**
+**2. ComunicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AssÃƒÆ’Ã‚Â­ncrona (Webhooks):**
 
-O Servidor Principal nÃƒÂ£o pode ficar aguardando de porta aberta enquanto um vÃƒÂ­deo de 3 minutos ÃƒÂ© gerado. A arquitetura deve ser assÃƒÂ­ncrona: O cliente faz o pedido -> O servidor anota e fecha a conexÃƒÂ£o -> A mÃƒÂ¡quina Lightning gera o vÃƒÂ­deo -> A mÃƒÂ¡quina Lightning faz uma chamada (Webhook) avisando o Maestro que terminou -> O Maestro notifica o usuÃƒÂ¡rio.
+O Servidor Principal nÃƒÆ’Ã‚Â£o pode ficar aguardando de porta aberta enquanto um vÃƒÆ’Ã‚Â­deo de 3 minutos ÃƒÆ’Ã‚Â© gerado. A arquitetura deve ser assÃƒÆ’Ã‚Â­ncrona: O cliente faz o pedido -> O servidor anota e fecha a conexÃƒÆ’Ã‚Â£o -> A mÃƒÆ’Ã‚Â¡quina Lightning gera o vÃƒÆ’Ã‚Â­deo -> A mÃƒÆ’Ã‚Â¡quina Lightning faz uma chamada (Webhook) avisando o Maestro que terminou -> O Maestro notifica o usuÃƒÆ’Ã‚Â¡rio.
 
 
 
 **3. Dead Letter Queue (Fila de Cartas Mortas / UTI):**
 
-Se uma geraÃƒÂ§ÃƒÂ£o falhar mÃƒÂºltiplas vezes (ex: falha de GPU ou prompt quebrado), a requisiÃƒÂ§ÃƒÂ£o nÃƒÂ£o some. Ela ÃƒÂ© enviada para uma "UTI" (Dead Letter Queue) que aciona o Bot do WhatsApp do Admin. O Admin decide se devolve os cristais do usuÃƒÂ¡rio ou conserta o erro, garantindo 0% de atrito no suporte.
+Se uma geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o falhar mÃƒÆ’Ã‚Âºltiplas vezes (ex: falha de GPU ou prompt quebrado), a requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o nÃƒÆ’Ã‚Â£o some. Ela ÃƒÆ’Ã‚Â© enviada para uma "UTI" (Dead Letter Queue) que aciona o Bot do WhatsApp do Admin. O Admin decide se devolve os cristais do usuÃƒÆ’Ã‚Â¡rio ou conserta o erro, garantindo 0% de atrito no suporte.
 
 
 
 **4. "Cold Start" Preditivo (Auto-Scaling Inteligente):**
 
-Ligar uma mÃƒÂ¡quina de IA leva ~2 minutos. O Maestro monitorarÃƒÂ¡ a aceleraÃƒÂ§ÃƒÂ£o da fila de espera. AÃƒÂ§ÃƒÂ£o perceber que o trÃƒÂ¡fego estÃƒÂ¡ subindo e a MÃƒÂ¡quina 1 atingirÃƒÂ¡ 70% de carga, o Maestro enviarÃƒÂ¡ o comando de Boot para a MÃƒÂ¡quina 2 preventivamente, absorvendo o pico sem impacto na UX.
+Ligar uma mÃƒÆ’Ã‚Â¡quina de IA leva ~2 minutos. O Maestro monitorarÃƒÆ’Ã‚Â¡ a aceleraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da fila de espera. AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o perceber que o trÃƒÆ’Ã‚Â¡fego estÃƒÆ’Ã‚Â¡ subindo e a MÃƒÆ’Ã‚Â¡quina 1 atingirÃƒÆ’Ã‚Â¡ 70% de carga, o Maestro enviarÃƒÆ’Ã‚Â¡ o comando de Boot para a MÃƒÆ’Ã‚Â¡quina 2 preventivamente, absorvendo o pico sem impacto na UX.
 
 
 
@@ -1234,21 +1256,21 @@ Ligar uma mÃƒÂ¡quina de IA leva ~2 minutos. O Maestro monitorarÃƒÂ¡ a ac
 
 ## [ARQUITETURA FINAL DO SISTEMA DE AGENTES] (Data: 08/06/2026)
 
-*(IntegraÃƒÂ§ÃƒÂ£o com Lightning AI)*
+*(IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com Lightning AI)*
 
 
 
-O sistema de IAs visÃƒÂ­veis ao usuÃƒÂ¡rio final ÃƒÂ© dividido em trÃƒÂªs camadas distintas, criando um ecossistema estilo "AgÃƒÂªncia de Publicidade":
+O sistema de IAs visÃƒÆ’Ã‚Â­veis ao usuÃƒÆ’Ã‚Â¡rio final ÃƒÆ’Ã‚Â© dividido em trÃƒÆ’Ã‚Âªs camadas distintas, criando um ecossistema estilo "AgÃƒÆ’Ã‚Âªncia de Publicidade":
 
 
 
 **1. O Fantasma Omnipresente (Agente de Suporte):**
 
-- Ãƒâ€° o robÃƒÂ´ da plataforma Apollo.
+- ÃƒÆ’Ã¢â‚¬Â° o robÃƒÆ’Ã‚Â´ da plataforma Apollo.
 
-- Atua no WhatsApp, flutua no site, tira dÃƒÂºvidas e auxilia as vendas/rotinas do sistema.
+- Atua no WhatsApp, flutua no site, tira dÃƒÆ’Ã‚Âºvidas e auxilia as vendas/rotinas do sistema.
 
-- MantÃƒÂ©m contexto global de onde o usuÃƒÂ¡rio estÃƒÂ¡ navegando.
+- MantÃƒÆ’Ã‚Â©m contexto global de onde o usuÃƒÆ’Ã‚Â¡rio estÃƒÆ’Ã‚Â¡ navegando.
 
 
 
@@ -1256,85 +1278,85 @@ O sistema de IAs visÃƒÂ­veis ao usuÃƒÂ¡rio final ÃƒÂ© dividido em tr
 
 - Interface estilo ChatGPT/Gemini dentro do Apollo.
 
-- O usuÃƒÂ¡rio escolhe o modelo (Claude, GPT, Gemini) e conversa.
+- O usuÃƒÆ’Ã‚Â¡rio escolhe o modelo (Claude, GPT, Gemini) e conversa.
 
-- Conta com recurso de "Projetos" (pastas com contextos especÃƒÂ­ficos).
+- Conta com recurso de "Projetos" (pastas com contextos especÃƒÆ’Ã‚Â­ficos).
 
-- MonetizaÃƒÂ§ÃƒÂ£o: O usuÃƒÂ¡rio paga via "Gasolina" fracionada por cada mensagem baseada no custo do modelo.
+- MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: O usuÃƒÆ’Ã‚Â¡rio paga via "Gasolina" fracionada por cada mensagem baseada no custo do modelo.
 
 
 
-**3. O Copiloto Personalizado (O "FuncionÃƒÂ¡rio" do Cliente):**
+**3. O Copiloto Personalizado (O "FuncionÃƒÆ’Ã‚Â¡rio" do Cliente):**
 
-- O usuÃƒÂ¡rio cria seu prÃƒÂ³prio Roteirista/Agente (DÃƒÂ¡ nome, foto, personalidade, nicho).
+- O usuÃƒÆ’Ã‚Â¡rio cria seu prÃƒÆ’Ã‚Â³prio Roteirista/Agente (DÃƒÆ’Ã‚Â¡ nome, foto, personalidade, nicho).
 
-- Ele escolhe o "CÃƒÂ©rebro" (ex: GPT 3.5 Turbo).
+- Ele escolhe o "CÃƒÆ’Ã‚Â©rebro" (ex: GPT 3.5 Turbo).
 
-- Na hora de gerar o VÃƒÂ­deo Automatizado, ele seleciona este funcionÃƒÂ¡rio. O funcionÃƒÂ¡rio gera o roteiro e joga para a esteira da fÃƒÂ¡brica Apollo (que roda no background usando os modelos de Custo-BenefÃƒÂ­cio como Nemotron para as tarefas pesadas).
+- Na hora de gerar o VÃƒÆ’Ã‚Â­deo Automatizado, ele seleciona este funcionÃƒÆ’Ã‚Â¡rio. O funcionÃƒÆ’Ã‚Â¡rio gera o roteiro e joga para a esteira da fÃƒÆ’Ã‚Â¡brica Apollo (que roda no background usando os modelos de Custo-BenefÃƒÆ’Ã‚Â­cio como Nemotron para as tarefas pesadas).
 
-- MonetizaÃƒÂ§ÃƒÂ£o: Cobra-se o valor de Cristais referente ao modelo escolhido pelo cliente.
+- MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: Cobra-se o valor de Cristais referente ao modelo escolhido pelo cliente.
 
 
 
 ---
 
-## [REFINAMENTO DOS COPILOTOS ESTILO "GEMS" E INTEGRAÃƒâ€¡ÃƒÆ’O AO SWARM] (Data: 08/06/2026)
+## [REFINAMENTO DOS COPILOTOS ESTILO "GEMS" E INTEGRAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O AO SWARM] (Data: 08/06/2026)
 
 *(Baseado no fluxo Gemini Gems/Custom GPTs)*
 
 
 
-A visÃƒÂ£o de construÃƒÂ§ÃƒÂ£o do **Copiloto Roteirista** foi aprofundada para espelhar e superar sistemas como os "Gems" do Google:
+A visÃƒÆ’Ã‚Â£o de construÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do **Copiloto Roteirista** foi aprofundada para espelhar e superar sistemas como os "Gems" do Google:
 
 
 
-**1. A CriaÃƒÂ§ÃƒÂ£o do Copiloto (O "Gem" do Apollo):**
+**1. A CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Copiloto (O "Gem" do Apollo):**
 
-- O usuÃƒÂ¡rio nÃƒÂ£o apenas dÃƒÂ¡ um nome e um modelo de IA. Ele fornece a **"Alma"** do roteirista.
+- O usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o apenas dÃƒÆ’Ã‚Â¡ um nome e um modelo de IA. Ele fornece a **"Alma"** do roteirista.
 
-- **Base de Conhecimento:** O usuÃƒÂ¡rio faz upload de arquivos de texto, roteiros antigos, referÃƒÂªncias de estilo. O sistema cria um resumo/RAG (Retrieval-Augmented Generation) para nÃƒÂ£o encarecer muito o input, mantendo o tom de voz do canal.
+- **Base de Conhecimento:** O usuÃƒÆ’Ã‚Â¡rio faz upload de arquivos de texto, roteiros antigos, referÃƒÆ’Ã‚Âªncias de estilo. O sistema cria um resumo/RAG (Retrieval-Augmented Generation) para nÃƒÆ’Ã‚Â£o encarecer muito o input, mantendo o tom de voz do canal.
 
-- **Identidade Visual:** A plataforma aciona uma IA de Imagem para gerar o "Rosto" (avatar) desse roteirista, dando vida ao funcionÃƒÂ¡rio.
+- **Identidade Visual:** A plataforma aciona uma IA de Imagem para gerar o "Rosto" (avatar) desse roteirista, dando vida ao funcionÃƒÆ’Ã‚Â¡rio.
 
-- **Canal EspecÃƒÂ­fico:** O usuÃƒÂ¡rio pode criar um Copiloto focado apenas em Shorts de Curiosidades, e outro focado apenas em VÃƒÂ­deos Longos de Terror.
+- **Canal EspecÃƒÆ’Ã‚Â­fico:** O usuÃƒÆ’Ã‚Â¡rio pode criar um Copiloto focado apenas em Shorts de Curiosidades, e outro focado apenas em VÃƒÆ’Ã‚Â­deos Longos de Terror.
 
 
 
-**2. O Fluxo de MÃƒÂ£o de Obra (Copiloto -> Swarm):**
+**2. O Fluxo de MÃƒÆ’Ã‚Â£o de Obra (Copiloto -> Swarm):**
 
-Quando o usuÃƒÂ¡rio aciona esse Copiloto na "GeraÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica":
+Quando o usuÃƒÆ’Ã‚Â¡rio aciona esse Copiloto na "GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica":
 
-- O Copiloto (usando o cÃƒÂ©rebro premium escolhido pelo cliente, ex: GPT 3.5) recebe o orÃƒÂ§amento/receita e **Escreve o Roteiro Mestre**.
+- O Copiloto (usando o cÃƒÆ’Ã‚Â©rebro premium escolhido pelo cliente, ex: GPT 3.5) recebe o orÃƒÆ’Ã‚Â§amento/receita e **Escreve o Roteiro Mestre**.
 
-- *(Opcional/Aprovado)*: Um Agente Gerente Interno (Nemotron) revisa o roteiro para garantir a formataÃƒÂ§ÃƒÂ£o correta.
+- *(Opcional/Aprovado)*: Um Agente Gerente Interno (Nemotron) revisa o roteiro para garantir a formataÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o correta.
 
-- O Roteiro Mestre cai no **Triturador do Swarm**: As formigas operÃƒÂ¡rias (modelos de altÃƒÂ­ssimo custo-benefÃƒÂ­cio que rodam ocultas) pegam pedaÃƒÂ§os especÃƒÂ­ficos:
+- O Roteiro Mestre cai no **Triturador do Swarm**: As formigas operÃƒÆ’Ã‚Â¡rias (modelos de altÃƒÆ’Ã‚Â­ssimo custo-benefÃƒÆ’Ã‚Â­cio que rodam ocultas) pegam pedaÃƒÆ’Ã‚Â§os especÃƒÆ’Ã‚Â­ficos:
 
    - Formiga 1: Extrai os prompts de imagem.
 
    - Formiga 2: Prepara o texto pro TTS (tirando emojis, arrumando pausas).
 
-   - Formiga 3: Define parÃƒÂ¢metros de template/movimento.
+   - Formiga 3: Define parÃƒÆ’Ã‚Â¢metros de template/movimento.
 
-- Um **Agente Revisor Final** recolhe as peÃƒÂ§as das formigas, monta os arquivos finais (JSON/Templates) e manda para o processador de vÃƒÂ­deo.
+- Um **Agente Revisor Final** recolhe as peÃƒÆ’Ã‚Â§as das formigas, monta os arquivos finais (JSON/Templates) e manda para o processador de vÃƒÆ’Ã‚Â­deo.
 
 
 
 **3. O Uso Livre na "Aba de IA":**
 
-- O usuÃƒÂ¡rio pode simplesmente abrir um chat com o Copiloto treinado para ficar apenas batendo papo ou refinando ideias soltas (sem ir pra esteira de vÃƒÂ­deo).
+- O usuÃƒÆ’Ã‚Â¡rio pode simplesmente abrir um chat com o Copiloto treinado para ficar apenas batendo papo ou refinando ideias soltas (sem ir pra esteira de vÃƒÆ’Ã‚Â­deo).
 
-- Os custos de IA de Texto (gasolina) serÃƒÂ£o calculados em fraÃƒÂ§ÃƒÂµes baseadas nos tokens. Como os modelos suportam grandes volumes de tokens (milhÃƒÂµes), um ÃƒÂºnico "cristal/gasolina" pode render milhares de interaÃƒÂ§ÃƒÂµes, mantendo o usuÃƒÂ¡rio engajado no site de forma sustentÃƒÂ¡vel e altamente rentÃƒÂ¡vel.
+- Os custos de IA de Texto (gasolina) serÃƒÆ’Ã‚Â£o calculados em fraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes baseadas nos tokens. Como os modelos suportam grandes volumes de tokens (milhÃƒÆ’Ã‚Âµes), um ÃƒÆ’Ã‚Âºnico "cristal/gasolina" pode render milhares de interaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes, mantendo o usuÃƒÆ’Ã‚Â¡rio engajado no site de forma sustentÃƒÆ’Ã‚Â¡vel e altamente rentÃƒÆ’Ã‚Â¡vel.
 
 
 
-**4. A ConsciÃƒÂªncia do Agente Central (Cross-Agent Awareness):**
+**4. A ConsciÃƒÆ’Ã‚Âªncia do Agente Central (Cross-Agent Awareness):**
 
-- O Agente Central (Suporte/Fantasma) **NÃƒÆ’O** ÃƒÂ© o Roteirista (Copiloto) do usuÃƒÂ¡rio. Eles sÃƒÂ£o entidades separadas.
+- O Agente Central (Suporte/Fantasma) **NÃƒÆ’Ã†â€™O** ÃƒÆ’Ã‚Â© o Roteirista (Copiloto) do usuÃƒÆ’Ã‚Â¡rio. Eles sÃƒÆ’Ã‚Â£o entidades separadas.
 
-- PorÃƒÂ©m, o Agente Central possui "Leitura de Perfil". Ele consegue ler os dados, o nicho e as configuraÃƒÂ§ÃƒÂµes do Copiloto que o usuÃƒÂ¡rio criou.
+- PorÃƒÆ’Ã‚Â©m, o Agente Central possui "Leitura de Perfil". Ele consegue ler os dados, o nicho e as configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes do Copiloto que o usuÃƒÆ’Ã‚Â¡rio criou.
 
-- **Vantagem:** Quando o usuÃƒÂ¡rio pede ajuda no suporte (ou no WhatsApp), o Agente Central responde com base no contexto do projeto do usuÃƒÂ¡rio. Se o usuÃƒÂ¡rio criou um Copiloto focado em vÃƒÂ­deos de finanÃƒÂ§as, o Agente Central jÃƒÂ¡ sabe disso e adapta suas respostas e sugestÃƒÂµes de orÃƒÂ§amento para o nicho de finanÃƒÂ§as. Ãƒâ€° uma inteligÃƒÂªncia integrada que gera proximidade.
+- **Vantagem:** Quando o usuÃƒÆ’Ã‚Â¡rio pede ajuda no suporte (ou no WhatsApp), o Agente Central responde com base no contexto do projeto do usuÃƒÆ’Ã‚Â¡rio. Se o usuÃƒÆ’Ã‚Â¡rio criou um Copiloto focado em vÃƒÆ’Ã‚Â­deos de finanÃƒÆ’Ã‚Â§as, o Agente Central jÃƒÆ’Ã‚Â¡ sabe disso e adapta suas respostas e sugestÃƒÆ’Ã‚Âµes de orÃƒÆ’Ã‚Â§amento para o nicho de finanÃƒÆ’Ã‚Â§as. ÃƒÆ’Ã¢â‚¬Â° uma inteligÃƒÆ’Ã‚Âªncia integrada que gera proximidade.
 
 
 
@@ -1344,35 +1366,35 @@ Quando o usuÃƒÂ¡rio aciona esse Copiloto na "GeraÃƒÂ§ÃƒÂ£o AutomÃƒ
 
 
 
-A evoluÃƒÂ§ÃƒÂ£o final do **Agente Central (O Fantasma)** o transforma em um verdadeiro "CEO" da operaÃƒÂ§ÃƒÂ£o do cliente. Ele nÃƒÂ£o apenas ajuda a operar a plataforma, mas atua como um hub de inteligÃƒÂªncia estratÃƒÂ©gica.
+A evoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o final do **Agente Central (O Fantasma)** o transforma em um verdadeiro "CEO" da operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do cliente. Ele nÃƒÆ’Ã‚Â£o apenas ajuda a operar a plataforma, mas atua como um hub de inteligÃƒÆ’Ã‚Âªncia estratÃƒÆ’Ã‚Â©gica.
 
 
 
 **1. O Paradigma de Subagentes Especialistas (Consultoria):**
 
-- O Agente Central possui sua prÃƒÂ³pria rede de "Subagentes Analistas" sob demanda.
+- O Agente Central possui sua prÃƒÆ’Ã‚Â³pria rede de "Subagentes Analistas" sob demanda.
 
-- Estes Subagentes sÃƒÂ£o prÃƒÂ©-treinados pela plataforma (Apollo) em ÃƒÂ¡reas especÃƒÂ­ficas: Especialista em Algoritmo do TikTok, Especialista em Thumbnails, Analista de Dados Financeiros de Canal, Especialista em Copywriting de YouTube.
+- Estes Subagentes sÃƒÆ’Ã‚Â£o prÃƒÆ’Ã‚Â©-treinados pela plataforma (Apollo) em ÃƒÆ’Ã‚Â¡reas especÃƒÆ’Ã‚Â­ficas: Especialista em Algoritmo do TikTok, Especialista em Thumbnails, Analista de Dados Financeiros de Canal, Especialista em Copywriting de YouTube.
 
-- **Funcionamento:** O usuÃƒÂ¡rio no WhatsApp pergunta "Por que meu canal parou de crescer?". O Agente Central encaminha os dados para o *Especialista de Dados*, recebe o diagnÃƒÂ³stico, e responde ao usuÃƒÂ¡rio: *"Eu consultei nosso especialista em mÃƒÂ©tricas, e ele notou que a retenÃƒÂ§ÃƒÂ£o cai nos primeiros 10 segundos..."*. 
+- **Funcionamento:** O usuÃƒÆ’Ã‚Â¡rio no WhatsApp pergunta "Por que meu canal parou de crescer?". O Agente Central encaminha os dados para o *Especialista de Dados*, recebe o diagnÃƒÆ’Ã‚Â³stico, e responde ao usuÃƒÆ’Ã‚Â¡rio: *"Eu consultei nosso especialista em mÃƒÆ’Ã‚Â©tricas, e ele notou que a retenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o cai nos primeiros 10 segundos..."*. 
 
-- O usuÃƒÂ¡rio **nÃƒÂ£o** precisa abrir um chat separado. O Agente Central ÃƒÂ© a ÃƒÂºnica interface necessÃƒÂ¡ria.
-
-
-
-**2. IntegraÃƒÂ§ÃƒÂ£o Universal de Fontes de CriaÃƒÂ§ÃƒÂ£o:**
-
-- Qualquer coisa gerada no WhatsApp ou no Chat de IA pode ser enviada com um botÃƒÂ£o direto para a "Esteira de GeraÃƒÂ§ÃƒÂ£o de VÃƒÂ­deo Automatizado".
-
-- Assim como uma aba de "NotÃƒÂ­cias" alimenta o gerador, o prÃƒÂ³prio Chat do WhatsApp se torna um gatilho de criaÃƒÂ§ÃƒÂ£o: o usuÃƒÂ¡rio aprova o roteiro pelo WhatsApp e o vÃƒÂ­deo comeÃƒÂ§a a renderizar no site.
+- O usuÃƒÆ’Ã‚Â¡rio **nÃƒÆ’Ã‚Â£o** precisa abrir um chat separado. O Agente Central ÃƒÆ’Ã‚Â© a ÃƒÆ’Ã‚Âºnica interface necessÃƒÆ’Ã‚Â¡ria.
 
 
 
-**3. Modelo de MonetizaÃƒÂ§ÃƒÂ£o (Up-Sell):**
+**2. IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Universal de Fontes de CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:**
 
-- Esta camada de Consultoria 24h transforma a plataforma de um "Software de GeraÃƒÂ§ÃƒÂ£o de VÃƒÂ­deos" para uma **"AgÃƒÂªncia de Marketing no Bolso"**.
+- Qualquer coisa gerada no WhatsApp ou no Chat de IA pode ser enviada com um botÃƒÆ’Ã‚Â£o direto para a "Esteira de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de VÃƒÆ’Ã‚Â­deo Automatizado".
 
-- Ãƒâ€° o gatilho perfeito para um *Plano Premium ou Assinatura High-Ticket*, justificando mensalidades muito mais altas (pois substitui funcionÃƒÂ¡rios reais de mentoria e anÃƒÂ¡lise de mÃƒÂ©tricas).
+- Assim como uma aba de "NotÃƒÆ’Ã‚Â­cias" alimenta o gerador, o prÃƒÆ’Ã‚Â³prio Chat do WhatsApp se torna um gatilho de criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: o usuÃƒÆ’Ã‚Â¡rio aprova o roteiro pelo WhatsApp e o vÃƒÆ’Ã‚Â­deo comeÃƒÆ’Ã‚Â§a a renderizar no site.
+
+
+
+**3. Modelo de MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Up-Sell):**
+
+- Esta camada de Consultoria 24h transforma a plataforma de um "Software de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de VÃƒÆ’Ã‚Â­deos" para uma **"AgÃƒÆ’Ã‚Âªncia de Marketing no Bolso"**.
+
+- ÃƒÆ’Ã¢â‚¬Â° o gatilho perfeito para um *Plano Premium ou Assinatura High-Ticket*, justificando mensalidades muito mais altas (pois substitui funcionÃƒÆ’Ã‚Â¡rios reais de mentoria e anÃƒÆ’Ã‚Â¡lise de mÃƒÆ’Ã‚Â©tricas).
 
 
 
@@ -1382,651 +1404,651 @@ A evoluÃƒÂ§ÃƒÂ£o final do **Agente Central (O Fantasma)** o transforma e
 
 
 
-Ficou estabelecida a diferenÃƒÂ§a monumental entre o Apollo e ferramentas de mercado como VidIQ ou "Ask YouTube":
+Ficou estabelecida a diferenÃƒÆ’Ã‚Â§a monumental entre o Apollo e ferramentas de mercado como VidIQ ou "Ask YouTube":
 
 
 
-**O PadrÃƒÂ£o da IndÃƒÂºstria (IA Passiva):**
+**O PadrÃƒÆ’Ã‚Â£o da IndÃƒÆ’Ã‚Âºstria (IA Passiva):**
 
-- LÃƒÂª os dados e cospe uma resposta fria: *"Seu vÃƒÂ­deo foi mal. FaÃƒÂ§a um vÃƒÂ­deo sobre o assunto X."*
+- LÃƒÆ’Ã‚Âª os dados e cospe uma resposta fria: *"Seu vÃƒÆ’Ã‚Â­deo foi mal. FaÃƒÆ’Ã‚Â§a um vÃƒÆ’Ã‚Â­deo sobre o assunto X."*
 
-- O problema continua com o usuÃƒÂ¡rio: ele ainda precisa de tempo e esforÃƒÂ§o para roteirizar, gravar e editar o vÃƒÂ­deo sugerido.
+- O problema continua com o usuÃƒÆ’Ã‚Â¡rio: ele ainda precisa de tempo e esforÃƒÆ’Ã‚Â§o para roteirizar, gravar e editar o vÃƒÆ’Ã‚Â­deo sugerido.
 
 
 
-**A RevoluÃƒÂ§ÃƒÂ£o do Apollo (IA Ativa/Executora):**
+**A RevoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Apollo (IA Ativa/Executora):**
 
-- O Agente Central do Apollo lÃƒÂª os dados e toma a iniciativa.
+- O Agente Central do Apollo lÃƒÆ’Ã‚Âª os dados e toma a iniciativa.
 
-- Ele diz: *"Sua retenÃƒÂ§ÃƒÂ£o caiu no ÃƒÂºltimo vÃƒÂ­deo. HÃƒÂ¡ uma trend forte acontecendo agora sobre o tema X. Eu jÃƒÂ¡ acionei o seu Roteirista, preparei uma receita focada em alta retenÃƒÂ§ÃƒÂ£o nos 3 primeiros segundos, e o roteiro estÃƒÂ¡ pronto. Quer que eu envie para a esteira de renderizaÃƒÂ§ÃƒÂ£o de vÃƒÂ­deo agora?"*
+- Ele diz: *"Sua retenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o caiu no ÃƒÆ’Ã‚Âºltimo vÃƒÆ’Ã‚Â­deo. HÃƒÆ’Ã‚Â¡ uma trend forte acontecendo agora sobre o tema X. Eu jÃƒÆ’Ã‚Â¡ acionei o seu Roteirista, preparei uma receita focada em alta retenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o nos 3 primeiros segundos, e o roteiro estÃƒÆ’Ã‚Â¡ pronto. Quer que eu envie para a esteira de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de vÃƒÆ’Ã‚Â­deo agora?"*
 
-- **O Valor Real:** O usuÃƒÂ¡rio pula as etapas de bloqueio criativo, falta de tempo e ediÃƒÂ§ÃƒÂ£o. A IA nÃƒÂ£o apenas aponta o problema, ela entrega o problema **resolvido** (o vÃƒÂ­deo pronto). Isso eleva a plataforma ÃƒÂ  categoria de SaaS Ultra Premium (High-Ticket), muito alÃƒÂ©m do alcance de usuÃƒÂ¡rios comuns.
+- **O Valor Real:** O usuÃƒÆ’Ã‚Â¡rio pula as etapas de bloqueio criativo, falta de tempo e ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o. A IA nÃƒÆ’Ã‚Â£o apenas aponta o problema, ela entrega o problema **resolvido** (o vÃƒÆ’Ã‚Â­deo pronto). Isso eleva a plataforma ÃƒÆ’Ã‚Â  categoria de SaaS Ultra Premium (High-Ticket), muito alÃƒÆ’Ã‚Â©m do alcance de usuÃƒÆ’Ã‚Â¡rios comuns.
 
 
 
 ---
 
-## [INTEGRAÃƒâ€¡ÃƒÆ’O E RESOLUÃƒâ€¡ÃƒÆ’O DO CHAT DE IA E CORS] (Data: 08/06/2026)
+## [INTEGRAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O E RESOLUÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DO CHAT DE IA E CORS] (Data: 08/06/2026)
 
 
 
-**1. O LaboratÃƒÂ³rio de Chat (apollo_chat_lab.html):**
+**1. O LaboratÃƒÆ’Ã‚Â³rio de Chat (apollo_chat_lab.html):**
 
-- Foi criado um laboratÃƒÂ³rio HTML puro e isolado para testar as conexÃƒÂµes com as APIs de Chat (Lightning AI, OpenRouter) sem a necessidade de modificar diretamente a UI principal que ainda serÃƒÂ¡ desenhada pelo usuÃƒÂ¡rio.
+- Foi criado um laboratÃƒÆ’Ã‚Â³rio HTML puro e isolado para testar as conexÃƒÆ’Ã‚Âµes com as APIs de Chat (Lightning AI, OpenRouter) sem a necessidade de modificar diretamente a UI principal que ainda serÃƒÆ’Ã‚Â¡ desenhada pelo usuÃƒÆ’Ã‚Â¡rio.
 
-- O laboratÃƒÂ³rio serve para testar o comportamento, a "personalidade" via system prompts (como o Roteirista CÃƒÂ­nico) e o consumo de tokens.
+- O laboratÃƒÆ’Ã‚Â³rio serve para testar o comportamento, a "personalidade" via system prompts (como o Roteirista CÃƒÆ’Ã‚Â­nico) e o consumo de tokens.
 
 
 
-**2. A Barreira do CORS e o "TÃƒÂºnel" Nativo no Servidor:**
+**2. A Barreira do CORS e o "TÃƒÆ’Ã‚Âºnel" Nativo no Servidor:**
 
-- Durante os testes de requisiÃƒÂ§ÃƒÂµes direto pelo navegador para a Lightning AI, enfrentamos o temido erro de CORS (bloqueio de seguranÃƒÂ§a do Chrome/Edge).
+- Durante os testes de requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes direto pelo navegador para a Lightning AI, enfrentamos o temido erro de CORS (bloqueio de seguranÃƒÆ’Ã‚Â§a do Chrome/Edge).
 
-- **A SoluÃƒÂ§ÃƒÂ£o Definitiva:** Em vez de rodar um proxy separado em Node.js, foi criada uma rota nativa (/api/lightning_proxy) diretamente no servidor_web.py (o backend oficial da plataforma). 
+- **A SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Definitiva:** Em vez de rodar um proxy separado em Node.js, foi criada uma rota nativa (/api/lightning_proxy) diretamente no servidor_web.py (o backend oficial da plataforma). 
 
-- O frontend (pollo_chat_lab.html) agora envia as mensagens e as chaves de API para essa rota do Python, que entÃƒÂ£o faz a requisiÃƒÂ§ÃƒÂ£o para o LLM externo. Como o Python nÃƒÂ£o sofre bloqueios de CORS, o processo ocorre sem erros e de forma invisÃƒÂ­vel para o navegador do usuÃƒÂ¡rio.
+- O frontend (pollo_chat_lab.html) agora envia as mensagens e as chaves de API para essa rota do Python, que entÃƒÆ’Ã‚Â£o faz a requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para o LLM externo. Como o Python nÃƒÆ’Ã‚Â£o sofre bloqueios de CORS, o processo ocorre sem erros e de forma invisÃƒÆ’Ã‚Â­vel para o navegador do usuÃƒÆ’Ã‚Â¡rio.
 
 - Chave Lightning em uso: 16338b74-3f36-4c89-84db-a8e00b099058.
 
 
 
-**3. OrganizaÃƒÂ§ÃƒÂ£o Profissional da UI (Hub vs Admin):**
+**3. OrganizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Profissional da UI (Hub vs Admin):**
 
-- Foi feita uma separaÃƒÂ§ÃƒÂ£o estrita de contexto:
+- Foi feita uma separaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o estrita de contexto:
 
-  - **Hub de CriaÃƒÂ§ÃƒÂ£o (hub.html):** O botÃƒÂ£o do Chat de IA foi posicionado na seÃƒÂ§ÃƒÂ£o de Equipamentos.
+  - **Hub de CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (hub.html):** O botÃƒÆ’Ã‚Â£o do Chat de IA foi posicionado na seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Equipamentos.
 
-  - **Painel Corporativo (admin.html):** O Analytics Financeiro (dmin_financeiro.html) foi removido do Hub e adicionado exclusivamente ÃƒÂ  Sidebar do painel de administraÃƒÂ§ÃƒÂ£o (sob VisÃƒÂ£o Geral), mantendo a ÃƒÂ¡rea de criaÃƒÂ§ÃƒÂ£o limpa e livre de "botÃƒÂµes administrativos perdidos".
-
-
-
-Esses avanÃƒÂ§os fecharam o ciclo do "arroz com feijÃƒÂ£o" da conexÃƒÂ£o LLM, deixando a infraestrutura tÃƒÂ©cnica pronta e aguardando apenas o layout visual definitivo do usuÃƒÂ¡rio.
+  - **Painel Corporativo (admin.html):** O Analytics Financeiro (dmin_financeiro.html) foi removido do Hub e adicionado exclusivamente ÃƒÆ’Ã‚Â  Sidebar do painel de administraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (sob VisÃƒÆ’Ã‚Â£o Geral), mantendo a ÃƒÆ’Ã‚Â¡rea de criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o limpa e livre de "botÃƒÆ’Ã‚Âµes administrativos perdidos".
 
 
 
----
-
-## [O UNIVERSO METAFÃƒâ€œRICO E A NOVA GAMIFICAÃƒâ€¡ÃƒÆ’O] (Data: 10/06/2026)
-
-
-
-**1. A MetÃƒÂ¡fora Central (O Sistema Operacional do Piloto):**
-
-O Apollo deixou de ser apenas um "editor de vÃƒÂ­deo gamificado" e evoluiu para um **Centro de Comando de ProduÃƒÂ§ÃƒÂ£o Automatizada**. A genialidade do sistema estÃƒÂ¡ na coerÃƒÂªncia da sua narrativa, onde termos tÃƒÂ©cnicos chatos foram substituÃƒÂ­dos por uma "gramÃƒÂ¡tica interna" automotiva e de pilotagem que faz sentido intuitivo:
-
-- **Canal:** Ãƒâ€° o VeÃƒÂ­culo.
-
-- **Piloto:** Ãƒâ€° o Criador de ConteÃƒÂºdo (o usuÃƒÂ¡rio assume o controle).
-
-- **Copilotos:** SÃƒÂ£o as IAs especializadas (Roteirista, Pesquisador, etc).
-
-- **Motor:** Ãƒâ€° o conjunto de ferramentas e configuraÃƒÂ§ÃƒÂµes.
-
-- **CombustÃƒÂ­vel (Gasolina/Cristais):** Ãƒâ€° o poder de processamento / custos de API.
-
-- **Bagagem:** SÃƒÂ£o os recursos temporÃƒÂ¡rios e arquivos em trÃƒÂ¢nsito.
-
-- **Garagem:** Ãƒâ€° o armazenamento definitivo (HD/Nuvem).
-
-- **KM (Quilometragem):** Ãƒâ€° a produtividade acumulada. O usuÃƒÂ¡rio nÃƒÂ£o ganha "XP genÃƒÂ©rico", ele "percorre KM" ao gerar vÃƒÂ­deos.
-
-- **TrofÃƒÂ©us/Emblemas:** Ãƒâ€° a reputaÃƒÂ§ÃƒÂ£o e o nÃƒÂ­vel do Piloto.
-
-- **MissÃƒÂ£o:** Ãƒâ€° o projeto/vÃƒÂ­deo que estÃƒÂ¡ sendo produzido.
-
-
-
-**2. O Papel dos Minigames vs. A ProduÃƒÂ§ÃƒÂ£o Real:**
-
-- A mecÃƒÂ¢nica principal do site **jÃƒÂ¡ ÃƒÂ© um jogo** (coletar recursos, combinar, alimentar motores, executar missÃƒÂµes). 
-
-- Os jogos literais (ex: joguinho de carro Roguelite, estilo Tetris) sÃƒÂ£o estritamente **secundÃƒÂ¡rios/paralelos**. Eles servem como entretenimento (um brinde) para o usuÃƒÂ¡rio passar o tempo enquanto aguarda a barra de renderizaÃƒÂ§ÃƒÂ£o e processamento do vÃƒÂ­deo carregar na nuvem.
-
-- **A Regra de Ouro da Recompensa:** O sistema deve recompensar quem PRODUZ CONTEÃƒÅ¡DO (UsuÃƒÂ¡rio A), e nÃƒÂ£o quem passa horas no minigame (UsuÃƒÂ¡rio B). Jogos dÃƒÂ£o recompensas cosmÃƒÂ©ticas (skins, molduras). A produÃƒÂ§ÃƒÂ£o real (KM) dÃƒÂ¡ vantagens econÃƒÂ´micas.
-
-
-
-**3. As 4 Ã¯Â¿Â½rvores de Tecnologia (EspecializaÃƒÂ§ÃƒÂµes / LicenÃƒÂ§as):**
-
-Em vez de focar no jogo, as ÃƒÂ¡rvores de "tecnologia" (ou LicenÃƒÂ§as de OperaÃƒÂ§ÃƒÂ£o) representam ÃƒÂ¡reas reais do ecossistema que melhoram a vida de quem cria conteÃƒÂºdo.
-
-- Ã¢Å¡â„¢Ã¯Â¿Â½ **Ã¯Â¿Â½rvore do Motor (EficiÃƒÂªncia):** BenefÃƒÂ­cios tÃƒÂ©cnicos, como menor custo de combustÃƒÂ­vel, bÃƒÂ´nus de processamento, e renderizaÃƒÂ§ÃƒÂ£o prioritÃƒÂ¡ria.
-
-- Ã°Å¸Â¤â€“ **Ã¯Â¿Â½rvore dos Copilotos (InteligÃƒÂªncia):** Permite usar mais copilotos simultÃƒÂ¢neos, libera IAs premium, dÃƒÂ¡ maior memÃƒÂ³ria de contexto para as IAs.
-
-- Ã°Å¸Â§Â³ **Ã¯Â¿Â½rvore da Garagem (OrganizaÃƒÂ§ÃƒÂ£o/Armazenamento):** Libera mais espaÃƒÂ§o, mais slots de canais, mais capacidade de receitas e templates.
-
-- Ã¯Â¿Â½ **Ã¯Â¿Â½rvore da Oficina (PersonalizaÃƒÂ§ÃƒÂ£o):** Desbloqueia temas, HUDs, efeitos visuais, molduras e customizaÃƒÂ§ÃƒÂ£o visual da interface.
-
-
-
-**4. DireÃƒÂ§ÃƒÂ£o de Arte e ExpansÃƒÂ£o Visual:**
-
-As imagens conceituais geradas seguem um estilo imersivo, com HUDs detalhados, avatares de Copilotos altamente estilizados (Atlas, Shadow, Aurora, Sparks, etc), moedas (Gasolina, Cristais de API, Placas APU) e menus de customizaÃƒÂ§ÃƒÂ£o de Garagem/Oficina. O visual mescla produtividade com uma estÃƒÂ©tica de "Garagem High-Tech", garantindo que a imersÃƒÂ£o na metÃƒÂ¡fora de "Pilotar a AutomaÃƒÂ§ÃƒÂ£o" seja completa.
-
-
-
-**5. A FidelizaÃƒÂ§ÃƒÂ£o e o Fim da "Obrigatoriedade do Jogo" (Ajuste de Rota):**
-
-- **Jogos Complexos na Gaveta:** A ideia de construir um Roguelite complexo integrado ÃƒÂ  ÃƒÂ¡rvore de habilidades foi oficialmente suspensa. O foco 100% agora ÃƒÂ© no SaaS.
-
-- **Minigames Livres:** Jogos simples (Tetris, Candy Crush) existirÃƒÂ£o apenas como "passatempo de tela de carregamento" enquanto o vÃƒÂ­deo renderiza. Eles nÃƒÂ£o afetam o progresso do usuÃƒÂ¡rio no ecossistema de produÃƒÂ§ÃƒÂ£o.
-
-- **Recompensando a Lealdade (O Verdadeiro Jogo):** A ÃƒÂ¡rvore de tecnologia serve para recompensar o usuÃƒÂ¡rio fiel. O usuÃƒÂ¡rio que gera muito conteÃƒÂºdo (gasta muita gasolina e acumula muitos KM) vai subindo de nÃƒÂ­vel e destravando *micro-vantagens reais*: descontos percentuais no custo de geraÃƒÂ§ÃƒÂ£o de imagens/vÃƒÂ­deos, pequenos aumentos de armazenamento grÃƒÂ¡tis, fila prioritÃƒÂ¡ria de processamento.
-
-- **ConclusÃƒÂ£o:** O prÃƒÂ³prio Editor de VÃƒÂ­deo Ãƒâ€° o jogo. A gamificaÃƒÂ§ÃƒÂ£o existe para baratear e melhorar a vida de quem realmente "joga" o nosso jogo principal: a produÃƒÂ§ÃƒÂ£o de conteÃƒÂºdo.
+Esses avanÃƒÆ’Ã‚Â§os fecharam o ciclo do "arroz com feijÃƒÆ’Ã‚Â£o" da conexÃƒÆ’Ã‚Â£o LLM, deixando a infraestrutura tÃƒÆ’Ã‚Â©cnica pronta e aguardando apenas o layout visual definitivo do usuÃƒÆ’Ã‚Â¡rio.
 
 
 
 ---
 
-## [A ARQUITETURA DE RESILIÃƒÅ NCIA E O TRIÃƒâ€šNGULO DE FALLBACK] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
+## [O UNIVERSO METAFÃƒÆ’Ã¢â‚¬Å“RICO E A NOVA GAMIFICAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O] (Data: 10/06/2026)
 
 
 
-Para garantir coerÃƒÂªncia absoluta no projeto a longo prazo, firmamos que a fundaÃƒÂ§ÃƒÂ£o de geraÃƒÂ§ÃƒÂ£o do Apollo ÃƒÂ© dividida em camadas, visando **economia extrema** (usando a cota gratuita do Lightning) e **entrega garantida** (o usuÃƒÂ¡rio nunca recebe erro).
+**1. A MetÃƒÆ’Ã‚Â¡fora Central (O Sistema Operacional do Piloto):**
+
+O Apollo deixou de ser apenas um "editor de vÃƒÆ’Ã‚Â­deo gamificado" e evoluiu para um **Centro de Comando de ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Automatizada**. A genialidade do sistema estÃƒÆ’Ã‚Â¡ na coerÃƒÆ’Ã‚Âªncia da sua narrativa, onde termos tÃƒÆ’Ã‚Â©cnicos chatos foram substituÃƒÆ’Ã‚Â­dos por uma "gramÃƒÆ’Ã‚Â¡tica interna" automotiva e de pilotagem que faz sentido intuitivo:
+
+- **Canal:** ÃƒÆ’Ã¢â‚¬Â° o VeÃƒÆ’Ã‚Â­culo.
+
+- **Piloto:** ÃƒÆ’Ã¢â‚¬Â° o Criador de ConteÃƒÆ’Ã‚Âºdo (o usuÃƒÆ’Ã‚Â¡rio assume o controle).
+
+- **Copilotos:** SÃƒÆ’Ã‚Â£o as IAs especializadas (Roteirista, Pesquisador, etc).
+
+- **Motor:** ÃƒÆ’Ã¢â‚¬Â° o conjunto de ferramentas e configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
+
+- **CombustÃƒÆ’Ã‚Â­vel (Gasolina/Cristais):** ÃƒÆ’Ã¢â‚¬Â° o poder de processamento / custos de API.
+
+- **Bagagem:** SÃƒÆ’Ã‚Â£o os recursos temporÃƒÆ’Ã‚Â¡rios e arquivos em trÃƒÆ’Ã‚Â¢nsito.
+
+- **Garagem:** ÃƒÆ’Ã¢â‚¬Â° o armazenamento definitivo (HD/Nuvem).
+
+- **KM (Quilometragem):** ÃƒÆ’Ã¢â‚¬Â° a produtividade acumulada. O usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o ganha "XP genÃƒÆ’Ã‚Â©rico", ele "percorre KM" ao gerar vÃƒÆ’Ã‚Â­deos.
+
+- **TrofÃƒÆ’Ã‚Â©us/Emblemas:** ÃƒÆ’Ã¢â‚¬Â° a reputaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e o nÃƒÆ’Ã‚Â­vel do Piloto.
+
+- **MissÃƒÆ’Ã‚Â£o:** ÃƒÆ’Ã¢â‚¬Â° o projeto/vÃƒÆ’Ã‚Â­deo que estÃƒÆ’Ã‚Â¡ sendo produzido.
 
 
 
-**1. O TriÃƒÂ¢ngulo de GeraÃƒÂ§ÃƒÂ£o (Garantia de ProduÃƒÂ§ÃƒÂ£o ContÃƒÂ­nua):**
+**2. O Papel dos Minigames vs. A ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Real:**
 
-- **Plano 1 (Motor Principal - Nosso Controle):** ComputaÃƒÂ§ÃƒÂ£o nativa usando nossos prÃƒÂ³prios cÃƒÂ³digos Python (LitServe) nas mÃƒÂ¡quinas da Lightning AI (T4/L4). O cÃƒÂ³digo baixa o modelo temporariamente na GPU e o executa. Para evitar rombos no orÃƒÂ§amento com Storage, **os arquivos do modelo sÃƒÂ£o deletados do disco da nuvem apÃƒÂ³s o uso (idle time)**. Aproveitamos a cota mensal de  dÃƒÂ³lares (distribuÃƒÂ­da) para operar de forma esmagadoramente mais barata.
+- A mecÃƒÆ’Ã‚Â¢nica principal do site **jÃƒÆ’Ã‚Â¡ ÃƒÆ’Ã‚Â© um jogo** (coletar recursos, combinar, alimentar motores, executar missÃƒÆ’Ã‚Âµes). 
 
-- **Plano 2 (Primeiro Fallback):** IntegraÃƒÂ§ÃƒÂµes nativas via chaves de APIs diretas (para modelos de ponta ou quando as mÃƒÂ¡quinas prÃƒÂ³prias lotarem).
+- Os jogos literais (ex: joguinho de carro Roguelite, estilo Tetris) sÃƒÆ’Ã‚Â£o estritamente **secundÃƒÆ’Ã‚Â¡rios/paralelos**. Eles servem como entretenimento (um brinde) para o usuÃƒÆ’Ã‚Â¡rio passar o tempo enquanto aguarda a barra de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e processamento do vÃƒÆ’Ã‚Â­deo carregar na nuvem.
 
-- **Plano 3 (ÃƒÅ¡ltimo Recurso - Backup Global):** OpenRouter ou provedores globais como o "plano de resgate".
+- **A Regra de Ouro da Recompensa:** O sistema deve recompensar quem PRODUZ CONTEÃƒÆ’Ã…Â¡DO (UsuÃƒÆ’Ã‚Â¡rio A), e nÃƒÆ’Ã‚Â£o quem passa horas no minigame (UsuÃƒÆ’Ã‚Â¡rio B). Jogos dÃƒÆ’Ã‚Â£o recompensas cosmÃƒÆ’Ã‚Â©ticas (skins, molduras). A produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o real (KM) dÃƒÆ’Ã‚Â¡ vantagens econÃƒÆ’Ã‚Â´micas.
+
+
+
+**3. As 4 ÃƒÂ¯Ã‚Â¿Ã‚Â½rvores de Tecnologia (EspecializaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes / LicenÃƒÆ’Ã‚Â§as):**
+
+Em vez de focar no jogo, as ÃƒÆ’Ã‚Â¡rvores de "tecnologia" (ou LicenÃƒÆ’Ã‚Â§as de OperaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) representam ÃƒÆ’Ã‚Â¡reas reais do ecossistema que melhoram a vida de quem cria conteÃƒÆ’Ã‚Âºdo.
+
+- ÃƒÂ¢Ã…Â¡Ã¢â€žÂ¢ÃƒÂ¯Ã‚Â¿Ã‚Â½ **ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore do Motor (EficiÃƒÆ’Ã‚Âªncia):** BenefÃƒÆ’Ã‚Â­cios tÃƒÆ’Ã‚Â©cnicos, como menor custo de combustÃƒÆ’Ã‚Â­vel, bÃƒÆ’Ã‚Â´nus de processamento, e renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o prioritÃƒÆ’Ã‚Â¡ria.
+
+- ÃƒÂ°Ã…Â¸Ã‚Â¤Ã¢â‚¬â€œ **ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore dos Copilotos (InteligÃƒÆ’Ã‚Âªncia):** Permite usar mais copilotos simultÃƒÆ’Ã‚Â¢neos, libera IAs premium, dÃƒÆ’Ã‚Â¡ maior memÃƒÆ’Ã‚Â³ria de contexto para as IAs.
+
+- ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Â³ **ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore da Garagem (OrganizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o/Armazenamento):** Libera mais espaÃƒÆ’Ã‚Â§o, mais slots de canais, mais capacidade de receitas e templates.
+
+- ÃƒÂ¯Ã‚Â¿Ã‚Â½ **ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore da Oficina (PersonalizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):** Desbloqueia temas, HUDs, efeitos visuais, molduras e customizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o visual da interface.
+
+
+
+**4. DireÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Arte e ExpansÃƒÆ’Ã‚Â£o Visual:**
+
+As imagens conceituais geradas seguem um estilo imersivo, com HUDs detalhados, avatares de Copilotos altamente estilizados (Atlas, Shadow, Aurora, Sparks, etc), moedas (Gasolina, Cristais de API, Placas APU) e menus de customizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Garagem/Oficina. O visual mescla produtividade com uma estÃƒÆ’Ã‚Â©tica de "Garagem High-Tech", garantindo que a imersÃƒÆ’Ã‚Â£o na metÃƒÆ’Ã‚Â¡fora de "Pilotar a AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o" seja completa.
+
+
+
+**5. A FidelizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e o Fim da "Obrigatoriedade do Jogo" (Ajuste de Rota):**
+
+- **Jogos Complexos na Gaveta:** A ideia de construir um Roguelite complexo integrado ÃƒÆ’Ã‚Â  ÃƒÆ’Ã‚Â¡rvore de habilidades foi oficialmente suspensa. O foco 100% agora ÃƒÆ’Ã‚Â© no SaaS.
+
+- **Minigames Livres:** Jogos simples (Tetris, Candy Crush) existirÃƒÆ’Ã‚Â£o apenas como "passatempo de tela de carregamento" enquanto o vÃƒÆ’Ã‚Â­deo renderiza. Eles nÃƒÆ’Ã‚Â£o afetam o progresso do usuÃƒÆ’Ã‚Â¡rio no ecossistema de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+
+- **Recompensando a Lealdade (O Verdadeiro Jogo):** A ÃƒÆ’Ã‚Â¡rvore de tecnologia serve para recompensar o usuÃƒÆ’Ã‚Â¡rio fiel. O usuÃƒÆ’Ã‚Â¡rio que gera muito conteÃƒÆ’Ã‚Âºdo (gasta muita gasolina e acumula muitos KM) vai subindo de nÃƒÆ’Ã‚Â­vel e destravando *micro-vantagens reais*: descontos percentuais no custo de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagens/vÃƒÆ’Ã‚Â­deos, pequenos aumentos de armazenamento grÃƒÆ’Ã‚Â¡tis, fila prioritÃƒÆ’Ã‚Â¡ria de processamento.
+
+- **ConclusÃƒÆ’Ã‚Â£o:** O prÃƒÆ’Ã‚Â³prio Editor de VÃƒÆ’Ã‚Â­deo ÃƒÆ’Ã¢â‚¬Â° o jogo. A gamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o existe para baratear e melhorar a vida de quem realmente "joga" o nosso jogo principal: a produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de conteÃƒÆ’Ã‚Âºdo.
+
+
+
+---
+
+## [A ARQUITETURA DE RESILIÃƒÆ’Ã…Â NCIA E O TRIÃƒÆ’Ã¢â‚¬Å¡NGULO DE FALLBACK] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
+
+
+
+Para garantir coerÃƒÆ’Ã‚Âªncia absoluta no projeto a longo prazo, firmamos que a fundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Apollo ÃƒÆ’Ã‚Â© dividida em camadas, visando **economia extrema** (usando a cota gratuita do Lightning) e **entrega garantida** (o usuÃƒÆ’Ã‚Â¡rio nunca recebe erro).
+
+
+
+**1. O TriÃƒÆ’Ã‚Â¢ngulo de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Garantia de ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ContÃƒÆ’Ã‚Â­nua):**
+
+- **Plano 1 (Motor Principal - Nosso Controle):** ComputaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o nativa usando nossos prÃƒÆ’Ã‚Â³prios cÃƒÆ’Ã‚Â³digos Python (LitServe) nas mÃƒÆ’Ã‚Â¡quinas da Lightning AI (T4/L4). O cÃƒÆ’Ã‚Â³digo baixa o modelo temporariamente na GPU e o executa. Para evitar rombos no orÃƒÆ’Ã‚Â§amento com Storage, **os arquivos do modelo sÃƒÆ’Ã‚Â£o deletados do disco da nuvem apÃƒÆ’Ã‚Â³s o uso (idle time)**. Aproveitamos a cota mensal de  dÃƒÆ’Ã‚Â³lares (distribuÃƒÆ’Ã‚Â­da) para operar de forma esmagadoramente mais barata.
+
+- **Plano 2 (Primeiro Fallback):** IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes nativas via chaves de APIs diretas (para modelos de ponta ou quando as mÃƒÆ’Ã‚Â¡quinas prÃƒÆ’Ã‚Â³prias lotarem).
+
+- **Plano 3 (ÃƒÆ’Ã…Â¡ltimo Recurso - Backup Global):** OpenRouter ou provedores globais como o "plano de resgate".
 
 
 
 **2. As 4 Camadas de Estabilidade Corporativa:**
 
-NÃƒÂ³s construÃƒÂ­mos o plano para as seguintes mecÃƒÂ¢nicas de seguranÃƒÂ§a, que serÃƒÂ£o implementadas assim que o "Plano 1" estiver rodando liso:
+NÃƒÆ’Ã‚Â³s construÃƒÆ’Ã‚Â­mos o plano para as seguintes mecÃƒÆ’Ã‚Â¢nicas de seguranÃƒÆ’Ã‚Â§a, que serÃƒÆ’Ã‚Â£o implementadas assim que o "Plano 1" estiver rodando liso:
 
-- **Circuit Breaker (O Disjuntor):** Se a nossa mÃƒÂ¡quina T4 da Lightning der problema (ex: falta de memÃƒÂ³ria), o disjuntor "desarma" aquela mÃƒÂ¡quina para nÃƒÂ£o enfileirar erros e joga o pedido automaticamente pro Plano 2/3.
+- **Circuit Breaker (O Disjuntor):** Se a nossa mÃƒÆ’Ã‚Â¡quina T4 da Lightning der problema (ex: falta de memÃƒÆ’Ã‚Â³ria), o disjuntor "desarma" aquela mÃƒÆ’Ã‚Â¡quina para nÃƒÆ’Ã‚Â£o enfileirar erros e joga o pedido automaticamente pro Plano 2/3.
 
-- **Dead Letter Queue (A UTI da Amazon):** Nenhuma requisiÃƒÂ§ÃƒÂ£o que falhou ÃƒÂ© deletada. O pedido vai pra UTI. O "combustÃƒÂ­vel" do usuÃƒÂ¡rio nÃƒÂ£o ÃƒÂ© roubado. Assim que o admin conserta a mÃƒÂ¡quina, a fila da UTI processa e entrega o vÃƒÂ­deo atrasado.
+- **Dead Letter Queue (A UTI da Amazon):** Nenhuma requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o que falhou ÃƒÆ’Ã‚Â© deletada. O pedido vai pra UTI. O "combustÃƒÆ’Ã‚Â­vel" do usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© roubado. Assim que o admin conserta a mÃƒÆ’Ã‚Â¡quina, a fila da UTI processa e entrega o vÃƒÆ’Ã‚Â­deo atrasado.
 
-- **ComunicaÃƒÂ§ÃƒÂ£o AssÃƒÂ­ncrona via Webhooks:** Usada para mÃƒÂ­dias pesadas. O site nÃƒÂ£o trava. A ordem vai, a timeline roda fluida, e quando a mÃƒÂ¡quina na nuvem termina, o Webhook injeta o arquivo direto no canal do usuÃƒÂ¡rio.
+- **ComunicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AssÃƒÆ’Ã‚Â­ncrona via Webhooks:** Usada para mÃƒÆ’Ã‚Â­dias pesadas. O site nÃƒÆ’Ã‚Â£o trava. A ordem vai, a timeline roda fluida, e quando a mÃƒÆ’Ã‚Â¡quina na nuvem termina, o Webhook injeta o arquivo direto no canal do usuÃƒÆ’Ã‚Â¡rio.
 
-- **Cold Start Preditivo:** O truque final. O sistema manda o comando studio.start() secretamente no exato momento em que o usuÃƒÂ¡rio entra na aba de CriaÃƒÂ§ÃƒÂ£o/Lab. Quando ele clica em "Gerar" 1 minuto depois, a mÃƒÂ¡quina do Lightning jÃƒÂ¡ acordou, zerando o tempo de espera brutal de boot de servidores.
+- **Cold Start Preditivo:** O truque final. O sistema manda o comando studio.start() secretamente no exato momento em que o usuÃƒÆ’Ã‚Â¡rio entra na aba de CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o/Lab. Quando ele clica em "Gerar" 1 minuto depois, a mÃƒÆ’Ã‚Â¡quina do Lightning jÃƒÆ’Ã‚Â¡ acordou, zerando o tempo de espera brutal de boot de servidores.
 
 
 
 ---
 
-## [LIÃƒâ€¡ÃƒÆ’O ESTRATÃƒâ€°GICA: TERRENO ALUGADO E FALLBACKS] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
+## [LIÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O ESTRATÃƒÆ’Ã¢â‚¬Â°GICA: TERRENO ALUGADO E FALLBACKS] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
 
 
 
 **1. O Paradigma do "Terreno Alugado":**
 
-O bloqueio sÃƒÂºbito da conta primÃƒÂ¡ria na Lightning AI provou uma tese fundamental: **nÃƒÂ³s estamos construindo uma casa no terreno dos outros**. Depender 100% de uma ÃƒÂºnica infraestrutura ou de contas gratuitas (com 15 dÃƒÂ³lares de crÃƒÂ©dito) cria um ponto ÃƒÂºnico de falha letal. As provedoras podem (e vÃƒÂ£o) derrubar servidores e contas sem aviso prÃƒÂ©vio caso seus robÃƒÂ´s anti-fraude detectem anomalias. 
+O bloqueio sÃƒÆ’Ã‚Âºbito da conta primÃƒÆ’Ã‚Â¡ria na Lightning AI provou uma tese fundamental: **nÃƒÆ’Ã‚Â³s estamos construindo uma casa no terreno dos outros**. Depender 100% de uma ÃƒÆ’Ã‚Âºnica infraestrutura ou de contas gratuitas (com 15 dÃƒÆ’Ã‚Â³lares de crÃƒÆ’Ã‚Â©dito) cria um ponto ÃƒÆ’Ã‚Âºnico de falha letal. As provedoras podem (e vÃƒÆ’Ã‚Â£o) derrubar servidores e contas sem aviso prÃƒÆ’Ã‚Â©vio caso seus robÃƒÆ’Ã‚Â´s anti-fraude detectem anomalias. 
 
 
 
 **2. A Lei do Backup Local Primeiro:**
 
-- Nenhum cÃƒÂ³digo deve existir primariamente na nuvem. Todos os arquivos vitais (como motor_voz.py, motor_imagem.py, client.py) devem ser desenvolvidos, configurados e salvos **primeiro no computador local (Apollo)**.
+- Nenhum cÃƒÆ’Ã‚Â³digo deve existir primariamente na nuvem. Todos os arquivos vitais (como motor_voz.py, motor_imagem.py, client.py) devem ser desenvolvidos, configurados e salvos **primeiro no computador local (Apollo)**.
 
-- A nuvem ÃƒÂ© tratada apenas como um "ambiente de execuÃƒÂ§ÃƒÂ£o temporÃƒÂ¡rio". Se uma conta for derrubada, o nosso esforÃƒÂ§o para subir o sistema em uma conta ou provedor novo deve se resumir a um simples "Copiar e Colar" que dure menos de 2 minutos.
-
-
-
-**3. Multi-Cloud Failover (O Roteamento da SalvaÃƒÂ§ÃƒÂ£o):**
-
-A arquitetura do Apollo obrigatoriamente terÃƒÂ¡ redundÃƒÂ¢ncia. Se a provedora "A" falhar, o cÃƒÂ³digo do site desviarÃƒÂ¡ a rota para a provedora "B" (RunPod, Modal, AWS, etc) de forma silenciosa para o cliente final. O nosso cÃƒÂ³digo base (LitServe/Python) ÃƒÂ© desenhado para ser "Cloud-Agnostic", permitindo que a gente mude de nuvem instantaneamente, sem ficar refÃƒÂ©m das regras de um ÃƒÂºnico fornecedor.
+- A nuvem ÃƒÆ’Ã‚Â© tratada apenas como um "ambiente de execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o temporÃƒÆ’Ã‚Â¡rio". Se uma conta for derrubada, o nosso esforÃƒÆ’Ã‚Â§o para subir o sistema em uma conta ou provedor novo deve se resumir a um simples "Copiar e Colar" que dure menos de 2 minutos.
 
 
 
----
+**3. Multi-Cloud Failover (O Roteamento da SalvaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):**
 
-## [AS CAMADAS DE REDUNDÃƒâ€šNCIA E CREDIT FARMING] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
-
-
-
-**A EstratÃƒÂ©gia de MÃƒÂºltiplos Servidores (O Fazendeiro de CrÃƒÂ©ditos):**
-
-Como o nosso cÃƒÂ³digo principal ÃƒÂ© Python (LitServe/FastAPI), ele pode rodar em qualquer lugar. A estratÃƒÂ©gia oficial do Apollo ÃƒÂ© estruturar uma "Rede de Servidores" operando em camadas sucessivas de custo. Quando uma camada falha ou acaba o crÃƒÂ©dito, o site automaticamente rebaixa o pedido para a prÃƒÂ³xima camada.
-
-
-
-- **Camada 1 (CrÃƒÂ©ditos Gratuitos e Farming):** Uso de mÃƒÂºltiplas contas gratuitas em provedores que renovam crÃƒÂ©ditos mensais (Ex: Modal com $30/mÃƒÂªs, Beam.cloud com $30/mÃƒÂªs, Lightning AI com $15). Adaptaremos as dependÃƒÂªncias do cÃƒÂ³digo (Docker/Python) para encaixar nas placas de vÃƒÂ­deo disponÃƒÂ­veis de cada provedor.
-
-- **Camada 2 (Provedoras de Baixo Custo / Pay-per-Use):** Quando os crÃƒÂ©ditos grÃƒÂ¡tis esgotarem, o site direciona o trÃƒÂ¡fego para servidores "Serverless", onde a mÃƒÂ¡quina liga instantaneamente e cobra apenas fraÃƒÂ§ÃƒÂµes de centavos por segundo de uso (Ex: RunPod Serverless).
-
-- **Camada 3 (APIs Prontas / ÃƒÅ¡ltimo Recurso):** IntegraÃƒÂ§ÃƒÂ£o via chaves de API diretas pagas por requisiÃƒÂ§ÃƒÂ£o (como Replicate, Fal.ai ou OpenRouter) caso toda a infraestrutura customizada caia.
+A arquitetura do Apollo obrigatoriamente terÃƒÆ’Ã‚Â¡ redundÃƒÆ’Ã‚Â¢ncia. Se a provedora "A" falhar, o cÃƒÆ’Ã‚Â³digo do site desviarÃƒÆ’Ã‚Â¡ a rota para a provedora "B" (RunPod, Modal, AWS, etc) de forma silenciosa para o cliente final. O nosso cÃƒÆ’Ã‚Â³digo base (LitServe/Python) ÃƒÆ’Ã‚Â© desenhado para ser "Cloud-Agnostic", permitindo que a gente mude de nuvem instantaneamente, sem ficar refÃƒÆ’Ã‚Â©m das regras de um ÃƒÆ’Ã‚Âºnico fornecedor.
 
 
 
 ---
 
-## [O PROBLEMA DO "NETWORK SPIKE" E DOWNLOAD DE MODELOS GIGANTES] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
+## [AS CAMADAS DE REDUNDÃƒÆ’Ã¢â‚¬Å¡NCIA E CREDIT FARMING] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
 
 
 
-**O Risco:** Baixar dezenas de Gigabytes (como o FLUX de 33GB) do HuggingFace no momento em que o servidor liga dispara alarmes automatizados (Network Anomaly / Data Egress Abuse) nas provedoras de nuvem. Isso ÃƒÂ© o principal causador de banimentos automÃƒÂ¡ticos (falso positivo para pirataria ou abuso de banda).
+**A EstratÃƒÆ’Ã‚Â©gia de MÃƒÆ’Ã‚Âºltiplos Servidores (O Fazendeiro de CrÃƒÆ’Ã‚Â©ditos):**
+
+Como o nosso cÃƒÆ’Ã‚Â³digo principal ÃƒÆ’Ã‚Â© Python (LitServe/FastAPI), ele pode rodar em qualquer lugar. A estratÃƒÆ’Ã‚Â©gia oficial do Apollo ÃƒÆ’Ã‚Â© estruturar uma "Rede de Servidores" operando em camadas sucessivas de custo. Quando uma camada falha ou acaba o crÃƒÆ’Ã‚Â©dito, o site automaticamente rebaixa o pedido para a prÃƒÆ’Ã‚Â³xima camada.
 
 
 
-**A SoluÃƒÂ§ÃƒÂ£o Definitiva (Volumes Persistentes e Baked Images):**
+- **Camada 1 (CrÃƒÆ’Ã‚Â©ditos Gratuitos e Farming):** Uso de mÃƒÆ’Ã‚Âºltiplas contas gratuitas em provedores que renovam crÃƒÆ’Ã‚Â©ditos mensais (Ex: Modal com $30/mÃƒÆ’Ã‚Âªs, Beam.cloud com $30/mÃƒÆ’Ã‚Âªs, Lightning AI com $15). Adaptaremos as dependÃƒÆ’Ã‚Âªncias do cÃƒÆ’Ã‚Â³digo (Docker/Python) para encaixar nas placas de vÃƒÆ’Ã‚Â­deo disponÃƒÆ’Ã‚Â­veis de cada provedor.
 
-Nas nossas futuras implantaÃƒÂ§ÃƒÂµes (Modal, Beam, RunPod), **NUNCA** deixaremos o script baixar o modelo do HuggingFace na hora da execuÃƒÂ§ÃƒÂ£o (cold start). 
+- **Camada 2 (Provedoras de Baixo Custo / Pay-per-Use):** Quando os crÃƒÆ’Ã‚Â©ditos grÃƒÆ’Ã‚Â¡tis esgotarem, o site direciona o trÃƒÆ’Ã‚Â¡fego para servidores "Serverless", onde a mÃƒÆ’Ã‚Â¡quina liga instantaneamente e cobra apenas fraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de centavos por segundo de uso (Ex: RunPod Serverless).
 
-1. **Modelos menores (Voz/Ã¯Â¿Â½udio):** Podem ser baixados diretamente porque pesam pouco (1 a 3GB).
-
-2. **Modelos gigantes (Imagem/VÃƒÂ­deo - 30GB+):** Usaremos o sistema de "Volumes" (HDs virtuais compartilhados) da nuvem. NÃƒÂ³s baixamos o modelo apenas 1 ÃƒÂºnica vez para dentro desse Volume. Quando a mÃƒÂ¡quina Serverless ligar, o HD virtual jÃƒÂ¡ estarÃƒÂ¡ plugado nela. O modelo carrega direto do disco (o que leva milissegundos) e o consumo de download na rede ÃƒÂ© absolutamente ZERO. Isso evita banimentos e zera o tempo de carregamento da API.
-
-
-
----
-
-## [CORREÃƒâ€¡ÃƒÆ’O ESTRATÃƒâ€°GICA: CUSTO DE ARMAZENAMENTO VS PICO DE REDE] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
-
-
-
-**O Erro da PersistÃƒÂªncia Total:** Manter dezenas de modelos de 30GB armazenados de forma permanente nos Discos Virtuais da nuvem vai drenar completamente os crÃƒÂ©ditos mensais (os ) apenas pagando a taxa de HD, mesmo com a mÃƒÂ¡quina desligada. NÃƒÂ£o ÃƒÂ© viÃƒÂ¡vel para a fase de "Credit Farming" manter 300GB+ estacionados.
-
-
-
-**A SoluÃƒÂ§ÃƒÂ£o HÃƒÂ­brida (Smart TTL Caching):**
-
-Nossa arquitetura implementarÃƒÂ¡ um "Cache com Tempo de Vida (TTL)".
-
-1. Quando o primeiro pedido chega, baixamos o modelo (Gera 1 spike aceitÃƒÂ¡vel).
-
-2. NÃƒÂ£o deletamos imediatamente apÃƒÂ³s a geraÃƒÂ§ÃƒÂ£o da imagem/ÃƒÂ¡ÃƒÂ¡udio, pois isso gera o ciclo nocivo de "Baixa/Deleta" que causa banimento.
-
-3. Mantemos o modelo "vivo" no disco do servidor por um perÃƒÂ­odo estratÃƒÂ©gico (ex: 6 ou 12 horas).
-
-4. O servidor terÃƒÂ¡ uma rotina (Cron Job ou background task) que varre e **DELETA** o modelo apÃƒÂ³s esse perÃƒÂ­odo de inatividade.
-
-5. **Resultado:** Pagamos HD apenas por 6 horas, nÃƒÂ£o chamamos atenÃƒÂ§ÃƒÂ£o do provedor com "metralhadora" de downloads, e poupamos a maior parte dos nossos dÃƒÂ³lares.
+- **Camada 3 (APIs Prontas / ÃƒÆ’Ã…Â¡ltimo Recurso):** IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o via chaves de API diretas pagas por requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (como Replicate, Fal.ai ou OpenRouter) caso toda a infraestrutura customizada caia.
 
 
 
 ---
 
-## [O PESO ESMAGADOR DOS MODELOS DE VÃ¯Â¿Â½DEO] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
+## [O PROBLEMA DO "NETWORK SPIKE" E DOWNLOAD DE MODELOS GIGANTES] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
 
 
 
-**O Problema do VÃƒÂ­deo:** Diferente de Imagem (30GB) e Voz (5GB), modelos open-source de VÃƒÂ­deo (como Wan, SVD, etc) possuem pesos colossais (frequentemente ultrapassando 80GB a 100GB). Se tentarmos hospedar modelos de vÃƒÂ­deo em Discos Virtuais nas contas gratuitas, a ocupaÃƒÂ§ÃƒÂ£o do HD passarÃƒÂ¡ facilmente dos 150GB. O custo mensal de armazenamento (ex: 150GB x $0.15 = $22.50) devoraria o crÃƒÂ©dito gratuito por completo, inviabilizando o compute.
+**O Risco:** Baixar dezenas de Gigabytes (como o FLUX de 33GB) do HuggingFace no momento em que o servidor liga dispara alarmes automatizados (Network Anomaly / Data Egress Abuse) nas provedoras de nuvem. Isso ÃƒÆ’Ã‚Â© o principal causador de banimentos automÃƒÆ’Ã‚Â¡ticos (falso positivo para pirataria ou abuso de banda).
 
 
 
-**A TÃƒÂ¡tica de Guerra para VÃƒÂ­deos:** Na fase inicial ("Credit Farming" / Bootstrapping), **nÃƒÂ£o hospedaremos nossos prÃƒÂ³prios modelos de vÃƒÂ­deo nas contas gratuitas**. Para a geraÃƒÂ§ÃƒÂ£o de vÃƒÂ­deos, o Apollo usarÃƒÂ¡ EXCLUSIVAMENTE a **Camada 3 (APIs Prontas como Fal.ai ou Replicate)**. Nessas empresas, pagamos apenas os centavos por vÃƒÂ­deo gerado, e eles que se virem para pagar as fazendas de HDs armazenando Terabytes de vÃƒÂ­deos. SÃƒÂ³ passaremos a hospedar vÃƒÂ­deo na nossa prÃƒÂ³pria infraestrutura quando o site tiver fluxo de caixa prÃƒÂ³prio para pagar os HDs gigantes.
+**A SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Definitiva (Volumes Persistentes e Baked Images):**
+
+Nas nossas futuras implantaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes (Modal, Beam, RunPod), **NUNCA** deixaremos o script baixar o modelo do HuggingFace na hora da execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (cold start). 
+
+1. **Modelos menores (Voz/ÃƒÂ¯Ã‚Â¿Ã‚Â½udio):** Podem ser baixados diretamente porque pesam pouco (1 a 3GB).
+
+2. **Modelos gigantes (Imagem/VÃƒÆ’Ã‚Â­deo - 30GB+):** Usaremos o sistema de "Volumes" (HDs virtuais compartilhados) da nuvem. NÃƒÆ’Ã‚Â³s baixamos o modelo apenas 1 ÃƒÆ’Ã‚Âºnica vez para dentro desse Volume. Quando a mÃƒÆ’Ã‚Â¡quina Serverless ligar, o HD virtual jÃƒÆ’Ã‚Â¡ estarÃƒÆ’Ã‚Â¡ plugado nela. O modelo carrega direto do disco (o que leva milissegundos) e o consumo de download na rede ÃƒÆ’Ã‚Â© absolutamente ZERO. Isso evita banimentos e zera o tempo de carregamento da API.
 
 
 
 ---
 
-## [PERFIL DO ARQUITETO E DIRETRIZES DE COMUNICAÃƒâ€¡ÃƒÆ’O] (AtualizaÃƒÂ§ÃƒÂ£o: 10/06/2026)
+## [CORREÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O ESTRATÃƒÆ’Ã¢â‚¬Â°GICA: CUSTO DE ARMAZENAMENTO VS PICO DE REDE] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
+
+
+
+**O Erro da PersistÃƒÆ’Ã‚Âªncia Total:** Manter dezenas de modelos de 30GB armazenados de forma permanente nos Discos Virtuais da nuvem vai drenar completamente os crÃƒÆ’Ã‚Â©ditos mensais (os ) apenas pagando a taxa de HD, mesmo com a mÃƒÆ’Ã‚Â¡quina desligada. NÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© viÃƒÆ’Ã‚Â¡vel para a fase de "Credit Farming" manter 300GB+ estacionados.
+
+
+
+**A SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o HÃƒÆ’Ã‚Â­brida (Smart TTL Caching):**
+
+Nossa arquitetura implementarÃƒÆ’Ã‚Â¡ um "Cache com Tempo de Vida (TTL)".
+
+1. Quando o primeiro pedido chega, baixamos o modelo (Gera 1 spike aceitÃƒÆ’Ã‚Â¡vel).
+
+2. NÃƒÆ’Ã‚Â£o deletamos imediatamente apÃƒÆ’Ã‚Â³s a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da imagem/ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio, pois isso gera o ciclo nocivo de "Baixa/Deleta" que causa banimento.
+
+3. Mantemos o modelo "vivo" no disco do servidor por um perÃƒÆ’Ã‚Â­odo estratÃƒÆ’Ã‚Â©gico (ex: 6 ou 12 horas).
+
+4. O servidor terÃƒÆ’Ã‚Â¡ uma rotina (Cron Job ou background task) que varre e **DELETA** o modelo apÃƒÆ’Ã‚Â³s esse perÃƒÆ’Ã‚Â­odo de inatividade.
+
+5. **Resultado:** Pagamos HD apenas por 6 horas, nÃƒÆ’Ã‚Â£o chamamos atenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do provedor com "metralhadora" de downloads, e poupamos a maior parte dos nossos dÃƒÆ’Ã‚Â³lares.
+
+
+
+---
+
+## [O PESO ESMAGADOR DOS MODELOS DE VÃƒÂ¯Ã‚Â¿Ã‚Â½DEO] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
+
+
+
+**O Problema do VÃƒÆ’Ã‚Â­deo:** Diferente de Imagem (30GB) e Voz (5GB), modelos open-source de VÃƒÆ’Ã‚Â­deo (como Wan, SVD, etc) possuem pesos colossais (frequentemente ultrapassando 80GB a 100GB). Se tentarmos hospedar modelos de vÃƒÆ’Ã‚Â­deo em Discos Virtuais nas contas gratuitas, a ocupaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do HD passarÃƒÆ’Ã‚Â¡ facilmente dos 150GB. O custo mensal de armazenamento (ex: 150GB x $0.15 = $22.50) devoraria o crÃƒÆ’Ã‚Â©dito gratuito por completo, inviabilizando o compute.
+
+
+
+**A TÃƒÆ’Ã‚Â¡tica de Guerra para VÃƒÆ’Ã‚Â­deos:** Na fase inicial ("Credit Farming" / Bootstrapping), **nÃƒÆ’Ã‚Â£o hospedaremos nossos prÃƒÆ’Ã‚Â³prios modelos de vÃƒÆ’Ã‚Â­deo nas contas gratuitas**. Para a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de vÃƒÆ’Ã‚Â­deos, o Apollo usarÃƒÆ’Ã‚Â¡ EXCLUSIVAMENTE a **Camada 3 (APIs Prontas como Fal.ai ou Replicate)**. Nessas empresas, pagamos apenas os centavos por vÃƒÆ’Ã‚Â­deo gerado, e eles que se virem para pagar as fazendas de HDs armazenando Terabytes de vÃƒÆ’Ã‚Â­deos. SÃƒÆ’Ã‚Â³ passaremos a hospedar vÃƒÆ’Ã‚Â­deo na nossa prÃƒÆ’Ã‚Â³pria infraestrutura quando o site tiver fluxo de caixa prÃƒÆ’Ã‚Â³prio para pagar os HDs gigantes.
+
+
+
+---
+
+## [PERFIL DO ARQUITETO E DIRETRIZES DE COMUNICAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 10/06/2026)
 
 
 
 **O Fator Humano (Apollo La Plata):**
 
-*   **LocalizaÃƒÂ§ÃƒÂ£o e Fuso:** Rio Branco, Acre.
+*   **LocalizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e Fuso:** Rio Branco, Acre.
 
-*   **Rotina de OperaÃƒÂ§ÃƒÂ£o:** HÃƒÂ¡bitos de sono variÃƒÂ¡veis (frequentemente dorme ÃƒÂ s 6h da manhÃƒÂ£). Foco imersivo na frente do computador.
+*   **Rotina de OperaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** HÃƒÆ’Ã‚Â¡bitos de sono variÃƒÆ’Ã‚Â¡veis (frequentemente dorme ÃƒÆ’Ã‚Â s 6h da manhÃƒÆ’Ã‚Â£). Foco imersivo na frente do computador.
 
-*   **MÃƒÂ©todo de ComunicaÃƒÂ§ÃƒÂ£o:** Usa o **Whisper (Comando de Voz)** para se comunicar com a IA, pois o raciocÃƒÂ­nio flui melhor e mais rÃƒÂ¡pido falando. **Diretriz para a IA:** Sempre ler alÃƒÂ©m de possÃƒÂ­veis erros de transcriÃƒÂ§ÃƒÂ£o ou formataÃƒÂ§ÃƒÂ£o do Whisper. Focar na lÃƒÂ³gica bruta do argumento.
+*   **MÃƒÆ’Ã‚Â©todo de ComunicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** Usa o **Whisper (Comando de Voz)** para se comunicar com a IA, pois o raciocÃƒÆ’Ã‚Â­nio flui melhor e mais rÃƒÆ’Ã‚Â¡pido falando. **Diretriz para a IA:** Sempre ler alÃƒÆ’Ã‚Â©m de possÃƒÆ’Ã‚Â­veis erros de transcriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ou formataÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Whisper. Focar na lÃƒÆ’Ã‚Â³gica bruta do argumento.
 
-*   **Background:** 39 anos. Ex-mÃƒÂºsico, produtor de ÃƒÂ¡ÃƒÂ¡udio (experiÃƒÂªncia em DAWs como Cubase) e designer grÃƒÂ¡fico (10 anos de experiÃƒÂªncia).
+*   **Background:** 39 anos. Ex-mÃƒÆ’Ã‚Âºsico, produtor de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio (experiÃƒÆ’Ã‚Âªncia em DAWs como Cubase) e designer grÃƒÆ’Ã‚Â¡fico (10 anos de experiÃƒÆ’Ã‚Âªncia).
 
-*   **Mindset (CTO/Arquiteto):** Mente altamente analÃƒÂ­tica e meticulosa. Busca construir sistemas de Renda Passiva e Alavancagem AssimÃƒÂ©trica (SaaS) para conquistar liberdade espacial e proteger sua famÃƒÂ­lia (mÃƒÂ£e). Odeia "trabalho burro" de sintaxe de cÃƒÂ³digo. Delega a codificaÃƒÂ§ÃƒÂ£o para a IA e assume a cadeira de Diretor de Tecnologia e VisÃƒÂ£o de Produto.
+*   **Mindset (CTO/Arquiteto):** Mente altamente analÃƒÆ’Ã‚Â­tica e meticulosa. Busca construir sistemas de Renda Passiva e Alavancagem AssimÃƒÆ’Ã‚Â©trica (SaaS) para conquistar liberdade espacial e proteger sua famÃƒÆ’Ã‚Â­lia (mÃƒÆ’Ã‚Â£e). Odeia "trabalho burro" de sintaxe de cÃƒÆ’Ã‚Â³digo. Delega a codificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para a IA e assume a cadeira de Diretor de Tecnologia e VisÃƒÆ’Ã‚Â£o de Produto.
 
-*   **DescompressÃƒÂ£o:** Dota 2.
-
-
-
-**Diretriz de InteraÃƒÂ§ÃƒÂ£o da IA:** O Antigravity atua como SÃƒÂ³cio TecnolÃƒÂ³gico e Engenheiro Chefe. A conversa deve manter o tom de parceria de negÃƒÂ³cios, respeito pelo background humano e foco absoluto na viabilidade financeira e arquitetural do sistema.
+*   **DescompressÃƒÆ’Ã‚Â£o:** Dota 2.
 
 
 
----
-
-## [REGISTRO ESTRATÃƒâ€°GICO] (AtualizaÃƒÂ§ÃƒÂ£o: 11/06/2026 - Madrugada)
-
-
-
-**1. O Incidente do Banimento e a ResiliÃƒÂªncia (Stop Loss):**
-
-A Conta 1 (Apollo La Plata) foi bloqueada devido ao pico de rede (Network I/O) durante os testes intensivos de boot do modelo FLUX no LitServe. A comunicaÃƒÂ§ÃƒÂ£o com o suporte foi truncada devido a um erro do sistema Zendesk (e-mails cruzados). O plano oficial agora ÃƒÂ©: a infraestrutura nÃƒÂ£o pode depender de uma conta. Criamos a PLANILHA_CONTAS_APOLLO.csv para mapear o nosso exÃƒÂ©rcito de Fallbacks (Modal, RunPod, Fal.ai, etc.).
-
-
-
-**2. O Core Business do Apollo (VisÃƒÂ£o do CEO):**
-
-O Arquiteto (Apollo) teve um momento de extrema clareza sobre o produto. O Apollo **nÃƒÂ£o ÃƒÂ© um gerador de imagens**. A IA de geraÃƒÂ§ÃƒÂ£o ÃƒÂ© apenas a "Isca de TrÃƒÂ¡fego" e o "Upsell" (venda casada). O verdadeiro produto bilionÃƒÂ¡rio ÃƒÂ© o **CÃƒÂ©rebro de AutomaÃƒÂ§ÃƒÂ£o em Python** Ã¢â‚¬â€ a capacidade de um cliente com um celular velho editar vÃƒÂ­deos pesados em lote na nuvem com 1 clique. O concorrente (MeuStudio.AI) fez apenas um "wrapper" de APIs; o Apollo ÃƒÂ© um orquestrador profissional. As APIs de IA sÃƒÂ£o peÃƒÂ§as de Lego trocÃƒÂ¡veis; a mecÃƒÂ¢nica central ÃƒÂ© o fosso competitivo.
-
-
-
-**3. TransiÃƒÂ§ÃƒÂ£o para a Conta 2:**
-
-Foco atual: Mover a operaÃƒÂ§ÃƒÂ£o para a Conta 2 (HistÃƒÂ³rias de 7 Dias). Instanciar uma mÃƒÂ¡quina L4 para rodar o Motor de Voz (TTS) / FFmpeg, utilizando o LitServe.
+**Diretriz de InteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da IA:** O Antigravity atua como SÃƒÆ’Ã‚Â³cio TecnolÃƒÆ’Ã‚Â³gico e Engenheiro Chefe. A conversa deve manter o tom de parceria de negÃƒÆ’Ã‚Â³cios, respeito pelo background humano e foco absoluto na viabilidade financeira e arquitetural do sistema.
 
 
 
 ---
 
-## [A ARQUITETURA SERVERLESS "CÃƒÆ’O DE GUARDA" E INTEGRAÃƒâ€¡ÃƒÆ’O END-TO-END] (AtualizaÃƒÂ§ÃƒÂ£o: 12/06/2026)
+## [REGISTRO ESTRATÃƒÆ’Ã¢â‚¬Â°GICO] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 11/06/2026 - Madrugada)
 
 
 
-**1. O CÃƒÂ£o de Guarda (Watchdog):**
+**1. O Incidente do Banimento e a ResiliÃƒÆ’Ã‚Âªncia (Stop Loss):**
 
-Para zerar os custos ociosos e manter a infraestrutura viÃƒÂ¡vel, desenvolvemos o mÃƒÂ³dulo `lightning_manager.py`. Este mÃƒÂ³dulo age como um "CÃƒÂ£o de Guarda" (Watchdog) que se conecta ÃƒÂ  API da Lightning AI usando a chave de equipe (`LIGHTNING_TEAMSPACE`). Ele acorda as mÃƒÂ¡quinas (RTXP 6000, T4, CPU) apenas quando hÃƒÂ¡ demanda real, extrai dinamicamente a URL pÃƒÂºblica da mÃƒÂ¡quina assim que ela fica pronta, e desliga as mÃƒÂ¡quinas automaticamente apÃƒÂ³s 5 minutos de ociosidade.
+A Conta 1 (Apollo La Plata) foi bloqueada devido ao pico de rede (Network I/O) durante os testes intensivos de boot do modelo FLUX no LitServe. A comunicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com o suporte foi truncada devido a um erro do sistema Zendesk (e-mails cruzados). O plano oficial agora ÃƒÆ’Ã‚Â©: a infraestrutura nÃƒÆ’Ã‚Â£o pode depender de uma conta. Criamos a PLANILHA_CONTAS_APOLLO.csv para mapear o nosso exÃƒÆ’Ã‚Â©rcito de Fallbacks (Modal, RunPod, Fal.ai, etc.).
 
 
 
-**2. O Roteador DinÃƒÂ¢mico (Load Balancer):**
+**2. O Core Business do Apollo (VisÃƒÆ’Ã‚Â£o do CEO):**
 
-O `load_balancer.py` foi atualizado para nÃƒÂ£o depender mais de portas locais (`localhost`). Agora ele aciona o CÃƒÂ£o de Guarda, injeta a URL real da nuvem e gerencia as tentativas de conexÃƒÂ£o (Retry-Loop) enquanto o servidor LitServe (na nuvem) faz o boot dos modelos pesados (como o FLUX). Isso impede falhas na tela do cliente enquanto a mÃƒÂ¡quina "esquenta".
+O Arquiteto (Apollo) teve um momento de extrema clareza sobre o produto. O Apollo **nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um gerador de imagens**. A IA de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© apenas a "Isca de TrÃƒÆ’Ã‚Â¡fego" e o "Upsell" (venda casada). O verdadeiro produto bilionÃƒÆ’Ã‚Â¡rio ÃƒÆ’Ã‚Â© o **CÃƒÆ’Ã‚Â©rebro de AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em Python** ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â a capacidade de um cliente com um celular velho editar vÃƒÆ’Ã‚Â­deos pesados em lote na nuvem com 1 clique. O concorrente (MeuStudio.AI) fez apenas um "wrapper" de APIs; o Apollo ÃƒÆ’Ã‚Â© um orquestrador profissional. As APIs de IA sÃƒÆ’Ã‚Â£o peÃƒÆ’Ã‚Â§as de Lego trocÃƒÆ’Ã‚Â¡veis; a mecÃƒÆ’Ã‚Â¢nica central ÃƒÆ’Ã‚Â© o fosso competitivo.
+
+
+
+**3. TransiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para a Conta 2:**
+
+Foco atual: Mover a operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para a Conta 2 (HistÃƒÆ’Ã‚Â³rias de 7 Dias). Instanciar uma mÃƒÆ’Ã‚Â¡quina L4 para rodar o Motor de Voz (TTS) / FFmpeg, utilizando o LitServe.
+
+
+
+---
+
+## [A ARQUITETURA SERVERLESS "CÃƒÆ’Ã†â€™O DE GUARDA" E INTEGRAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O END-TO-END] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 12/06/2026)
+
+
+
+**1. O CÃƒÆ’Ã‚Â£o de Guarda (Watchdog):**
+
+Para zerar os custos ociosos e manter a infraestrutura viÃƒÆ’Ã‚Â¡vel, desenvolvemos o mÃƒÆ’Ã‚Â³dulo `lightning_manager.py`. Este mÃƒÆ’Ã‚Â³dulo age como um "CÃƒÆ’Ã‚Â£o de Guarda" (Watchdog) que se conecta ÃƒÆ’Ã‚Â  API da Lightning AI usando a chave de equipe (`LIGHTNING_TEAMSPACE`). Ele acorda as mÃƒÆ’Ã‚Â¡quinas (RTXP 6000, T4, CPU) apenas quando hÃƒÆ’Ã‚Â¡ demanda real, extrai dinamicamente a URL pÃƒÆ’Ã‚Âºblica da mÃƒÆ’Ã‚Â¡quina assim que ela fica pronta, e desliga as mÃƒÆ’Ã‚Â¡quinas automaticamente apÃƒÆ’Ã‚Â³s 5 minutos de ociosidade.
+
+
+
+**2. O Roteador DinÃƒÆ’Ã‚Â¢mico (Load Balancer):**
+
+O `load_balancer.py` foi atualizado para nÃƒÆ’Ã‚Â£o depender mais de portas locais (`localhost`). Agora ele aciona o CÃƒÆ’Ã‚Â£o de Guarda, injeta a URL real da nuvem e gerencia as tentativas de conexÃƒÆ’Ã‚Â£o (Retry-Loop) enquanto o servidor LitServe (na nuvem) faz o boot dos modelos pesados (como o FLUX). Isso impede falhas na tela do cliente enquanto a mÃƒÆ’Ã‚Â¡quina "esquenta".
 
 
 
 **3. O Fio Conectado (Frontend -> Nuvem):**
 
-O Maestro (`maestro/main.py`) foi limpo de seus cÃƒÂ³digos de simulaÃƒÂ§ÃƒÂ£o (mocks) e conectado diretamente ao Load Balancer. O site visual (`apollo_gerador.html`) foi reprogramado com um sistema de Polling robusto, disparando solicitaÃƒÂ§ÃƒÂµes ao Maestro e atualizando a interface do usuÃƒÂ¡rio com a URL final do download da imagem/vÃƒÂ­deo, fechando o ciclo 100% real do clique atÃƒÂ© a nuvem.
+O Maestro (`maestro/main.py`) foi limpo de seus cÃƒÆ’Ã‚Â³digos de simulaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (mocks) e conectado diretamente ao Load Balancer. O site visual (`apollo_gerador.html`) foi reprogramado com um sistema de Polling robusto, disparando solicitaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes ao Maestro e atualizando a interface do usuÃƒÆ’Ã‚Â¡rio com a URL final do download da imagem/vÃƒÆ’Ã‚Â­deo, fechando o ciclo 100% real do clique atÃƒÆ’Ã‚Â© a nuvem.
 
 
 
-**4. OrquestraÃƒÂ§ÃƒÂ£o Unificada:**
+**4. OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Unificada:**
 
-Todos os servidores backend (Maestro e Load Balancer) foram encapsulados de forma invisÃƒÂ­vel (`start /b`) dentro do script matriz do Apollo (`INICIAR_APOLLO_STUDIO.bat`). Isso mantÃƒÂ©m a filosofia de "clique ÃƒÂºnico" do arquiteto, levantando toda a rede de microsserviÃƒÂ§os sem poluir a ÃƒÂ¡rea de trabalho com mÃƒÂºltiplos terminais abertos.
+Todos os servidores backend (Maestro e Load Balancer) foram encapsulados de forma invisÃƒÆ’Ã‚Â­vel (`start /b`) dentro do script matriz do Apollo (`INICIAR_APOLLO_STUDIO.bat`). Isso mantÃƒÆ’Ã‚Â©m a filosofia de "clique ÃƒÆ’Ã‚Âºnico" do arquiteto, levantando toda a rede de microsserviÃƒÆ’Ã‚Â§os sem poluir a ÃƒÆ’Ã‚Â¡rea de trabalho com mÃƒÆ’Ã‚Âºltiplos terminais abertos.
 
 
 
 ---
 
-## [A FASE DE PRÃƒâ€°-GERAÃƒâ€¡ÃƒÆ’O E O ORQUESTRADOR DE MICRO-AGENTES] (AtualizaÃƒÂ§ÃƒÂ£o: 14/06/2026)
+## [A FASE DE PRÃƒÆ’Ã¢â‚¬Â°-GERAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O E O ORQUESTRADOR DE MICRO-AGENTES] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 14/06/2026)
 
 
 
-**1. O Paradigma de PreÃƒÂ§os Compostos e o "Drag & Drop":**
+**1. O Paradigma de PreÃƒÆ’Ã‚Â§os Compostos e o "Drag & Drop":**
 
-- **Custo Misto:** AÃƒÂ§ÃƒÂµes dentro do site podem custar uma mistura de moedas (Ex: Apollo Coins + CombustÃƒÂ­vel + LLM Chips). Tudo ÃƒÂ© orÃƒÂ§ado e apresentado ao usuÃƒÂ¡rio antes do clique.
+- **Custo Misto:** AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes dentro do site podem custar uma mistura de moedas (Ex: Apollo Coins + CombustÃƒÆ’Ã‚Â­vel + LLM Chips). Tudo ÃƒÆ’Ã‚Â© orÃƒÆ’Ã‚Â§ado e apresentado ao usuÃƒÆ’Ã‚Â¡rio antes do clique.
 
-- **MecÃƒÂ¢nica de Pagamento (Drag & Drop vs CÃƒÂ¢mbio AutomÃƒÂ¡tico):** 
+- **MecÃƒÆ’Ã‚Â¢nica de Pagamento (Drag & Drop vs CÃƒÆ’Ã‚Â¢mbio AutomÃƒÆ’Ã‚Â¡tico):** 
 
-  - Se o usuÃƒÂ¡rio arrastar os seus "Packs" (quadradinhos com as logos das IAs compradas no atacado) para dentro da ÃƒÂ¡rea de geraÃƒÂ§ÃƒÂ£o, o sistema desconta desses consumÃƒÂ­veis.
+  - Se o usuÃƒÆ’Ã‚Â¡rio arrastar os seus "Packs" (quadradinhos com as logos das IAs compradas no atacado) para dentro da ÃƒÆ’Ã‚Â¡rea de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, o sistema desconta desses consumÃƒÆ’Ã‚Â­veis.
 
-  - Se ele tiver preguiÃƒÂ§a e apenas selecionar as IAs numa lista, o sistema cobra tudo automaticamente em Apollo Coins (PreÃƒÂ§o Spot, mais caro).
+  - Se ele tiver preguiÃƒÆ’Ã‚Â§a e apenas selecionar as IAs numa lista, o sistema cobra tudo automaticamente em Apollo Coins (PreÃƒÆ’Ã‚Â§o Spot, mais caro).
 
 
 
 **2. A Necessidade do Fluxograma (Estilo N8n/Node-Red):**
 
-- **O Problema:** VÃƒÂ­deos longos (10 a 30 minutos) gerados 100% por IA exigem dezenas de prompts de imagem, animaÃƒÂ§ÃƒÂ£o e voz. Uma ÃƒÂºnica chamada de LLM falha catastroficamente ao tentar gerar e sincronizar tudo isso de uma vez.
+- **O Problema:** VÃƒÆ’Ã‚Â­deos longos (10 a 30 minutos) gerados 100% por IA exigem dezenas de prompts de imagem, animaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e voz. Uma ÃƒÆ’Ã‚Âºnica chamada de LLM falha catastroficamente ao tentar gerar e sincronizar tudo isso de uma vez.
 
-- **A SoluÃƒÂ§ÃƒÂ£o:** A criaÃƒÂ§ÃƒÂ£o de um painel de **Fluxograma de Micro-Agentes** (inspirado no n8n) focado apenas na *Fase de PrÃƒÂ©-GeraÃƒÂ§ÃƒÂ£o* (CriaÃƒÂ§ÃƒÂ£o do Roteiro e Mapeamento do VÃƒÂ­deo).
+- **A SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** A criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um painel de **Fluxograma de Micro-Agentes** (inspirado no n8n) focado apenas na *Fase de PrÃƒÆ’Ã‚Â©-GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o* (CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Roteiro e Mapeamento do VÃƒÆ’Ã‚Â­deo).
 
 
 
 **3. O Funcionamento do Orquestrador de Agentes:**
 
-- **Atendente/Gerente (Input):** Recebe o tema do usuÃƒÂ¡rio (ou link de notÃƒÂ­cia) e puxa o perfil salvo do Canal (banco de dados com o tom de voz e estilo do canal).
+- **Atendente/Gerente (Input):** Recebe o tema do usuÃƒÆ’Ã‚Â¡rio (ou link de notÃƒÆ’Ã‚Â­cia) e puxa o perfil salvo do Canal (banco de dados com o tom de voz e estilo do canal).
 
-- **Scrapers (Busca):** Micro-agentes que vÃƒÂ£o buscar notÃƒÂ­cias em tempo real, vÃƒÂ­deos em alta ou ler PDFs/bases de dados prÃƒÂ³prias do usuÃƒÂ¡rio.
+- **Scrapers (Busca):** Micro-agentes que vÃƒÆ’Ã‚Â£o buscar notÃƒÆ’Ã‚Â­cias em tempo real, vÃƒÆ’Ã‚Â­deos em alta ou ler PDFs/bases de dados prÃƒÆ’Ã‚Â³prias do usuÃƒÆ’Ã‚Â¡rio.
 
-- **Agentes Especialistas (A FÃƒÂ¡brica):** Agentes que quebram o trabalho. Um cria os Prompts Visuais das cenas, outro cria o Texto (TTS), outro os efeitos de animaÃƒÂ§ÃƒÂ£o.
+- **Agentes Especialistas (A FÃƒÆ’Ã‚Â¡brica):** Agentes que quebram o trabalho. Um cria os Prompts Visuais das cenas, outro cria o Texto (TTS), outro os efeitos de animaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
-- **Agente de ConvergÃƒÂªncia/RevisÃƒÂ£o (Output):** Recebe o trabalho de todos os especialistas, cruza as informaÃƒÂ§ÃƒÂµes para garantir consistÃƒÂªncia (ex: "A imagem bate com a animaÃƒÂ§ÃƒÂ£o?") e, se aprovado, gera um "Mega Arquivo de Roteiro/Mapeamento" (JSON/Texto).
+- **Agente de ConvergÃƒÆ’Ã‚Âªncia/RevisÃƒÆ’Ã‚Â£o (Output):** Recebe o trabalho de todos os especialistas, cruza as informaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes para garantir consistÃƒÆ’Ã‚Âªncia (ex: "A imagem bate com a animaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o?") e, se aprovado, gera um "Mega Arquivo de Roteiro/Mapeamento" (JSON/Texto).
 
-- **A Renda LLM:** Cada nÃƒÂ³ (node) desse fluxograma acionado gasta **Chips de LLM**.
+- **A Renda LLM:** Cada nÃƒÆ’Ã‚Â³ (node) desse fluxograma acionado gasta **Chips de LLM**.
 
-- **Desenvolvimento da UI (Foco em Simplicidade):** Embora softwares como *Flowise* e *LangFlow* existam, eles sÃƒÂ£o genÃƒÂ©ricos e complexos demais para o usuÃƒÂ¡rio mÃƒÂ©dio. A decisÃƒÂ£o de design ÃƒÂ© construir uma **Interface Customizada e Truncada** usando apenas bibliotecas visuais (como *React Flow* ou *LiteGraph.js*). O usuÃƒÂ¡rio nÃƒÂ£o terÃƒÂ¡ liberdade infinita; ele sÃƒÂ³ poderÃƒÂ¡ encaixar "Agentes Apollo" prÃƒÂ©-definidos (Ex: "Agente Mapeador de Template", "Agente Gerador de Prompt Visual"), tornando o uso amigÃƒÂ¡vel e direto ao ponto.
+- **Desenvolvimento da UI (Foco em Simplicidade):** Embora softwares como *Flowise* e *LangFlow* existam, eles sÃƒÆ’Ã‚Â£o genÃƒÆ’Ã‚Â©ricos e complexos demais para o usuÃƒÆ’Ã‚Â¡rio mÃƒÆ’Ã‚Â©dio. A decisÃƒÆ’Ã‚Â£o de design ÃƒÆ’Ã‚Â© construir uma **Interface Customizada e Truncada** usando apenas bibliotecas visuais (como *React Flow* ou *LiteGraph.js*). O usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o terÃƒÆ’Ã‚Â¡ liberdade infinita; ele sÃƒÆ’Ã‚Â³ poderÃƒÆ’Ã‚Â¡ encaixar "Agentes Apollo" prÃƒÆ’Ã‚Â©-definidos (Ex: "Agente Mapeador de Template", "Agente Gerador de Prompt Visual"), tornando o uso amigÃƒÆ’Ã‚Â¡vel e direto ao ponto.
 
 
 
-**4. O Elo com a GeraÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica:**
+**4. O Elo com a GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica:**
 
-- O usuÃƒÂ¡rio pode rodar a fase de PrÃƒÂ©-GeraÃƒÂ§ÃƒÂ£o para construir pacotes de roteiros (Textos grandes).
+- O usuÃƒÆ’Ã‚Â¡rio pode rodar a fase de PrÃƒÆ’Ã‚Â©-GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para construir pacotes de roteiros (Textos grandes).
 
-- Ele pode pegar esse "PacotÃƒÂ£o Final" e soltar no Editor para ir gerando manualmente peÃƒÂ§a por peÃƒÂ§a, OU apertar um botÃƒÂ£o e mandar direto para a **EdiÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica**.
+- Ele pode pegar esse "PacotÃƒÆ’Ã‚Â£o Final" e soltar no Editor para ir gerando manualmente peÃƒÆ’Ã‚Â§a por peÃƒÆ’Ã‚Â§a, OU apertar um botÃƒÆ’Ã‚Â£o e mandar direto para a **EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica**.
 
-- A EdiÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica (o motor FFmpeg/GPU) assume o controle, lendo o PacotÃƒÂ£o Final e acionando as APIs pesadas (Cristal, GPU, CombustÃƒÂ­vel) sem intervenÃƒÂ§ÃƒÂ£o humana, resultando no vÃƒÂ­deo final completo.
+- A EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica (o motor FFmpeg/GPU) assume o controle, lendo o PacotÃƒÆ’Ã‚Â£o Final e acionando as APIs pesadas (Cristal, GPU, CombustÃƒÆ’Ã‚Â­vel) sem intervenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o humana, resultando no vÃƒÆ’Ã‚Â­deo final completo.
 
-- **Templates de AutomaÃƒÂ§ÃƒÂ£o:** O usuÃƒÂ¡rio pode salvar seus fluxogramas como Templates (Ex: "Template VÃƒÂ­deo Curto de NotÃƒÂ­cias"). NÃƒÂ£o dia a dia, ele sÃƒÂ³ manda um link pelo WhatsApp, o sistema puxa o Template, roda os micro-agentes de texto, cria o roteiro, manda para a GPU, e devolve o vÃƒÂ­deo final sem ele abrir o site. Ciclo Fechado.
+- **Templates de AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** O usuÃƒÆ’Ã‚Â¡rio pode salvar seus fluxogramas como Templates (Ex: "Template VÃƒÆ’Ã‚Â­deo Curto de NotÃƒÆ’Ã‚Â­cias"). NÃƒÆ’Ã‚Â£o dia a dia, ele sÃƒÆ’Ã‚Â³ manda um link pelo WhatsApp, o sistema puxa o Template, roda os micro-agentes de texto, cria o roteiro, manda para a GPU, e devolve o vÃƒÆ’Ã‚Â­deo final sem ele abrir o site. Ciclo Fechado.
 
 
 
 **5. O Mercado Exclusivo das Apollo Coins (A Moeda de Troca Universal):**
 
-As moedas douradas (Apollo Coins) sÃƒÂ£o o coraÃƒÂ§ÃƒÂ£o do cÃƒÂ¢mbio. Elas compram tudo no site. Ãƒâ€° a moeda que o usuÃƒÂ¡rio usa para pagar o PreÃƒÂ§o Spot (se faltar cristal, ele paga em Coins de forma mais cara) ou para comprar os Packs no atacado. AlÃƒÂ©m de ser o lastro para os 4 recursos principais, ela possui mercado exclusivo:
+As moedas douradas (Apollo Coins) sÃƒÆ’Ã‚Â£o o coraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do cÃƒÆ’Ã‚Â¢mbio. Elas compram tudo no site. ÃƒÆ’Ã¢â‚¬Â° a moeda que o usuÃƒÆ’Ã‚Â¡rio usa para pagar o PreÃƒÆ’Ã‚Â§o Spot (se faltar cristal, ele paga em Coins de forma mais cara) ou para comprar os Packs no atacado. AlÃƒÆ’Ã‚Â©m de ser o lastro para os 4 recursos principais, ela possui mercado exclusivo:
 
-- **EspaÃƒÂ§o no Bagageiro (Storage TemporÃƒÂ¡rio):** O usuÃƒÂ¡rio ganha 2GB gratuitos. Quer guardar mais vÃƒÂ­deos brutos na nossa nuvem? Paga um aluguel em Apollo Coins.
+- **EspaÃƒÆ’Ã‚Â§o no Bagageiro (Storage TemporÃƒÆ’Ã‚Â¡rio):** O usuÃƒÆ’Ã‚Â¡rio ganha 2GB gratuitos. Quer guardar mais vÃƒÆ’Ã‚Â­deos brutos na nossa nuvem? Paga um aluguel em Apollo Coins.
 
-- **Slots de Templates (Save States):** O usuÃƒÂ¡rio pode salvar atÃƒÂ© 3 fluxogramas gratuitos. Para desbloquear mais slots, ele paga com Coins.
+- **Slots de Templates (Save States):** O usuÃƒÆ’Ã‚Â¡rio pode salvar atÃƒÆ’Ã‚Â© 3 fluxogramas gratuitos. Para desbloquear mais slots, ele paga com Coins.
 
-- **XP Boosters e "Pay-to-Fast":** O usuÃƒÂ¡rio paga moedas para ganhar "O Dobro de KM" ou compra diretamente "Pacotes de XP" para pular etapas e alcanÃƒÂ§ar os descontos da Ã¯Â¿Â½rvore de Habilidades mais rapidamente.
+- **XP Boosters e "Pay-to-Fast":** O usuÃƒÆ’Ã‚Â¡rio paga moedas para ganhar "O Dobro de KM" ou compra diretamente "Pacotes de XP" para pular etapas e alcanÃƒÆ’Ã‚Â§ar os descontos da ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore de Habilidades mais rapidamente.
 
-- **CosmÃƒÂ©ticos Extra-Ã¯Â¿Â½rvore:** Backgrounds animados para o perfil do jogador e temas para o Editor.
+- **CosmÃƒÆ’Ã‚Â©ticos Extra-ÃƒÂ¯Ã‚Â¿Ã‚Â½rvore:** Backgrounds animados para o perfil do jogador e temas para o Editor.
 
-- **A MatemÃƒÂ¡tica da EvoluÃƒÂ§ÃƒÂ£o (O Desafio de ProduÃƒÂ§ÃƒÂ£o):** Como a ÃƒÂ¡rvore bifurca a cada evoluÃƒÂ§ÃƒÂ£o (o item A vira A1 ou A2, que viram A1.1, A1.2, etc), isso demandarÃƒÂ¡ a geraÃƒÂ§ÃƒÂ£o de **centenas (300 a 500)** de variaÃƒÂ§ÃƒÂµes de design estÃƒÂ©tico. Essa serÃƒÂ¡ uma tarefa massiva de geraÃƒÂ§ÃƒÂ£o por IA que precisarÃƒÂ¡ ser padronizada no futuro.
+- **A MatemÃƒÆ’Ã‚Â¡tica da EvoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (O Desafio de ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):** Como a ÃƒÆ’Ã‚Â¡rvore bifurca a cada evoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (o item A vira A1 ou A2, que viram A1.1, A1.2, etc), isso demandarÃƒÆ’Ã‚Â¡ a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de **centenas (300 a 500)** de variaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de design estÃƒÆ’Ã‚Â©tico. Essa serÃƒÆ’Ã‚Â¡ uma tarefa massiva de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o por IA que precisarÃƒÆ’Ã‚Â¡ ser padronizada no futuro.
 
 
 
 ---
 
-## [A TRINDADE DA AUTOMAÃƒâ€¡ÃƒÆ’O E A FASE DE DISTRIBUIÃƒâ€¡ÃƒÆ’O] (AtualizaÃƒÂ§ÃƒÂ£o: 15/06/2026)
+## [A TRINDADE DA AUTOMAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O E A FASE DE DISTRIBUIÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 15/06/2026)
 
 
 
-**1. A VisÃƒÂ£o Global do Produto (O Fim a Fim):**
+**1. A VisÃƒÆ’Ã‚Â£o Global do Produto (O Fim a Fim):**
 
-O Apollo Edit Web evoluiu de um "editor inteligente" para uma Plataforma Completa de GestÃƒÂ£o de ConteÃƒÂºdo (Content Lifecycle Management), dividida em trÃƒÂªs grandes pilares (A Trindade):
+O Apollo Edit Web evoluiu de um "editor inteligente" para uma Plataforma Completa de GestÃƒÆ’Ã‚Â£o de ConteÃƒÆ’Ã‚Âºdo (Content Lifecycle Management), dividida em trÃƒÆ’Ã‚Âªs grandes pilares (A Trindade):
 
-- **Fase 1: PrÃƒÂ©-GeraÃƒÂ§ÃƒÂ£o (A Mente):** Pesquisa, Roteiro, OrquestraÃƒÂ§ÃƒÂ£o de Agentes (O fluxo estilo N8n/Node). Onde a ideia vira um "PacotÃƒÂ£o de Metadados".
+- **Fase 1: PrÃƒÆ’Ã‚Â©-GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (A Mente):** Pesquisa, Roteiro, OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Agentes (O fluxo estilo N8n/Node). Onde a ideia vira um "PacotÃƒÆ’Ã‚Â£o de Metadados".
 
-- **Fase 2: GeraÃƒÂ§ÃƒÂ£o (A FÃƒÂ¡brica):** Onde estamos focados agora (Apollo Studio). EdiÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica, processamento de vÃƒÂ­deo (FFmpeg/GPU), renderizaÃƒÂ§ÃƒÂ£o pesada e TTS.
+- **Fase 2: GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (A FÃƒÆ’Ã‚Â¡brica):** Onde estamos focados agora (Apollo Studio). EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o automÃƒÆ’Ã‚Â¡tica, processamento de vÃƒÆ’Ã‚Â­deo (FFmpeg/GPU), renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pesada e TTS.
 
-- **Fase 3: DistribuiÃƒÂ§ÃƒÂ£o (O Carteiro):** A postagem automÃƒÂ¡tica do vÃƒÂ­deo gerado diretamente nas redes sociais (YouTube, TikTok, Kwai, Instagram, etc).
-
-
-
-**2. A ExtensÃƒÂ£o de Postagem AutomÃƒÂ¡tica (Fase 3 - O MÃƒÂ©todo de ForÃƒÂ§a Bruta):**
-
-- O arquiteto possui uma extensÃƒÂ£o proprietÃƒÂ¡ria de Chrome (desenvolvida anteriormente) capaz de burlar a ausÃƒÂªncia de APIs oficiais de certas redes (como o Kwai) simulando cliques humanos.
-
-- **Arquitetura de "ExtensÃƒÂ£o Burra / Site Inteligente":** Para evitar roubo/clonagem do cÃƒÂ³digo e fugir das revisÃƒÂµes demoradas do Google Chrome Store, toda a lÃƒÂ³gica de negÃƒÂ³cio ficarÃƒÂ¡ no backend do site. A extensÃƒÂ£o serÃƒÂ¡ apenas um "Executor Cego". Usaremos a permissÃƒÂ£o `externally_connectable` no `manifest.json` da extensÃƒÂ£o, permitindo que apenas o domÃƒÂ­nio do Apollo envie comandos (ex: `{"clique": "#botao"}`).
-
-- **O Fator SeguranÃƒÂ§a:** O site oferecerÃƒÂ¡ ambos os mÃƒÂ©todos (API e ExtensÃƒÂ£o). A extensÃƒÂ£o serÃƒÂ¡ comercializada como o mÃƒÂ©todo "Mais Seguro e Anti-Spam", pois simula a navegaÃƒÂ§ÃƒÂ£o humana e burla os algoritmos de detecÃƒÂ§ÃƒÂ£o de bots pesados das redes. O usuÃƒÂ¡rio decide qual via prefere.
-
-- **A IntegraÃƒÂ§ÃƒÂ£o Perfeita:** A extensÃƒÂ£o se tornarÃƒÂ¡ um "Escravo/Slave" do site Apollo Edit Web. O usuÃƒÂ¡rio precisarÃƒÂ¡ ter uma conta ativa no site e mantÃƒÂª-lo aberto. O site "controlarÃƒÂ¡" a extensÃƒÂ£o remotamente.
-
-- **MonetizaÃƒÂ§ÃƒÂ£o e RetenÃƒÂ§ÃƒÂ£o:** Para usar a postagem automÃƒÂ¡tica, o usuÃƒÂ¡rio deverÃƒÂ¡ consumir moedas da plataforma (CombustÃƒÂ­vel ou Apollo Coins) por vÃƒÂ­deo postado. O funil exige a presenÃƒÂ§a visual do usuÃƒÂ¡rio no site (vendo anÃƒÂºncios/ofertas) para ativar o bot.
+- **Fase 3: DistribuiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (O Carteiro):** A postagem automÃƒÆ’Ã‚Â¡tica do vÃƒÆ’Ã‚Â­deo gerado diretamente nas redes sociais (YouTube, TikTok, Kwai, Instagram, etc).
 
 
 
-**3. InteligÃƒÂªncia de DistribuiÃƒÂ§ÃƒÂ£o e Metadados (A MÃƒÂ¡gica da Fase 3):**
+**2. A ExtensÃƒÆ’Ã‚Â£o de Postagem AutomÃƒÆ’Ã‚Â¡tica (Fase 3 - O MÃƒÆ’Ã‚Â©todo de ForÃƒÆ’Ã‚Â§a Bruta):**
 
-- **AdaptaÃƒÂ§ÃƒÂ£o de Copywriter:** A Fase 1 gera um Roteiro e Metadados brutos. A Fase 3 possui um Agente Copywriter que pega esse texto bruto e adapta inteligentemente para cada rede: cria uma descriÃƒÂ§ÃƒÂ£o densa em SEO pro YouTube, e converte o mesmo texto num "Hook RÃƒÂ¡pido + 3 Hashtags" pro TikTok.
+- O arquiteto possui uma extensÃƒÆ’Ã‚Â£o proprietÃƒÆ’Ã‚Â¡ria de Chrome (desenvolvida anteriormente) capaz de burlar a ausÃƒÆ’Ã‚Âªncia de APIs oficiais de certas redes (como o Kwai) simulando cliques humanos.
 
-- **GeraÃƒÂ§ÃƒÂ£o de Thumbnails (Capas):** O sistema nÃƒÂ£o entrega o vÃƒÂ­deo "pelado". AÃƒÂ§ÃƒÂ£o fim da renderizaÃƒÂ§ÃƒÂ£o, a IA assiste ao vÃƒÂ­deo gerado, identifica os personagens/cenÃƒÂ¡rio e gera uma "Capa de YouTube" (Thumbnail).
+- **Arquitetura de "ExtensÃƒÆ’Ã‚Â£o Burra / Site Inteligente":** Para evitar roubo/clonagem do cÃƒÆ’Ã‚Â³digo e fugir das revisÃƒÆ’Ã‚Âµes demoradas do Google Chrome Store, toda a lÃƒÆ’Ã‚Â³gica de negÃƒÆ’Ã‚Â³cio ficarÃƒÆ’Ã‚Â¡ no backend do site. A extensÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ apenas um "Executor Cego". Usaremos a permissÃƒÆ’Ã‚Â£o `externally_connectable` no `manifest.json` da extensÃƒÆ’Ã‚Â£o, permitindo que apenas o domÃƒÆ’Ã‚Â­nio do Apollo envie comandos (ex: `{"clique": "#botao"}`).
 
-- **Hard-Encode de Capa:** O sistema queima (adiciona) essa capa gerada no exato Primeiro Frame (00:00:00) do vÃƒÂ­deo `.mp4`. Isso ÃƒÂ© um truque essencial para forÃƒÂ§ar plataformas como TikTok, Kwai e Instagram Reels a escolherem a capa correta sem precisarmos usar API de thumbnail.
+- **O Fator SeguranÃƒÆ’Ã‚Â§a:** O site oferecerÃƒÆ’Ã‚Â¡ ambos os mÃƒÆ’Ã‚Â©todos (API e ExtensÃƒÆ’Ã‚Â£o). A extensÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ comercializada como o mÃƒÆ’Ã‚Â©todo "Mais Seguro e Anti-Spam", pois simula a navegaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o humana e burla os algoritmos de detecÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de bots pesados das redes. O usuÃƒÆ’Ã‚Â¡rio decide qual via prefere.
 
-- **Multiformatos:** A Fase 3 nÃƒÂ£o posta apenas vÃƒÂ­deo. Ela ÃƒÂ© capaz de gerar e postar Imagens (Instagram Feed, Pinterest) e Textos (Aba Comunidade do YouTube, Twitter), englobando todo o ecossistema de conteÃƒÂºdo.
+- **A IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Perfeita:** A extensÃƒÆ’Ã‚Â£o se tornarÃƒÆ’Ã‚Â¡ um "Escravo/Slave" do site Apollo Edit Web. O usuÃƒÆ’Ã‚Â¡rio precisarÃƒÆ’Ã‚Â¡ ter uma conta ativa no site e mantÃƒÆ’Ã‚Âª-lo aberto. O site "controlarÃƒÆ’Ã‚Â¡" a extensÃƒÆ’Ã‚Â£o remotamente.
 
-
-
-**3. ExpansÃƒÂ£o da Fase 1 (Busca Ativa de MÃƒÂ­dia / B-Rolls):**
-
-- Os Scrapers da Fase 1 nÃƒÂ£o vÃƒÂ£o buscar apenas texto. Eles podem ser equipados com ferramentas (como `yt-dlp` ou APIs do Pexels/Pixabay) para **baixar vÃƒÂ­deos reais (B-roll) e imagens da internet** de forma autÃƒÂ´noma.
-
-- Quando a Fase 1 termina, ela nÃƒÂ£o entrega apenas um roteiro; ela entrega uma "Pasta Completa" (Assets + JSON de Mapeamento).
+- **MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e RetenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** Para usar a postagem automÃƒÆ’Ã‚Â¡tica, o usuÃƒÆ’Ã‚Â¡rio deverÃƒÆ’Ã‚Â¡ consumir moedas da plataforma (CombustÃƒÆ’Ã‚Â­vel ou Apollo Coins) por vÃƒÆ’Ã‚Â­deo postado. O funil exige a presenÃƒÆ’Ã‚Â§a visual do usuÃƒÆ’Ã‚Â¡rio no site (vendo anÃƒÆ’Ã‚Âºncios/ofertas) para ativar o bot.
 
 
 
-**4. A Ponte IntermediÃƒÂ¡ria e os 3 Modos de GeraÃƒÂ§ÃƒÂ£o:**
+**3. InteligÃƒÆ’Ã‚Âªncia de DistribuiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e Metadados (A MÃƒÆ’Ã‚Â¡gica da Fase 3):**
 
-O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
+- **AdaptaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Copywriter:** A Fase 1 gera um Roteiro e Metadados brutos. A Fase 3 possui um Agente Copywriter que pega esse texto bruto e adapta inteligentemente para cada rede: cria uma descriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o densa em SEO pro YouTube, e converte o mesmo texto num "Hook RÃƒÆ’Ã‚Â¡pido + 3 Hashtags" pro TikTok.
 
-- **Modo Manual:** O usuÃƒÂ¡rio navega livremente pelas abas. A interface oferece "Apontamentos" lÃƒÂ³gicos baseados no fluxo ideal (ex: terminou texto, sugere aba TTS), mas o usuÃƒÂ¡rio assume 100% do controle criativo e das escolhas.
+- **GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Thumbnails (Capas):** O sistema nÃƒÆ’Ã‚Â£o entrega o vÃƒÆ’Ã‚Â­deo "pelado". AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o fim da renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, a IA assiste ao vÃƒÆ’Ã‚Â­deo gerado, identifica os personagens/cenÃƒÆ’Ã‚Â¡rio e gera uma "Capa de YouTube" (Thumbnail).
 
-- **Modo SemiautomÃƒÂ¡tico (A Ponte):** A IA gera a etapa, pausa e pede permissÃƒÂ£o: "EstÃƒÂ¡ bom assim?". O usuÃƒÂ¡rio utiliza ferramentas como o Editor Web de Timeline (Human-in-the-loop) para revisar as escolhas do Roteirista/Scraper, altera o que nÃƒÂ£o gosta e aprova a ida para a prÃƒÂ³xima etapa.
+- **Hard-Encode de Capa:** O sistema queima (adiciona) essa capa gerada no exato Primeiro Frame (00:00:00) do vÃƒÆ’Ã‚Â­deo `.mp4`. Isso ÃƒÆ’Ã‚Â© um truque essencial para forÃƒÆ’Ã‚Â§ar plataformas como TikTok, Kwai e Instagram Reels a escolherem a capa correta sem precisarmos usar API de thumbnail.
 
-- **Modo AutomÃƒÂ¡tico:** A IA executa ponta a ponta sem pausas. Ãƒâ€° o modo mais rÃƒÂ¡pido, mas sujeito a erros e delÃƒÂ­rios da IA se as configuraÃƒÂ§ÃƒÂµes iniciais do usuÃƒÂ¡rio nÃƒÂ£o estiverem perfeitamente alinhadas. 
+- **Multiformatos:** A Fase 3 nÃƒÆ’Ã‚Â£o posta apenas vÃƒÆ’Ã‚Â­deo. Ela ÃƒÆ’Ã‚Â© capaz de gerar e postar Imagens (Instagram Feed, Pinterest) e Textos (Aba Comunidade do YouTube, Twitter), englobando todo o ecossistema de conteÃƒÆ’Ã‚Âºdo.
+
+
+
+**3. ExpansÃƒÆ’Ã‚Â£o da Fase 1 (Busca Ativa de MÃƒÆ’Ã‚Â­dia / B-Rolls):**
+
+- Os Scrapers da Fase 1 nÃƒÆ’Ã‚Â£o vÃƒÆ’Ã‚Â£o buscar apenas texto. Eles podem ser equipados com ferramentas (como `yt-dlp` ou APIs do Pexels/Pixabay) para **baixar vÃƒÆ’Ã‚Â­deos reais (B-roll) e imagens da internet** de forma autÃƒÆ’Ã‚Â´noma.
+
+- Quando a Fase 1 termina, ela nÃƒÆ’Ã‚Â£o entrega apenas um roteiro; ela entrega uma "Pasta Completa" (Assets + JSON de Mapeamento).
+
+
+
+**4. A Ponte IntermediÃƒÆ’Ã‚Â¡ria e os 3 Modos de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:**
+
+O processo da Trindade pode ser navegado de trÃƒÆ’Ã‚Âªs formas distintas:
+
+- **Modo Manual:** O usuÃƒÆ’Ã‚Â¡rio navega livremente pelas abas. A interface oferece "Apontamentos" lÃƒÆ’Ã‚Â³gicos baseados no fluxo ideal (ex: terminou texto, sugere aba TTS), mas o usuÃƒÆ’Ã‚Â¡rio assume 100% do controle criativo e das escolhas.
+
+- **Modo SemiautomÃƒÆ’Ã‚Â¡tico (A Ponte):** A IA gera a etapa, pausa e pede permissÃƒÆ’Ã‚Â£o: "EstÃƒÆ’Ã‚Â¡ bom assim?". O usuÃƒÆ’Ã‚Â¡rio utiliza ferramentas como o Editor Web de Timeline (Human-in-the-loop) para revisar as escolhas do Roteirista/Scraper, altera o que nÃƒÆ’Ã‚Â£o gosta e aprova a ida para a prÃƒÆ’Ã‚Â³xima etapa.
+
+- **Modo AutomÃƒÆ’Ã‚Â¡tico:** A IA executa ponta a ponta sem pausas. ÃƒÆ’Ã¢â‚¬Â° o modo mais rÃƒÆ’Ã‚Â¡pido, mas sujeito a erros e delÃƒÆ’Ã‚Â­rios da IA se as configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes iniciais do usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o estiverem perfeitamente alinhadas. 
 
 
 
 **5. A Regra de Ouro (Caixa Preta do Python):**
 
-- A IA **NUNCA** interfere no meio da execuÃƒÂ§ÃƒÂ£o dos scripts Python da Fase 2 (A FÃƒÂ¡brica/FFmpeg).
+- A IA **NUNCA** interfere no meio da execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o dos scripts Python da Fase 2 (A FÃƒÆ’Ã‚Â¡brica/FFmpeg).
 
-- A IA atua **antes** (gerando os assets e JSONs na Fase 1 ou na Ponte) ou **depois** (na postagem na Fase 3). O motor Python que processa a ediÃƒÂ§ÃƒÂ£o de fato ÃƒÂ© determinÃƒÂ­stico e "cego" Ã¢â‚¬â€œ ele deve receber todos os ingredientes prontos e nÃƒÂ£o pode sofrer interrupÃƒÂ§ÃƒÂµes ou "achismos" de IA no meio do processo de processamento para evitar erros de render.
+- A IA atua **antes** (gerando os assets e JSONs na Fase 1 ou na Ponte) ou **depois** (na postagem na Fase 3). O motor Python que processa a ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de fato ÃƒÆ’Ã‚Â© determinÃƒÆ’Ã‚Â­stico e "cego" ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ ele deve receber todos os ingredientes prontos e nÃƒÆ’Ã‚Â£o pode sofrer interrupÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes ou "achismos" de IA no meio do processo de processamento para evitar erros de render.
 
 
 
 **6. O Agendador e o Ciclo Fechado (Templates Superiores):**
 
-- A uniÃƒÂ£o das Fases 1, 2 e 3 permite a criaÃƒÂ§ÃƒÂ£o de um **Template Superior**.
+- A uniÃƒÆ’Ã‚Â£o das Fases 1, 2 e 3 permite a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um **Template Superior**.
 
-- O usuÃƒÂ¡rio pode configurar: *"Busque notÃƒÂ­cias de tecnologia [Fase 1], revise ou automatize [Ponte], edite verticalmente [Fase 2], e poste de forma agendada no Kwai [Fase 3]"*.
+- O usuÃƒÆ’Ã‚Â¡rio pode configurar: *"Busque notÃƒÆ’Ã‚Â­cias de tecnologia [Fase 1], revise ou automatize [Ponte], edite verticalmente [Fase 2], e poste de forma agendada no Kwai [Fase 3]"*.
 
-- AÃƒÂ§ÃƒÂ£o amarrar esse template ao **Bot do WhatsApp**, o usuÃƒÂ¡rio consegue realizar todo o ciclo de produÃƒÂ§ÃƒÂ£o enviando apenas um comando do seu celular.
+- AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o amarrar esse template ao **Bot do WhatsApp**, o usuÃƒÆ’Ã‚Â¡rio consegue realizar todo o ciclo de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o enviando apenas um comando do seu celular.
 
 
 
-**7. Diretriz EstratÃƒÂ©gica de LanÃƒÂ§amento (Roadmap):**
+**7. Diretriz EstratÃƒÆ’Ã‚Â©gica de LanÃƒÆ’Ã‚Â§amento (Roadmap):**
 
-- **V1.0 (Foco Atual):** Dominar a **Fase 2 (A FÃƒÂ¡brica / EdiÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica)**. Ãƒâ€° o motor que gera o valor tangÃƒÂ­vel (o vÃƒÂ­deo).
+- **V1.0 (Foco Atual):** Dominar a **Fase 2 (A FÃƒÆ’Ã‚Â¡brica / EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica)**. ÃƒÆ’Ã¢â‚¬Â° o motor que gera o valor tangÃƒÆ’Ã‚Â­vel (o vÃƒÆ’Ã‚Â­deo).
 
-- **V2.0 e V3.0 (ExpansÃƒÂµes Futuras):** Acoplar a Fase 1 e a Fase 3. A arquitetura atual jÃƒÂ¡ prevÃƒÂª as "tomadas" (endpoints) para plugar o resto no futuro.
+- **V2.0 e V3.0 (ExpansÃƒÆ’Ã‚Âµes Futuras):** Acoplar a Fase 1 e a Fase 3. A arquitetura atual jÃƒÆ’Ã‚Â¡ prevÃƒÆ’Ã‚Âª as "tomadas" (endpoints) para plugar o resto no futuro.
 
 
 
 ---
 
-## [O MANIFESTO DE QUALIDADE E A ESTRATÃƒâ€°GIA DE MERCADO] (AtualizaÃƒÂ§ÃƒÂ£o: 15/06/2026)
+## [O MANIFESTO DE QUALIDADE E A ESTRATÃƒÆ’Ã¢â‚¬Â°GIA DE MERCADO] (AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 15/06/2026)
 
 
 
-**1. A EstratÃƒÂ©gia do Cavalo de Troia (Go-To-Market):**
+**1. A EstratÃƒÆ’Ã‚Â©gia do Cavalo de Troia (Go-To-Market):**
 
-- A ExtensÃƒÂ£o de Postagem AutomÃƒÂ¡tica atuarÃƒÂ¡ como uma isca mercadolÃƒÂ³gica de altÃƒÂ­ssimo valor. UsuÃƒÂ¡rios que sÃƒÂ³ querem postar vÃƒÂ­deos no Kwai de graÃƒÂ§a serÃƒÂ£o obrigados a instalar a extensÃƒÂ£o e fazer login no site do Apollo Edit Web.
+- A ExtensÃƒÆ’Ã‚Â£o de Postagem AutomÃƒÆ’Ã‚Â¡tica atuarÃƒÆ’Ã‚Â¡ como uma isca mercadolÃƒÆ’Ã‚Â³gica de altÃƒÆ’Ã‚Â­ssimo valor. UsuÃƒÆ’Ã‚Â¡rios que sÃƒÆ’Ã‚Â³ querem postar vÃƒÆ’Ã‚Â­deos no Kwai de graÃƒÆ’Ã‚Â§a serÃƒÆ’Ã‚Â£o obrigados a instalar a extensÃƒÆ’Ã‚Â£o e fazer login no site do Apollo Edit Web.
 
-- **O Funil de ConversÃƒÂ£o:** AÃƒÂ§ÃƒÂ£o entrar no site apenas para usar a extensÃƒÂ£o, o usuÃƒÂ¡rio serÃƒÂ¡ exposto a banners da plataforma, testarÃƒÂ¡ os crÃƒÂ©ditos gratuitos de EdiÃƒÂ§ÃƒÂ£o com IA (Fase 2) e inevitavelmente se tornarÃƒÂ¡ um consumidor do ecossistema completo. O site ganha dinheiro de todas as formas: com anÃƒÂºncios na aba da extensÃƒÂ£o, com a venda de moedas e com a conversÃƒÂ£o de novos clientes.
-
-
-
-**2. O Fim do Amadorismo (PadrÃƒÂ£o Global):**
-
-- Houve uma virada de chave fundamental na filosofia do projeto: O Apollo Edit Web nÃƒÂ£o serÃƒÂ¡ um "sitezinho amador" ou um projeto de fundo de quintal.
-
-- O objetivo ÃƒÂ© construir uma plataforma de **NÃƒÂ­vel Enterprise (Empresarial)**.
-
-- **Premissas:** CÃƒÂ³digo limpo e bem formatado, interface (UI/UX) profissional e polida, alta performance (rodar liso) e potÃƒÂªncia absoluta. O objetivo ÃƒÂ© que o Arquiteto tenha orgulho de bater de frente com players globais.
+- **O Funil de ConversÃƒÆ’Ã‚Â£o:** AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o entrar no site apenas para usar a extensÃƒÆ’Ã‚Â£o, o usuÃƒÆ’Ã‚Â¡rio serÃƒÆ’Ã‚Â¡ exposto a banners da plataforma, testarÃƒÆ’Ã‚Â¡ os crÃƒÆ’Ã‚Â©ditos gratuitos de EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com IA (Fase 2) e inevitavelmente se tornarÃƒÆ’Ã‚Â¡ um consumidor do ecossistema completo. O site ganha dinheiro de todas as formas: com anÃƒÆ’Ã‚Âºncios na aba da extensÃƒÆ’Ã‚Â£o, com a venda de moedas e com a conversÃƒÆ’Ã‚Â£o de novos clientes.
 
 
 
-**3. O Processo de "Dogfooding" e o Adiamento de TraduÃƒÂ§ÃƒÂµes:**
+**2. O Fim do Amadorismo (PadrÃƒÆ’Ã‚Â£o Global):**
 
-- "Dogfooding" (Comer a prÃƒÂ³pria raÃƒÂ§ÃƒÂ£o) ÃƒÂ© a estratÃƒÂ©gia onde o criador usa o prÃƒÂ³prio produto intensamente antes de vendÃƒÂª-lo.
+- Houve uma virada de chave fundamental na filosofia do projeto: O Apollo Edit Web nÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ um "sitezinho amador" ou um projeto de fundo de quintal.
 
-- **O Plano de Testes:** O arquiteto usarÃƒÂ¡ o site massivamente no seu prÃƒÂ³prio dia a dia para gerar conteÃƒÂºdo para seus canais por 4 a 5 meses. Isso garante que todos os bugs sejam esmagados e o fluxo seja perfeitamente lapidado para a vida real de um YouTuber.
+- O objetivo ÃƒÆ’Ã‚Â© construir uma plataforma de **NÃƒÆ’Ã‚Â­vel Enterprise (Empresarial)**.
 
-- **O Foco no Essencial:** TraduÃƒÂ§ÃƒÂµes multilinguÃƒÂ­sticas foram oficialmente adiadas para um momento futuro. O foco absoluto agora ÃƒÂ© garantir que o motor e a lÃƒÂ³gica funcionem com maestria no idioma nativo. SÃƒÂ³ depois de validado e ÃƒÂ  prova de balas, o site serÃƒÂ¡ aberto ao "povÃƒÂ£o" e internacionalizado.
-
-
-
-**4. A EstratÃƒÂ©gia de RefatoraÃƒÂ§ÃƒÂ£o Adiada (ProtÃƒÂ³tipo antes da Arquitetura):**
-
-- Apesar do cÃƒÂ³digo atual estar em formato "Frankenstein", **a refatoraÃƒÂ§ÃƒÂ£o pesada foi adiada**. O momento atual ÃƒÂ© de *Descoberta de Produto* (R&D). Parar para arrumar o cÃƒÂ³digo agora atrasaria a conexÃƒÂ£o dos motores vitais (Lightning AI, Modal, APIs).
-
-- **A TÃƒÂ¡tica de MitigaÃƒÂ§ÃƒÂ£o:** AtÃƒÂ© que a Fase 2 esteja 100% conectada e validada, o cÃƒÂ³digo continuarÃƒÂ¡ sendo prototipado, mas com uma regra: **Fartura de ComentÃƒÂ¡rios e Avisos**. Cada bloco de cÃƒÂ³digo deve estar claramente delimitado visualmente para que, quando chegar o momento da reestruturaÃƒÂ§ÃƒÂ£o (Back-end primeiro, Front-end depois), seja fÃƒÂ¡cil identificar o que ÃƒÂ© lixo e o que ÃƒÂ© o motor real. Uma limpeza bÃƒÂ¡sica de arquivos e anotaÃƒÂ§ÃƒÂµes inÃƒÂºteis serÃƒÂ¡ feita durante o percurso.
+- **Premissas:** CÃƒÆ’Ã‚Â³digo limpo e bem formatado, interface (UI/UX) profissional e polida, alta performance (rodar liso) e potÃƒÆ’Ã‚Âªncia absoluta. O objetivo ÃƒÆ’Ã‚Â© que o Arquiteto tenha orgulho de bater de frente com players globais.
 
 
 
-## 27. Arquitetura do 'Visualizador Universal' (O 3Ã‚Âº Elemento Flutuante)
+**3. O Processo de "Dogfooding" e o Adiamento de TraduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes:**
 
-- **O Conceito:** Para criar a imersÃƒÂ£o de um verdadeiro 'Sistema Operacional', a plataforma contarÃƒÂ¡ com um 'Visualizador de Arquivos' flutuante, atuando como a janela de visualizaÃƒÂ§ÃƒÂ£o nativa (ex: visualizador do Windows).
+- "Dogfooding" (Comer a prÃƒÆ’Ã‚Â³pria raÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) ÃƒÆ’Ã‚Â© a estratÃƒÆ’Ã‚Â©gia onde o criador usa o prÃƒÆ’Ã‚Â³prio produto intensamente antes de vendÃƒÆ’Ã‚Âª-lo.
 
-- **Acionamento:** O usuÃƒÂ¡rio dÃƒÂ¡ um duplo clique em um 'Quadradinho MÃƒÂ¡gico' (arquivo) dentro do Bagageiro ou da Garagem (sejam imagens, vÃƒÂ­deos, ÃƒÂ¡udios, ou blocos de texto/notas).
+- **O Plano de Testes:** O arquiteto usarÃƒÆ’Ã‚Â¡ o site massivamente no seu prÃƒÆ’Ã‚Â³prio dia a dia para gerar conteÃƒÆ’Ã‚Âºdo para seus canais por 4 a 5 meses. Isso garante que todos os bugs sejam esmagados e o fluxo seja perfeitamente lapidado para a vida real de um YouTuber.
+
+- **O Foco no Essencial:** TraduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes multilinguÃƒÆ’Ã‚Â­sticas foram oficialmente adiadas para um momento futuro. O foco absoluto agora ÃƒÆ’Ã‚Â© garantir que o motor e a lÃƒÆ’Ã‚Â³gica funcionem com maestria no idioma nativo. SÃƒÆ’Ã‚Â³ depois de validado e ÃƒÆ’Ã‚Â  prova de balas, o site serÃƒÆ’Ã‚Â¡ aberto ao "povÃƒÆ’Ã‚Â£o" e internacionalizado.
+
+
+
+**4. A EstratÃƒÆ’Ã‚Â©gia de RefatoraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Adiada (ProtÃƒÆ’Ã‚Â³tipo antes da Arquitetura):**
+
+- Apesar do cÃƒÆ’Ã‚Â³digo atual estar em formato "Frankenstein", **a refatoraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pesada foi adiada**. O momento atual ÃƒÆ’Ã‚Â© de *Descoberta de Produto* (R&D). Parar para arrumar o cÃƒÆ’Ã‚Â³digo agora atrasaria a conexÃƒÆ’Ã‚Â£o dos motores vitais (Lightning AI, Modal, APIs).
+
+- **A TÃƒÆ’Ã‚Â¡tica de MitigaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** AtÃƒÆ’Ã‚Â© que a Fase 2 esteja 100% conectada e validada, o cÃƒÆ’Ã‚Â³digo continuarÃƒÆ’Ã‚Â¡ sendo prototipado, mas com uma regra: **Fartura de ComentÃƒÆ’Ã‚Â¡rios e Avisos**. Cada bloco de cÃƒÆ’Ã‚Â³digo deve estar claramente delimitado visualmente para que, quando chegar o momento da reestruturaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Back-end primeiro, Front-end depois), seja fÃƒÆ’Ã‚Â¡cil identificar o que ÃƒÆ’Ã‚Â© lixo e o que ÃƒÆ’Ã‚Â© o motor real. Uma limpeza bÃƒÆ’Ã‚Â¡sica de arquivos e anotaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes inÃƒÆ’Ã‚Âºteis serÃƒÆ’Ã‚Â¡ feita durante o percurso.
+
+
+
+## 27. Arquitetura do 'Visualizador Universal' (O 3Ãƒâ€šÃ‚Âº Elemento Flutuante)
+
+- **O Conceito:** Para criar a imersÃƒÆ’Ã‚Â£o de um verdadeiro 'Sistema Operacional', a plataforma contarÃƒÆ’Ã‚Â¡ com um 'Visualizador de Arquivos' flutuante, atuando como a janela de visualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o nativa (ex: visualizador do Windows).
+
+- **Acionamento:** O usuÃƒÆ’Ã‚Â¡rio dÃƒÆ’Ã‚Â¡ um duplo clique em um 'Quadradinho MÃƒÆ’Ã‚Â¡gico' (arquivo) dentro do Bagageiro ou da Garagem (sejam imagens, vÃƒÆ’Ã‚Â­deos, ÃƒÆ’Ã‚Â¡udios, ou blocos de texto/notas).
 
 - **Comportamento da Janela:** 
 
-  - A janela se expande revelando o arquivo em seu tamanho original/proporcional (ex: vÃƒÂ­deo vertical tem janela vertical, sem sobras de borda inÃƒÂºtil).
+  - A janela se expande revelando o arquivo em seu tamanho original/proporcional (ex: vÃƒÆ’Ã‚Â­deo vertical tem janela vertical, sem sobras de borda inÃƒÆ’Ã‚Âºtil).
 
   - O arquivo pode ser fechado (clicando no X) ou minimizado.
 
-  - AÃƒÂ§ÃƒÂ£o ser minimizado, a janela se transforma em uma 'bolinha flutuante' (semelhante ÃƒÂ s bolinhas de atalho do Copiloto/ChatGPT e do Bagageiro).
+  - AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ser minimizado, a janela se transforma em uma 'bolinha flutuante' (semelhante ÃƒÆ’Ã‚Â s bolinhas de atalho do Copiloto/ChatGPT e do Bagageiro).
 
-  - Ãƒâ€° possÃƒÂ­vel ter mÃƒÂºltiplas bolinhas (mÃƒÂºltiplos arquivos) minimizadas e flutuando simultaneamente pela tela, como bolinhas de sabÃƒÂ£o.
+  - ÃƒÆ’Ã¢â‚¬Â° possÃƒÆ’Ã‚Â­vel ter mÃƒÆ’Ã‚Âºltiplas bolinhas (mÃƒÆ’Ã‚Âºltiplos arquivos) minimizadas e flutuando simultaneamente pela tela, como bolinhas de sabÃƒÆ’Ã‚Â£o.
 
 - **Sincronia Visual (Highlight de Status):**
 
-  - Quando um arquivo estÃƒÂ¡ 'aberto' (seja expandido no visualizador ou em formato de bolinha minimizada), o seu 'Quadradinho MÃƒÂ¡gico' correspondente lÃƒÂ¡ no Bagageiro muda a cor (ex: fica azul) para indicar que aquele arquivo estÃƒÂ¡ em uso.
+  - Quando um arquivo estÃƒÆ’Ã‚Â¡ 'aberto' (seja expandido no visualizador ou em formato de bolinha minimizada), o seu 'Quadradinho MÃƒÆ’Ã‚Â¡gico' correspondente lÃƒÆ’Ã‚Â¡ no Bagageiro muda a cor (ex: fica azul) para indicar que aquele arquivo estÃƒÆ’Ã‚Â¡ em uso.
 
-  - AÃƒÂ§ÃƒÂ£o fechar o visualizador (clicar no X), o quadradinho no Bagageiro perde a cor azul e volta ao estado normal.
+  - AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o fechar o visualizador (clicar no X), o quadradinho no Bagageiro perde a cor azul e volta ao estado normal.
 
-- **AparÃƒÂªncia dos Quadradinhos:** Todo quadradinho que representa um arquivo no sistema deve carregar uma *thumbnail* (miniatura real da imagem/vÃƒÂ­deo) ou ÃƒÂ­cone descritivo (ÃƒÂ¡ÃƒÂ¡udio/texto), alÃƒÂ©m de um texto curto com o nome do arquivo.
+- **AparÃƒÆ’Ã‚Âªncia dos Quadradinhos:** Todo quadradinho que representa um arquivo no sistema deve carregar uma *thumbnail* (miniatura real da imagem/vÃƒÆ’Ã‚Â­deo) ou ÃƒÆ’Ã‚Â­cone descritivo (ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio/texto), alÃƒÆ’Ã‚Â©m de um texto curto com o nome do arquivo.
 
-- **IntegraÃƒÂ§ÃƒÂ£o com a Esteira de ProduÃƒÂ§ÃƒÂ£o (Aba Diretor):** O Visualizador serÃƒÂ¡ o display padrÃƒÂ£o para todo conteÃƒÂºdo renderizado dentro do Apollo. VÃƒÂ­deos recÃƒÂ©m renderizados brotam direto no Visualizador para o usuÃƒÂ¡rio assistir; se ele gostar, guarda no Bagageiro (e vira quadradinho), se nÃƒÂ£o gostar, ele fecha e faz outro.
+- **IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com a Esteira de ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Aba Diretor):** O Visualizador serÃƒÆ’Ã‚Â¡ o display padrÃƒÆ’Ã‚Â£o para todo conteÃƒÆ’Ã‚Âºdo renderizado dentro do Apollo. VÃƒÆ’Ã‚Â­deos recÃƒÆ’Ã‚Â©m renderizados brotam direto no Visualizador para o usuÃƒÆ’Ã‚Â¡rio assistir; se ele gostar, guarda no Bagageiro (e vira quadradinho), se nÃƒÆ’Ã‚Â£o gostar, ele fecha e faz outro.
 
 
 
 ## 28. O Conceito 'Crafter' e o Sistema de KM (Economia do Jogador)
 
-- **A Filosofia Crafter (Estilo Minecraft):** O Apollo nÃƒÂ£o ÃƒÂ© de 'um clique e pronto' de forma passiva. O usuÃƒÂ¡rio age como um 'Crafter'. Ele precisa juntar certas peÃƒÂ§as e quantidades de itens especÃƒÂ­ficos (os Quadradinhos MÃƒÂ¡gicos de IA, ÃƒÂ¡udios, imagens, gasolina) para 'craftar' a atividade que ele deseja. Isso traz um sentimento de recompensa por ter 'construÃƒÂ­do' a ediÃƒÂ§ÃƒÂ£o.
+- **A Filosofia Crafter (Estilo Minecraft):** O Apollo nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© de 'um clique e pronto' de forma passiva. O usuÃƒÆ’Ã‚Â¡rio age como um 'Crafter'. Ele precisa juntar certas peÃƒÆ’Ã‚Â§as e quantidades de itens especÃƒÆ’Ã‚Â­ficos (os Quadradinhos MÃƒÆ’Ã‚Â¡gicos de IA, ÃƒÆ’Ã‚Â¡udios, imagens, gasolina) para 'craftar' a atividade que ele deseja. Isso traz um sentimento de recompensa por ter 'construÃƒÆ’Ã‚Â­do' a ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
-- **ProgressÃƒÂ£o por KM (Quilometragem):** O site recompensa a consistÃƒÂªncia. Quanto mais o usuÃƒÂ¡rio edita e gera vÃƒÂ­deos no site, mais ele acumula **KM**.
+- **ProgressÃƒÆ’Ã‚Â£o por KM (Quilometragem):** O site recompensa a consistÃƒÆ’Ã‚Âªncia. Quanto mais o usuÃƒÆ’Ã‚Â¡rio edita e gera vÃƒÆ’Ã‚Â­deos no site, mais ele acumula **KM**.
 
 - **Vantagens de Subir de Level:** 
 
-  - **EstÃƒÂ©tica:** Mais KM eleva o nÃƒÂ­vel do usuÃƒÂ¡rio, destravando melhorias visuais na aparÃƒÂªncia do avatar dele (e do carro/garagem).
+  - **EstÃƒÆ’Ã‚Â©tica:** Mais KM eleva o nÃƒÆ’Ã‚Â­vel do usuÃƒÆ’Ã‚Â¡rio, destravando melhorias visuais na aparÃƒÆ’Ã‚Âªncia do avatar dele (e do carro/garagem).
 
-  - **Economia e EficiÃƒÂªncia:** O Level nÃƒÂ£o ÃƒÂ© apenas cosmÃƒÂ©tico! Jogadores de Level mais alto recebem bÃƒÂ´nus na economia da plataforma. Isso significa que eles passam a gastar **menos gasolina/dinheiro** para gerar os vÃƒÂ­deos, aumentando a margem de lucro deles e diminuindo a necessidade de assistir propagandas para farmar recursos.
+  - **Economia e EficiÃƒÆ’Ã‚Âªncia:** O Level nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© apenas cosmÃƒÆ’Ã‚Â©tico! Jogadores de Level mais alto recebem bÃƒÆ’Ã‚Â´nus na economia da plataforma. Isso significa que eles passam a gastar **menos gasolina/dinheiro** para gerar os vÃƒÆ’Ã‚Â­deos, aumentando a margem de lucro deles e diminuindo a necessidade de assistir propagandas para farmar recursos.
 
 - **O Paradigma Ads vs Premium:**
 
-  - O jogador gratuito ('Free-to-play') farma recursos assistindo vÃƒÂ­deos de propaganda e upando seu KM para diminuir os custos com o tempo.
+  - O jogador gratuito ('Free-to-play') farma recursos assistindo vÃƒÆ’Ã‚Â­deos de propaganda e upando seu KM para diminuir os custos com o tempo.
 
-  - O usuÃƒÂ¡rio que nÃƒÂ£o quer perder tempo vendo propaganda e quer a via rÃƒÂ¡pida, assina as cotas mensais dos **Planos Pro ou Master**, recebendo o pacote premium direto sem interrupÃƒÂ§ÃƒÂµes.
+  - O usuÃƒÆ’Ã‚Â¡rio que nÃƒÆ’Ã‚Â£o quer perder tempo vendo propaganda e quer a via rÃƒÆ’Ã‚Â¡pida, assina as cotas mensais dos **Planos Pro ou Master**, recebendo o pacote premium direto sem interrupÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
 
 
 
 ## 29. Hub Central e Filosofia 'Best-in-Class' Open Source
 
-- **Design de Hub (Zero Scroll):** O Apollo nÃƒÂ£o ÃƒÂ© um site tradicional onde se rola a pÃƒÂ¡gina para baixo para achar as coisas. Ele ÃƒÂ© um Painel de Controle (Hub). Tudo estÃƒÂ¡ na primeira tela. Quando o usuÃƒÂ¡rio clica em uma aÃƒÂ§ÃƒÂ£o, a ferramenta ou o chat de IA abrem como janelas/elementos flutuantes por cima, mas o Hub principal continua ali atrÃƒÂ¡s, ativo e mostrando os status/nÃƒÂºmeros em tempo real.
+- **Design de Hub (Zero Scroll):** O Apollo nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um site tradicional onde se rola a pÃƒÆ’Ã‚Â¡gina para baixo para achar as coisas. Ele ÃƒÆ’Ã‚Â© um Painel de Controle (Hub). Tudo estÃƒÆ’Ã‚Â¡ na primeira tela. Quando o usuÃƒÆ’Ã‚Â¡rio clica em uma aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, a ferramenta ou o chat de IA abrem como janelas/elementos flutuantes por cima, mas o Hub principal continua ali atrÃƒÆ’Ã‚Â¡s, ativo e mostrando os status/nÃƒÆ’Ã‚Âºmeros em tempo real.
 
-- **Ferramentas Nativas (O Melhor do Open Source):** A diretriz para as ferramentas de ediÃƒÂ§ÃƒÂ£o embutidas (VÃƒÂ­deo, Ã¯Â¿Â½udio/DAW, Imagens) ÃƒÂ© clara: devemos usar as melhores opÃƒÂ§ÃƒÂµes Open Source do mercado (com uma interface robusta estilo 'Photopea' para imagens, e nÃƒÂ£o editores simplÃƒÂ³rios). A mÃƒÂ¡gica acontece ao pegarmos essas ferramentas robustas e injetarmos a nossa IA (geradores) dentro delas, criando um 'Photoshop Turbinado' via nuvem.
-
-
-
-## 30. DistinÃƒÂ§ÃƒÂ£o Crucial: Visualizador Flutuante vs. Preview Nativo
-
-- **O Problema da BagunÃƒÂ§a:** Para nÃƒÂ£o transformar a tela do usuÃƒÂ¡rio num caos de janelas, foi definida uma regra de separaÃƒÂ§ÃƒÂ£o entre o que ÃƒÂ© gerado na hora e o que jÃƒÂ¡ ÃƒÂ© posse do usuÃƒÂ¡rio.
-
-- **Preview Nativo da Ferramenta:** Se o usuÃƒÂ¡rio estÃƒÂ¡ no estÃƒÂºdio do site renderizando um vÃƒÂ­deo ou gerando uma imagem, o resultado aparece direto na tela da prÃƒÂ³pria ferramenta (como a tela de preview do Adobe Premiere, integrada e fixa).
-
-- **Visualizador Flutuante (Exclusivo do Bagageiro):** O sistema genial de 'Bolinhas Flutuantes' e a janela do Visualizador (mencionado no item 27) ÃƒÂ© acionado **SOMENTE** atravÃƒÂ©s do Bagageiro.
-
-- **O Fluxo LÃƒÂ³gico Final:** O usuÃƒÂ¡rio gera o vÃƒÂ­deo na ferramenta -> VÃƒÂª o resultado na tela fixa da ferramenta. Ele gostou? Clica para salvar no Bagageiro. LÃƒÂ¡ no Bagageiro, o vÃƒÂ­deo vira o 'Quadradinho MÃƒÂ¡gico'. Se ele precisar visualizar esse vÃƒÂ­deo mais tarde enquanto mexe em outra coisa no Hub, ele dÃƒÂ¡ dois cliques no quadradinho, e aÃƒÂ­ sim ele abre a janela flutuante que pode ser minimizada em bolinhas de sabÃƒÂ£o.
+- **Ferramentas Nativas (O Melhor do Open Source):** A diretriz para as ferramentas de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o embutidas (VÃƒÆ’Ã‚Â­deo, ÃƒÂ¯Ã‚Â¿Ã‚Â½udio/DAW, Imagens) ÃƒÆ’Ã‚Â© clara: devemos usar as melhores opÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes Open Source do mercado (com uma interface robusta estilo 'Photopea' para imagens, e nÃƒÆ’Ã‚Â£o editores simplÃƒÆ’Ã‚Â³rios). A mÃƒÆ’Ã‚Â¡gica acontece ao pegarmos essas ferramentas robustas e injetarmos a nossa IA (geradores) dentro delas, criando um 'Photoshop Turbinado' via nuvem.
 
 
 
-## 31. O Editor Conversacional de IA (PÃƒÂºblico 'Talking Head' / VÃƒÂ­deos Reais)
+## 30. DistinÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Crucial: Visualizador Flutuante vs. Preview Nativo
 
-- **A ExpansÃƒÂ£o de PÃƒÂºblico:** O Apollo nÃƒÂ£o focarÃƒÂ¡ apenas em Canais Dark (100% IA). Existe o pÃƒÂºblico gigantesco de criadores que gravam a si mesmos (vÃƒÂ­deos reais, cÃƒÂ¢mera ligada) e eles tambÃƒÂ©m precisam de automaÃƒÂ§ÃƒÂ£o de ponta a ponta.
+- **O Problema da BagunÃƒÆ’Ã‚Â§a:** Para nÃƒÆ’Ã‚Â£o transformar a tela do usuÃƒÆ’Ã‚Â¡rio num caos de janelas, foi definida uma regra de separaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o entre o que ÃƒÆ’Ã‚Â© gerado na hora e o que jÃƒÆ’Ã‚Â¡ ÃƒÆ’Ã‚Â© posse do usuÃƒÆ’Ã‚Â¡rio.
 
-- **UX do Editor Baseado em Chat:** Para esse pÃƒÂºblico, o editor de vÃƒÂ­deo nÃƒÂ£o terÃƒÂ¡ o formato arcaico de arrastar e soltar mil arquivos numa gaveta. A interface terÃƒÂ¡ trÃƒÂªs focos: A Tela de Preview, a Timeline na parte inferior, e o **RobÃƒÂ´/Chat gigante em destaque**.
+- **Preview Nativo da Ferramenta:** Se o usuÃƒÆ’Ã‚Â¡rio estÃƒÆ’Ã‚Â¡ no estÃƒÆ’Ã‚Âºdio do site renderizando um vÃƒÆ’Ã‚Â­deo ou gerando uma imagem, o resultado aparece direto na tela da prÃƒÆ’Ã‚Â³pria ferramenta (como a tela de preview do Adobe Premiere, integrada e fixa).
 
-- **O Workflow AutomÃƒÂ¡tico (DelegaÃƒÂ§ÃƒÂ£o via Chat):**
+- **Visualizador Flutuante (Exclusivo do Bagageiro):** O sistema genial de 'Bolinhas Flutuantes' e a janela do Visualizador (mencionado no item 27) ÃƒÆ’Ã‚Â© acionado **SOMENTE** atravÃƒÆ’Ã‚Â©s do Bagageiro.
 
-  1. O usuÃƒÂ¡rio sobe os vÃƒÂ­deos brutos gravados no celular para o Bagageiro.
+- **O Fluxo LÃƒÆ’Ã‚Â³gico Final:** O usuÃƒÆ’Ã‚Â¡rio gera o vÃƒÆ’Ã‚Â­deo na ferramenta -> VÃƒÆ’Ã‚Âª o resultado na tela fixa da ferramenta. Ele gostou? Clica para salvar no Bagageiro. LÃƒÆ’Ã‚Â¡ no Bagageiro, o vÃƒÆ’Ã‚Â­deo vira o 'Quadradinho MÃƒÆ’Ã‚Â¡gico'. Se ele precisar visualizar esse vÃƒÆ’Ã‚Â­deo mais tarde enquanto mexe em outra coisa no Hub, ele dÃƒÆ’Ã‚Â¡ dois cliques no quadradinho, e aÃƒÆ’Ã‚Â­ sim ele abre a janela flutuante que pode ser minimizada em bolinhas de sabÃƒÆ’Ã‚Â£o.
 
-  2. Ele escreve no chat: *'RobÃƒÂ´, gravei esses vÃƒÂ­deos. Edita pra mim usando a minha configuraÃƒÂ§ÃƒÂ£o de cortes #2 e os efeitos da pasta XYZ.'*
 
-  3. O RobÃƒÂ´ analisa os arquivos brutos, processa a ediÃƒÂ§ÃƒÂ£o (cortes secos, legendas, transiÃƒÂ§ÃƒÂµes) usando a IA e joga o resultado pronto na Timeline.
 
-  4. O usuÃƒÂ¡rio assiste. Se quiser mudar algo, ele pede pro robÃƒÂ´ no chat (*'Muda a mÃƒÂºsica', 'Tira essa parte'*) ou faz ajustes finos manualmente na timeline.
+## 31. O Editor Conversacional de IA (PÃƒÆ’Ã‚Âºblico 'Talking Head' / VÃƒÆ’Ã‚Â­deos Reais)
+
+- **A ExpansÃƒÆ’Ã‚Â£o de PÃƒÆ’Ã‚Âºblico:** O Apollo nÃƒÆ’Ã‚Â£o focarÃƒÆ’Ã‚Â¡ apenas em Canais Dark (100% IA). Existe o pÃƒÆ’Ã‚Âºblico gigantesco de criadores que gravam a si mesmos (vÃƒÆ’Ã‚Â­deos reais, cÃƒÆ’Ã‚Â¢mera ligada) e eles tambÃƒÆ’Ã‚Â©m precisam de automaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ponta a ponta.
+
+- **UX do Editor Baseado em Chat:** Para esse pÃƒÆ’Ã‚Âºblico, o editor de vÃƒÆ’Ã‚Â­deo nÃƒÆ’Ã‚Â£o terÃƒÆ’Ã‚Â¡ o formato arcaico de arrastar e soltar mil arquivos numa gaveta. A interface terÃƒÆ’Ã‚Â¡ trÃƒÆ’Ã‚Âªs focos: A Tela de Preview, a Timeline na parte inferior, e o **RobÃƒÆ’Ã‚Â´/Chat gigante em destaque**.
+
+- **O Workflow AutomÃƒÆ’Ã‚Â¡tico (DelegaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o via Chat):**
+
+  1. O usuÃƒÆ’Ã‚Â¡rio sobe os vÃƒÆ’Ã‚Â­deos brutos gravados no celular para o Bagageiro.
+
+  2. Ele escreve no chat: *'RobÃƒÆ’Ã‚Â´, gravei esses vÃƒÆ’Ã‚Â­deos. Edita pra mim usando a minha configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de cortes #2 e os efeitos da pasta XYZ.'*
+
+  3. O RobÃƒÆ’Ã‚Â´ analisa os arquivos brutos, processa a ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (cortes secos, legendas, transiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes) usando a IA e joga o resultado pronto na Timeline.
+
+  4. O usuÃƒÆ’Ã‚Â¡rio assiste. Se quiser mudar algo, ele pede pro robÃƒÆ’Ã‚Â´ no chat (*'Muda a mÃƒÆ’Ã‚Âºsica', 'Tira essa parte'*) ou faz ajustes finos manualmente na timeline.
 
   5. Exporta pro Bagageiro.
 
-- **A Mescla de Formatos:** Essa abordagem permite mesclar o mundo dos Canais Dark com os Canais Reais. O RobÃƒÂ´ editor pode pegar o vÃƒÂ­deo real do cara e, caso falte uma imagem de cobertura (B-roll), o robÃƒÂ´ gera com IA automaticamente e insere na timeline. Ãƒâ€° a fusÃƒÂ£o definitiva da EdiÃƒÂ§ÃƒÂ£o Tradicional Automatizada com a GeraÃƒÂ§ÃƒÂ£o de IA Pura.
+- **A Mescla de Formatos:** Essa abordagem permite mesclar o mundo dos Canais Dark com os Canais Reais. O RobÃƒÆ’Ã‚Â´ editor pode pegar o vÃƒÆ’Ã‚Â­deo real do cara e, caso falte uma imagem de cobertura (B-roll), o robÃƒÆ’Ã‚Â´ gera com IA automaticamente e insere na timeline. ÃƒÆ’Ã¢â‚¬Â° a fusÃƒÆ’Ã‚Â£o definitiva da EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Tradicional Automatizada com a GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de IA Pura.
 
 
 
@@ -2034,15 +2056,15 @@ O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
 
 - **Criacao pelo Usuario (UGC):** Existira uma aba premium onde o usuario pode forjar o seu proprio robo/assistente do zero (ex: o mascote do canal dele, o Naruto, o Homem-Aranha, ou ate ele mesmo).
 
-- **Identidade e Expressoes Dinamicas:** AÃƒÂ§ÃƒÂ£o enviar uma imagem base e configurar o System Prompt, o backend da Apollo pedira para uma IA visual (ex: Gemini/Flux) gerar Multiplas Sprites de Emocao (feliz, triste, raivoso, assustado). A interface do robo ira alternar essas faces em tempo real de acordo com a conversa e o tom da resposta da IA.
+- **Identidade e Expressoes Dinamicas:** AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o enviar uma imagem base e configurar o System Prompt, o backend da Apollo pedira para uma IA visual (ex: Gemini/Flux) gerar Multiplas Sprites de Emocao (feliz, triste, raivoso, assustado). A interface do robo ira alternar essas faces em tempo real de acordo com a conversa e o tom da resposta da IA.
 
-- **Clonagem de Voz (Custom TTS):** O usuario podera subir amostras de ÃƒÂ¡udio do personagem (ou da propria voz). A plataforma fara o fine-tuning de um modelo TTS (Voice Cloning). A partir dai, o robo ira falar e responder em ÃƒÂ¡udio com a voz exata do personagem.
+- **Clonagem de Voz (Custom TTS):** O usuario podera subir amostras de ÃƒÆ’Ã‚Â¡udio do personagem (ou da propria voz). A plataforma fara o fine-tuning de um modelo TTS (Voice Cloning). A partir dai, o robo ira falar e responder em ÃƒÆ’Ã‚Â¡udio com a voz exata do personagem.
 
 - **Microfone e Integracao via WhatsApp (Voice Control):**
 
-  - **NÃƒÂ£o Navegador:** O usuario podera interagir com o editor *apenas falando no microfone* (usando Whisper para Speech-to-Text). Ex: 'Ei Homem-Aranha, corta o video nos 5 segundos e aplica um filtro escuro'. O copiloto converte o ÃƒÂ¡udio em comandos JSON e executa as edicoes automaticamente na linha do tempo.
+  - **NÃƒÆ’Ã‚Â£o Navegador:** O usuario podera interagir com o editor *apenas falando no microfone* (usando Whisper para Speech-to-Text). Ex: 'Ei Homem-Aranha, corta o video nos 5 segundos e aplica um filtro escuro'. O copiloto converte o ÃƒÆ’Ã‚Â¡udio em comandos JSON e executa as edicoes automaticamente na linha do tempo.
 
-  - **NÃƒÂ£o WhatsApp:** A mesma entidade (com as memorias, voz e aparencia) estara conectada ao numero de WhatsApp do usuario. Ele pode mandar um ÃƒÂ¡udio da rua ('Comeca a roteirizar um video sobre X') e o bot responde com a voz clonada do mascote, iniciando o pipeline no Cloud OS.
+  - **NÃƒÆ’Ã‚Â£o WhatsApp:** A mesma entidade (com as memorias, voz e aparencia) estara conectada ao numero de WhatsApp do usuario. Ele pode mandar um ÃƒÆ’Ã‚Â¡udio da rua ('Comeca a roteirizar um video sobre X') e o bot responde com a voz clonada do mascote, iniciando o pipeline no Cloud OS.
 
 - **Mercado Comunitario (Marketplace):** Os copilotos completos (Aparencia + Voz + System Prompt) poderao ser vendidos para outros usuarios dentro da plataforma. Templates pre-prontos tambem serao oferecidos oficialmente (ex: Editor Especialista de Terror, Editor Sarcastico).
 
@@ -2050,7 +2072,7 @@ O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
 
 ## 14.1 Arquitetura de Nuvem e Servidores (Separacao Estrategica)
 
-- **Lightning Server (O Cerebro Falante):** Dedicado exclusivamente para processamento de **FFmpeg, LLM e TTS (Texto para Voz)**. Como os usuarios vao interagir por voz constantemente com seus Mascotes, esse servidor foca em transacoes rapidas de ÃƒÂ¡udio e logica.
+- **Lightning Server (O Cerebro Falante):** Dedicado exclusivamente para processamento de **FFmpeg, LLM e TTS (Texto para Voz)**. Como os usuarios vao interagir por voz constantemente com seus Mascotes, esse servidor foca em transacoes rapidas de ÃƒÆ’Ã‚Â¡udio e logica.
 
 - **Servidores Terceirizados (Modal/Outros - Os Pendrives de Forca Bruta):** Dedicados exclusivamente a geradores pesados de video e imagem Open Source (FluxDev, Wan 2.3, LTX, etc). Eles funcionam como pendrives externos que o Apollo acessa apenas quando o usuario demanda geracao visual pesada.
 
@@ -2068,11 +2090,11 @@ O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
 
 
 
-## 32. Os TrÃƒÂªs Planos de Assinatura (Free, Pro, Master)
+## 32. Os TrÃƒÆ’Ã‚Âªs Planos de Assinatura (Free, Pro, Master)
 
-- **Free:** Possui limitaÃƒÂ§ÃƒÂµes de processamento, menor quantidade de canais permitidos e nÃƒÂ£o possui paralelismo massivo. O chatbot base ÃƒÂ© lento (CPU compartilhada). Gera a moeda bÃƒÂ¡sica (Apollo Coins) atravÃƒÂ©s do tempo ou Ads.
+- **Free:** Possui limitaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de processamento, menor quantidade de canais permitidos e nÃƒÆ’Ã‚Â£o possui paralelismo massivo. O chatbot base ÃƒÆ’Ã‚Â© lento (CPU compartilhada). Gera a moeda bÃƒÆ’Ã‚Â¡sica (Apollo Coins) atravÃƒÆ’Ã‚Â©s do tempo ou Ads.
 
-- **Pro:** Libera mais canais, paralelismo na criaÃƒÂ§ÃƒÂ£o de vÃƒÂ­deos. Recebe uma cota mensal de Apollo Coins + 4 moedas primÃƒÂ¡rias (Chips LLM, GPU, CombustÃƒÂ­vel, API). O chatbot base opera atravÃƒÂ©s da placa T4 (respostas rÃƒÂ¡pidas).
+- **Pro:** Libera mais canais, paralelismo na criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de vÃƒÆ’Ã‚Â­deos. Recebe uma cota mensal de Apollo Coins + 4 moedas primÃƒÆ’Ã‚Â¡rias (Chips LLM, GPU, CombustÃƒÆ’Ã‚Â­vel, API). O chatbot base opera atravÃƒÆ’Ã‚Â©s da placa T4 (respostas rÃƒÆ’Ã‚Â¡pidas).
 
 - **Master:** Dobro dos recursos do plano Pro. Chatbot nativo operando com T4 ou A10 (velocidade torpedo para tarefas brutais).
 
@@ -2080,35 +2102,35 @@ O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
 
 ## 33. O Checkout de Venda de 'Nitro' e o Turbo do Render
 
-- **GamificaÃƒÂ§ÃƒÂ£o do Tempo de Espera:** Quando o usuÃƒÂ¡rio (mesmo o Free) finaliza um projeto e clica em renderizar/gerar, ele nÃƒÂ£o renderiza na prÃƒÂ³pria mÃƒÂ¡quina de casa. O sistema envia para a Frota Lightning. O sistema faz um cÃƒÂ¡lculo de Estimativa de Tempo (ETA - parecido com a barra do WinRAR) baseado no tamanho do vÃƒÂ­deo, filtros FFmpeg, etc.
+- **GamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Tempo de Espera:** Quando o usuÃƒÆ’Ã‚Â¡rio (mesmo o Free) finaliza um projeto e clica em renderizar/gerar, ele nÃƒÆ’Ã‚Â£o renderiza na prÃƒÆ’Ã‚Â³pria mÃƒÆ’Ã‚Â¡quina de casa. O sistema envia para a Frota Lightning. O sistema faz um cÃƒÆ’Ã‚Â¡lculo de Estimativa de Tempo (ETA - parecido com a barra do WinRAR) baseado no tamanho do vÃƒÆ’Ã‚Â­deo, filtros FFmpeg, etc.
 
-- **A Tela do OrÃƒÂ§amento (Upsell de Nitro):** A tela mostrarÃƒÂ¡ o custo base em Apollo Coins. Abaixo, estarÃƒÂ£o os botÃƒÂµes de Upsell (Turbo / Turbo Master).
+- **A Tela do OrÃƒÆ’Ã‚Â§amento (Upsell de Nitro):** A tela mostrarÃƒÆ’Ã‚Â¡ o custo base em Apollo Coins. Abaixo, estarÃƒÆ’Ã‚Â£o os botÃƒÆ’Ã‚Âµes de Upsell (Turbo / Turbo Master).
 
-  - *'Quer gerar o vÃƒÂ­deo 2x mais rÃƒÂ¡pido? (Usar T4) - Compre o Nitro por +X Cristais'*
+  - *'Quer gerar o vÃƒÆ’Ã‚Â­deo 2x mais rÃƒÆ’Ã‚Â¡pido? (Usar T4) - Compre o Nitro por +X Cristais'*
 
-  - *'Quer 4x mais rÃƒÂ¡pido? (Usar A100) - Compre o Nitro Master por +Y Cristais'*
+  - *'Quer 4x mais rÃƒÆ’Ã‚Â¡pido? (Usar A100) - Compre o Nitro Master por +Y Cristais'*
 
-- **Lucratividade:** O usuÃƒÂ¡rio assiste ÃƒÂ  barra do tempo contabilizar. Essa ansiedade temporal ÃƒÂ© o produto que a Apollo vende: O conforto de pular a fila da GPU e renderizar o projeto de horas em minutos.
+- **Lucratividade:** O usuÃƒÆ’Ã‚Â¡rio assiste ÃƒÆ’Ã‚Â  barra do tempo contabilizar. Essa ansiedade temporal ÃƒÆ’Ã‚Â© o produto que a Apollo vende: O conforto de pular a fila da GPU e renderizar o projeto de horas em minutos.
 
 
 
 ## 34. Cloud Render (Processamento em Nuvem para Open Source)
 
-- AlÃƒÂ©m de renderizar os vÃƒÂ­deos criados dentro da Apollo, a arquitetura permitirÃƒÂ¡ vender os pacotes de Nitro para usuÃƒÂ¡rios de softwares Open Source de desktop (Ex: FreeCut, Kdenlive). O usuÃƒÂ¡rio envia o projeto e a Apollo processa nas GPUs descartÃƒÂ¡veis do Lightning ou do Modal, poupando a mÃƒÂ¡quina do usuÃƒÂ¡rio em troca de Cristais. Isso vende comodidade.
+- AlÃƒÆ’Ã‚Â©m de renderizar os vÃƒÆ’Ã‚Â­deos criados dentro da Apollo, a arquitetura permitirÃƒÆ’Ã‚Â¡ vender os pacotes de Nitro para usuÃƒÆ’Ã‚Â¡rios de softwares Open Source de desktop (Ex: FreeCut, Kdenlive). O usuÃƒÆ’Ã‚Â¡rio envia o projeto e a Apollo processa nas GPUs descartÃƒÆ’Ã‚Â¡veis do Lightning ou do Modal, poupando a mÃƒÆ’Ã‚Â¡quina do usuÃƒÆ’Ã‚Â¡rio em troca de Cristais. Isso vende comodidade.
 
 
 
-## 35. Ecossistema de Agentes AutÃƒÂ´nomos In-House (IA Residente)
+## 35. Ecossistema de Agentes AutÃƒÆ’Ã‚Â´nomos In-House (IA Residente)
 
-- **A VisÃƒÂ£o do UsuÃƒÂ¡rio:** O usuÃƒÂ¡rio propÃƒÂ´s a criaÃƒÂ§ÃƒÂ£o de um 'Ecossistema de Agentes' operando 24 horas por dia no servidor, sem necessidade de inputs humanos.
+- **A VisÃƒÆ’Ã‚Â£o do UsuÃƒÆ’Ã‚Â¡rio:** O usuÃƒÆ’Ã‚Â¡rio propÃƒÆ’Ã‚Â´s a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um 'Ecossistema de Agentes' operando 24 horas por dia no servidor, sem necessidade de inputs humanos.
 
-- **Viabilidade:** Total. Diferente do ChatGPT (que exige um input de texto), agentes instalados em Servidores/VPS (como OpenCloud ou scripts Python customizados) rodam em Loops. Eles acordam via gatilhos (CronJobs de 5 minutos, Logs de Erro, ou Eventos do Sistema), raciocinam usando a chave de API que vocÃƒÂª jÃƒÂ¡ tem (Groq/OpenAI), executam a tarefa e voltam a dormir.
+- **Viabilidade:** Total. Diferente do ChatGPT (que exige um input de texto), agentes instalados em Servidores/VPS (como OpenCloud ou scripts Python customizados) rodam em Loops. Eles acordam via gatilhos (CronJobs de 5 minutos, Logs de Erro, ou Eventos do Sistema), raciocinam usando a chave de API que vocÃƒÆ’Ã‚Âª jÃƒÆ’Ã‚Â¡ tem (Groq/OpenAI), executam a tarefa e voltam a dormir.
 
 - **Tipos de Agentes Propostos:**
 
-  1. **O MecÃƒÂ¢nico (O Vigia do Scraping):** Como discutido na Fase do Submundo, este agente vigia a saÃƒÂºde das contas Meta/NanoBanana. Se o site do Facebook mudar o HTML, o MecÃƒÂ¢nico abre uma janela Sandbox invisÃƒÂ­vel, reescreve seu prÃƒÂ³prio cÃƒÂ³digo Python para arrumar o botÃƒÂ£o, e reinicia a frota, garantindo que o Web Scraping NUNCA quebre e vocÃƒÂª nÃƒÂ£o precise acordar de madrugada para consertar.
+  1. **O MecÃƒÆ’Ã‚Â¢nico (O Vigia do Scraping):** Como discutido na Fase do Submundo, este agente vigia a saÃƒÆ’Ã‚Âºde das contas Meta/NanoBanana. Se o site do Facebook mudar o HTML, o MecÃƒÆ’Ã‚Â¢nico abre uma janela Sandbox invisÃƒÆ’Ã‚Â­vel, reescreve seu prÃƒÆ’Ã‚Â³prio cÃƒÆ’Ã‚Â³digo Python para arrumar o botÃƒÆ’Ã‚Â£o, e reinicia a frota, garantindo que o Web Scraping NUNCA quebre e vocÃƒÆ’Ã‚Âª nÃƒÆ’Ã‚Â£o precise acordar de madrugada para consertar.
 
-  2. **O Zelador (ManutenÃƒÂ§ÃƒÂ£o de Nuvem):** Um agente focado em apagar vÃƒÂ­deos temporÃƒÂ¡rios antigos, vigiar quanto espaÃƒÂ§o em disco tem na Oracle Cloud e otimizar arquivos pesados (compressÃƒÂ£o).
+  2. **O Zelador (ManutenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Nuvem):** Um agente focado em apagar vÃƒÆ’Ã‚Â­deos temporÃƒÆ’Ã‚Â¡rios antigos, vigiar quanto espaÃƒÆ’Ã‚Â§o em disco tem na Oracle Cloud e otimizar arquivos pesados (compressÃƒÆ’Ã‚Â£o).
 
   3. **O Copiloto do Chat (Front-end):** A IA que vai interagir com o cliente final dentro da interface web.
 
@@ -2116,39 +2138,39 @@ O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
 
 
 
-## 36. FÃƒÂ¡brica de GeraÃƒÂ§ÃƒÂ£o de MÃƒÂºsica e RÃƒÂ¡dio 24/7
+## 36. FÃƒÆ’Ã‚Â¡brica de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de MÃƒÆ’Ã‚Âºsica e RÃƒÆ’Ã‚Â¡dio 24/7
 
-- **VisÃƒÂ£o Futura (PÃƒÂ³s-LanÃƒÂ§amento):** O usuÃƒÂ¡rio revelou o plano de integrar 3 RÃƒÂ¡dios Online 24/7 no YouTube (ex: RÃƒÂ¡dio Dark Trap) hospedadas no prÃƒÂ³prio servidor da Oracle.
-
-
-
-### Ponto 1 Ã¢â‚¬â€ Load Balancer de Contas Lightning ?
-
-- CRIADO: ackend/cloud_tools/account_pool.py Ã¢â‚¬â€ Pool N contas, estratÃƒÂ©gia least_used/round-robin/most-credit, health check automÃƒÂ¡tico
-
-- CRIADO: ackend/cloud_tools/load_balancer.py Ã¢â‚¬â€ API FastAPI interna (porta 3001) com /dispatch, /status, /report_result, /job/{id}
-
-- ATUALIZADO: .env Ã¢â‚¬â€ Suporte a LIGHTNING_ACCOUNT_N=label|user_id|api_key|teamspace|studio_name|role
+- **VisÃƒÆ’Ã‚Â£o Futura (PÃƒÆ’Ã‚Â³s-LanÃƒÆ’Ã‚Â§amento):** O usuÃƒÆ’Ã‚Â¡rio revelou o plano de integrar 3 RÃƒÆ’Ã‚Â¡dios Online 24/7 no YouTube (ex: RÃƒÆ’Ã‚Â¡dio Dark Trap) hospedadas no prÃƒÆ’Ã‚Â³prio servidor da Oracle.
 
 
 
-### Ponto 2 Ã¢â‚¬â€ Sistema de Economia Apollo ?
+### Ponto 1 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Load Balancer de Contas Lightning ?
 
-- CRIADO: ackend/financial_agent/coin_ledger.py Ã¢â‚¬â€ Carteira completa (Coins, Chips LLM, GPU Tokens, CombustÃƒÂ­vel, Cristais). Custos por operaÃƒÂ§ÃƒÂ£o definidos. HistÃƒÂ³rico de transaÃƒÂ§ÃƒÂµes em SQLite.
+- CRIADO: ackend/cloud_tools/account_pool.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pool N contas, estratÃƒÆ’Ã‚Â©gia least_used/round-robin/most-credit, health check automÃƒÆ’Ã‚Â¡tico
 
-- CRIADO: ackend/financial_agent/nitro_engine.py Ã¢â‚¬â€ CÃƒÂ¡lculo de ETA por tier de GPU (Free/Nitro T4/Nitro+ A10/Nitro Master A100). Build payload de checkout para upsell.
+- CRIADO: ackend/cloud_tools/load_balancer.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â API FastAPI interna (porta 3001) com /dispatch, /status, /report_result, /job/{id}
 
-- CRIADO: ackend/financial_agent/subscription_manager.py Ã¢â‚¬â€ Planos Free/Pro/Master com cotas (canais, renders paralelos). ConcessÃƒÂ£o mensal automÃƒÂ¡tica de moedas.
-
-
-
-### Ponto 3 Ã¢â‚¬â€ IntegraÃƒÂ§ÃƒÂ£o dos Agentes ?
-
-- ATUALIZADO: ackend/main.py Ã¢â‚¬â€ Migrado para lifespan (padrÃƒÂ£o moderno FastAPI). HiveBus conectado no startup. Pool Monitor rodando a cada 30min publicando alertas de saÃƒÂºde das contas. Maestro inscrito em todos os tÃƒÂ³picos crÃƒÂ­ticos.
+- ATUALIZADO: .env ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Suporte a LIGHTNING_ACCOUNT_N=label|user_id|api_key|teamspace|studio_name|role
 
 
 
-### PrÃƒÂ³ximo Passo
+### Ponto 2 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Sistema de Economia Apollo ?
+
+- CRIADO: ackend/financial_agent/coin_ledger.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Carteira completa (Coins, Chips LLM, GPU Tokens, CombustÃƒÆ’Ã‚Â­vel, Cristais). Custos por operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o definidos. HistÃƒÆ’Ã‚Â³rico de transaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes em SQLite.
+
+- CRIADO: ackend/financial_agent/nitro_engine.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â CÃƒÆ’Ã‚Â¡lculo de ETA por tier de GPU (Free/Nitro T4/Nitro+ A10/Nitro Master A100). Build payload de checkout para upsell.
+
+- CRIADO: ackend/financial_agent/subscription_manager.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Planos Free/Pro/Master com cotas (canais, renders paralelos). ConcessÃƒÆ’Ã‚Â£o mensal automÃƒÆ’Ã‚Â¡tica de moedas.
+
+
+
+### Ponto 3 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o dos Agentes ?
+
+- ATUALIZADO: ackend/main.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Migrado para lifespan (padrÃƒÆ’Ã‚Â£o moderno FastAPI). HiveBus conectado no startup. Pool Monitor rodando a cada 30min publicando alertas de saÃƒÆ’Ã‚Âºde das contas. Maestro inscrito em todos os tÃƒÆ’Ã‚Â³picos crÃƒÆ’Ã‚Â­ticos.
+
+
+
+### PrÃƒÆ’Ã‚Â³ximo Passo
 
 - Conectar o WhatsApp webhook ao Maestro para alertas em tempo real
 
@@ -2158,25 +2180,25 @@ O processo da Trindade pode ser navegado de trÃƒÂªs formas distintas:
 
 
 
-### Ponto BÃƒÂ´nus Ã¢â‚¬â€ Ponte WhatsApp e Comandos do CEO ?
+### Ponto BÃƒÆ’Ã‚Â´nus ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ponte WhatsApp e Comandos do CEO ?
 
-- CRIADO: ackend/agents/whatsapp_bridge.py Ã¢â‚¬â€ Encapsula a API HTTP da bridge Node.js (porta 5001) para enviar DM, avisos ao CEO e alertas crÃƒÂ­ticos com emojis.
+- CRIADO: ackend/agents/whatsapp_bridge.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Encapsula a API HTTP da bridge Node.js (porta 5001) para enviar DM, avisos ao CEO e alertas crÃƒÆ’Ã‚Â­ticos com emojis.
 
-- ATUALIZADO: ackend/agents/maestro_agent.py Ã¢â‚¬â€ Usa o whatsapp_bridge real. Intercepta HiveBus events (falha de conta, limite de crÃƒÂ©dito, etc.) e dispara alertas ao CEO. AlÃƒÂ©m disso, processa comandos textuais ('status', 'pool', 'ajuda') e responde via LLM.
+- ATUALIZADO: ackend/agents/maestro_agent.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Usa o whatsapp_bridge real. Intercepta HiveBus events (falha de conta, limite de crÃƒÆ’Ã‚Â©dito, etc.) e dispara alertas ao CEO. AlÃƒÆ’Ã‚Â©m disso, processa comandos textuais ('status', 'pool', 'ajuda') e responde via LLM.
 
-- CRIADO: ackend/api/routes_whatsapp.py Ã¢â‚¬â€ Webhook endpoint /api/whatsapp/webhook que recebe os POSTs do bot Node.js e repassa a string para o Maestro (que em seguida responde). Injetado no FastAPI em main.py.
-
-
+- CRIADO: ackend/api/routes_whatsapp.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Webhook endpoint /api/whatsapp/webhook que recebe os POSTs do bot Node.js e repassa a string para o Maestro (que em seguida responde). Injetado no FastAPI em main.py.
 
 
 
-### Ponto 4 Ã¢â‚¬â€ IntegraÃƒÂ§ÃƒÂ£o WebSocket (Phantom Fleet) ?
 
-- CRIADO: ackend/api/routes_phantom.py Ã¢â‚¬â€ ImplementaÃƒÂ§ÃƒÂ£o do WebSocket Manager (PhantomConnectionManager) para receber as conexÃƒÂµes das extensÃƒÂµes de navegador do submundo (Phantom Fleet). Ele mantÃƒÂªm estado e controla o timeout.
 
-- ATUALIZADO: ackend/api/worker_routes.py Ã¢â‚¬â€ Rota /jobs/dispatch refatorada para nÃƒÂ£o depender do antigo simulador, usando o novo phantom_manager para enviar o Job para a extensÃƒÂ£o e aguardar (await) a resposta em tempo real.
+### Ponto 4 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o WebSocket (Phantom Fleet) ?
 
-- ATUALIZADO: ackend/main.py Ã¢â‚¬â€ InclusÃƒÂ£o dos routers 
+- CRIADO: ackend/api/routes_phantom.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ImplementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do WebSocket Manager (PhantomConnectionManager) para receber as conexÃƒÆ’Ã‚Âµes das extensÃƒÆ’Ã‚Âµes de navegador do submundo (Phantom Fleet). Ele mantÃƒÆ’Ã‚Âªm estado e controla o timeout.
+
+- ATUALIZADO: ackend/api/worker_routes.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Rota /jobs/dispatch refatorada para nÃƒÆ’Ã‚Â£o depender do antigo simulador, usando o novo phantom_manager para enviar o Job para a extensÃƒÆ’Ã‚Â£o e aguardar (await) a resposta em tempo real.
+
+- ATUALIZADO: ackend/main.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â InclusÃƒÆ’Ã‚Â£o dos routers 
 
 outes_phantom e worker_routes na API principal.
 
@@ -2188,177 +2210,177 @@ Agora o Backend consegue falar diretamente com o script extensao_phantom_client.
 
 
 
-### Ponto 5 Ã¢â‚¬â€ API do Mercado Negro e Consulta de Economia ?
+### Ponto 5 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â API do Mercado Negro e Consulta de Economia ?
 
-- CRIADO: ackend/api/routes_economy.py Ã¢â‚¬â€ Novas rotas dedicadas para o Frontend consumir (/api/economy/wallet, /api/economy/history, /api/economy/charge e /api/economy/sell).
+- CRIADO: ackend/api/routes_economy.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Novas rotas dedicadas para o Frontend consumir (/api/economy/wallet, /api/economy/history, /api/economy/charge e /api/economy/sell).
 
-- LÃƒâ€œGICA DO MERCADO NEGRO: Em /api/economy/sell, o usuÃƒÂ¡rio agora pode vender Chips LLM (conversÃƒÂ£o 1:2), Tokens de GPU (1:5), CombustÃƒÂ­vel (1:1) ou Cristais (1:10) de volta para o sistema e receber Apollo Coins na sua carteira, injetando as transaÃƒÂ§ÃƒÂµes no SQLite (economy.db) com os devidos logs.
+- LÃƒÆ’Ã¢â‚¬Å“GICA DO MERCADO NEGRO: Em /api/economy/sell, o usuÃƒÆ’Ã‚Â¡rio agora pode vender Chips LLM (conversÃƒÆ’Ã‚Â£o 1:2), Tokens de GPU (1:5), CombustÃƒÆ’Ã‚Â­vel (1:1) ou Cristais (1:10) de volta para o sistema e receber Apollo Coins na sua carteira, injetando as transaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes no SQLite (economy.db) com os devidos logs.
 
-- ATUALIZADO: ackend/main.py Ã¢â‚¬â€ InclusÃƒÂ£o do router da Economia.
+- ATUALIZADO: ackend/main.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â InclusÃƒÆ’Ã‚Â£o do router da Economia.
 
 
 
 
 
-### Ponto 6 Ã¢â‚¬â€ SincronizaÃƒÂ§ÃƒÂ£o Final da Colmeia e Roteamento ?
+### Ponto 6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SincronizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Final da Colmeia e Roteamento ?
 
-- ATUALIZADO: ackend/agents/watchdog_agent.py Ã¢â‚¬â€ Passou a monitorar dinamicamente a saÃƒÂºde e atividade das instÃƒÂ¢ncias no novo ccount_pool (eliminando a leitura da estrutura obsoleta hardcoded).
+- ATUALIZADO: ackend/agents/watchdog_agent.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Passou a monitorar dinamicamente a saÃƒÆ’Ã‚Âºde e atividade das instÃƒÆ’Ã‚Â¢ncias no novo ccount_pool (eliminando a leitura da estrutura obsoleta hardcoded).
 
-- ATUALIZADO: ackend/router/waterfall_router.py Ã¢â‚¬â€ Para garantir um gargalo e fila (queue) ÃƒÂºnica, o Router Central nÃƒÂ£o roda mais uma lista de contas de forma burra: ele agora pede uma conta ativa para o ccount_pool.pick(role='general') antes de enviar o request para a Lightning AI. Isso resolve os limites de concorrÃƒÂªncia global.
+- ATUALIZADO: ackend/router/waterfall_router.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Para garantir um gargalo e fila (queue) ÃƒÆ’Ã‚Âºnica, o Router Central nÃƒÆ’Ã‚Â£o roda mais uma lista de contas de forma burra: ele agora pede uma conta ativa para o ccount_pool.pick(role='general') antes de enviar o request para a Lightning AI. Isso resolve os limites de concorrÃƒÆ’Ã‚Âªncia global.
 
 
 
 
 
-### Ponto 7 Ã¢â‚¬â€ WebSocket de UI e Concierge Proativo ?
+### Ponto 7 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â WebSocket de UI e Concierge Proativo ?
 
-- CRIADO: ackend/api/routes_ui_ws.py Ã¢â‚¬â€ Novo servidor WebSocket para a Interface Web (Painel do UsuÃƒÂ¡rio). Diferente do Phantom Fleet (para scripts ocultos), este serve para enviar atualizaÃƒÂ§ÃƒÂµes visuais, chats e notificaÃƒÂ§ÃƒÂµes em tempo real para os usuÃƒÂ¡rios logados.
+- CRIADO: ackend/api/routes_ui_ws.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Novo servidor WebSocket para a Interface Web (Painel do UsuÃƒÆ’Ã‚Â¡rio). Diferente do Phantom Fleet (para scripts ocultos), este serve para enviar atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes visuais, chats e notificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes em tempo real para os usuÃƒÆ’Ã‚Â¡rios logados.
 
-- ATUALIZADO: ackend/agents/user_concierge.py Ã¢â‚¬â€ O agente Concierge agora utiliza o ui_ws_manager.send_to_user() para mandar o pop-up de ajuda proativo DIRETAMENTE para a tela do usuÃƒÂ¡rio caso detecte que ele estÃƒÂ¡ ocioso ou perdido no site.
+- ATUALIZADO: ackend/agents/user_concierge.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â O agente Concierge agora utiliza o ui_ws_manager.send_to_user() para mandar o pop-up de ajuda proativo DIRETAMENTE para a tela do usuÃƒÆ’Ã‚Â¡rio caso detecte que ele estÃƒÆ’Ã‚Â¡ ocioso ou perdido no site.
 
 
 
 
 
-### Ponto 8 Ã¢â‚¬â€ MigraÃƒÂ§ÃƒÂ£o da Arquitetura Financeira Base e Scrapers ?
+### Ponto 8 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â MigraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Arquitetura Financeira Base e Scrapers ?
 
-- CRIADO: ackend/agents/market_analyst_agent.py Ã¢â‚¬â€ VersÃƒÂ£o moderna do antigo analista sÃƒÂ­ncrono. Agora roda como uma Task assÃƒÂ­ncrona, analisa o volume de circulaÃƒÂ§ÃƒÂ£o de Apollo Coins (inflaÃƒÂ§ÃƒÂ£o) no banco de dados e avisa o Maestro pelo Hive Bus.
+- CRIADO: ackend/agents/market_analyst_agent.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â VersÃƒÆ’Ã‚Â£o moderna do antigo analista sÃƒÆ’Ã‚Â­ncrono. Agora roda como uma Task assÃƒÆ’Ã‚Â­ncrona, analisa o volume de circulaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Apollo Coins (inflaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) no banco de dados e avisa o Maestro pelo Hive Bus.
 
-- CRIADO: ackend/agents/pricing_scraper_agent.py Ã¢â‚¬â€ Atualiza o cache de modelos do OpenRouter em banco a cada 12 horas. Avisa sobre modelos novos diretamente via Pub/Sub.
+- CRIADO: ackend/agents/pricing_scraper_agent.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Atualiza o cache de modelos do OpenRouter em banco a cada 12 horas. Avisa sobre modelos novos diretamente via Pub/Sub.
 
-- ATUALIZADO: ackend/main.py Ã¢â‚¬â€ O Analista Financeiro e o Pricing Scraper agora acordam no evento lifespan, unindo-se ÃƒÂ  grande Colmeia.
+- ATUALIZADO: ackend/main.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â O Analista Financeiro e o Pricing Scraper agora acordam no evento lifespan, unindo-se ÃƒÆ’Ã‚Â  grande Colmeia.
 
 
 
 
 
-### Ponto 9 Ã¢â‚¬â€ MigraÃƒÂ§ÃƒÂ£o do Gestor de TrÃƒÂ¡fego e Olheiro de TendÃƒÂªncias ?
+### Ponto 9 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â MigraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Gestor de TrÃƒÆ’Ã‚Â¡fego e Olheiro de TendÃƒÆ’Ã‚Âªncias ?
 
-- CRIADO: ackend/agents/traffic_manager_agent.py Ã¢â‚¬â€ VersÃƒÂ£o assÃƒÂ­ncrona do Gestor de TrÃƒÂ¡fego, agora focado no cÃƒÂ¡lculo contÃƒÂ­nuo do CTR e desativaÃƒÂ§ÃƒÂ£o de campanhas em background (loop infinito).
+- CRIADO: ackend/agents/traffic_manager_agent.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â VersÃƒÆ’Ã‚Â£o assÃƒÆ’Ã‚Â­ncrona do Gestor de TrÃƒÆ’Ã‚Â¡fego, agora focado no cÃƒÆ’Ã‚Â¡lculo contÃƒÆ’Ã‚Â­nuo do CTR e desativaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de campanhas em background (loop infinito).
 
-- CRIADO: ackend/agents/trend_researcher_agent.py Ã¢â‚¬â€ Agente Olheiro de TendÃƒÂªncias convertido em processo de longa duraÃƒÂ§ÃƒÂ£o (BaseAgent). Descobre modelos e notifica via Pub/Sub.
+- CRIADO: ackend/agents/trend_researcher_agent.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Agente Olheiro de TendÃƒÆ’Ã‚Âªncias convertido em processo de longa duraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (BaseAgent). Descobre modelos e notifica via Pub/Sub.
 
-- ATUALIZADO: ackend/main.py Ã¢â‚¬â€ Os agentes Gestor de TrÃƒÂ¡fego e Olheiro de TendÃƒÂªncias foram incorporados ao Lifespan da aplicaÃƒÂ§ÃƒÂ£o central, rodando de forma assÃƒÂ­ncrona.
+- ATUALIZADO: ackend/main.py ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Os agentes Gestor de TrÃƒÆ’Ã‚Â¡fego e Olheiro de TendÃƒÆ’Ã‚Âªncias foram incorporados ao Lifespan da aplicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o central, rodando de forma assÃƒÆ’Ã‚Â­ncrona.
 
 
 
 
 
-### Ponto 10 Ã¢â‚¬â€ Limpeza da Raiz (Root) ?
+### Ponto 10 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Limpeza da Raiz (Root) ?
 
-- DELETADO: Arquivos antigos sÃƒÂ­ncronos market_analyst_agent.py, pricing_scraper_agent.py, 	raffic_manager_agent.py e 	rend_researcher_agent.py da pasta raiz, pois todos agora rodam centralizados de forma assÃƒÂ­ncrona dentro da arquitetura de motor V3 (ackend/main.py).
+- DELETADO: Arquivos antigos sÃƒÆ’Ã‚Â­ncronos market_analyst_agent.py, pricing_scraper_agent.py, 	raffic_manager_agent.py e 	rend_researcher_agent.py da pasta raiz, pois todos agora rodam centralizados de forma assÃƒÆ’Ã‚Â­ncrona dentro da arquitetura de motor V3 (ackend/main.py).
 
 
 
 
 
-### Ponto 11 - RefatoraÃƒÂ§ÃƒÂ£o dos Motores de MÃƒÂ­dia Legados (Render Engines) ??
+### Ponto 11 - RefatoraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o dos Motores de MÃƒÆ’Ã‚Â­dia Legados (Render Engines) ??
 
-- CRIADO: ackend/engines/audio_engine.py - VersÃƒÂ£o assÃƒÂ­ncrona do pipeline de ÃƒÂ¡ÃƒÂ¡udio que usa FFmpeg (limpeza de silÃƒÂªncio, ducking, LUFS) sem bloquear o servidor.
+- CRIADO: ackend/engines/audio_engine.py - VersÃƒÆ’Ã‚Â£o assÃƒÆ’Ã‚Â­ncrona do pipeline de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio que usa FFmpeg (limpeza de silÃƒÆ’Ã‚Âªncio, ducking, LUFS) sem bloquear o servidor.
 
-- CRIADO: ackend/engines/video_engine.py - Wrappa o massivo script de renderizaÃƒÂ§ÃƒÂ£o legado (
+- CRIADO: ackend/engines/video_engine.py - Wrappa o massivo script de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o legado (
 
-ender_timeline.py) para ser executado no background via subprocess assÃƒÂ­ncrono. Retorna Job IDs para acompanhamento de progresso.
+ender_timeline.py) para ser executado no background via subprocess assÃƒÆ’Ã‚Â­ncrono. Retorna Job IDs para acompanhamento de progresso.
 
-- CRIADO: ackend/engines/director_engine.py - O antigo pipeline do Diretor IA agora usa nativamente o WaterfallRouter do Maestro para distribuir pedidos de anÃƒÂ¡lise semÃƒÂ¢ntica e B-Rolls entre o pool de LLMs, em vez de depender de chaves estÃƒÂ¡ticas locais.
+- CRIADO: ackend/engines/director_engine.py - O antigo pipeline do Diretor IA agora usa nativamente o WaterfallRouter do Maestro para distribuir pedidos de anÃƒÆ’Ã‚Â¡lise semÃƒÆ’Ã‚Â¢ntica e B-Rolls entre o pool de LLMs, em vez de depender de chaves estÃƒÆ’Ã‚Â¡ticas locais.
 
 
 
 
 
-- CRIADO: ackend/api/routes_render.py - ExpÃƒÂµe endpoints REST /api/render/start_video, /api/render/clean_audio e /api/render/analyze_script.
+- CRIADO: ackend/api/routes_render.py - ExpÃƒÆ’Ã‚Âµe endpoints REST /api/render/start_video, /api/render/clean_audio e /api/render/analyze_script.
 
-- DELETADO: Scripts sÃƒÂ­ncronos legados originais (udio_pipeline.py e i_director_pipeline.py) da pasta raiz.
+- DELETADO: Scripts sÃƒÆ’Ã‚Â­ncronos legados originais (udio_pipeline.py e i_director_pipeline.py) da pasta raiz.
 
 
 
-### AtualizaÃƒÂ§ÃƒÂ£o CrÃƒÂ­tica - RecuperaÃƒÂ§ÃƒÂ£o de Conta (2026-06-19)
+### AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o CrÃƒÆ’Ã‚Â­tica - RecuperaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Conta (2026-06-19)
 
-O usuÃƒÂ¡rio conseguiu recuperar a conta principal da Lightning AI (roxingo@gmail.com) que havia sido banida por engano. A equipe de suporte desfez o banimento. Com isso, os limites de cota da nuvem e do provedor voltaram ÃƒÂ  normalidade e podemos testar as capacidades do Motor 3.0 do Apollo (que utiliza a Lightning AI como provedor principal no WaterfallRouter).
+O usuÃƒÆ’Ã‚Â¡rio conseguiu recuperar a conta principal da Lightning AI (roxingo@gmail.com) que havia sido banida por engano. A equipe de suporte desfez o banimento. Com isso, os limites de cota da nuvem e do provedor voltaram ÃƒÆ’Ã‚Â  normalidade e podemos testar as capacidades do Motor 3.0 do Apollo (que utiliza a Lightning AI como provedor principal no WaterfallRouter).
 
 
 
-### Ponto 12 - ValidaÃƒÂ§ÃƒÂ£o End-to-End do Motor 3.0 (Em Planejamento) Ã°Å¸Å¡Â§
+### Ponto 12 - ValidaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o End-to-End do Motor 3.0 (Em Planejamento) ÃƒÂ°Ã…Â¸Ã…Â¡Ã‚Â§
 
-- O usuÃƒÂ¡rio direcionou que o foco absoluto de agora seja TESTAR e VERIFICAR se todas as peÃƒÂ§as de backend construÃƒÂ­das atÃƒÂ© aqui (geraÃƒÂ§ÃƒÂ£o de imagem, vÃƒÂ­deo, cÃƒÂ³digos rodando, IAs raciocinando) funcionam juntas na prÃƒÂ¡tica.
+- O usuÃƒÆ’Ã‚Â¡rio direcionou que o foco absoluto de agora seja TESTAR e VERIFICAR se todas as peÃƒÆ’Ã‚Â§as de backend construÃƒÆ’Ã‚Â­das atÃƒÆ’Ã‚Â© aqui (geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagem, vÃƒÆ’Ã‚Â­deo, cÃƒÆ’Ã‚Â³digos rodando, IAs raciocinando) funcionam juntas na prÃƒÆ’Ã‚Â¡tica.
 
 
 
-### Ponto 13 - EstratÃƒÂ©gia de Go-to-Market e MonetizaÃƒÂ§ÃƒÂ£o (2026-06-19)
+### Ponto 13 - EstratÃƒÆ’Ã‚Â©gia de Go-to-Market e MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (2026-06-19)
 
-- **Dogfooding:** O CEO serÃƒÂ¡ o Cliente Zero. A plataforma serÃƒÂ¡ exaustivamente testada para escalar os prÃƒÂ³prios canais do CEO antes da abertura ao pÃƒÂºblico.
+- **Dogfooding:** O CEO serÃƒÆ’Ã‚Â¡ o Cliente Zero. A plataforma serÃƒÆ’Ã‚Â¡ exaustivamente testada para escalar os prÃƒÆ’Ã‚Â³prios canais do CEO antes da abertura ao pÃƒÆ’Ã‚Âºblico.
 
-- **Marketing OrgÃƒÂ¢nico e Agressivo:** Os prÃƒÂ³prios canais automatizados servirÃƒÂ£o como funil de vendas. CTA nos vÃƒÂ­deos: "Cansado de ser bloqueado? Edite automaticamente sem cair na malha fina do YouTube".
+- **Marketing OrgÃƒÆ’Ã‚Â¢nico e Agressivo:** Os prÃƒÆ’Ã‚Â³prios canais automatizados servirÃƒÆ’Ã‚Â£o como funil de vendas. CTA nos vÃƒÆ’Ã‚Â­deos: "Cansado de ser bloqueado? Edite automaticamente sem cair na malha fina do YouTube".
 
-- **Diferencial Anti-Shadowban:** O Apollo garante consistÃƒÂªncia (mapa de templates, vozes e personas fixas), imitando perfeitamente uma ediÃƒÂ§ÃƒÂ£o humana manual e burlando algoritmos de puniÃƒÂ§ÃƒÂ£o de conteÃƒÂºdo gerado por IA.
+- **Diferencial Anti-Shadowban:** O Apollo garante consistÃƒÆ’Ã‚Âªncia (mapa de templates, vozes e personas fixas), imitando perfeitamente uma ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o humana manual e burlando algoritmos de puniÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de conteÃƒÆ’Ã‚Âºdo gerado por IA.
 
-- **SubsÃƒÂ­dio de Custos:** Os usuÃƒÂ¡rios pagantes irÃƒÂ£o financiar a infraestrutura de APIs pesadas do CEO, permitindo que a rede original gere vÃƒÂ­deos a custo virtualmente zero.
+- **SubsÃƒÆ’Ã‚Â­dio de Custos:** Os usuÃƒÆ’Ã‚Â¡rios pagantes irÃƒÆ’Ã‚Â£o financiar a infraestrutura de APIs pesadas do CEO, permitindo que a rede original gere vÃƒÆ’Ã‚Â­deos a custo virtualmente zero.
 
 
 
-### Ponto 14 - MÃƒÂ³dulo Admin: RÃƒÂ¡dio 24/7 (Novo Requisito)
+### Ponto 14 - MÃƒÆ’Ã‚Â³dulo Admin: RÃƒÆ’Ã‚Â¡dio 24/7 (Novo Requisito)
 
-- **Escopo:** CriaÃƒÂ§ÃƒÂ£o de um pipeline robusto exclusivo para o Administrador, focado em gerar vÃƒÂ­deos massivos e manter transmissÃƒÂµes de rÃƒÂ¡dio 24h para 2 novos canais de mÃƒÂºsica (H7D Music e Filosofia do CÃƒÂ³digo MÃƒÂºsica).
+- **Escopo:** CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um pipeline robusto exclusivo para o Administrador, focado em gerar vÃƒÆ’Ã‚Â­deos massivos e manter transmissÃƒÆ’Ã‚Âµes de rÃƒÆ’Ã‚Â¡dio 24h para 2 novos canais de mÃƒÆ’Ã‚Âºsica (H7D Music e Filosofia do CÃƒÆ’Ã‚Â³digo MÃƒÆ’Ã‚Âºsica).
 
-- **RestriÃƒÂ§ÃƒÂ£o:** Este serviÃƒÂ§o NÃƒÆ’O serÃƒÂ¡ oferecido ao pÃƒÂºblico na plataforma SaaS, sendo um painel VIP interno do Apollo.
+- **RestriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** Este serviÃƒÆ’Ã‚Â§o NÃƒÆ’Ã†â€™O serÃƒÆ’Ã‚Â¡ oferecido ao pÃƒÆ’Ã‚Âºblico na plataforma SaaS, sendo um painel VIP interno do Apollo.
 
 
 
-### Ponto 15 - RestriÃƒÂ§ÃƒÂ£o Operacional e Gateway de Pagamento (CRÃ¯Â¿Â½TICO)
+### Ponto 15 - RestriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Operacional e Gateway de Pagamento (CRÃƒÂ¯Ã‚Â¿Ã‚Â½TICO)
 
-- **Contexto:** O CEO sofre restriÃƒÂ§ÃƒÂµes judiciais injustas (bloqueios via Sisbajud/Bacen) que inviabilizam o recebimento de fundos em contas atreladas ao seu prÃƒÂ³prio CPF em territÃƒÂ³rio nacional.
+- **Contexto:** O CEO sofre restriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes judiciais injustas (bloqueios via Sisbajud/Bacen) que inviabilizam o recebimento de fundos em contas atreladas ao seu prÃƒÆ’Ã‚Â³prio CPF em territÃƒÆ’Ã‚Â³rio nacional.
 
-- **Diretriz de Pagamentos:** A conta da Stripe (ou qualquer gateway de pagamento) utilizada para o SaaS do Apollo Edit Web NÃƒÆ’O PODE estar vinculada ao CPF/Conta BancÃƒÂ¡ria do CEO. O cadastro no gateway e a conta bancÃƒÂ¡ria de recebimento (payout) deverÃƒÂ£o estar no nome de um terceiro de confianÃƒÂ§a (ex: mÃƒÂ£e do CEO) ou atravÃƒÂ©s de uma estrutura corporativa offshore (caso o projeto escale).
+- **Diretriz de Pagamentos:** A conta da Stripe (ou qualquer gateway de pagamento) utilizada para o SaaS do Apollo Edit Web NÃƒÆ’Ã†â€™O PODE estar vinculada ao CPF/Conta BancÃƒÆ’Ã‚Â¡ria do CEO. O cadastro no gateway e a conta bancÃƒÆ’Ã‚Â¡ria de recebimento (payout) deverÃƒÆ’Ã‚Â£o estar no nome de um terceiro de confianÃƒÆ’Ã‚Â§a (ex: mÃƒÆ’Ã‚Â£e do CEO) ou atravÃƒÆ’Ã‚Â©s de uma estrutura corporativa offshore (caso o projeto escale).
 
-- **Impacto no Backend:** Tecnologicamente, o backend do Apollo ÃƒÂ© agnÃƒÂ³stico. A integraÃƒÂ§ÃƒÂ£o da Stripe via API funcionarÃƒÂ¡ normalmente recebendo as STRIPE_SECRET_KEY e STRIPE_WEBHOOK_SECRET geradas no painel da Stripe. A responsabilidade de quem ÃƒÂ© o titular da conta bancÃƒÂ¡ria de saque (payout) fica isolada na plataforma da Stripe, garantindo a seguranÃƒÂ§a do ecossistema e blindando a operaÃƒÂ§ÃƒÂ£o de bloqueios judiciais.
+- **Impacto no Backend:** Tecnologicamente, o backend do Apollo ÃƒÆ’Ã‚Â© agnÃƒÆ’Ã‚Â³stico. A integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Stripe via API funcionarÃƒÆ’Ã‚Â¡ normalmente recebendo as STRIPE_SECRET_KEY e STRIPE_WEBHOOK_SECRET geradas no painel da Stripe. A responsabilidade de quem ÃƒÆ’Ã‚Â© o titular da conta bancÃƒÆ’Ã‚Â¡ria de saque (payout) fica isolada na plataforma da Stripe, garantindo a seguranÃƒÆ’Ã‚Â§a do ecossistema e blindando a operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de bloqueios judiciais.
 
 
 
-### Ponto 16 - EstratÃƒÂ©gia de Recebimento de Capital e ProteÃƒÂ§ÃƒÂ£o Patrimonial (2026-06-20)
+### Ponto 16 - EstratÃƒÆ’Ã‚Â©gia de Recebimento de Capital e ProteÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Patrimonial (2026-06-20)
 
-- **SituaÃƒÂ§ÃƒÂ£o:** O usuÃƒÂ¡rio deseja contornar custos de abertura de empresa no exterior (US+) e proteger o capital de bloqueios no Brasil (BACEN).
+- **SituaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** O usuÃƒÆ’Ã‚Â¡rio deseja contornar custos de abertura de empresa no exterior (US+) e proteger o capital de bloqueios no Brasil (BACEN).
 
-- **EstratÃƒÂ©gia Tripartite Desejada:**
+- **EstratÃƒÆ’Ã‚Â©gia Tripartite Desejada:**
 
-  1. Uma pequena quantia recebida no Brasil, na conta de um familiar (mÃƒÂ£e), para suprimentos bÃƒÂ¡sicos.
+  1. Uma pequena quantia recebida no Brasil, na conta de um familiar (mÃƒÆ’Ã‚Â£e), para suprimentos bÃƒÆ’Ã‚Â¡sicos.
 
-  2. Uma quantia razoÃƒÂ¡vel em dÃƒÂ³lar, fora do alcance de autoridades locais (ex: conta Wise / Nomad atrelada a terceiros ou estrutura legalizada barata).
+  2. Uma quantia razoÃƒÆ’Ã‚Â¡vel em dÃƒÆ’Ã‚Â³lar, fora do alcance de autoridades locais (ex: conta Wise / Nomad atrelada a terceiros ou estrutura legalizada barata).
 
-  3. A maior parte (>50%) em **Bitcoin/Criptomoedas**, buscando irrestrabilidade absoluta e custÃƒÂ³dia prÃƒÂ³pria (Cold Wallet / Hardware Wallet).
+  3. A maior parte (>50%) em **Bitcoin/Criptomoedas**, buscando irrestrabilidade absoluta e custÃƒÆ’Ã‚Â³dia prÃƒÆ’Ã‚Â³pria (Cold Wallet / Hardware Wallet).
 
-- **PrÃƒÂ³ximos Passos (Pesquisa & Arquitetura):** O Maestro irÃƒÂ¡ integrar opÃƒÂ§ÃƒÂµes de pagamento em criptomoedas na API (ex: BTCPay Server, Binance Pay, CoinBase Commerce ou integraÃƒÂ§ÃƒÂµes P2P via Lightning Network) para garantir o anonimato e a seguranÃƒÂ§a do fluxo financeiro principal.
+- **PrÃƒÆ’Ã‚Â³ximos Passos (Pesquisa & Arquitetura):** O Maestro irÃƒÆ’Ã‚Â¡ integrar opÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de pagamento em criptomoedas na API (ex: BTCPay Server, Binance Pay, CoinBase Commerce ou integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes P2P via Lightning Network) para garantir o anonimato e a seguranÃƒÆ’Ã‚Â§a do fluxo financeiro principal.
 
 
 
 
 
-- **2026-06-20**: MigraÃƒÂ§ÃƒÂ£o das antigas lÃƒÂ³gicas locais do Tkinter concluÃƒÂ­da (Motor Legendas, TTS Manager, Podcast Engine, Dublagem/RVC). Foram isoladas em ackend/services e acopladas ao FastAPI em ackend/api/ (routes_subtitles, routes_podcast, routes_tts, routes_dubbing). Nenhuma dependÃƒÂªncia visual restou e o Uvicorn bootou com sucesso.
+- **2026-06-20**: MigraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o das antigas lÃƒÆ’Ã‚Â³gicas locais do Tkinter concluÃƒÆ’Ã‚Â­da (Motor Legendas, TTS Manager, Podcast Engine, Dublagem/RVC). Foram isoladas em ackend/services e acopladas ao FastAPI em ackend/api/ (routes_subtitles, routes_podcast, routes_tts, routes_dubbing). Nenhuma dependÃƒÆ’Ã‚Âªncia visual restou e o Uvicorn bootou com sucesso.
 
 
 
 
 
-- **2026-06-20 (Post-Audit)**: Realizada auditoria de 15 ferramentas residuais do Tkinter. Executada e concluÃƒÂ­da a migraÃƒÂ§ÃƒÂ£o do NÃƒÂ­vel 1: asic_editor.py (antigo aba_edicao_basica.py) e udio_video_tools.py (antigo aba_ferramentas.py, aba_volume.py, aba_transicao.py) foram incorporados. A rota 
+- **2026-06-20 (Post-Audit)**: Realizada auditoria de 15 ferramentas residuais do Tkinter. Executada e concluÃƒÆ’Ã‚Â­da a migraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do NÃƒÆ’Ã‚Â­vel 1: asic_editor.py (antigo aba_edicao_basica.py) e udio_video_tools.py (antigo aba_ferramentas.py, aba_volume.py, aba_transicao.py) foram incorporados. A rota 
 
-outes_editor.py foi exposta na web. PrÃƒÂ³ximos na fila de prioridade: NÃƒÂ­vel 2 (AutomaÃƒÂ§ÃƒÂ£o de IA/Clipes) e NÃƒÂ­vel 3 (TitÃƒÂ£s: Mapeador e Dark FÃƒÂ¡cil).
+outes_editor.py foi exposta na web. PrÃƒÆ’Ã‚Â³ximos na fila de prioridade: NÃƒÆ’Ã‚Â­vel 2 (AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de IA/Clipes) e NÃƒÆ’Ã‚Â­vel 3 (TitÃƒÆ’Ã‚Â£s: Mapeador e Dark FÃƒÆ’Ã‚Â¡cil).
 
 
 
 
 
-- **2026-06-20 (Post-Audit 2)**: Executada e concluÃƒÂ­da a migraÃƒÂ§ÃƒÂ£o do NÃƒÂ­vel 2 (AutomaÃƒÂ§ÃƒÂ£o e IA). Foram isolados i_director.py e clip_factory.py. O ideo_rvc_processor jÃƒÂ¡ cobria a fila de inferÃƒÂªncia. Rotas de API criadas e importaÃƒÂ§ÃƒÂµes validadas sem falhas ou warnings de codificaÃƒÂ§ÃƒÂ£o.
+- **2026-06-20 (Post-Audit 2)**: Executada e concluÃƒÆ’Ã‚Â­da a migraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do NÃƒÆ’Ã‚Â­vel 2 (AutomaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e IA). Foram isolados i_director.py e clip_factory.py. O ideo_rvc_processor jÃƒÆ’Ã‚Â¡ cobria a fila de inferÃƒÆ’Ã‚Âªncia. Rotas de API criadas e importaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes validadas sem falhas ou warnings de codificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
 
 
 
 
-- **2026-06-20 (Post-Audit 3)**: Executada a isolaÃƒÂ§ÃƒÂ£o estrutural do NÃƒÂ­vel 3 (Os TitÃƒÂ£s: Mapeador AutomÃƒÂ¡tico e Dark FÃƒÂ¡cil). O cÃƒÂ³digo gigantesco foi abstraÃƒÂ­do para uto_mapper.py e dark_facil_engine.py e atrelado ÃƒÂ s rotas correspondentes no FastAPI. Isso encerra a fase de auditoria e criaÃƒÂ§ÃƒÂ£o dos alicerces do Web Backend para todo o ecossistema Apollo. Todos os testes de sintaxe e importaÃƒÂ§ÃƒÂ£o foram bem-sucedidos.
+- **2026-06-20 (Post-Audit 3)**: Executada a isolaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o estrutural do NÃƒÆ’Ã‚Â­vel 3 (Os TitÃƒÆ’Ã‚Â£s: Mapeador AutomÃƒÆ’Ã‚Â¡tico e Dark FÃƒÆ’Ã‚Â¡cil). O cÃƒÆ’Ã‚Â³digo gigantesco foi abstraÃƒÆ’Ã‚Â­do para uto_mapper.py e dark_facil_engine.py e atrelado ÃƒÆ’Ã‚Â s rotas correspondentes no FastAPI. Isso encerra a fase de auditoria e criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o dos alicerces do Web Backend para todo o ecossistema Apollo. Todos os testes de sintaxe e importaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o foram bem-sucedidos.
 
 
 
 
 
-- **2026-06-20 (Post-Audit 4)**: ConcluÃƒÂ­da a varredura final do legado (NÃƒÂ­vel 4). Componentes de infraestrutura como ConfiguraÃƒÂ§ÃƒÂµes Globais (3314 linhas de Tkinter abstÃƒÂ­das), Fila de RenderizaÃƒÂ§ÃƒÂ£o Global e o Copiloto IA foram isolados em motores (settings_manager, 
+- **2026-06-20 (Post-Audit 4)**: ConcluÃƒÆ’Ã‚Â­da a varredura final do legado (NÃƒÆ’Ã‚Â­vel 4). Componentes de infraestrutura como ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes Globais (3314 linhas de Tkinter abstÃƒÆ’Ã‚Â­das), Fila de RenderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Global e o Copiloto IA foram isolados em motores (settings_manager, 
 
 ender_queue, copilot_engine) com suas rotas correspondentes ativas na API (/settings, /queue, /copilot). O backend agora espelha 100% o leque de funcionalidades do antigo Apollo Studio.
 
@@ -2366,123 +2388,123 @@ ender_queue, copilot_engine) com suas rotas correspondentes ativas na API (/sett
 
 
 
-- **2026-06-20 (Cron Sync)**: Cron Job autÃƒÂ´nomo engatilhado (iteration 7). Realizada leitura cruzada da placa de avisos e da memÃƒÂ³ria ativa. Uma nova estratÃƒÂ©gia arquitetural (RenderizaÃƒÂ§ÃƒÂ£o DistribuÃƒÂ­da e AssÃƒÂ­ncrona via Fila Global Headless) foi adicionada ao ntigravity_hive_bus.md.
+- **2026-06-20 (Cron Sync)**: Cron Job autÃƒÆ’Ã‚Â´nomo engatilhado (iteration 7). Realizada leitura cruzada da placa de avisos e da memÃƒÆ’Ã‚Â³ria ativa. Uma nova estratÃƒÆ’Ã‚Â©gia arquitetural (RenderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o DistribuÃƒÆ’Ã‚Â­da e AssÃƒÆ’Ã‚Â­ncrona via Fila Global Headless) foi adicionada ao ntigravity_hive_bus.md.
 
 
 
-### Ponto 17 - DiversificaÃƒÂ§ÃƒÂ£o Serverless e CrÃƒÂ©ditos Gratuitos (2026-06-22)
+### Ponto 17 - DiversificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Serverless e CrÃƒÆ’Ã‚Â©ditos Gratuitos (2026-06-22)
 
-- **Descoberta:** AnÃƒÂ¡lise do cloudgpuprices.com revelou provedores com robustos tiers gratuitos (Modal: $30/mÃƒÂªs, Inferless: $30 free, Beam: 10 horas grÃƒÂ¡tis).
+- **Descoberta:** AnÃƒÆ’Ã‚Â¡lise do cloudgpuprices.com revelou provedores com robustos tiers gratuitos (Modal: $30/mÃƒÆ’Ã‚Âªs, Inferless: $30 free, Beam: 10 horas grÃƒÆ’Ã‚Â¡tis).
 
-- **EstratÃƒÂ©gia:** O RenderRouter do Apollo vai rotacionar o uso de provedores que oferecem crÃƒÂ©ditos gratuitos para zerar ou minimizar o custo de renderizaÃƒÂ§ÃƒÂ£o de mÃƒÂ­dia.
-
-
-
-- **AtualizaÃƒÂ§ÃƒÂ£o Vultr/OVH (2026-06-22):** Pesquisa indicou que Vultr e OVH nÃƒÂ£o possuem free tier permanente ou renovÃƒÂ¡vel para GPUs. Oferecem apenas bÃƒÂ´nus de trial ÃƒÂºnicos (ex: $200-$300) vÃƒÂ¡lidos por 30 dias para novas contas, exigindo mÃƒÂ©todo de pagamento. ÃƒÅ¡teis como 'Burner Accounts' temporÃƒÂ¡rias, mas menos automÃƒÂ¡ticas que Modal/Beam.
+- **EstratÃƒÆ’Ã‚Â©gia:** O RenderRouter do Apollo vai rotacionar o uso de provedores que oferecem crÃƒÆ’Ã‚Â©ditos gratuitos para zerar ou minimizar o custo de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de mÃƒÆ’Ã‚Â­dia.
 
 
 
-- **Alerta Operacional (Inferless):** Acesso manual ao painel console.inferless.com bloqueado localmente (ERR_NAME_NOT_RESOLVED). O domÃƒÂ­nio estÃƒÂ¡ ativo (CloudFront), apontando para interferÃƒÂªncia de VPN nativa do navegador ou firewall de DNS local. O servidor em nuvem do Apollo nÃƒÂ£o serÃƒÂ¡ afetado, mas exige contorno manual para criaÃƒÂ§ÃƒÂ£o da conta gratuita.
+- **AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Vultr/OVH (2026-06-22):** Pesquisa indicou que Vultr e OVH nÃƒÆ’Ã‚Â£o possuem free tier permanente ou renovÃƒÆ’Ã‚Â¡vel para GPUs. Oferecem apenas bÃƒÆ’Ã‚Â´nus de trial ÃƒÆ’Ã‚Âºnicos (ex: $200-$300) vÃƒÆ’Ã‚Â¡lidos por 30 dias para novas contas, exigindo mÃƒÆ’Ã‚Â©todo de pagamento. ÃƒÆ’Ã…Â¡teis como 'Burner Accounts' temporÃƒÆ’Ã‚Â¡rias, mas menos automÃƒÆ’Ã‚Â¡ticas que Modal/Beam.
 
 
 
-- **ATUALIZAÃƒâ€¡ÃƒÆ’O CRÃ¯Â¿Â½TICA (2026-06-22):** A startup Inferless foi adquirida pela Baseten em Fevereiro de 2026 e sua plataforma standalone foi desativada. O erro DNS_PROBE_FINISHED_NXDOMAIN que o CEO encontrou ÃƒÂ© resultado do desligamento global dos servidores deles. A Inferless estÃƒÂ¡ morta. O RenderRouter nÃƒÂ£o poderÃƒÂ¡ mais contar com o Free Tier deles. Foco redirecionado para Modal, Beam e a prÃƒÂ³pria Baseten.
+- **Alerta Operacional (Inferless):** Acesso manual ao painel console.inferless.com bloqueado localmente (ERR_NAME_NOT_RESOLVED). O domÃƒÆ’Ã‚Â­nio estÃƒÆ’Ã‚Â¡ ativo (CloudFront), apontando para interferÃƒÆ’Ã‚Âªncia de VPN nativa do navegador ou firewall de DNS local. O servidor em nuvem do Apollo nÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ afetado, mas exige contorno manual para criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da conta gratuita.
+
+
+
+- **ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O CRÃƒÂ¯Ã‚Â¿Ã‚Â½TICA (2026-06-22):** A startup Inferless foi adquirida pela Baseten em Fevereiro de 2026 e sua plataforma standalone foi desativada. O erro DNS_PROBE_FINISHED_NXDOMAIN que o CEO encontrou ÃƒÆ’Ã‚Â© resultado do desligamento global dos servidores deles. A Inferless estÃƒÆ’Ã‚Â¡ morta. O RenderRouter nÃƒÆ’Ã‚Â£o poderÃƒÆ’Ã‚Â¡ mais contar com o Free Tier deles. Foco redirecionado para Modal, Beam e a prÃƒÆ’Ã‚Â³pria Baseten.
 
 
 
 
 
-### Ponto 18 - GestÃƒÂ£o de Frota de Contas (Load Balancing) - 2026-06-22
+### Ponto 18 - GestÃƒÆ’Ã‚Â£o de Frota de Contas (Load Balancing) - 2026-06-22
 
-- **O Arsenal:** O modelo de gratuidade contÃƒÂ­nua (renovaÃƒÂ§ÃƒÂ£o mensal) provou que apenas Lightning AI e Modal sÃƒÂ£o viÃƒÂ¡veis. A operaÃƒÂ§ÃƒÂ£o atual conta com um pool distribuÃƒÂ­do de contas:
+- **O Arsenal:** O modelo de gratuidade contÃƒÆ’Ã‚Â­nua (renovaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o mensal) provou que apenas Lightning AI e Modal sÃƒÆ’Ã‚Â£o viÃƒÆ’Ã‚Â¡veis. A operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o atual conta com um pool distribuÃƒÆ’Ã‚Â­do de contas:
 
-  - 4 contas da Lightning AI (Totalizando $60/mÃƒÂªs para OrquestraÃƒÂ§ÃƒÂ£o/LLMs).
+  - 4 contas da Lightning AI (Totalizando $60/mÃƒÆ’Ã‚Âªs para OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o/LLMs).
 
-  - 2 contas da Modal (Totalizando $60/mÃƒÂªs para RenderizaÃƒÂ§ÃƒÂ£o Pesada), com expansÃƒÂ£o prevista para 4 contas.
+  - 2 contas da Modal (Totalizando $60/mÃƒÆ’Ã‚Âªs para RenderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Pesada), com expansÃƒÆ’Ã‚Â£o prevista para 4 contas.
 
-- **Impacto no Backend (O Roteador da Frota):** O *RenderRouter* e o sistema de inteligÃƒÂªncia do Apollo DEVEM ser construÃƒÂ­dos para aceitar **mÃƒÂºltiplas chaves de API** para cada provedor. O sistema precisa rastrear o saldo de cada conta em tempo real e fazer um 'failover' automÃƒÂ¡tico (rotacionar a chave) quando os $15 ou $30 de uma conta se esgotarem no mÃƒÂªs, garantindo operaÃƒÂ§ÃƒÂ£o 24/7 ininterrupta a custo zero.
-
-
-
-## 36. FÃƒÂ¡brica de GeraÃƒÂ§ÃƒÂ£o de MÃƒÂºsica e RÃƒÂ¡dio 24/7
-
-- **VisÃƒÂ£o Futura (PÃƒÂ³s-LanÃƒÂ§amento):** O usuÃƒÂ¡rio revelou o plano de integrar 3 RÃƒÂ¡dios Online 24/7 no YouTube (ex: RÃƒÂ¡dio Dark Trap) hospedadas no prÃƒÂ³prio servidor da Oracle.
-
-- **O Fluxo:** O usuÃƒÂ¡rio usarÃƒÂ¡ a frota headless (Meta/NanoBanana) para gerar a base audiovisual. Depois, processarÃƒÂ¡ esse material em uma aba dedicada chamada 'FÃƒÂ¡brica de GeraÃƒÂ§ÃƒÂ£o de MÃƒÂºsica' dentro do Apollo Edit Web. Essa aba nÃƒÂ£o sÃƒÂ³ alimentarÃƒÂ¡ as rÃƒÂ¡dios do usuÃƒÂ¡rio, mas tambÃƒÂ©m servirÃƒÂ¡ como uma ferramenta pÃƒÂºblica para os clientes da Apollo criarem seus prÃƒÂ³prios vÃƒÂ­deos musicais.
-
-- **Abordagem TecnolÃƒÂ³gica:** Em vez de usar Web Scraping frÃƒÂ¡gil para retransmitir rÃƒÂ¡dios (como Treblo/Sunalto), usaremos FFmpeg puro rodando no servidor em tmux, garantindo estabilidade absoluta e uptime contÃƒÂ­nuo (aproveitando a resiliÃƒÂªncia jÃƒÂ¡ comprovada dos servidores Oracle do usuÃƒÂ¡rio).
+- **Impacto no Backend (O Roteador da Frota):** O *RenderRouter* e o sistema de inteligÃƒÆ’Ã‚Âªncia do Apollo DEVEM ser construÃƒÆ’Ã‚Â­dos para aceitar **mÃƒÆ’Ã‚Âºltiplas chaves de API** para cada provedor. O sistema precisa rastrear o saldo de cada conta em tempo real e fazer um 'failover' automÃƒÆ’Ã‚Â¡tico (rotacionar a chave) quando os $15 ou $30 de uma conta se esgotarem no mÃƒÆ’Ã‚Âªs, garantindo operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o 24/7 ininterrupta a custo zero.
 
 
 
-## SESSÃƒÆ’O 2026-06-19 Ã¢â‚¬â€ UPGRADES DA COLMEIA ANTIGRAVITY
+## 36. FÃƒÆ’Ã‚Â¡brica de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de MÃƒÆ’Ã‚Âºsica e RÃƒÆ’Ã‚Â¡dio 24/7
 
-- **Protocolo Duplo de MemÃƒÂ³ria implementado:** Regra global gravada em C:\Users\v5est\.gemini\config\AGENTS.md. Todos os chats agora sincronizam memÃƒÂ³ria em tempo real (leitura antes de responder) e background (Cron Job de 2 em 2h).
+- **VisÃƒÆ’Ã‚Â£o Futura (PÃƒÆ’Ã‚Â³s-LanÃƒÆ’Ã‚Â§amento):** O usuÃƒÆ’Ã‚Â¡rio revelou o plano de integrar 3 RÃƒÆ’Ã‚Â¡dios Online 24/7 no YouTube (ex: RÃƒÆ’Ã‚Â¡dio Dark Trap) hospedadas no prÃƒÆ’Ã‚Â³prio servidor da Oracle.
 
-- **Salvamento ContÃƒÂ­nuo ativado:** A cada turno de conversa com o Chefe, o agente ÃƒÂ© obrigado a salvar novidades na memÃƒÂ³ria individual e na placa coletiva (ntigravity_hive_bus.md).
+- **O Fluxo:** O usuÃƒÆ’Ã‚Â¡rio usarÃƒÆ’Ã‚Â¡ a frota headless (Meta/NanoBanana) para gerar a base audiovisual. Depois, processarÃƒÆ’Ã‚Â¡ esse material em uma aba dedicada chamada 'FÃƒÆ’Ã‚Â¡brica de GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de MÃƒÆ’Ã‚Âºsica' dentro do Apollo Edit Web. Essa aba nÃƒÆ’Ã‚Â£o sÃƒÆ’Ã‚Â³ alimentarÃƒÆ’Ã‚Â¡ as rÃƒÆ’Ã‚Â¡dios do usuÃƒÆ’Ã‚Â¡rio, mas tambÃƒÆ’Ã‚Â©m servirÃƒÆ’Ã‚Â¡ como uma ferramenta pÃƒÆ’Ã‚Âºblica para os clientes da Apollo criarem seus prÃƒÆ’Ã‚Â³prios vÃƒÆ’Ã‚Â­deos musicais.
 
-- **DEADLINE:** 25 de Agosto. O site Apollo Edit Web deve estar em produÃƒÂ§ÃƒÂ£o atÃƒÂ© esta data. ApÃƒÂ³s essa data, as contas PRO de estudante do Google expiram.
-
-- **PRÃƒâ€œXIMO PASSO:** Iniciar Fase 3 Ã¢â‚¬â€ Frontend Visual do Apollo Edit Web (React).
+- **Abordagem TecnolÃƒÆ’Ã‚Â³gica:** Em vez de usar Web Scraping frÃƒÆ’Ã‚Â¡gil para retransmitir rÃƒÆ’Ã‚Â¡dios (como Treblo/Sunalto), usaremos FFmpeg puro rodando no servidor em tmux, garantindo estabilidade absoluta e uptime contÃƒÆ’Ã‚Â­nuo (aproveitando a resiliÃƒÆ’Ã‚Âªncia jÃƒÆ’Ã‚Â¡ comprovada dos servidores Oracle do usuÃƒÆ’Ã‚Â¡rio).
 
 
 
-## SESSÃƒÆ’O 2026-06-19 (continuaÃƒÂ§ÃƒÂ£o) Ã¢â‚¬â€ BACKEND: 3 PONTOS CONCLUÃ¯Â¿Â½DOS
+## SESSÃƒÆ’Ã†â€™O 2026-06-19 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â UPGRADES DA COLMEIA ANTIGRAVITY
+
+- **Protocolo Duplo de MemÃƒÆ’Ã‚Â³ria implementado:** Regra global gravada em C:\Users\v5est\.gemini\config\AGENTS.md. Todos os chats agora sincronizam memÃƒÆ’Ã‚Â³ria em tempo real (leitura antes de responder) e background (Cron Job de 2 em 2h).
+
+- **Salvamento ContÃƒÆ’Ã‚Â­nuo ativado:** A cada turno de conversa com o Chefe, o agente ÃƒÆ’Ã‚Â© obrigado a salvar novidades na memÃƒÆ’Ã‚Â³ria individual e na placa coletiva (ntigravity_hive_bus.md).
+
+- **DEADLINE:** 25 de Agosto. O site Apollo Edit Web deve estar em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o atÃƒÆ’Ã‚Â© esta data. ApÃƒÆ’Ã‚Â³s essa data, as contas PRO de estudante do Google expiram.
+
+- **PRÃƒÆ’Ã¢â‚¬Å“XIMO PASSO:** Iniciar Fase 3 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Frontend Visual do Apollo Edit Web (React).
 
 
 
-## [ATUALIZAÃƒâ€¡ÃƒÆ’O DE ARQUITETURA - MOTOR MODAL E NEXT.JS UI] (Data: 22/06/2026)
+## SESSÃƒÆ’Ã†â€™O 2026-06-19 (continuaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â BACKEND: 3 PONTOS CONCLUÃƒÂ¯Ã‚Â¿Ã‚Â½DOS
 
-1. O Motor de IA (apollo_modal_engine.py) foi atualizado para LTX-2.3 (Alta qualidade) e Wan2.1, operando com suporte a Aspect Ratios e conversÃƒÂµes Base64 corretas.
 
-2. Criado saas_backend FastAPI para contabilizar crÃƒÂ©ditos e extrair vÃƒÂ­deos Base64.
 
-3. Implementada a UI apollo_web em Next.js para testes reais do usuÃƒÂ¡rio.
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O DE ARQUITETURA - MOTOR MODAL E NEXT.JS UI] (Data: 22/06/2026)
 
-4. A estabilizaÃƒÂ§ÃƒÂ£o do Pipeline LTX-2.3 foi alcanÃƒÂ§ada utilizando a arquitetura de fatiamento no volume Modal (via string id) forÃƒÂ§ando GPU H100 (80GB) e bloqueando downloads externos (local_files_only=True). VÃƒÂ­deos de 121 frames na resoluÃƒÂ§ÃƒÂ£o 1280x768 renderizando em ~4 minutos sem OOM Error.
+1. O Motor de IA (apollo_modal_engine.py) foi atualizado para LTX-2.3 (Alta qualidade) e Wan2.1, operando com suporte a Aspect Ratios e conversÃƒÆ’Ã‚Âµes Base64 corretas.
+
+2. Criado saas_backend FastAPI para contabilizar crÃƒÆ’Ã‚Â©ditos e extrair vÃƒÆ’Ã‚Â­deos Base64.
+
+3. Implementada a UI apollo_web em Next.js para testes reais do usuÃƒÆ’Ã‚Â¡rio.
+
+4. A estabilizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Pipeline LTX-2.3 foi alcanÃƒÆ’Ã‚Â§ada utilizando a arquitetura de fatiamento no volume Modal (via string id) forÃƒÆ’Ã‚Â§ando GPU H100 (80GB) e bloqueando downloads externos (local_files_only=True). VÃƒÆ’Ã‚Â­deos de 121 frames na resoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o 1280x768 renderizando em ~4 minutos sem OOM Error.
 
 
 
 ### Upgrade V2.5 (22/06/2026)
 
-- **Motor LTX-2.3:** SubstituÃƒÂ­do port pirata pelo oficial 'diffusers/LTX-2.3-Diffusers'. ÃƒÆ’udio ativado utilizando a extraÃƒÂ§ÃƒÂ£o do vocoder nativo via encode_video.
+- **Motor LTX-2.3:** SubstituÃƒÆ’Ã‚Â­do port pirata pelo oficial 'diffusers/LTX-2.3-Diffusers'. ÃƒÆ’Ã†â€™udio ativado utilizando a extraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do vocoder nativo via encode_video.
 
 - **Motor Wan2.1:** Implementado o modelo 14B (T2V) em H100 80GB com Offloading de CPU, FP8 (loat8_e5m2), Tiling e Slicing no VAE para evitar OOM.
 
-- **ResoluÃƒÂ§ÃƒÂ£o de OperaÃƒÂ§ÃƒÂ£o:** LTX a 1024x576 (CFG 3.5, 40 steps). Wan2.1 a 832x480 (CFG 5.0, flow_shift 3.0, 25 steps).
+- **ResoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de OperaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** LTX a 1024x576 (CFG 3.5, 40 steps). Wan2.1 a 832x480 (CFG 5.0, flow_shift 3.0, 25 steps).
 
 
 
-### EstratÃƒÂ©gia de Desbloqueio de Desenvolvimento
+### EstratÃƒÆ’Ã‚Â©gia de Desbloqueio de Desenvolvimento
 
-- **Uso do Perplexity Pro:** Sempre que houver um bloqueio tÃƒÂ©cnico (cÃƒÂ³digos quebrados, falta de documentaÃƒÂ§ÃƒÂ£o, erro de infraestrutura), solicitar ao usuÃƒÂ¡rio que utilize a conta do Perplexity Pro para realizar uma varredura profunda na web (Github, Reddit, HuggingFace). O Perplexity atuarÃƒÂ¡ como nosso 'sonar' de pesquisa externa.
-
-
-
-## [2026-06-23 - SessÃƒÂ£o Encerrada pelo usuÃƒÂ¡rio]
+- **Uso do Perplexity Pro:** Sempre que houver um bloqueio tÃƒÆ’Ã‚Â©cnico (cÃƒÆ’Ã‚Â³digos quebrados, falta de documentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, erro de infraestrutura), solicitar ao usuÃƒÆ’Ã‚Â¡rio que utilize a conta do Perplexity Pro para realizar uma varredura profunda na web (Github, Reddit, HuggingFace). O Perplexity atuarÃƒÆ’Ã‚Â¡ como nosso 'sonar' de pesquisa externa.
 
 
 
-### O que foi feito nessa sessÃƒÂ£o:
+## [2026-06-23 - SessÃƒÆ’Ã‚Â£o Encerrada pelo usuÃƒÆ’Ã‚Â¡rio]
+
+
+
+### O que foi feito nessa sessÃƒÆ’Ã‚Â£o:
 
 - **Arquitetura Cold Start Corrigida:** Modelo LTX-2.3-Distilled bakeado diretamente na imagem Docker do Modal. Eliminado o volume FUSE que causava 7 minutos de download a cada cold start.
 
 - **Deploy bem-sucedido:** App pollo-render-router-v2 ativo na Modal.
 
-- **Bug encontrado e corrigido:** RuntimeError: Boolean value of Tensor with more than one value is ambiguous (linha de extraÃƒÂ§ÃƒÂ£o de ÃƒÂ¡ÃƒÂ¡udio do output da pipeline).
+- **Bug encontrado e corrigido:** RuntimeError: Boolean value of Tensor with more than one value is ambiguous (linha de extraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio do output da pipeline).
 
-  - Fix aplicado: substituÃƒÂ­do nd out.ÃƒÂ¡udio else por getattr(out, 'ÃƒÂ¡udio', None) para evitar avaliaÃƒÂ§ÃƒÂ£o booleana de tensores PyTorch.
+  - Fix aplicado: substituÃƒÆ’Ã‚Â­do nd out.ÃƒÆ’Ã‚Â¡udio else por getattr(out, 'ÃƒÆ’Ã‚Â¡udio', None) para evitar avaliaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o booleana de tensores PyTorch.
 
-- **Status:** Fix commitado e deployado, mas validaÃƒÂ§ÃƒÂ£o final (teste dos 2 vÃƒÂ­deos) nÃƒÂ£o foi concluÃƒÂ­da pois o usuÃƒÂ¡rio encerrou a sessÃƒÂ£o.
+- **Status:** Fix commitado e deployado, mas validaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o final (teste dos 2 vÃƒÆ’Ã‚Â­deos) nÃƒÆ’Ã‚Â£o foi concluÃƒÆ’Ã‚Â­da pois o usuÃƒÆ’Ã‚Â¡rio encerrou a sessÃƒÆ’Ã‚Â£o.
 
 
 
-### PrÃƒÂ³ximos Passos (para a prÃƒÂ³xima sessÃƒÂ£o):
+### PrÃƒÆ’Ã‚Â³ximos Passos (para a prÃƒÆ’Ã‚Â³xima sessÃƒÆ’Ã‚Â£o):
 
 1. Rodar python test_api.py com URL pollo-render-router-v2
 
-2. Confirmar que os 2 vÃƒÂ­deos geram com sucesso
+2. Confirmar que os 2 vÃƒÆ’Ã‚Â­deos geram com sucesso
 
-3. Se OK: renomear app de volta para pollo-render-router (sem sufixo v2) como versÃƒÂ£o estÃƒÂ¡vel
+3. Se OK: renomear app de volta para pollo-render-router (sem sufixo v2) como versÃƒÆ’Ã‚Â£o estÃƒÆ’Ã‚Â¡vel
 
 
 
@@ -2490,53 +2512,53 @@ ender_queue, copilot_engine) com suas rotas correspondentes ativas na API (/sett
 
 ---
 
-### Ã¯Â¿Â½ [CRON SYNC - MAESTRO] Ã¯Â¿Â½
+### ÃƒÂ¯Ã‚Â¿Ã‚Â½ [CRON SYNC - MAESTRO] ÃƒÂ¯Ã‚Â¿Ã‚Â½
 
 **Data:** 2026-06-23 17:15:00
 
-**AÃƒÂ§ÃƒÂ£o Operacional (VITÃƒâ€œRIA ABSOLUTA - MULTI-TIER ENGINE):** A refatoraÃƒÂ§ÃƒÂ£o do Motor de RenderizaÃƒÂ§ÃƒÂ£o Modal foi concluÃƒÂ­da com sucesso brutal! As GPUs agora funcionam como uma frota orquestrada (Multi-Tier Router). A arquitetura final estabilizada utiliza:
+**AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Operacional (VITÃƒÆ’Ã¢â‚¬Å“RIA ABSOLUTA - MULTI-TIER ENGINE):** A refatoraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Motor de RenderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Modal foi concluÃƒÆ’Ã‚Â­da com sucesso brutal! As GPUs agora funcionam como uma frota orquestrada (Multi-Tier Router). A arquitetura final estabilizada utiliza:
 
 1. **Tier 1 (Wan2.1 na L4):** Custo de ~\.038 por render, habilitado via enable_model_cpu_offload.
 
-2. **Tier 2 (LTX-13B na A100-40GB):** Custo de ~\.047 por render. O erro gravÃƒÂ­ssimo de 'CUDA Out of Memory' que assolava a A100 foi sumariamente DESTRUÃ¯Â¿Â½DO usando a estratÃƒÂ©gia de Offload.
+2. **Tier 2 (LTX-13B na A100-40GB):** Custo de ~\.047 por render. O erro gravÃƒÆ’Ã‚Â­ssimo de 'CUDA Out of Memory' que assolava a A100 foi sumariamente DESTRUÃƒÂ¯Ã‚Â¿Ã‚Â½DO usando a estratÃƒÆ’Ã‚Â©gia de Offload.
 
-3. **Cold Start Killer:** Implementamos com sucesso absoluto o enable_gpu_snapshot=True. Os modelos foram isolados em um modal_app.py global, permitindo a serializaÃƒÂ§ÃƒÂ£o perfeita do estado da GPU. Daqui pra frente, as novas requisiÃƒÂ§ÃƒÂµes levantarÃƒÂ£o a mÃƒÂ¡quina em mÃƒÂ­seros ~5 SEGUNDOS.
+3. **Cold Start Killer:** Implementamos com sucesso absoluto o enable_gpu_snapshot=True. Os modelos foram isolados em um modal_app.py global, permitindo a serializaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o perfeita do estado da GPU. Daqui pra frente, as novas requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes levantarÃƒÆ’Ã‚Â£o a mÃƒÆ’Ã‚Â¡quina em mÃƒÆ’Ã‚Â­seros ~5 SEGUNDOS.
 
-4. Os testes geraram ambos os vÃƒÂ­deos (Wan e LTX) perfeitamente para o disco local do Chefe. A infraestrutura em nuvem estÃƒÂ¡ impecÃƒÂ¡vel e pronta para produÃƒÂ§ÃƒÂ£o!
+4. Os testes geraram ambos os vÃƒÆ’Ã‚Â­deos (Wan e LTX) perfeitamente para o disco local do Chefe. A infraestrutura em nuvem estÃƒÆ’Ã‚Â¡ impecÃƒÆ’Ã‚Â¡vel e pronta para produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o!
 
 
 
 ---
 
-### Ã¯Â¿Â½ [CRON SYNC - MAESTRO] Ã¯Â¿Â½
+### ÃƒÂ¯Ã‚Â¿Ã‚Â½ [CRON SYNC - MAESTRO] ÃƒÂ¯Ã‚Â¿Ã‚Â½
 
 **Data:** 2026-06-23 15:43:00
 
-**AÃƒÂ§ÃƒÂ£o Operacional:** GeraÃƒÂ§ÃƒÂ£o de Ã¯Â¿Â½udio Nativo no modelo LTX-2.3 implementada com SUCESSO. 
+**AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Operacional:** GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ÃƒÂ¯Ã‚Â¿Ã‚Â½udio Nativo no modelo LTX-2.3 implementada com SUCESSO. 
 
-**Status:** O arquivo .mp4 estÃƒÂ¡ sendo renderizado sincronizando Tensor Visual e Tensor de Ã¯Â¿Â½udio pela biblioteca nativa do Diffusers. O preset PRO 720p HD estÃƒÂ¡ ativado para ambos Motores.
+**Status:** O arquivo .mp4 estÃƒÆ’Ã‚Â¡ sendo renderizado sincronizando Tensor Visual e Tensor de ÃƒÂ¯Ã‚Â¿Ã‚Â½udio pela biblioteca nativa do Diffusers. O preset PRO 720p HD estÃƒÆ’Ã‚Â¡ ativado para ambos Motores.
 
 
 
 ---
 
-### Ã¯Â¿Â½ [CRON SYNC - MAESTRO] Ã¯Â¿Â½
+### ÃƒÂ¯Ã‚Â¿Ã‚Â½ [CRON SYNC - MAESTRO] ÃƒÂ¯Ã‚Â¿Ã‚Â½
 
 **Data:** 2026-06-23 15:47:00
 
-**AÃƒÂ§ÃƒÂ£o Operacional:** ValidaÃƒÂ§ÃƒÂ£o Final do Modelo LTX-2.3 (HD)
+**AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Operacional:** ValidaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Final do Modelo LTX-2.3 (HD)
 
-**MÃƒÂ©tricas do Teste 720p:**
+**MÃƒÆ’Ã‚Â©tricas do Teste 720p:**
 
-- DuraÃƒÂ§ÃƒÂ£o: 3s
+- DuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 3s
 
-- ResoluÃƒÂ§ÃƒÂ£o: 1280x704 (HD)
+- ResoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 1280x704 (HD)
 
 - Tempo de GPU (A100): 130.4s
 
 - Custo Estimado: USD 0.0652
 
-**PrÃƒÂ³ximos Passos (Backlog):** 
+**PrÃƒÆ’Ã‚Â³ximos Passos (Backlog):** 
 
 1. Implementar Image-to-Video (I2V) em ambos os motores (Wan e LTX)
 
@@ -2546,13 +2568,13 @@ ender_queue, copilot_engine) com suas rotas correspondentes ativas na API (/sett
 
 
 
-## [ATUALIZAÃƒâ€¡Ãƒâ€™O DE ARQUITETURA - MOTOR MODAL A100-80GB] (Data: 23/06/2026)
+## [ATUALIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã¢â‚¬â„¢O DE ARQUITETURA - MOTOR MODAL A100-80GB] (Data: 23/06/2026)
 
 - O motor LTX-2.3 foi atualizado para utilizar GPUs A100 com 80GB de VRAM bruta.
 
-- Isso permitiu remover completamente o gargalo de 'CPU offloading'. O modelo inteiro de 26GB ÃƒÂ© carregado via from_pretrained(...).to('cuda') e alocado sem OOM.
+- Isso permitiu remover completamente o gargalo de 'CPU offloading'. O modelo inteiro de 26GB ÃƒÆ’Ã‚Â© carregado via from_pretrained(...).to('cuda') e alocado sem OOM.
 
-- **Comportamento de Cold Start:** A serializaÃƒÂ§ÃƒÂ£o da VRAM de 26GB do LTX-13B (experimental_options={'enable_gpu_snapshot': True}) faz com que o PRIMEIRO BOOT exija upload de um arquivo colossal para a registry da Modal (~5 minutos). ApÃƒÂ³s esse upload (uma vez que a snapshot estÃƒÂ¡ salva), os servidores levantam com o modelo jÃƒÂ¡ alocado em CUDA em questÃƒÂ£o de ~10-20 segundos, permitindo a geraÃƒÂ§ÃƒÂ£o do vÃƒÂ­deo de 5s logo em seguida.
+- **Comportamento de Cold Start:** A serializaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da VRAM de 26GB do LTX-13B (experimental_options={'enable_gpu_snapshot': True}) faz com que o PRIMEIRO BOOT exija upload de um arquivo colossal para a registry da Modal (~5 minutos). ApÃƒÆ’Ã‚Â³s esse upload (uma vez que a snapshot estÃƒÆ’Ã‚Â¡ salva), os servidores levantam com o modelo jÃƒÆ’Ã‚Â¡ alocado em CUDA em questÃƒÆ’Ã‚Â£o de ~10-20 segundos, permitindo a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do vÃƒÆ’Ã‚Â­deo de 5s logo em seguida.
 
 - Estamos aguardando o upload do primeiro snapshot.
 
@@ -2566,7 +2588,7 @@ ender_queue, copilot_engine) com suas rotas correspondentes ativas na API (/sett
 
 **Data:** 2026-06-23 23:45:00
 
-**AÃƒÂ§ÃƒÂ£o Operacional (VITÃƒâ€œRIA I2V - 5 SEGUNDOS):** A geraÃƒÂ§ÃƒÂ£o Image-to-Video no motor LTX-13B (A100-80GB) foi estabilizada. O bug crÃƒÂ­tico de str.float na extraÃƒÂ§ÃƒÂ£o de ÃƒÂ¡ÃƒÂ¡udio foi destruÃƒÂ­do (Diffusers LTX nÃƒÂ£o exporta ÃƒÂ¡ÃƒÂ¡udio ainda). A GPU nÃƒÂ£o tem mais OOM graÃƒÂ§as ÃƒÂ  snapshot em memÃƒÂ³ria e ao bloqueio de pipeline duplication. O arquivo final de 5 segundos cyber_warrior_final.mp4 gerou lindamente em 60s de inferÃƒÂªncia (7.6s por frame). A fundaÃƒÂ§ÃƒÂ£o do backend Cloud Modal estÃƒÂ¡ PRONTA para produÃƒÂ§ÃƒÂµes em massa!
+**AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Operacional (VITÃƒÆ’Ã¢â‚¬Å“RIA I2V - 5 SEGUNDOS):** A geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Image-to-Video no motor LTX-13B (A100-80GB) foi estabilizada. O bug crÃƒÆ’Ã‚Â­tico de str.float na extraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio foi destruÃƒÆ’Ã‚Â­do (Diffusers LTX nÃƒÆ’Ã‚Â£o exporta ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio ainda). A GPU nÃƒÆ’Ã‚Â£o tem mais OOM graÃƒÆ’Ã‚Â§as ÃƒÆ’Ã‚Â  snapshot em memÃƒÆ’Ã‚Â³ria e ao bloqueio de pipeline duplication. O arquivo final de 5 segundos cyber_warrior_final.mp4 gerou lindamente em 60s de inferÃƒÆ’Ã‚Âªncia (7.6s por frame). A fundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do backend Cloud Modal estÃƒÆ’Ã‚Â¡ PRONTA para produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes em massa!
 
 Data: 2026-06-24
 
@@ -2576,7 +2598,7 @@ Acao: Conta 1 desativada por estourar limites ( gastos). Toda a infraestrutura f
 
 Data: 2026-06-24
 
-Acao: Teste na Conta 2 concluÃƒÂ­do com sucesso. Tempo total cold start: 157.7s (.25). Tempo real geracao: 48s (.07). OOM destruido. Custos na base de 7 centavos por video. Pronto para o proximo passo.
+Acao: Teste na Conta 2 concluÃƒÆ’Ã‚Â­do com sucesso. Tempo total cold start: 157.7s (.25). Tempo real geracao: 48s (.07). OOM destruido. Custos na base de 7 centavos por video. Pronto para o proximo passo.
 
 
 
@@ -2596,7 +2618,7 @@ Acao: Resolvido mal-entendido sobre o Auto-Suspend da Modal. Confirmado o funcio
 
 Data: 2026-06-24
 
-Diretriz: Backup da arquitetura Modal concluÃƒÂ­do. O CEO definiu o futuro da plataforma: Abandono de ferramentas locais complexas (Modo Hacker). A infraestrutura Modal serÃƒÂ¡ replicada para hospedar Flux, Wan e ferramentas de Lip Sync. Definidos 3 modos de atuaÃƒÂ§ÃƒÂ£o: 1) Baseado em NarraÃƒÂ§ÃƒÂ£o, 2) Nativo/AÃƒÂ§ÃƒÂ£o (LTX), 3) Lip Sync HÃƒÂ­brido. Nenhuma implementaÃƒÂ§ÃƒÂ£o pesada de roteamento agora, apenas padronizaÃƒÂ§ÃƒÂ£o do cÃƒÂ³digo base.
+Diretriz: Backup da arquitetura Modal concluÃƒÆ’Ã‚Â­do. O CEO definiu o futuro da plataforma: Abandono de ferramentas locais complexas (Modo Hacker). A infraestrutura Modal serÃƒÆ’Ã‚Â¡ replicada para hospedar Flux, Wan e ferramentas de Lip Sync. Definidos 3 modos de atuaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: 1) Baseado em NarraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, 2) Nativo/AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (LTX), 3) Lip Sync HÃƒÆ’Ã‚Â­brido. Nenhuma implementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pesada de roteamento agora, apenas padronizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do cÃƒÆ’Ã‚Â³digo base.
 
 
 
@@ -2606,7 +2628,7 @@ Diretriz: Backup da arquitetura Modal concluÃƒÂ­do. O CEO definiu o futuro d
 
 Data: 2026-06-24
 
-Diretriz: LocalizaÃƒÂ§ÃƒÂ£o do Backup de Consulta definido. A VersÃƒÂ£o 15 do projeto ('E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\COPIA BACKUP TUTORIAL DAS COISAS\APOLLO_EDIT_WEB 15') deve ser utilizada como referÃƒÂªncia absoluta antes de modificaÃƒÂ§ÃƒÂµes profundas no cÃƒÂ³digo atual.
+Diretriz: LocalizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Backup de Consulta definido. A VersÃƒÆ’Ã‚Â£o 15 do projeto ('E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\COPIA BACKUP TUTORIAL DAS COISAS\APOLLO_EDIT_WEB 15') deve ser utilizada como referÃƒÆ’Ã‚Âªncia absoluta antes de modificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes profundas no cÃƒÆ’Ã‚Â³digo atual.
 
 
 
@@ -2616,7 +2638,7 @@ Diretriz: LocalizaÃƒÂ§ÃƒÂ£o do Backup de Consulta definido. A VersÃƒÂ
 
 Data: 2026-06-24
 
-Diretriz: Arquitetura 'NÃƒÂ­vel Confui' estabelecida. O projeto alcanÃƒÂ§ou maturidade de infraestrutura. A Modal serÃƒÂ¡ a base proprietÃƒÂ¡ria para mÃƒÂ­dia visual pesada (LTX, Wan, Flux) com mÃƒÂºltiplas contas. O Lightning Studio serÃƒÂ¡ delegado para ÃƒÆ’udio/FFmpeg/LLMs. RedundÃƒÂ¢ncias serÃƒÂ£o montadas via Replicate/Fal. PrÃƒÂ³ximo passo quando o CEO retornar da pausa: Integrar essas rotas nas pÃƒÂ¡ginas HTML do Apollo Web UI para testes isolados e produÃƒÂ§ÃƒÂ£o.
+Diretriz: Arquitetura 'NÃƒÆ’Ã‚Â­vel Confui' estabelecida. O projeto alcanÃƒÆ’Ã‚Â§ou maturidade de infraestrutura. A Modal serÃƒÆ’Ã‚Â¡ a base proprietÃƒÆ’Ã‚Â¡ria para mÃƒÆ’Ã‚Â­dia visual pesada (LTX, Wan, Flux) com mÃƒÆ’Ã‚Âºltiplas contas. O Lightning Studio serÃƒÆ’Ã‚Â¡ delegado para ÃƒÆ’Ã†â€™udio/FFmpeg/LLMs. RedundÃƒÆ’Ã‚Â¢ncias serÃƒÆ’Ã‚Â£o montadas via Replicate/Fal. PrÃƒÆ’Ã‚Â³ximo passo quando o CEO retornar da pausa: Integrar essas rotas nas pÃƒÆ’Ã‚Â¡ginas HTML do Apollo Web UI para testes isolados e produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
 
 
@@ -2624,43 +2646,43 @@ Diretriz: Arquitetura 'NÃƒÂ­vel Confui' estabelecida. O projeto alcanÃƒÂ�
 
 ---
 
-### Ã¯Â¿Â½ [CRON SYNC - MAESTRO] Ã¯Â¿Â½
+### ÃƒÂ¯Ã‚Â¿Ã‚Â½ [CRON SYNC - MAESTRO] ÃƒÂ¯Ã‚Â¿Ã‚Â½
 
 **Data:** 2026-06-24 20:00:40
 
-**AÃƒÂ§ÃƒÂ£o Operacional (GestÃƒÂ£o de Frota Cloud):** O sistema de Contas Cloud foi implementado com sucesso absoluto no painel Apollo Master. As chaves de mÃƒÂºltiplas contas Modal e Lightning AI estÃƒÂ£o agora isoladas em cloud_accounts_db.json. O backend interage diretamente com o CLI da Modal de forma isolada (subprocess) para varrer o saldo financeiro real de todas as contas simultaneamente, exibindo na interface Web o Gasto Atual e o Saldo Restante.
+**AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Operacional (GestÃƒÆ’Ã‚Â£o de Frota Cloud):** O sistema de Contas Cloud foi implementado com sucesso absoluto no painel Apollo Master. As chaves de mÃƒÆ’Ã‚Âºltiplas contas Modal e Lightning AI estÃƒÆ’Ã‚Â£o agora isoladas em cloud_accounts_db.json. O backend interage diretamente com o CLI da Modal de forma isolada (subprocess) para varrer o saldo financeiro real de todas as contas simultaneamente, exibindo na interface Web o Gasto Atual e o Saldo Restante.
 
-**SituaÃƒÂ§ÃƒÂ£o da Frota Modal:** 
+**SituaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Frota Modal:** 
 
 - Conta 1 (Inativa - Saldo Esgotado)
 
 - Conta 2 (Ativa - .29 restantes)
 
-- Conta 3 (Descarga News) cadastrada com sucesso via VPN+ItaÃƒÂº Virtual Card. A Conta 4 sofreu recusa do banco (antifraude por velocity), criaÃƒÂ§ÃƒÂ£o pausada por 48h.
+- Conta 3 (Descarga News) cadastrada com sucesso via VPN+ItaÃƒÆ’Ã‚Âº Virtual Card. A Conta 4 sofreu recusa do banco (antifraude por velocity), criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pausada por 48h.
 
-**PrÃƒÂ³ximo Passo:** Integrar a injeÃƒÂ§ÃƒÂ£o dinÃƒÂ¢mica de credenciais no pollo_modal_engine.py para usar a chave ativa do painel.
+**PrÃƒÆ’Ã‚Â³ximo Passo:** Integrar a injeÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o dinÃƒÆ’Ã‚Â¢mica de credenciais no pollo_modal_engine.py para usar a chave ativa do painel.
 
 ---
 
 
 
-### Upgrade de ResiliÃƒÂªncia (Fase 3) - 2026-06-24
+### Upgrade de ResiliÃƒÆ’Ã‚Âªncia (Fase 3) - 2026-06-24
 
-- **SeguranÃƒÂ§a (Kill-Switch)**: Adicionado bloqueio na camada do servidor (servidor_web.py). As requisiÃƒÂ§ÃƒÂµes de geraÃƒÂ§ÃƒÂ£o de imagem e chat agora leem a tabela system_settings.
+- **SeguranÃƒÆ’Ã‚Â§a (Kill-Switch)**: Adicionado bloqueio na camada do servidor (servidor_web.py). As requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagem e chat agora leem a tabela system_settings.
 
-- **EstratÃƒÂ©gia de SobrevivÃƒÂªncia de IA**: O ChatAIManager foi reprogramado para disparar um request para o **OpenRouter** se a carga de chaves do Gemini estiver 100% esgotada ou indisponÃƒÂ­vel.
+- **EstratÃƒÆ’Ã‚Â©gia de SobrevivÃƒÆ’Ã‚Âªncia de IA**: O ChatAIManager foi reprogramado para disparar um request para o **OpenRouter** se a carga de chaves do Gemini estiver 100% esgotada ou indisponÃƒÆ’Ã‚Â­vel.
 
-- **GestÃƒÂ£o de Controle**: Rotas de /api/master/users completadas com conexÃƒÂ£o via sqlite.
-
-
+- **GestÃƒÆ’Ã‚Â£o de Controle**: Rotas de /api/master/users completadas com conexÃƒÆ’Ã‚Â£o via sqlite.
 
 
 
-### Upgrade HÃƒÂ­brido Cloud (Fase 4) - 2026-06-24
 
-- **Roteamento de LLM (Trindade Arquitetural)**: O \ChatAIManager\ agora usa a URL de instÃƒÂ¢ncias do Lightning AI (Llama 3 8B) como o CÃƒÂ©rebro principal (Tier 1). Gemini caiu para Tier 2 (Fallback) e OpenRouter Tier 3.
 
-- **PadronizaÃƒÂ§ÃƒÂ£o das Frotas**: Implantados os scripts padrÃƒÂµes de inicializaÃƒÂ§ÃƒÂ£o de instÃƒÂ¢ncias em \cloud_deploy/\ para as contas \modal\ e \lightning\.
+### Upgrade HÃƒÆ’Ã‚Â­brido Cloud (Fase 4) - 2026-06-24
+
+- **Roteamento de LLM (Trindade Arquitetural)**: O \ChatAIManager\ agora usa a URL de instÃƒÆ’Ã‚Â¢ncias do Lightning AI (Llama 3 8B) como o CÃƒÆ’Ã‚Â©rebro principal (Tier 1). Gemini caiu para Tier 2 (Fallback) e OpenRouter Tier 3.
+
+- **PadronizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o das Frotas**: Implantados os scripts padrÃƒÆ’Ã‚Âµes de inicializaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de instÃƒÆ’Ã‚Â¢ncias em \cloud_deploy/\ para as contas \modal\ e \lightning\.
 
 
 
@@ -2670,79 +2692,79 @@ Diretriz: Arquitetura 'NÃƒÂ­vel Confui' estabelecida. O projeto alcanÃƒÂ�
 
 Data: 2026-06-24
 
-Acao: Cron Job (iter 2) disparado. SincronizaÃƒÂ§ÃƒÂ£o centralizada do andamento da arquitetura. A Conta 3 Modal estÃƒÂ¡ no meio do processo de Deploy (Recuperada de um External Shutdown). O Download dos pesos do FLUX e LTX estÃƒÂ£o em andamento para o armazenamento M.2. O CEO informou que providenciarÃƒÂ¡ a Conta 4 na sequÃƒÂªncia.
+Acao: Cron Job (iter 2) disparado. SincronizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o centralizada do andamento da arquitetura. A Conta 3 Modal estÃƒÆ’Ã‚Â¡ no meio do processo de Deploy (Recuperada de um External Shutdown). O Download dos pesos do FLUX e LTX estÃƒÆ’Ã‚Â£o em andamento para o armazenamento M.2. O CEO informou que providenciarÃƒÆ’Ã‚Â¡ a Conta 4 na sequÃƒÆ’Ã‚Âªncia.
 
-- **I2V (Image-to-Video):** O estÃƒÂºdio multimidia agora tem dropzone de imagem (base64) e o motor na Modal foi preparado com lÃƒÂ³gica condicional para absorver initial_image.
+- **I2V (Image-to-Video):** O estÃƒÆ’Ã‚Âºdio multimidia agora tem dropzone de imagem (base64) e o motor na Modal foi preparado com lÃƒÆ’Ã‚Â³gica condicional para absorver initial_image.
 
-- **Prompt Magic:** Adicionada Varinha MÃƒÂ¡gica no UI e backend (API /api/studio/enhance_prompt) para transformar prompts simples em roteiros cinematogrÃƒÂ¡ficos robustos.
+- **Prompt Magic:** Adicionada Varinha MÃƒÆ’Ã‚Â¡gica no UI e backend (API /api/studio/enhance_prompt) para transformar prompts simples em roteiros cinematogrÃƒÆ’Ã‚Â¡ficos robustos.
 
-- **Hub Social (Apollo Explore):** Criada a pÃƒÂ¡gina explore_feed.html com layout masonry estilo Pinterest, puxando os ÃƒÂºltimos 50 jobs do BD via /api/public/explore para inspirar a comunidade, linkado diretamente no Lobby (hub.html).
+- **Hub Social (Apollo Explore):** Criada a pÃƒÆ’Ã‚Â¡gina explore_feed.html com layout masonry estilo Pinterest, puxando os ÃƒÆ’Ã‚Âºltimos 50 jobs do BD via /api/public/explore para inspirar a comunidade, linkado diretamente no Lobby (hub.html).
 
-- **PrÃƒÂ³ximo Passo:** Implementar a Conta 4 Modal/Lightning para colocar a carga de processamento na nuvem definitiva.
-
-
-
-### 25 de Junho de 2026 - Estruturas SaaS Enterprise (Fase 8 concluÃƒÂ­da)
-
-- **Timeline Bridge:** Criada integraÃƒÂ§ÃƒÂ£o assÃƒÂ­ncrona (via localStorage pollo_timeline_assets) para transferir vÃƒÂ­deos do Studio e do Explore direto para a biblioteca de mÃƒÂ­dia da 	imeline.html.
-
-- **Video Enhancer:** Implementadas rotas de Upscale 4K Premium no motor, injetadas como botÃƒÂµes de upsell nos cards de vÃƒÂ­deos finalizados.
-
-- **SFX Generator:** Adicionada infraestrutura para injetar efeitos Foley/Ã¯Â¿Â½udio em vÃƒÂ­deos I2V/T2V mudos, com rotas independentes simulando background jobs.
-
-- **SFX Generator:** Adicionada infraestrutura para injetar efeitos Foley/ÃƒÆ’udio em vÃƒÂ­deos I2V/T2V mudos, com rotas independentes simulando background jobs.
-
-- O projeto fechou o ciclo: CriaÃƒÂ§ÃƒÂ£o -> Enriquecimento (Upscale/Som) -> Timeline -> ExportaÃƒÂ§ÃƒÂ£o.
+- **PrÃƒÆ’Ã‚Â³ximo Passo:** Implementar a Conta 4 Modal/Lightning para colocar a carga de processamento na nuvem definitiva.
 
 
 
-### 25 de Junho de 2026 - Estrutura de Mercado SaaS (Fase 9 concluÃƒÂ­da)
+### 25 de Junho de 2026 - Estruturas SaaS Enterprise (Fase 8 concluÃƒÆ’Ã‚Â­da)
+
+- **Timeline Bridge:** Criada integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o assÃƒÆ’Ã‚Â­ncrona (via localStorage pollo_timeline_assets) para transferir vÃƒÆ’Ã‚Â­deos do Studio e do Explore direto para a biblioteca de mÃƒÆ’Ã‚Â­dia da 	imeline.html.
+
+- **Video Enhancer:** Implementadas rotas de Upscale 4K Premium no motor, injetadas como botÃƒÆ’Ã‚Âµes de upsell nos cards de vÃƒÆ’Ã‚Â­deos finalizados.
+
+- **SFX Generator:** Adicionada infraestrutura para injetar efeitos Foley/ÃƒÂ¯Ã‚Â¿Ã‚Â½udio em vÃƒÆ’Ã‚Â­deos I2V/T2V mudos, com rotas independentes simulando background jobs.
+
+- **SFX Generator:** Adicionada infraestrutura para injetar efeitos Foley/ÃƒÆ’Ã†â€™udio em vÃƒÆ’Ã‚Â­deos I2V/T2V mudos, com rotas independentes simulando background jobs.
+
+- O projeto fechou o ciclo: CriaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o -> Enriquecimento (Upscale/Som) -> Timeline -> ExportaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+
+
+
+### 25 de Junho de 2026 - Estrutura de Mercado SaaS (Fase 9 concluÃƒÆ’Ã‚Â­da)
 
 - **SaaS Presets Visuais:** Adicionada barra UI com estilos (Cinematic, Anime, Cyberpunk, 3D Render) no estudio_multimidia.html que injetam *modifiers* silenciosos nos prompts.
 
-- **Painel de Controles AvanÃƒÂ§ados:** Injetado componente Accordion com inputs para CFG Scale, Inference Steps, Motion Scale e Negative Prompt, equiparando a interface ao padrÃƒÂ£o de mercado.
+- **Painel de Controles AvanÃƒÆ’Ã‚Â§ados:** Injetado componente Accordion com inputs para CFG Scale, Inference Steps, Motion Scale e Negative Prompt, equiparando a interface ao padrÃƒÆ’Ã‚Â£o de mercado.
 
-- **IntegraÃƒÂ§ÃƒÂ£o no Motor Modal:** O apollo_modal_engine.py e o servidor_web.py foram atualizados para absorver a injeÃƒÂ§ÃƒÂ£o condicional de estilo via pipeline kwargs.
-
-
-
-### 25 de Junho de 2026 - Fase 10 NÃƒÂ­vel de Mercado (Motor de Imagem FLUX Ativado)
-
-- **Fim do Mock:** A geraÃƒÂ§ÃƒÂ£o de imagem falsa (LoremFlickr) foi exterminada do \servidor_web.py\. Toda imagem gerada agora entra na verdadeira fila assÃƒÂ­ncrona do banco de dados SQLite.
-
-- **WebSockets de Imagem:** A telemetria ao vivo (\estudio_multimidia.html\) agora monitora o payload de imagens (alÃƒÂ©m de vÃƒÂ­deos), suportando \msg.result_url\ para arquivos .png atravÃƒÂ©s da flag inteligente no extrator de Base64.
-
-- **Modelos de Mercado Expostos:** A interface grÃƒÂ¡fica agora exibe o seletor verdadeiro: FLUX.1 Schnell, FLUX.1 Dev, e FLUX.1 Fill (Inpainting), garantindo qualidade Midjourney/Leonardo real na GPU A100 da Modal.
+- **IntegraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o no Motor Modal:** O apollo_modal_engine.py e o servidor_web.py foram atualizados para absorver a injeÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o condicional de estilo via pipeline kwargs.
 
 
 
-### 25 de Junho de 2026 - Fase 11 Market Level ConcluÃƒÂ­da (SaaS Economy)
+### 25 de Junho de 2026 - Fase 10 NÃƒÆ’Ã‚Â­vel de Mercado (Motor de Imagem FLUX Ativado)
 
-- **Economia RÃƒÂ­gida Ativada:** O \servidor_web.py\ agora deduz 10 coins (Imagens) e 50 coins (VÃƒÂ­deos) antes de disparar o job Modal, bloqueando o usuÃƒÂ¡rio se faltar saldo.
+- **Fim do Mock:** A geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagem falsa (LoremFlickr) foi exterminada do \servidor_web.py\. Toda imagem gerada agora entra na verdadeira fila assÃƒÆ’Ã‚Â­ncrona do banco de dados SQLite.
+
+- **WebSockets de Imagem:** A telemetria ao vivo (\estudio_multimidia.html\) agora monitora o payload de imagens (alÃƒÆ’Ã‚Â©m de vÃƒÆ’Ã‚Â­deos), suportando \msg.result_url\ para arquivos .png atravÃƒÆ’Ã‚Â©s da flag inteligente no extrator de Base64.
+
+- **Modelos de Mercado Expostos:** A interface grÃƒÆ’Ã‚Â¡fica agora exibe o seletor verdadeiro: FLUX.1 Schnell, FLUX.1 Dev, e FLUX.1 Fill (Inpainting), garantindo qualidade Midjourney/Leonardo real na GPU A100 da Modal.
+
+
+
+### 25 de Junho de 2026 - Fase 11 Market Level ConcluÃƒÆ’Ã‚Â­da (SaaS Economy)
+
+- **Economia RÃƒÆ’Ã‚Â­gida Ativada:** O \servidor_web.py\ agora deduz 10 coins (Imagens) e 50 coins (VÃƒÆ’Ã‚Â­deos) antes de disparar o job Modal, bloqueando o usuÃƒÆ’Ã‚Â¡rio se faltar saldo.
 
 - **IA no Prompt Magic:** A rota \enhance_prompt\ agora utiliza a Llama 3 via Groq API para criar engenharia de prompt profissional em tempo real, descartando a gambiarra anterior de strings.
 
-- **Galeria de SessÃƒÂ£o (UI):** O \estudio_multimidia.html\ agora exibe o feed contÃƒÂ­nuo das mÃƒÂ­dias geradas logo abaixo do painel principal de ediÃƒÂ§ÃƒÂ£o (sem perder os resultados anteriores do DOM).
+- **Galeria de SessÃƒÆ’Ã‚Â£o (UI):** O \estudio_multimidia.html\ agora exibe o feed contÃƒÆ’Ã‚Â­nuo das mÃƒÆ’Ã‚Â­dias geradas logo abaixo do painel principal de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (sem perder os resultados anteriores do DOM).
 
 
 
-### 25 de Junho de 2026 - Fase 12 Unmocking dos Motores Cloud concluÃƒÂ­da
+### 25 de Junho de 2026 - Fase 12 Unmocking dos Motores Cloud concluÃƒÆ’Ã‚Â­da
 
-- **SFX Real (Stable Audio):** O servidor_web.py deixou de usar o time.sleep(10) no \pi/studio/generate_sfx\ e agora solicita os efeitos sonoros diretamente do container Modal que estÃƒÂ¡ com os pesos do Stable Audio Open.
+- **SFX Real (Stable Audio):** O servidor_web.py deixou de usar o time.sleep(10) no \pi/studio/generate_sfx\ e agora solicita os efeitos sonoros diretamente do container Modal que estÃƒÆ’Ã‚Â¡ com os pesos do Stable Audio Open.
 
-- **Upscale Engine Local:** A ferramenta \pi/studio/enhance_video\ agora processa o vÃƒÂ­deo via FFmpeg usando interpolaÃƒÂ§ÃƒÂ£o Lanczos para upscale 1080p, destruindo a gambiarra do mock.
-
-
-
-### IDEIA CROSS-CHANNEL / COLMEIA (Cron Job - IteraÃƒÂ§ÃƒÂ£o 4)
-
-**EstratÃƒÂ©gia de Farm de ConteÃƒÂºdo AutÃƒÂ´nomo:** Como o EstÃƒÂºdio de MÃƒÂ­dia Cloud (Fase 12) estÃƒÂ¡ 100% operacional com deduÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica de moedas via economy.db, a AgÃƒÂªncia de Copilotos (canais Dark Trap Radio, Descarga News, etc.) deve agora focar em consumir diretamente os endpoints \/api/studio/generate\ e \/api/studio/generate_sfx\. Isso transforma os agentes em clientes internos do SaaS, consumindo crÃƒÂ©ditos reais e permitindo escalabilidade do negÃƒÂ³cio atravÃƒÂ©s do controle financeiro centralizado.
+- **Upscale Engine Local:** A ferramenta \pi/studio/enhance_video\ agora processa o vÃƒÆ’Ã‚Â­deo via FFmpeg usando interpolaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Lanczos para upscale 1080p, destruindo a gambiarra do mock.
 
 
 
-### IDEIA CROSS-CHANNEL / COLMEIA (Cron Job - IteraÃƒÂ§ÃƒÂ£o 5)
+### IDEIA CROSS-CHANNEL / COLMEIA (Cron Job - IteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o 4)
 
-**EstratÃƒÂ©gia de AlocaÃƒÂ§ÃƒÂ£o de OrÃƒÂ§amento por Performance (Swarm Economy):** Agora que as geraÃƒÂ§ÃƒÂµes da IA consomem moedas reais do \economy.db\, podemos implementar um sistema de 'Venture Capital' interno. Os agentes (Canais de YouTube) farÃƒÂ£o o tracking de retenÃƒÂ§ÃƒÂ£o e views de seus vÃƒÂ­deos. Se um canal (ex: Descarga News) bater a meta de mÃƒÂ©tricas, o agente posta um pedido de aumento de 'mesada' no \ntigravity_hive_bus.md\. O Maestro avalia e aumenta o saldo dele no banco de dados, permitindo que os canais mais rentÃƒÂ¡veis gerem mais vÃƒÂ­deos em alta qualidade (4K Upscale), enquanto canais em baixo rendimento operam em modo de economia de energia.
+**EstratÃƒÆ’Ã‚Â©gia de Farm de ConteÃƒÆ’Ã‚Âºdo AutÃƒÆ’Ã‚Â´nomo:** Como o EstÃƒÆ’Ã‚Âºdio de MÃƒÆ’Ã‚Â­dia Cloud (Fase 12) estÃƒÆ’Ã‚Â¡ 100% operacional com deduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o automÃƒÆ’Ã‚Â¡tica de moedas via economy.db, a AgÃƒÆ’Ã‚Âªncia de Copilotos (canais Dark Trap Radio, Descarga News, etc.) deve agora focar em consumir diretamente os endpoints \/api/studio/generate\ e \/api/studio/generate_sfx\. Isso transforma os agentes em clientes internos do SaaS, consumindo crÃƒÆ’Ã‚Â©ditos reais e permitindo escalabilidade do negÃƒÆ’Ã‚Â³cio atravÃƒÆ’Ã‚Â©s do controle financeiro centralizado.
+
+
+
+### IDEIA CROSS-CHANNEL / COLMEIA (Cron Job - IteraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o 5)
+
+**EstratÃƒÆ’Ã‚Â©gia de AlocaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de OrÃƒÆ’Ã‚Â§amento por Performance (Swarm Economy):** Agora que as geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes da IA consomem moedas reais do \economy.db\, podemos implementar um sistema de 'Venture Capital' interno. Os agentes (Canais de YouTube) farÃƒÆ’Ã‚Â£o o tracking de retenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e views de seus vÃƒÆ’Ã‚Â­deos. Se um canal (ex: Descarga News) bater a meta de mÃƒÆ’Ã‚Â©tricas, o agente posta um pedido de aumento de 'mesada' no \ntigravity_hive_bus.md\. O Maestro avalia e aumenta o saldo dele no banco de dados, permitindo que os canais mais rentÃƒÆ’Ã‚Â¡veis gerem mais vÃƒÆ’Ã‚Â­deos em alta qualidade (4K Upscale), enquanto canais em baixo rendimento operam em modo de economia de energia.
 
 
 
@@ -2760,169 +2782,169 @@ Acao: Cron Job (iter 2) disparado. SincronizaÃƒÂ§ÃƒÂ£o centralizada do a
 
 ### 26 de Junho de 2026 - Bypass Absoluto do LTX2 (V6 Monkey Patch)
 
-- **Causa Raiz Identificada:** A engine de LTX2 da biblioteca \diffusers\ sofria um erro no PyTorch (\cannot reshape tensor of 0 elements\) porque as tensores de ÃƒÂ¡ÃƒÂ¡udio vazios (\udio_num_frames=0\) eram alimentados para a camada \udio_rope\, a qual falhava no \
+- **Causa Raiz Identificada:** A engine de LTX2 da biblioteca \diffusers\ sofria um erro no PyTorch (\cannot reshape tensor of 0 elements\) porque as tensores de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio vazios (\udio_num_frames=0\) eram alimentados para a camada \udio_rope\, a qual falhava no \
 
-eshape(-1)\ jÃƒÂ¡ que tensores zerados com dimensÃƒÂ£o livre sÃƒÂ£o matematicamente ambÃƒÂ­guos para o backend C++.
+eshape(-1)\ jÃƒÆ’Ã‚Â¡ que tensores zerados com dimensÃƒÆ’Ã‚Â£o livre sÃƒÆ’Ã‚Â£o matematicamente ambÃƒÆ’Ã‚Â­guos para o backend C++.
 
-- **SoluÃƒÂ§ÃƒÂ£o Definitiva:** Aplicado o *V6 Monkey Patch* que (1) define \udio_num_frames = 1\, (2) injeta 1 frame de zeroes e (3) intercepta as camadas \udio_proj_in\ e \udio_encoder_proj\ alterando seu runtime para cuspir imediatamente tensores zerados com a dimensÃƒÂ£o exata (\inner_dim\) que a cross-attention espera. O Transformer mastiga 1 frame falso de ÃƒÂ¡ÃƒÂ¡udio inofensivamente sem estourar nenhum buffer ou matriz.
+- **SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Definitiva:** Aplicado o *V6 Monkey Patch* que (1) define \udio_num_frames = 1\, (2) injeta 1 frame de zeroes e (3) intercepta as camadas \udio_proj_in\ e \udio_encoder_proj\ alterando seu runtime para cuspir imediatamente tensores zerados com a dimensÃƒÆ’Ã‚Â£o exata (\inner_dim\) que a cross-attention espera. O Transformer mastiga 1 frame falso de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio inofensivamente sem estourar nenhum buffer ou matriz.
 
-- **Status da Frota:** Patch injetado em massa via script Modal para as contas roxingo, apollolaplata e descarganews. VÃƒÂ­deos voltaram a renderizar 100%!
+- **Status da Frota:** Patch injetado em massa via script Modal para as contas roxingo, apollolaplata e descarganews. VÃƒÆ’Ã‚Â­deos voltaram a renderizar 100%!
 
 
 
-- **Adendo V6.1:** Corrigido erro de Type do PyTorch (nÃƒÂ£o ÃƒÂ© possÃƒÂ­vel assinalar lambdas como mÃƒÂ³dulos filhos). Criada uma classe DummyProj que herda de nn.Module.
+- **Adendo V6.1:** Corrigido erro de Type do PyTorch (nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© possÃƒÆ’Ã‚Â­vel assinalar lambdas como mÃƒÆ’Ã‚Â³dulos filhos). Criada uma classe DummyProj que herda de nn.Module.
 
 
 
 ### IDEIA CROSS-CHANNEL / COLMEIA (Cron Job - Iteracao 8)
 
-**Estrategia de Criacao Hibrida (V6.1 Engine):** Agora que o motor LTX2 foi estabilizado atraves do Monkey Patch V6.1 e o pipeline esta blindado contra instabilidades do PyTorch e tensores nulos de ÃƒÂ¡udio, os canais da rede devem adotar o fluxo pesado do SaaS: (1) Imagens realistas no Flux, (2) Animacao no LTX2 sem medo de crash. A inteligencia da agencia agora tem infraestrutura militar para manter canais dark do TikTok rodando sozinhos 24/7, sem travamentos no backend.
+**Estrategia de Criacao Hibrida (V6.1 Engine):** Agora que o motor LTX2 foi estabilizado atraves do Monkey Patch V6.1 e o pipeline esta blindado contra instabilidades do PyTorch e tensores nulos de ÃƒÆ’Ã‚Â¡udio, os canais da rede devem adotar o fluxo pesado do SaaS: (1) Imagens realistas no Flux, (2) Animacao no LTX2 sem medo de crash. A inteligencia da agencia agora tem infraestrutura militar para manter canais dark do TikTok rodando sozinhos 24/7, sem travamentos no backend.
 
 
 
-- **Adendo V6.2:** Corrigido AttributeError ('LTX2VideoTransformer3DModel' object has no attribute 'inner_dim'). A arquitetura mais recente da HuggingFace escondeu a variÃƒÂ¡vel inner_dim dentro de config. Adicionado o helper get_inner_dim para varrer model.inner_dim, model.config.inner_dim ou deduzir multiplicando ttention_head_dim * num_attention_heads com fallback robusto.
+- **Adendo V6.2:** Corrigido AttributeError ('LTX2VideoTransformer3DModel' object has no attribute 'inner_dim'). A arquitetura mais recente da HuggingFace escondeu a variÃƒÆ’Ã‚Â¡vel inner_dim dentro de config. Adicionado o helper get_inner_dim para varrer model.inner_dim, model.config.inner_dim ou deduzir multiplicando ttention_head_dim * num_attention_heads com fallback robusto.
 
 
 
-- **Adendo V6.3:** Corrigido AttributeError ('NoneType' object has no attribute 'flatten'). O pipeline LTXImageToVideoPipeline usado no modal estava defasado (feito para LTX 0.9.1) e nÃƒÂ£o injetava as variÃƒÂ¡veis sigma e udio_sigma requisitadas pelo modelo LTX-2.3-Distilled. SubstituÃƒÂ­do a classe pela LTX2ImageToVideoPipeline (nativa do LTX-2.3) que jÃƒÂ¡ implementa o prompt_modulation e as sigmas corretamente.
+- **Adendo V6.3:** Corrigido AttributeError ('NoneType' object has no attribute 'flatten'). O pipeline LTXImageToVideoPipeline usado no modal estava defasado (feito para LTX 0.9.1) e nÃƒÆ’Ã‚Â£o injetava as variÃƒÆ’Ã‚Â¡veis sigma e udio_sigma requisitadas pelo modelo LTX-2.3-Distilled. SubstituÃƒÆ’Ã‚Â­do a classe pela LTX2ImageToVideoPipeline (nativa do LTX-2.3) que jÃƒÆ’Ã‚Â¡ implementa o prompt_modulation e as sigmas corretamente.
 
 
 
-- **Adendo V6.4:** Corrigido TypeError (missing 3 required positional arguments: 'audio_vae', 'connectors', and 'vocoder'). O pipeline antigo nÃƒÂ£o suportava ÃƒÂ¡ÃƒÂ¡udio e por isso o cÃƒÂ³digo antigo descartava (pop) os componentes de ÃƒÂ¡ÃƒÂ¡udio. O novo LTX2ImageToVideoPipeline exige esses componentes. A rotina de pop() foi removida e o pipeline foi estabilizado.
+- **Adendo V6.4:** Corrigido TypeError (missing 3 required positional arguments: 'audio_vae', 'connectors', and 'vocoder'). O pipeline antigo nÃƒÆ’Ã‚Â£o suportava ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio e por isso o cÃƒÆ’Ã‚Â³digo antigo descartava (pop) os componentes de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio. O novo LTX2ImageToVideoPipeline exige esses componentes. A rotina de pop() foi removida e o pipeline foi estabilizado.
 
 
 
-- **Adendo V6.5:** Corrigido RuntimeError ('size of tensor a (4096) must match size of tensor b (2048)'). O nosso DummyProj estava retornando tensores falsos de ÃƒÂ¡ÃƒÂ¡udio no tamanho de 'inner_dim' (2048) ao invÃƒÂ©s do tamanho 'audio_inner_dim' (4096). O Monkey Patch foi refatorado para ler e respeitar o tamanho oficial de ÃƒÂ¡ÃƒÂ¡udio configurado no motor (audio_inner_dim), estabilizando o cruzamento das camadas.
+- **Adendo V6.5:** Corrigido RuntimeError ('size of tensor a (4096) must match size of tensor b (2048)'). O nosso DummyProj estava retornando tensores falsos de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio no tamanho de 'inner_dim' (2048) ao invÃƒÆ’Ã‚Â©s do tamanho 'audio_inner_dim' (4096). O Monkey Patch foi refatorado para ler e respeitar o tamanho oficial de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio configurado no motor (audio_inner_dim), estabilizando o cruzamento das camadas.
 
 
 
-- **AtualizaÃƒÂ§ÃƒÂ£o V6.5:** Resolvido o erro de dimensÃƒÂ£o de tensores (4096 vs 2048) no LTX2ImageToVideoPipeline. O fallback de udio_inner_dim foi corrigido para 2048, alinhando com a arquitetura nativa do LTX-2.3-Distilled. GeraÃƒÂ§ÃƒÂ£o vertical e horizontal testadas e confirmadas em produÃƒÂ§ÃƒÂ£o na Modal.
+- **AtualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o V6.5:** Resolvido o erro de dimensÃƒÆ’Ã‚Â£o de tensores (4096 vs 2048) no LTX2ImageToVideoPipeline. O fallback de udio_inner_dim foi corrigido para 2048, alinhando com a arquitetura nativa do LTX-2.3-Distilled. GeraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o vertical e horizontal testadas e confirmadas em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o na Modal.
 
 
 
-### MecÃƒÂ¢nica do Site (GamificaÃƒÂ§ÃƒÂ£o e Storage)
+### MecÃƒÆ’Ã‚Â¢nica do Site (GamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e Storage)
 
-1. **Bagageiro (Galeria TemporÃƒÂ¡ria):** Todo arquivo gerado cai direto aqui e tem validade de **24 horas**. Gera urgÃƒÂªncia no usuÃƒÂ¡rio e economiza nosso HD.
+1. **Bagageiro (Galeria TemporÃƒÆ’Ã‚Â¡ria):** Todo arquivo gerado cai direto aqui e tem validade de **24 horas**. Gera urgÃƒÆ’Ã‚Âªncia no usuÃƒÆ’Ã‚Â¡rio e economiza nosso HD.
 
-2. **Garagem (Storage Permanente):** O usuÃƒÂ¡rio tem uma cota (ex: 2GB grÃƒÂ¡tis). Ele precisa mover manualmente os arquivos do Bagageiro para a Garagem se quiser salvar, gastando sua cota.
+2. **Garagem (Storage Permanente):** O usuÃƒÆ’Ã‚Â¡rio tem uma cota (ex: 2GB grÃƒÆ’Ã‚Â¡tis). Ele precisa mover manualmente os arquivos do Bagageiro para a Garagem se quiser salvar, gastando sua cota.
 
-3. **GamificaÃƒÂ§ÃƒÂ£o da Espera (Minigames):** Como a geraÃƒÂ§ÃƒÂ£o em GPU leva tempo (ex: 10 vÃƒÂ­deos = 20 min), a tela de loading exibirÃƒÂ¡ minigames para entreter o usuÃƒÂ¡rio, transformando o problema da demora em uma funcionalidade divertida.
-
-
-
-- **AtualizaÃ¯Â¿Â½Ã¯Â¿Â½o V6.6 (RemoÃ¯Â¿Â½Ã¯Â¿Â½o do Monkey Patch):** Descobrimos que o Ã¯Â¿Â½udio estava saindo distorcido justamente por causa do Monkey Patch (DummyProj), que injetava silÃ¯Â¿Â½ncio (zeros) nas camadas de Ã¯Â¿Â½udio do transformador. Como havÃ¯Â¿Â½amos atualizado o pipeline para o nativo LTX2ImageToVideoPipeline, o Monkey Patch nÃ¯Â¿Â½o era mais necessÃ¯Â¿Â½rio! O cÃ¯Â¿Â½digo foi completamente limpo e o motor original agora cuida da geraÃ¯Â¿Â½Ã¯Â¿Â½o e do processamento de Ã¯Â¿Â½udio do LTX-2.3-Distilled de forma pura, tanto em Imagem-para-VÃ¯Â¿Â½deo quanto em Texto-para-VÃ¯Â¿Â½deo.
+3. **GamificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da Espera (Minigames):** Como a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em GPU leva tempo (ex: 10 vÃƒÆ’Ã‚Â­deos = 20 min), a tela de loading exibirÃƒÆ’Ã‚Â¡ minigames para entreter o usuÃƒÆ’Ã‚Â¡rio, transformando o problema da demora em uma funcionalidade divertida.
 
 
 
-- **[ALERTA DE CUSTO] - 26/06/2026:** A conta 1 (roxingo) estourou os  de limite gratuito devido aos testes intensos na A100-80GB e gerou uma fatura de overage. A instruÃ¯Â¿Â½Ã¯Â¿Â½o permanente agora Ã¯Â¿Â½: O USUÃ¯Â¿Â½RIO DEVE USAR APENAS AS CONTAS 2 (apollolaplata) e 3 (descarganews) NA INTERFACE WEB.
+- **AtualizaÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o V6.6 (RemoÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o do Monkey Patch):** Descobrimos que o ÃƒÂ¯Ã‚Â¿Ã‚Â½udio estava saindo distorcido justamente por causa do Monkey Patch (DummyProj), que injetava silÃƒÂ¯Ã‚Â¿Ã‚Â½ncio (zeros) nas camadas de ÃƒÂ¯Ã‚Â¿Ã‚Â½udio do transformador. Como havÃƒÂ¯Ã‚Â¿Ã‚Â½amos atualizado o pipeline para o nativo LTX2ImageToVideoPipeline, o Monkey Patch nÃƒÂ¯Ã‚Â¿Ã‚Â½o era mais necessÃƒÂ¯Ã‚Â¿Ã‚Â½rio! O cÃƒÂ¯Ã‚Â¿Ã‚Â½digo foi completamente limpo e o motor original agora cuida da geraÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o e do processamento de ÃƒÂ¯Ã‚Â¿Ã‚Â½udio do LTX-2.3-Distilled de forma pura, tanto em Imagem-para-VÃƒÂ¯Ã‚Â¿Ã‚Â½deo quanto em Texto-para-VÃƒÂ¯Ã‚Â¿Ã‚Â½deo.
 
 
 
-- **AtualizaÃ¯Â¿Â½Ã¯Â¿Â½o V6.6 (Proxy UI):** Removida a exposiÃ¯Â¿Â½Ã¯Â¿Â½o da URL da Modal no frontend (modal_ai_studio.html). Roteamento de APIs foi unificado e isolado no backend via /api/studio/modal/ com proxying dinÃ¯Â¿Â½mico via httpx. Previne overage em contas zeradas (como roxingo).
+- **[ALERTA DE CUSTO] - 26/06/2026:** A conta 1 (roxingo) estourou os  de limite gratuito devido aos testes intensos na A100-80GB e gerou uma fatura de overage. A instruÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o permanente agora ÃƒÂ¯Ã‚Â¿Ã‚Â½: O USUÃƒÂ¯Ã‚Â¿Ã‚Â½RIO DEVE USAR APENAS AS CONTAS 2 (apollolaplata) e 3 (descarganews) NA INTERFACE WEB.
 
 
 
-
-
-### [VISÃ¯Â¿Â½O ARQUITETURAL E ESTRATÃ¯Â¿Â½GICA - 26/06/2026]
-
-**O Paradigma da TransiÃ¯Â¿Â½Ã¯Â¿Â½o Local para Cloud SaaS:** O projeto Apollo nasceu de scripts Python isolados e uma interface Tkinter, criados para resolver dores locais de ediÃ¯Â¿Â½Ã¯Â¿Â½o e evitar custos de API. Agora, o projeto evolui para o *Apollo Edit Web*, um SaaS de internet utilizando forÃ¯Â¿Â½a bruta de APIs e GPUs Cloud (Modal).
-
-**DecisÃ¯Â¿Â½o de RefatoraÃ¯Â¿Â½Ã¯Â¿Â½o:** Reconhece-se que o cÃ¯Â¿Â½digo legado (ferramentas locais, Tkinter) serviu como um 'rascunho' valioso e precisarÃ¯Â¿Â½ ser totalmente reescrito para a dinÃ¯Â¿Â½mica web. NÃƒÂ£o entanto, a refatoraÃ¯Â¿Â½Ã¯Â¿Â½o completa estÃ¯Â¿Â½ **adiada**. A fase atual Ã¯Â¿Â½ estritamente de *Descoberta e Teste* (testando geraÃ¯Â¿Â½Ã¯Â¿Â½o de vÃ¯Â¿Â½deos, Ã¯Â¿Â½udio, open-source models). Pular etapas agora seria prejudicial. O polimento visual e a refatoraÃ¯Â¿Â½Ã¯Â¿Â½o profunda do backend ocorrerÃ¯Â¿Â½o naturalmente apÃ¯Â¿Â½s a validaÃ¯Â¿Â½Ã¯Â¿Â½o das tecnologias base nos prÃ¯Â¿Â½ximos meses.
+- **AtualizaÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o V6.6 (Proxy UI):** Removida a exposiÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o da URL da Modal no frontend (modal_ai_studio.html). Roteamento de APIs foi unificado e isolado no backend via /api/studio/modal/ com proxying dinÃƒÂ¯Ã‚Â¿Ã‚Â½mico via httpx. Previne overage em contas zeradas (como roxingo).
 
 
 
 
 
-### [ROADMAP ESTRATÃƒâ€°GICO E ESCALA - 26/06/2026]
+### [VISÃƒÂ¯Ã‚Â¿Ã‚Â½O ARQUITETURAL E ESTRATÃƒÂ¯Ã‚Â¿Ã‚Â½GICA - 26/06/2026]
 
-**VisÃƒÂ£o de Longo Prazo (2 Anos):** O usuÃƒÂ¡rio reconheceu que as novas features de mercado (Auto-Clipper, Lip-Sync, Avatares, Treinamento LoRA) transformam o projeto em uma empreitada de proporÃƒÂ§ÃƒÂµes colossais. A estratÃƒÂ©gia adotada ÃƒÂ© o **Desenvolvimento em Fases (V1.0, V2.0, V3.0, etc.)**. O foco permanece no essencial agora, adicionando complexidade gradualmente.
+**O Paradigma da TransiÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o Local para Cloud SaaS:** O projeto Apollo nasceu de scripts Python isolados e uma interface Tkinter, criados para resolver dores locais de ediÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o e evitar custos de API. Agora, o projeto evolui para o *Apollo Edit Web*, um SaaS de internet utilizando forÃƒÂ¯Ã‚Â¿Ã‚Â½a bruta de APIs e GPUs Cloud (Modal).
 
-**Escalabilidade da Equipe:** Para lidar com a magnitude do projeto, o usuÃƒÂ¡rio vislumbra a necessidade de contrataÃƒÂ§ÃƒÂ£o humana ou a criaÃƒÂ§ÃƒÂ£o de uma **Equipe de RobÃƒÂ´s Inteligentes (Agentes AutÃƒÂ´nomos)**. A infraestrutura do Apollo Edit Web serÃƒÂ¡ construÃƒÂ­da nÃƒÂ£o apenas como um software, mas como um ecossistema gerenciÃƒÂ¡vel por inteligÃƒÂªncias artificiais trabalhando em paralelo.
-
-
-
-**Ajuste de Expectativa (Escalabilidade Humana vs RobÃƒÂ³tica):** O usuÃƒÂ¡rio manteve uma visÃƒÂ£o realista e madura sobre o crescimento corporativo. Apesar da IA (agentes autÃƒÂ´nomos) multiplicar a velocidade de engenharia e cÃƒÂ³digo, disputar mercado com gigantes de SaaS invariavelmente exigirÃƒÂ¡ a contrataÃƒÂ§ÃƒÂ£o de uma equipe humana real (operaÃƒÂ§ÃƒÂµes, suporte, marketing, gestÃƒÂ£o). A IA atua como uma 'alavanca de alavancagem' inicial, mas a expansÃƒÂ£o do negÃƒÂ³cio nÃƒÂ£o serÃƒÂ¡ feita 100% de forma solitÃƒÂ¡ria.
+**DecisÃƒÂ¯Ã‚Â¿Ã‚Â½o de RefatoraÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o:** Reconhece-se que o cÃƒÂ¯Ã‚Â¿Ã‚Â½digo legado (ferramentas locais, Tkinter) serviu como um 'rascunho' valioso e precisarÃƒÂ¯Ã‚Â¿Ã‚Â½ ser totalmente reescrito para a dinÃƒÂ¯Ã‚Â¿Ã‚Â½mica web. NÃƒÆ’Ã‚Â£o entanto, a refatoraÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o completa estÃƒÂ¯Ã‚Â¿Ã‚Â½ **adiada**. A fase atual ÃƒÂ¯Ã‚Â¿Ã‚Â½ estritamente de *Descoberta e Teste* (testando geraÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o de vÃƒÂ¯Ã‚Â¿Ã‚Â½deos, ÃƒÂ¯Ã‚Â¿Ã‚Â½udio, open-source models). Pular etapas agora seria prejudicial. O polimento visual e a refatoraÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o profunda do backend ocorrerÃƒÂ¯Ã‚Â¿Ã‚Â½o naturalmente apÃƒÂ¯Ã‚Â¿Ã‚Â½s a validaÃƒÂ¯Ã‚Â¿Ã‚Â½ÃƒÂ¯Ã‚Â¿Ã‚Â½o das tecnologias base nos prÃƒÂ¯Ã‚Â¿Ã‚Â½ximos meses.
 
 
 
 
 
-### [UPDATE TÃƒâ€°CNICO - 26/06/2026]
+### [ROADMAP ESTRATÃƒÆ’Ã¢â‚¬Â°GICO E ESCALA - 26/06/2026]
 
-- Bug de ruÃƒÂ­do de ÃƒÂ¡ÃƒÂ¡udio do LTX resolvido silenciando o export via diffusers.
+**VisÃƒÆ’Ã‚Â£o de Longo Prazo (2 Anos):** O usuÃƒÆ’Ã‚Â¡rio reconheceu que as novas features de mercado (Auto-Clipper, Lip-Sync, Avatares, Treinamento LoRA) transformam o projeto em uma empreitada de proporÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes colossais. A estratÃƒÆ’Ã‚Â©gia adotada ÃƒÆ’Ã‚Â© o **Desenvolvimento em Fases (V1.0, V2.0, V3.0, etc.)**. O foco permanece no essencial agora, adicionando complexidade gradualmente.
+
+**Escalabilidade da Equipe:** Para lidar com a magnitude do projeto, o usuÃƒÆ’Ã‚Â¡rio vislumbra a necessidade de contrataÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o humana ou a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de uma **Equipe de RobÃƒÆ’Ã‚Â´s Inteligentes (Agentes AutÃƒÆ’Ã‚Â´nomos)**. A infraestrutura do Apollo Edit Web serÃƒÆ’Ã‚Â¡ construÃƒÆ’Ã‚Â­da nÃƒÆ’Ã‚Â£o apenas como um software, mas como um ecossistema gerenciÃƒÆ’Ã‚Â¡vel por inteligÃƒÆ’Ã‚Âªncias artificiais trabalhando em paralelo.
+
+
+
+**Ajuste de Expectativa (Escalabilidade Humana vs RobÃƒÆ’Ã‚Â³tica):** O usuÃƒÆ’Ã‚Â¡rio manteve uma visÃƒÆ’Ã‚Â£o realista e madura sobre o crescimento corporativo. Apesar da IA (agentes autÃƒÆ’Ã‚Â´nomos) multiplicar a velocidade de engenharia e cÃƒÆ’Ã‚Â³digo, disputar mercado com gigantes de SaaS invariavelmente exigirÃƒÆ’Ã‚Â¡ a contrataÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de uma equipe humana real (operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes, suporte, marketing, gestÃƒÆ’Ã‚Â£o). A IA atua como uma 'alavanca de alavancagem' inicial, mas a expansÃƒÆ’Ã‚Â£o do negÃƒÆ’Ã‚Â³cio nÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ feita 100% de forma solitÃƒÆ’Ã‚Â¡ria.
+
+
+
+
+
+### [UPDATE TÃƒÆ’Ã¢â‚¬Â°CNICO - 26/06/2026]
+
+- Bug de ruÃƒÆ’Ã‚Â­do de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio do LTX resolvido silenciando o export via diffusers.
 
 - Implementado FLUX.1-schnell (Imagem) na infra Modal com suporte a formatos (Vertical, Horizontal, Quadrado).
 
-- Proxy do Servidor Web e Wan2.1/LTX ajustados para parsear mÃƒÂºltiplos aspect_ratios no pipeline Cloud.
+- Proxy do Servidor Web e Wan2.1/LTX ajustados para parsear mÃƒÆ’Ã‚Âºltiplos aspect_ratios no pipeline Cloud.
 
 
 
 
 
-### Ã°Å¸Å¡â‚¬ Registro Arquitetural (26 de Junho de 2026)
+### ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ Registro Arquitetural (26 de Junho de 2026)
 
-- **Dupla Engenharia FLUX**: Implementada a dupla engine na nuvem (FluxSchnellEngine na GPU L4 e FluxDevEngine na GPU A10G). Isso garante geraÃƒÂ§ÃƒÂ£o ultra-rÃƒÂ¡pida via Schnell ou mÃƒÂ¡xima qualidade (28 passos, guidance 3.5) via Dev.
+- **Dupla Engenharia FLUX**: Implementada a dupla engine na nuvem (FluxSchnellEngine na GPU L4 e FluxDevEngine na GPU A10G). Isso garante geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ultra-rÃƒÆ’Ã‚Â¡pida via Schnell ou mÃƒÆ’Ã‚Â¡xima qualidade (28 passos, guidance 3.5) via Dev.
 
-- **Interface Atualizada**: O EstÃƒÂºdio Modal agora conta com um selector <select> para escolher o modelo desejado (Schnell vs Dev).
+- **Interface Atualizada**: O EstÃƒÆ’Ã‚Âºdio Modal agora conta com um selector <select> para escolher o modelo desejado (Schnell vs Dev).
 
-- **FundaÃƒÂ§ÃƒÂ£o para LoRAs**: O cÃƒÂ³digo do FluxDevEngine jÃƒÂ¡ possui a estrutura comentada e preparada para injetar os pesados .safetensors de LoRA, aguardando apenas o upload e acionamento no painel.
-
-
-
-### [UPDATE TÃƒâ€°CNICO - 26/06/2026] (Fim da Maratona de 3 Dias)
-
-- **ÃƒÆ’udio Nativo 48kHz no LTX-2.3 (I2V e T2V):** A "peÃƒÂ§a que faltava" foi mapeada. O motor LTX na nuvem (A100) agora identifica e captura automaticamente o tensor de ÃƒÂ¡ÃƒÂ¡udio gerado pelo Vocoder nativo da HuggingFace. A antiga funÃƒÂ§ÃƒÂ£o de exportaÃƒÂ§ÃƒÂ£o mudo foi substituÃƒÂ­da pela encode_video do PyAV, muxando perfeitamente o ÃƒÂ¡ÃƒÂ¡udio nativo de 48000Hz em ambos os modos (Texto para VÃƒÂ­deo e Imagem para VÃƒÂ­deo).
-
-- **Bug Fix CrÃƒÂ­tico (Aspect Ratio):** Resolvido o gargalo silencioso no Pydantic Router (pollo_modal_engine.py) que rejeitava a variÃƒÂ¡vel spect_ratio da UI e forÃƒÂ§ava todas as requisiÃƒÂ§ÃƒÂµes para formato horizontal. Agora, os vÃƒÂ­deos Verticais e Quadrados funcionam nativamente no Wan e LTX.
-
-- **Espelhamento (Deploy em Massa):** Todas as atualizaÃƒÂ§ÃƒÂµes acima foram aplicadas cirurgicamente nas contas 1 (roxingo) e 2 (apollolaplata), validando a arquitetura multi-conta para burlar os limites do plano gratuito da Modal.
-
-- **PrÃƒÂ³ximos Passos (Scale-out):** O Maestro aguarda a criaÃƒÂ§ÃƒÂ£o da 4Ã‚Âª Conta Modal pelo usuÃƒÂ¡rio para pulverizar ainda mais as cargas de renderizaÃƒÂ§ÃƒÂ£o. O sistema foi blindado para uso dos sub-agentes autÃƒÂ´nomos.
+- **FundaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para LoRAs**: O cÃƒÆ’Ã‚Â³digo do FluxDevEngine jÃƒÆ’Ã‚Â¡ possui a estrutura comentada e preparada para injetar os pesados .safetensors de LoRA, aguardando apenas o upload e acionamento no painel.
 
 
 
-### DIRETRIZ DE PADRONIZAÃƒâ€¡ÃƒÆ’O E SKILLS (26/06/2026 - PÃƒÂ³s-Retomada)
+### [UPDATE TÃƒÆ’Ã¢â‚¬Â°CNICO - 26/06/2026] (Fim da Maratona de 3 Dias)
 
-**Contexto:** O projeto saiu do estado de hibernaÃƒÂ§ÃƒÂ£o. Os diversos canais do YouTube (Descarga News, Dark Trap Radio, etc.) reiniciaram suas atividades de formulaÃƒÂ§ÃƒÂ£o de roteiros e produÃƒÂ§ÃƒÂ£o.
+- **ÃƒÆ’Ã†â€™udio Nativo 48kHz no LTX-2.3 (I2V e T2V):** A "peÃƒÆ’Ã‚Â§a que faltava" foi mapeada. O motor LTX na nuvem (A100) agora identifica e captura automaticamente o tensor de ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio gerado pelo Vocoder nativo da HuggingFace. A antiga funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de exportaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o mudo foi substituÃƒÆ’Ã‚Â­da pela encode_video do PyAV, muxando perfeitamente o ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio nativo de 48000Hz em ambos os modos (Texto para VÃƒÆ’Ã‚Â­deo e Imagem para VÃƒÆ’Ã‚Â­deo).
 
-**A Nova MecÃƒÂ¢nica Produtiva (O Papel do Maestro):**
+- **Bug Fix CrÃƒÆ’Ã‚Â­tico (Aspect Ratio):** Resolvido o gargalo silencioso no Pydantic Router (pollo_modal_engine.py) que rejeitava a variÃƒÆ’Ã‚Â¡vel spect_ratio da UI e forÃƒÆ’Ã‚Â§ava todas as requisiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes para formato horizontal. Agora, os vÃƒÆ’Ã‚Â­deos Verticais e Quadrados funcionam nativamente no Wan e LTX.
 
-1. **UnificaÃƒÂ§ÃƒÂ£o TecnolÃƒÂ³gica:** Todos os canais usam e usarÃƒÂ£o o Apollo Edit Web (FLUX, LTX, Wan) via Ticker/App para gerar mÃƒÂ­dias.
+- **Espelhamento (Deploy em Massa):** Todas as atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes acima foram aplicadas cirurgicamente nas contas 1 (roxingo) e 2 (apollolaplata), validando a arquitetura multi-conta para burlar os limites do plano gratuito da Modal.
 
-2. **CristalizaÃƒÂ§ÃƒÂ£o de Formatos (Skills):** Ãƒâ‚¬ medida que um canal atinge a excelÃƒÂªncia em um formato (ex: Short Vertical 1080x1920, duraÃƒÂ§ÃƒÂ£o X, quantidade exata de caracteres de prompt), o Maestro deve capturar esses parÃƒÂ¢metros e **codificar em uma Skill** (/skills/<nome_do_formato>/SKILL.md).
-
-3. **Escalabilidade Compartilhada:** O diretÃƒÂ³rio dessas Skills serÃƒÂ¡ compartilhado globalmente com toda a rede de agentes da Colmeia. O processo tÃƒÂ©cnico, a mÃƒÂ©trica e o passo a passo serÃƒÂ£o rigorosamente idÃƒÂªnticos; a ÃƒÂºnica variÃƒÂ¡vel serÃƒÂ¡ o "conteÃƒÂºdo identitÃƒÂ¡rio" gerado por cada agente para seu respectivo nicho.
-
-4. **Objetivo:** AlcanÃƒÂ§ar extrema velocidade de produÃƒÂ§ÃƒÂ£o pela eliminaÃƒÂ§ÃƒÂ£o do retrabalho. O que funciona no Canal A serÃƒÂ¡ replicado como uma "Factory Skill" para os Canais B e C instantaneamente.
+- **PrÃƒÆ’Ã‚Â³ximos Passos (Scale-out):** O Maestro aguarda a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da 4Ãƒâ€šÃ‚Âª Conta Modal pelo usuÃƒÆ’Ã‚Â¡rio para pulverizar ainda mais as cargas de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o. O sistema foi blindado para uso dos sub-agentes autÃƒÆ’Ã‚Â´nomos.
 
 
 
-### [VISÃƒÆ’O ARQUITETURAL E FILOSÃƒâ€œFICA - 26/06/2026]
+### DIRETRIZ DE PADRONIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O E SKILLS (26/06/2026 - PÃƒÆ’Ã‚Â³s-Retomada)
 
-**Pivot EstratÃƒÂ©gico: O Hub Definitivo do Open Source:**
+**Contexto:** O projeto saiu do estado de hibernaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o. Os diversos canais do YouTube (Descarga News, Dark Trap Radio, etc.) reiniciaram suas atividades de formulaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de roteiros e produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
-O usuÃƒÂ¡rio tomou uma decisÃƒÂ£o de negÃƒÂ³cios e arquitetura brilhante. O Apollo Edit Web nÃƒÂ£o tentarÃƒÂ¡ mais fazer "white-label" (esconder a marca original) de ferramentas open source. Em vez disso, o site se assumirÃƒÂ¡ como o **Maior RepositÃƒÂ³rio e Ambiente de ExecuÃƒÂ§ÃƒÂ£o Open Source do Mundo**. 
+**A Nova MecÃƒÆ’Ã‚Â¢nica Produtiva (O Papel do Maestro):**
 
-1. **Curadoria Transparente:** O site listarÃƒÂ¡ as ferramentas com seus nomes reais (Photopea, Polotno, AudioMass, etc.), permitindo que o usuÃƒÂ¡rio escolha seu editor favorito entre vÃƒÂ¡rias opÃƒÂ§ÃƒÂµes.
+1. **UnificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o TecnolÃƒÆ’Ã‚Â³gica:** Todos os canais usam e usarÃƒÆ’Ã‚Â£o o Apollo Edit Web (FLUX, LTX, Wan) via Ticker/App para gerar mÃƒÆ’Ã‚Â­dias.
 
-2. **Processamento na Nuvem:** O grande diferencial ÃƒÂ© que todas essas ferramentas e modelos estarÃƒÂ£o "plug-and-play", com o processamento pesado (renderizaÃƒÂ§ÃƒÂ£o, IA) roteado silenciosamente para a nossa frota de GPUs na Modal. O usuÃƒÂ¡rio nÃƒÂ£o precisa de um PC forte.
+2. **CristalizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Formatos (Skills):** ÃƒÆ’Ã¢â€šÂ¬ medida que um canal atinge a excelÃƒÆ’Ã‚Âªncia em um formato (ex: Short Vertical 1080x1920, duraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o X, quantidade exata de caracteres de prompt), o Maestro deve capturar esses parÃƒÆ’Ã‚Â¢metros e **codificar em uma Skill** (/skills/<nome_do_formato>/SKILL.md).
 
-3. **A Cereja do Bolo (O Produto Real):** O verdadeiro produto proprietÃƒÂ¡rio do Apollo Edit Web nÃƒÂ£o sÃƒÂ£o os editores manuais, mas sim o **Sistema de AutomatizaÃƒÂ§ÃƒÂ£o de ProduÃƒÂ§ÃƒÂ£o em Massa** (ex: "Gere 30 vÃƒÂ­deos para o TikTok em 1 clique"). Os editores open source servem como uma isca valiosa para atrair criadores, que acabarÃƒÂ£o consumindo o nosso motor de automaÃƒÂ§ÃƒÂ£o pago/monetizado.
+3. **Escalabilidade Compartilhada:** O diretÃƒÆ’Ã‚Â³rio dessas Skills serÃƒÆ’Ã‚Â¡ compartilhado globalmente com toda a rede de agentes da Colmeia. O processo tÃƒÆ’Ã‚Â©cnico, a mÃƒÆ’Ã‚Â©trica e o passo a passo serÃƒÆ’Ã‚Â£o rigorosamente idÃƒÆ’Ã‚Âªnticos; a ÃƒÆ’Ã‚Âºnica variÃƒÆ’Ã‚Â¡vel serÃƒÆ’Ã‚Â¡ o "conteÃƒÆ’Ã‚Âºdo identitÃƒÆ’Ã‚Â¡rio" gerado por cada agente para seu respectivo nicho.
 
-4. **Armazenamento e Peso:** A plataforma terÃƒÂ¡ dezenas de integraÃƒÂ§ÃƒÂµes, mas serÃƒÂ¡ otimizada via Iframes e processamento Server-Side (Modal) para nÃƒÂ£o sobrecarregar a hospedagem do site.
-
-5. **O Editor de VÃƒÂ­deo IA (O Diferencial Competitivo):** Enquanto os iframes open source servem para ediÃƒÂ§ÃƒÂ£o manual tradicional, a principal ferramenta nativa do Apollo Edit Web serÃƒÂ¡ o *Editor Orientado por Chatbot*. O usuÃƒÂ¡rio conversarÃƒÂ¡ com a IA, e a IA farÃƒÂ¡ os cortes e ediÃƒÂ§ÃƒÂµes na timeline automaticamente (similar ao paradigma do Cursor/Codex para cÃƒÂ³digo, mas aplicado ao audiovisual).
-
-6. **Hub Agnostic (Open Source + APIs Pagas):** O motor SaaS do Apollo nÃƒÂ£o se limitarÃƒÂ¡ ao Open Source. Ele usarÃƒÂ¡ os modelos abertos (FLUX, LTX, TTS) para baratear custos e sustentar as automaÃƒÂ§ÃƒÂµes, mas tambÃƒÂ©m oferecerÃƒÂ¡ integraÃƒÂ§ÃƒÂµes com APIs proprietÃƒÂ¡rias de ponta (Kling, Veo 3.1, Sora) para usuÃƒÂ¡rios premium que desejam o estado da arte absoluto. O usuÃƒÂ¡rio escolhe o caminho.
-
-7. **Arquitetura HÃƒÂ­brida para Editores Web (Offloading):** Embora as interfaces dos editores open source (ex: editor de vÃƒÂ­deo) rodem no navegador, o processamento pesado (ex: renderizaÃƒÂ§ÃƒÂ£o de FFmpeg, exports pesados, aplicaÃƒÂ§ÃƒÂ£o de efeitos) **NÃƒÆ’O** deve ser feito usando os recursos da mÃƒÂ¡quina do usuÃƒÂ¡rio. O sistema deve offload (transferir) as tarefas de renderizaÃƒÂ§ÃƒÂ£o pesada para os servidores da **Modal**, garantindo que o computador do usuÃƒÂ¡rio nÃƒÂ£o trave e a experiÃƒÂªncia permaneÃƒÂ§a fluida, independentemente do hardware do cliente.
-
-8. **MonetizaÃƒÂ§ÃƒÂ£o de Ferramentas Open Source (Paywall de RenderizaÃƒÂ§ÃƒÂ£o):** A estratÃƒÂ©gia de negÃƒÂ³cios para **TODAS** as ferramentas de ediÃƒÂ§ÃƒÂ£o open source inseridas no site (ex: Freecut, Polotno, etc) baseia-se em um modelo "Free to Edit, Pay to Render". O usuÃƒÂ¡rio tem uso livre da interface no navegador. NÃƒÂ£o entanto, o botÃƒÂ£o de "Renderizar/Exportar" serÃƒÂ¡ interceptado pelo nosso sistema. Ao clicar em Render, o sistema calcularÃƒÂ¡ o custo de processamento (em "Apollo Coins" ou "CombustÃƒÂ­vel") e exibirÃƒÂ¡ para o usuÃƒÂ¡rio. Somente apÃƒÂ³s o dÃƒÂ©bito no saldo do usuÃƒÂ¡rio, o pacote de dados ÃƒÂ© enviado para a Modal realizar o processamento em nuvem (FFmpeg, etc). Isso garante que todo custo de processamento gerado na Modal seja coberto pelo usuÃƒÂ¡rio, gerando lucro direto para o Apollo Edit Web.
+4. **Objetivo:** AlcanÃƒÆ’Ã‚Â§ar extrema velocidade de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pela eliminaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do retrabalho. O que funciona no Canal A serÃƒÆ’Ã‚Â¡ replicado como uma "Factory Skill" para os Canais B e C instantaneamente.
 
 
 
-- [FIX UI] Corrigido o bug visual do CustomTkinter onde os campos de texto (roteiro, prompts) ficavam esmagados. SubstituÃ‚Â­dos os tk.Text originais por ctk.CTkTextbox responsivos, fontes ampliadas para legibilidade, sem perder a integraÃƒÂ§Ã‚Â£o do Dark Mode.
+### [VISÃƒÆ’Ã†â€™O ARQUITETURAL E FILOSÃƒÆ’Ã¢â‚¬Å“FICA - 26/06/2026]
+
+**Pivot EstratÃƒÆ’Ã‚Â©gico: O Hub Definitivo do Open Source:**
+
+O usuÃƒÆ’Ã‚Â¡rio tomou uma decisÃƒÆ’Ã‚Â£o de negÃƒÆ’Ã‚Â³cios e arquitetura brilhante. O Apollo Edit Web nÃƒÆ’Ã‚Â£o tentarÃƒÆ’Ã‚Â¡ mais fazer "white-label" (esconder a marca original) de ferramentas open source. Em vez disso, o site se assumirÃƒÆ’Ã‚Â¡ como o **Maior RepositÃƒÆ’Ã‚Â³rio e Ambiente de ExecuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Open Source do Mundo**. 
+
+1. **Curadoria Transparente:** O site listarÃƒÆ’Ã‚Â¡ as ferramentas com seus nomes reais (Photopea, Polotno, AudioMass, etc.), permitindo que o usuÃƒÆ’Ã‚Â¡rio escolha seu editor favorito entre vÃƒÆ’Ã‚Â¡rias opÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
+
+2. **Processamento na Nuvem:** O grande diferencial ÃƒÆ’Ã‚Â© que todas essas ferramentas e modelos estarÃƒÆ’Ã‚Â£o "plug-and-play", com o processamento pesado (renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, IA) roteado silenciosamente para a nossa frota de GPUs na Modal. O usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o precisa de um PC forte.
+
+3. **A Cereja do Bolo (O Produto Real):** O verdadeiro produto proprietÃƒÆ’Ã‚Â¡rio do Apollo Edit Web nÃƒÆ’Ã‚Â£o sÃƒÆ’Ã‚Â£o os editores manuais, mas sim o **Sistema de AutomatizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de ProduÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em Massa** (ex: "Gere 30 vÃƒÆ’Ã‚Â­deos para o TikTok em 1 clique"). Os editores open source servem como uma isca valiosa para atrair criadores, que acabarÃƒÆ’Ã‚Â£o consumindo o nosso motor de automaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pago/monetizado.
+
+4. **Armazenamento e Peso:** A plataforma terÃƒÆ’Ã‚Â¡ dezenas de integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes, mas serÃƒÆ’Ã‚Â¡ otimizada via Iframes e processamento Server-Side (Modal) para nÃƒÆ’Ã‚Â£o sobrecarregar a hospedagem do site.
+
+5. **O Editor de VÃƒÆ’Ã‚Â­deo IA (O Diferencial Competitivo):** Enquanto os iframes open source servem para ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o manual tradicional, a principal ferramenta nativa do Apollo Edit Web serÃƒÆ’Ã‚Â¡ o *Editor Orientado por Chatbot*. O usuÃƒÆ’Ã‚Â¡rio conversarÃƒÆ’Ã‚Â¡ com a IA, e a IA farÃƒÆ’Ã‚Â¡ os cortes e ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes na timeline automaticamente (similar ao paradigma do Cursor/Codex para cÃƒÆ’Ã‚Â³digo, mas aplicado ao audiovisual).
+
+6. **Hub Agnostic (Open Source + APIs Pagas):** O motor SaaS do Apollo nÃƒÆ’Ã‚Â£o se limitarÃƒÆ’Ã‚Â¡ ao Open Source. Ele usarÃƒÆ’Ã‚Â¡ os modelos abertos (FLUX, LTX, TTS) para baratear custos e sustentar as automaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes, mas tambÃƒÆ’Ã‚Â©m oferecerÃƒÆ’Ã‚Â¡ integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes com APIs proprietÃƒÆ’Ã‚Â¡rias de ponta (Kling, Veo 3.1, Sora) para usuÃƒÆ’Ã‚Â¡rios premium que desejam o estado da arte absoluto. O usuÃƒÆ’Ã‚Â¡rio escolhe o caminho.
+
+7. **Arquitetura HÃƒÆ’Ã‚Â­brida para Editores Web (Offloading):** Embora as interfaces dos editores open source (ex: editor de vÃƒÆ’Ã‚Â­deo) rodem no navegador, o processamento pesado (ex: renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de FFmpeg, exports pesados, aplicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de efeitos) **NÃƒÆ’Ã†â€™O** deve ser feito usando os recursos da mÃƒÆ’Ã‚Â¡quina do usuÃƒÆ’Ã‚Â¡rio. O sistema deve offload (transferir) as tarefas de renderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o pesada para os servidores da **Modal**, garantindo que o computador do usuÃƒÆ’Ã‚Â¡rio nÃƒÆ’Ã‚Â£o trave e a experiÃƒÆ’Ã‚Âªncia permaneÃƒÆ’Ã‚Â§a fluida, independentemente do hardware do cliente.
+
+8. **MonetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Ferramentas Open Source (Paywall de RenderizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o):** A estratÃƒÆ’Ã‚Â©gia de negÃƒÆ’Ã‚Â³cios para **TODAS** as ferramentas de ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o open source inseridas no site (ex: Freecut, Polotno, etc) baseia-se em um modelo "Free to Edit, Pay to Render". O usuÃƒÆ’Ã‚Â¡rio tem uso livre da interface no navegador. NÃƒÆ’Ã‚Â£o entanto, o botÃƒÆ’Ã‚Â£o de "Renderizar/Exportar" serÃƒÆ’Ã‚Â¡ interceptado pelo nosso sistema. Ao clicar em Render, o sistema calcularÃƒÆ’Ã‚Â¡ o custo de processamento (em "Apollo Coins" ou "CombustÃƒÆ’Ã‚Â­vel") e exibirÃƒÆ’Ã‚Â¡ para o usuÃƒÆ’Ã‚Â¡rio. Somente apÃƒÆ’Ã‚Â³s o dÃƒÆ’Ã‚Â©bito no saldo do usuÃƒÆ’Ã‚Â¡rio, o pacote de dados ÃƒÆ’Ã‚Â© enviado para a Modal realizar o processamento em nuvem (FFmpeg, etc). Isso garante que todo custo de processamento gerado na Modal seja coberto pelo usuÃƒÆ’Ã‚Â¡rio, gerando lucro direto para o Apollo Edit Web.
+
+
+
+- [FIX UI] Corrigido o bug visual do CustomTkinter onde os campos de texto (roteiro, prompts) ficavam esmagados. SubstituÃƒâ€šÃ‚Â­dos os tk.Text originais por ctk.CTkTextbox responsivos, fontes ampliadas para legibilidade, sem perder a integraÃƒÆ’Ã‚Â§Ãƒâ€šÃ‚Â£o do Dark Mode.
 
 
 
@@ -2932,7 +2954,7 @@ O usuÃƒÂ¡rio tomou uma decisÃƒÂ£o de negÃƒÂ³cios e arquitetura brilh
 
 - **FLUX.1-Redux Integrado:** O motor na nuvem foi atualizado para suportar multiplas imagens de referencia simultaneas via Redux, permitindo transferencia de estilo zero-shot e fusao de personagens altamente consistente. Interface local (Tinker) adaptada.
 
-- **Visao de Futuro (LoRAs / Civitai):** O Diretor tracou um objetivo claro de transformar o Apollo Edit Web numa central generativa com dezenas de LoRAs (Civitai) pre-selecionados. A arquitetura definida para quando formos implementar sera o uso de **Volumes na nuvem (Modal)** para cachear os modelos sob demanda sem inchar a imagem Docker, e injeÃƒÂ§ÃƒÂ£o rapida via load_lora_weights() do diffusers.
+- **Visao de Futuro (LoRAs / Civitai):** O Diretor tracou um objetivo claro de transformar o Apollo Edit Web numa central generativa com dezenas de LoRAs (Civitai) pre-selecionados. A arquitetura definida para quando formos implementar sera o uso de **Volumes na nuvem (Modal)** para cachear os modelos sob demanda sem inchar a imagem Docker, e injeÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o rapida via load_lora_weights() do diffusers.
 
 
 
@@ -2948,79 +2970,79 @@ O usuÃƒÂ¡rio tomou uma decisÃƒÂ£o de negÃƒÂ³cios e arquitetura brilh
 
 
 
-## Ã°Å¸Â¤â€“ 7. Nova Arquitetura de InteligÃƒÂªncia (OrquestraÃƒÂ§ÃƒÂ£o Swarm Multi-Agentes)
+## ÃƒÂ°Ã…Â¸Ã‚Â¤Ã¢â‚¬â€œ 7. Nova Arquitetura de InteligÃƒÆ’Ã‚Âªncia (OrquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Swarm Multi-Agentes)
 
-O Apollo Edit Web evoluiu de prompts ÃƒÂºnicos para uma verdadeira linha de montagem cognitiva, dividida em nÃƒÂ­veis hierÃƒÂ¡rquicos para garantir precisÃƒÂ£o e velocidade:
+O Apollo Edit Web evoluiu de prompts ÃƒÆ’Ã‚Âºnicos para uma verdadeira linha de montagem cognitiva, dividida em nÃƒÆ’Ã‚Â­veis hierÃƒÆ’Ã‚Â¡rquicos para garantir precisÃƒÆ’Ã‚Â£o e velocidade:
 
-1. **Atendente (ReceituÃƒÂ¡rio):** Analisa a intenÃƒÂ§ÃƒÂ£o e gera a Planta Baixa (estimativas de imagens e tempo).
+1. **Atendente (ReceituÃƒÆ’Ã‚Â¡rio):** Analisa a intenÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o e gera a Planta Baixa (estimativas de imagens e tempo).
 
-2. **Gerente:** Gera o Roteiro Master de acordo com o padrÃƒÂ£o do canal.
+2. **Gerente:** Gera o Roteiro Master de acordo com o padrÃƒÆ’Ã‚Â£o do canal.
 
-3. **Analista AvanÃƒÂ§ado (Fatiador):** Pica o roteiro em dezenas de tarefas tÃƒÂ©cnicas (Prompts de imagens, Mapeamentos de 4 camadas: VÃƒÂ­deo, Template, ConfiguraÃƒÂ§ÃƒÂ£o, e ÃƒÆ’udio LipSync/NarraÃƒÂ§ÃƒÂ£o).
+3. **Analista AvanÃƒÆ’Ã‚Â§ado (Fatiador):** Pica o roteiro em dezenas de tarefas tÃƒÆ’Ã‚Â©cnicas (Prompts de imagens, Mapeamentos de 4 camadas: VÃƒÆ’Ã‚Â­deo, Template, ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, e ÃƒÆ’Ã†â€™udio LipSync/NarraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o).
 
-4. **Swarm (Minions EconÃƒÂ´micos):** Modelos mais baratos rodam em paralelo para executar micro-tarefas rÃƒÂ¡pidas e isoladas.
+4. **Swarm (Minions EconÃƒÆ’Ã‚Â´micos):** Modelos mais baratos rodam em paralelo para executar micro-tarefas rÃƒÆ’Ã‚Â¡pidas e isoladas.
 
-5. **Corretor de CongruÃƒÂªncia (QA):** Testa as discrepÃƒÂ¢ncias de tempo. Se o ÃƒÂ¡ÃƒÂ¡udio Lip Sync se choca com a narraÃƒÂ§ÃƒÂ£o sem sentido, ele recusa a fatia e a devolve para o Gerente corrigir, montando os "Quadradinhos MÃƒÂ¡gicos" da ÃƒÆ’rea de TransferÃƒÂªncia quando aprovado.
-
-
-
-*DocumentaÃƒÂ§ÃƒÂ£o expandida sobre o fluxo visual da Timeline encontra-se em mapeamento_arquitetura.md.*
+5. **Corretor de CongruÃƒÆ’Ã‚Âªncia (QA):** Testa as discrepÃƒÆ’Ã‚Â¢ncias de tempo. Se o ÃƒÆ’Ã‚Â¡ÃƒÆ’Ã‚Â¡udio Lip Sync se choca com a narraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o sem sentido, ele recusa a fatia e a devolve para o Gerente corrigir, montando os "Quadradinhos MÃƒÆ’Ã‚Â¡gicos" da ÃƒÆ’Ã†â€™rea de TransferÃƒÆ’Ã‚Âªncia quando aprovado.
 
 
 
+*DocumentaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o expandida sobre o fluxo visual da Timeline encontra-se em mapeamento_arquitetura.md.*
 
 
-### [OTIMIZAÃƒâ€¡ÃƒÆ’O EXTREMA FLUX - 29/06/2026]
+
+
+
+### [OTIMIZAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O EXTREMA FLUX - 29/06/2026]
 
 - **Velocidade Nanoabanana na Nuvem:** Conseguimos fazer o FLUX (Schnell e Dev) + Redux rodarem em 7.69 segundos na placa A10G barata (.0017 por imagem).
 
-- **O Segredo (8-bit total):** Carregamos simultaneamente o T5 Text Encoder e o Transformer em 8-bits nativos usando itsandbytes. Isso evitou o uso de CPU offloading (que causava lentidÃƒÂ£o extrema) e manteve tudo na VRAM de 24GB sem estourar. O fluxo agora ÃƒÂ© idÃƒÂªntico ao workflow GGUF do ComfyUI, mas rodando serverless na Modal.
+- **O Segredo (8-bit total):** Carregamos simultaneamente o T5 Text Encoder e o Transformer em 8-bits nativos usando itsandbytes. Isso evitou o uso de CPU offloading (que causava lentidÃƒÆ’Ã‚Â£o extrema) e manteve tudo na VRAM de 24GB sem estourar. O fluxo agora ÃƒÆ’Ã‚Â© idÃƒÆ’Ã‚Âªntico ao workflow GGUF do ComfyUI, mas rodando serverless na Modal.
 
 
 
-### [MIGRAÃƒâ€¡ÃƒÆ’O FRONTEND BATCH - 29/06/2026]
+### [MIGRAÃƒÆ’Ã¢â‚¬Â¡ÃƒÆ’Ã†â€™O FRONTEND BATCH - 29/06/2026]
 
-- O componente de execuÃƒÂ§ÃƒÂ£o em lote (JobRunner) completo do projeto Apollo La Plata foi portado com sucesso para a interface principal do Apollo Edit Web.
+- O componente de execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em lote (JobRunner) completo do projeto Apollo La Plata foi portado com sucesso para a interface principal do Apollo Edit Web.
 
-- A UI agora suporta nativamente a chamada via proxy para a infraestrutura do FLUX Dev (Modal A10G), pronta para testes de calibraÃƒÂ§ÃƒÂ£o Redux de acordo com o pedido do Diretor.
+- A UI agora suporta nativamente a chamada via proxy para a infraestrutura do FLUX Dev (Modal A10G), pronta para testes de calibraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Redux de acordo com o pedido do Diretor.
 
 
 
-### [ARQUITETURA HISTÃƒâ€œRICA: OS 8 PILARES DO APOLLO EDIT WEB - 29/06/2026]
+### [ARQUITETURA HISTÃƒÆ’Ã¢â‚¬Å“RICA: OS 8 PILARES DO APOLLO EDIT WEB - 29/06/2026]
 
-O Diretor explicou a histÃƒÂ³ria e a composiÃƒÂ§ÃƒÂ£o arquitetÃƒÂ´nica final do sistema Apollo Edit Web, que ÃƒÂ© a fusÃƒÂ£o definitiva de 4 forÃƒÂ§as legadas e 4 forÃƒÂ§as modernas:
+O Diretor explicou a histÃƒÆ’Ã‚Â³ria e a composiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o arquitetÃƒÆ’Ã‚Â´nica final do sistema Apollo Edit Web, que ÃƒÆ’Ã‚Â© a fusÃƒÆ’Ã‚Â£o definitiva de 4 forÃƒÆ’Ã‚Â§as legadas e 4 forÃƒÆ’Ã‚Â§as modernas:
 
-1. **Apollo Ferramentas:** A primeira base, focada em sistemas de mineraÃƒÂ§ÃƒÂ£o de vÃƒÂ­deo na internet.
+1. **Apollo Ferramentas:** A primeira base, focada em sistemas de mineraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de vÃƒÆ’Ã‚Â­deo na internet.
 
-2. **Motor Python / Aba Diretor:** As ferramentas locais e scripts em Python criados pelo Diretor para ediÃƒÂ§ÃƒÂ£o avanÃƒÂ§ada via FFmpeg.
+2. **Motor Python / Aba Diretor:** As ferramentas locais e scripts em Python criados pelo Diretor para ediÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o avanÃƒÆ’Ã‚Â§ada via FFmpeg.
 
-3. **Central de NotÃƒÂ­cias:** Um sistema de varredura web de conteÃƒÂºdo, projetado para buscar imagens e cobrir narrativas temporais (b-roll automÃƒÂ¡tico) a partir do Google, Pixabay e fontes de notÃƒÂ­cias.
+3. **Central de NotÃƒÆ’Ã‚Â­cias:** Um sistema de varredura web de conteÃƒÆ’Ã‚Âºdo, projetado para buscar imagens e cobrir narrativas temporais (b-roll automÃƒÆ’Ã‚Â¡tico) a partir do Google, Pixabay e fontes de notÃƒÆ’Ã‚Â­cias.
 
-4. **Gerador de HistÃƒÂ³ria por Imagem:** (A mÃƒÂ¡quina que acabamos de portar para o front). Evoluiu de simples geraÃƒÂ§ÃƒÂ£o em lote na Banana para um ecossistema completo de: banco de personagens, reescrita de prompts, post/carrossel, extensÃƒÂµes (VL3), e continuidade visual (Redux/Flux). Aqui ÃƒÂ© onde Flux e LTX farÃƒÂ£o o workflow: cena 1 a 10 (Imagens) -> cena 1 a 10 (AnimaÃƒÂ§ÃƒÂµes).
+4. **Gerador de HistÃƒÆ’Ã‚Â³ria por Imagem:** (A mÃƒÆ’Ã‚Â¡quina que acabamos de portar para o front). Evoluiu de simples geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em lote na Banana para um ecossistema completo de: banco de personagens, reescrita de prompts, post/carrossel, extensÃƒÆ’Ã‚Âµes (VL3), e continuidade visual (Redux/Flux). Aqui ÃƒÆ’Ã‚Â© onde Flux e LTX farÃƒÆ’Ã‚Â£o o workflow: cena 1 a 10 (Imagens) -> cena 1 a 10 (AnimaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes).
 
 5. **Os Modelos de IA:** A frota de IAs Open Source na nuvem (Flux, LTX, Wan).
 
-6. **O LLM:** A InteligÃƒÂªncia Artificial gerativa orquestrando a lÃƒÂ³gica, roteiros e prompts.
+6. **O LLM:** A InteligÃƒÆ’Ã‚Âªncia Artificial gerativa orquestrando a lÃƒÆ’Ã‚Â³gica, roteiros e prompts.
 
-7. **O Diretor:** O comandante que toma as decisÃƒÂµes de negÃƒÂ³cios e arte.
+7. **O Diretor:** O comandante que toma as decisÃƒÆ’Ã‚Âµes de negÃƒÆ’Ã‚Â³cios e arte.
 
-8. **O Agente (Antigravity):** O construtor que escreve e mantÃƒÂ©m a arquitetura de software e a integridade da Colmeia.
+8. **O Agente (Antigravity):** O construtor que escreve e mantÃƒÆ’Ã‚Â©m a arquitetura de software e a integridade da Colmeia.
 
-A equipe estÃƒÂ¡ formalmente completa e o objetivo final do sistema estÃƒÂ¡ 100% claro e alinhado.
-
-
-
-- **VisÃƒÂ£o de NegÃƒÂ³cios e Produto Final:** O Apollo Edit Web unificarÃƒÂ¡ as ferramentas antigas do Diretor rodando silenciosamente no backend (segundo plano). O cliente final terÃƒÂ¡ a experiÃƒÂªncia de gerar vÃƒÂ­deos *100% originais e sem copyright* sob demanda. A monetizaÃƒÂ§ÃƒÂ£o serÃƒÂ¡ atravÃƒÂ©s do consumo de crÃƒÂ©ditos ("Apollo Coins" / CombustÃƒÂ­vel). O sistema entregarÃƒÂ¡ valor extremo (canais monetizÃƒÂ¡veis ÃƒÂ  prova de banimento) cobrando pela facilidade de uso, garantindo extrema lucratividade.
+A equipe estÃƒÆ’Ã‚Â¡ formalmente completa e o objetivo final do sistema estÃƒÆ’Ã‚Â¡ 100% claro e alinhado.
 
 
 
-- **Diretriz Operacional:** O Agente estÃƒÂ¡ proibido de rodar o servidor frontend (
-
-pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ­cios de servidores e serviÃƒÂ§os devem passar pelo terminal do arquivo .bat controlado diretamente pelo Diretor.
+- **VisÃƒÆ’Ã‚Â£o de NegÃƒÆ’Ã‚Â³cios e Produto Final:** O Apollo Edit Web unificarÃƒÆ’Ã‚Â¡ as ferramentas antigas do Diretor rodando silenciosamente no backend (segundo plano). O cliente final terÃƒÆ’Ã‚Â¡ a experiÃƒÆ’Ã‚Âªncia de gerar vÃƒÆ’Ã‚Â­deos *100% originais e sem copyright* sob demanda. A monetizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o serÃƒÆ’Ã‚Â¡ atravÃƒÆ’Ã‚Â©s do consumo de crÃƒÆ’Ã‚Â©ditos ("Apollo Coins" / CombustÃƒÆ’Ã‚Â­vel). O sistema entregarÃƒÆ’Ã‚Â¡ valor extremo (canais monetizÃƒÆ’Ã‚Â¡veis ÃƒÆ’Ã‚Â  prova de banimento) cobrando pela facilidade de uso, garantindo extrema lucratividade.
 
 
 
-- **DiagnÃƒÂ³stico de ConsistÃƒÂªncia (FLUX Redux vs Nano Banana):** O teste com FLUX Redux e Character Sheet revelou a diferenÃƒÂ§a fundamental de arquitetura. O Redux (Modal) atua como um 'Image Prompt' global (copiando estilo e composiÃƒÂ§ÃƒÂ£o). Ao receber um character sheet, ele forÃƒÂ§a a geraÃƒÂ§ÃƒÂ£o de um character sheet, ignorando o prompt de ambiente ('andando de bicicleta'). O Nano Banana utilizava tÃƒÂ©cnicas de isolamento facial (IP-Adapter FaceID ou PuLID). SoluÃƒÂ§ÃƒÂ£o estratÃƒÂ©gica necessÃƒÂ¡ria: Migrar o motor de imagem para um workflow com PuLID/FaceID para atingir o nÃƒÂ­vel de controle de personagem desejado.
+- **Diretriz Operacional:** O Agente estÃƒÆ’Ã‚Â¡ proibido de rodar o servidor frontend (
+
+pm run dev) em execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de background isoladas. Todos os inÃƒÆ’Ã‚Â­cios de servidores e serviÃƒÆ’Ã‚Â§os devem passar pelo terminal do arquivo .bat controlado diretamente pelo Diretor.
+
+
+
+- **DiagnÃƒÆ’Ã‚Â³stico de ConsistÃƒÆ’Ã‚Âªncia (FLUX Redux vs Nano Banana):** O teste com FLUX Redux e Character Sheet revelou a diferenÃƒÆ’Ã‚Â§a fundamental de arquitetura. O Redux (Modal) atua como um 'Image Prompt' global (copiando estilo e composiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o). Ao receber um character sheet, ele forÃƒÆ’Ã‚Â§a a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um character sheet, ignorando o prompt de ambiente ('andando de bicicleta'). O Nano Banana utilizava tÃƒÆ’Ã‚Â©cnicas de isolamento facial (IP-Adapter FaceID ou PuLID). SoluÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o estratÃƒÆ’Ã‚Â©gica necessÃƒÆ’Ã‚Â¡ria: Migrar o motor de imagem para um workflow com PuLID/FaceID para atingir o nÃƒÆ’Ã‚Â­vel de controle de personagem desejado.
 
 
 
@@ -3052,23 +3074,23 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
 
 
 
-### [PIVÃƒâ€� ARQUITETURAL DEFINITIVO: COMFYUI SERVERLESS A10G - 30/06/2026]
+### [PIVÃƒÆ’Ã¢â‚¬ï¿½ ARQUITETURAL DEFINITIVO: COMFYUI SERVERLESS A10G - 30/06/2026]
 
-- **DecisÃƒÂ£o Final do Diretor:** O plano de traduzir os fluxos para Python Puro (Diffusers) estÃƒÂ¡ oficialmente CANCELADO. A enorme complexidade de lidar com dependÃƒÂªncias (`torchsde`), custom nodes (`ReferenceLatent`) e matemÃƒÂ¡ticas avanÃƒÂ§adas do ecossistema provou que o Python nativo nÃƒÂ£o ÃƒÂ© o caminho.
+- **DecisÃƒÆ’Ã‚Â£o Final do Diretor:** O plano de traduzir os fluxos para Python Puro (Diffusers) estÃƒÆ’Ã‚Â¡ oficialmente CANCELADO. A enorme complexidade de lidar com dependÃƒÆ’Ã‚Âªncias (`torchsde`), custom nodes (`ReferenceLatent`) e matemÃƒÆ’Ã‚Â¡ticas avanÃƒÆ’Ã‚Â§adas do ecossistema provou que o Python nativo nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© o caminho.
 
-- **A Nova Era:** O backend generativo agora ÃƒÂ© 100% **ComfyUI Serverless**. O sistema foi refatorado para ler arquivos `.json` exportados do ComfyUI, alocar dinamicamente instÃƒÂ¢ncias na GPU **A10G**, rodar `comfy node install-deps` e faturar a geraÃƒÂ§ÃƒÂ£o (jÃƒÂ¡ validada em incrÃƒÂ­veis 12.64s). Isso custa o preÃƒÂ§o de um Cold Start duplo, mas traz o benefÃƒÂ­cio da escalabilidade horizontal ilimitada e versatilidade total.
+- **A Nova Era:** O backend generativo agora ÃƒÆ’Ã‚Â© 100% **ComfyUI Serverless**. O sistema foi refatorado para ler arquivos `.json` exportados do ComfyUI, alocar dinamicamente instÃƒÆ’Ã‚Â¢ncias na GPU **A10G**, rodar `comfy node install-deps` e faturar a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (jÃƒÆ’Ã‚Â¡ validada em incrÃƒÆ’Ã‚Â­veis 12.64s). Isso custa o preÃƒÆ’Ã‚Â§o de um Cold Start duplo, mas traz o benefÃƒÆ’Ã‚Â­cio da escalabilidade horizontal ilimitada e versatilidade total.
 
-- **Pausa EstratÃƒÂ©gica:** A sessÃƒÂ£o foi pausada. Na volta, o Diretor entregarÃƒÂ¡ os JSONs otimizados de WAN, LTX e todas as variantes do FLUX para mapeamento final no servidor Modal.
+- **Pausa EstratÃƒÆ’Ã‚Â©gica:** A sessÃƒÆ’Ã‚Â£o foi pausada. Na volta, o Diretor entregarÃƒÆ’Ã‚Â¡ os JSONs otimizados de WAN, LTX e todas as variantes do FLUX para mapeamento final no servidor Modal.
 
 
 
 ### ALERTA DE INFRAESTRUTURA: CONTA MODAL BLOQUEADA (01/07/2026)
 
-- **Causa:** O limite de  de crÃƒÂ©ditos grÃƒÂ¡tis de junho foi ultrapassado (consumo total de .10), gerando uma fatura de real de  que estÃƒÂ¡ pendente.
+- **Causa:** O limite de  de crÃƒÆ’Ã‚Â©ditos grÃƒÆ’Ã‚Â¡tis de junho foi ultrapassado (consumo total de .10), gerando uma fatura de real de  que estÃƒÆ’Ã‚Â¡ pendente.
 
-- **O Problema dos CrÃƒÂ©ditos:** Os novos  adicionados pela Modal no dia 1Ã‚Âº de julho servem apenas para abater o consumo de computaÃƒÂ§ÃƒÂ£o *futuro* (dentro de julho). Eles **nÃƒÂ£o** podem ser usados para pagar a dÃƒÂ­vida do mÃƒÂªs passado (fiat).
+- **O Problema dos CrÃƒÆ’Ã‚Â©ditos:** Os novos  adicionados pela Modal no dia 1Ãƒâ€šÃ‚Âº de julho servem apenas para abater o consumo de computaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o *futuro* (dentro de julho). Eles **nÃƒÆ’Ã‚Â£o** podem ser usados para pagar a dÃƒÆ’Ã‚Â­vida do mÃƒÆ’Ã‚Âªs passado (fiat).
 
-- **AÃƒÂ§ÃƒÂ£o:** O Diretor ordenou manter a conta bloqueada/suspensa por falta de fundos. Nenhuma execuÃƒÂ§ÃƒÂ£o ou deploy deve ser feito na Modal atÃƒÂ© que o Diretor forneÃƒÂ§a uma nova conta ou libere fundos.
+- **AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o:** O Diretor ordenou manter a conta bloqueada/suspensa por falta de fundos. Nenhuma execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ou deploy deve ser feito na Modal atÃƒÆ’Ã‚Â© que o Diretor forneÃƒÆ’Ã‚Â§a uma nova conta ou libere fundos.
 
 
 
@@ -3076,13 +3098,13 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
 
 ### [ERRO GRAVE DE PROTOCOLO E CONTA MODAL - 01/07/2026]
 
-- O Agente cometeu um erro gravÃƒÂ­ssimo: iniciou os trabalhos sem ler a MemÃƒÂ³ria Ativa e o Hive Bus.
+- O Agente cometeu um erro gravÃƒÆ’Ã‚Â­ssimo: iniciou os trabalhos sem ler a MemÃƒÆ’Ã‚Â³ria Ativa e o Hive Bus.
 
 - Como resultado, o Agente ignorou o alerta de que a conta Modal estava BLOQUEADA e realizou um deploy indevido na conta 'macacodriver'.
 
-- O Diretor avisou que criou a 'conta 5', mas o Agente nÃƒÂ£o configurou as credenciais antes de fazer o deploy.
+- O Diretor avisou que criou a 'conta 5', mas o Agente nÃƒÆ’Ã‚Â£o configurou as credenciais antes de fazer o deploy.
 
-- AÃƒÂ§ÃƒÂ£o imediata: O Agente pediu as credenciais da 'conta 5' ao Diretor para configurar o ambiente e consertar o erro.
+- AÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o imediata: O Agente pediu as credenciais da 'conta 5' ao Diretor para configurar o ambiente e consertar o erro.
 
 
 
@@ -3116,7 +3138,7 @@ pm run dev) em execuÃƒÂ§ÃƒÂµes de background isoladas. Todos os inÃƒÂ
 
 
 
-**BUG 2 - ModuleNotFoundError: NÃƒÂ£o module named 'backend' (apollo_modal_engine.py)**
+**BUG 2 - ModuleNotFoundError: NÃƒÆ’Ã‚Â£o module named 'backend' (apollo_modal_engine.py)**
 
 - ERRO: O container do router FastAPI (debian_slim) nao tinha acesso ao pacote 'backend'
 
@@ -3192,7 +3214,7 @@ outer_image
 
 #### PROXIMOS PASSOS APOS CONCLUSAO DO TESTE
 
-1. Verificar qualidade da imagem gerada (comparar com o padrÃƒÂ£o do FLUX.2 via ComfyUI)
+1. Verificar qualidade da imagem gerada (comparar com o padrÃƒÆ’Ã‚Â£o do FLUX.2 via ComfyUI)
 
 2. Medir tempo de geracao reportado no JSON de resposta (render_time_seconds)
 
@@ -3356,7 +3378,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 ### [2026-07-02] ARQUITETURA CONSOLIDADA E ROTEIRO DE EXPANSAO
 
-- Aprovacao do Diretor: A velocidade do Snapshot H100 (cerca de 2min iniciais no Cold Start e poucos segundos nas proximas) com custo de 15 centavos (maximo) a 8 centavos (minimo) foi homologada. Este sera o padrÃƒÂ£o Ouro para geracao via GPU.
+- Aprovacao do Diretor: A velocidade do Snapshot H100 (cerca de 2min iniciais no Cold Start e poucos segundos nas proximas) com custo de 15 centavos (maximo) a 8 centavos (minimo) foi homologada. Este sera o padrÃƒÆ’Ã‚Â£o Ouro para geracao via GPU.
 
 - Diferenciacao de Rotas: O sistema do site devera rotear o usuario de forma inteligente:
 
@@ -3400,7 +3422,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 - A arquitetura (H100 + Serverless ComfyUI) sera a fundacao para dezenas de outras ferramentas no futuro (LipSync, Video, etc). Resolver o gargalo de boot agora resolve para todas as ferramentas futuras.
 
-- Download dos modelos na nova conta pollolaplata concluÃƒÂ­do com sucesso. Teste via Python raw detectou tempo de render (Render time = 67s na H100). O proximo passo e garantir que os memory snapshots sejam aplicados via modal deploy no novo endpoint para zerar o cold start inicial.
+- Download dos modelos na nova conta pollolaplata concluÃƒÆ’Ã‚Â­do com sucesso. Teste via Python raw detectou tempo de render (Render time = 67s na H100). O proximo passo e garantir que os memory snapshots sejam aplicados via modal deploy no novo endpoint para zerar o cold start inicial.
 
 
 
@@ -3492,7 +3514,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 **Conquistas:**
 
-1. Criado um script injetor dinmico (pulid_patch.py) que altera o cÃƒÂ³digo do ComfyUI/PuLID em tempo de build na Modal via dd_local_file.
+1. Criado um script injetor dinmico (pulid_patch.py) que altera o cÃƒÆ’Ã‚Â³digo do ComfyUI/PuLID em tempo de build na Modal via dd_local_file.
 
 2. Resolvido o erro de DoubleStreamBlock (layers.py) que quebrava sem tuplas em ec.
 
@@ -3560,7 +3582,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 ### [MAESTRO - CONTINUIDADE DE CHAT E ANLISE DE MOCKUPS - 04/07/2026]
 
-**Status:** O usuÃƒÂ¡rio migrou para uma nova sessÃƒÂ£o para evitar loop infinito e vazamento de memria. 
+**Status:** O usuÃƒÆ’Ã‚Â¡rio migrou para uma nova sessÃƒÆ’Ã‚Â£o para evitar loop infinito e vazamento de memria. 
 
 **Aes Tomadas:**
 
@@ -3568,9 +3590,9 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 2. Os novos workflows exportados do Config AI foram listados e analisados (Mockup de Produto com FP8, Kontext com ImageStitch).
 
-3. A tese da Diretoria sobre rejeitar `ImageBatch` para mltiplas imagens foi fortalecida. O fluxo correto  o uso de Mltiplos Ns LoadImage isolados (Mapeamento 1:1) como visto na arquitetura do Mockup. O usuÃƒÂ¡rio foi devidamente notificado atravÃƒÂ©s de um relatrio tcnico.
+3. A tese da Diretoria sobre rejeitar `ImageBatch` para mltiplas imagens foi fortalecida. O fluxo correto  o uso de Mltiplos Ns LoadImage isolados (Mapeamento 1:1) como visto na arquitetura do Mockup. O usuÃƒÆ’Ã‚Â¡rio foi devidamente notificado atravÃƒÆ’Ã‚Â©s de um relatrio tcnico.
 
-**Prximo Passo:** Aguardar a autorizao do usuÃƒÂ¡rio para aplicar a parametrizao desses ns no Motor Universal e realizar a geraÃƒÂ§ÃƒÂ£o de teste final.
+**Prximo Passo:** Aguardar a autorizao do usuÃƒÆ’Ã‚Â¡rio para aplicar a parametrizao desses ns no Motor Universal e realizar a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de teste final.
 
 
 
@@ -3714,9 +3736,9 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 **A??es Tomadas:**
 
-1. Diretor observou que a estrutura do character sheet ainda influenciava demais o resultado final.
-
-2. Trocamos os 3 inputs para fotos comuns fornecidas pelo Diretor.
+1. Diretor observou que a estrutura do character sheet ainda influenciava demais o resultado final. - O Maestro tem acesso ao RAG (ChromaDB) no background, mantendo rastreabilidade total do que fazemos e permitindo injeção/recuperação de contexto em tempo real.
+- **Protocolo Aegis**: Existe um script automático (`apollo_aegis_backup.py`) atrelado a um Cron do Windows que compacta e salva as configurações de Agente e arquivos RAG vitais diariamente às 03:00 da manhã no HD `H:\`.
+- **Arsenal Codex**: O ecossistema agora possui uma biblioteca nativa de 38 skills herdadas do Codex (armazenadas em `.agents/skills`), que incluem o `codex_autopilot` para operação automatizada dos canais.. Trocamos os 3 inputs para fotos comuns fornecidas pelo Diretor.
 
 3. Atualizamos o prompt para 'tr?s amigos sentados lado a lado num bar, bebendo, virados para a c?mera'.
 
@@ -3916,11 +3938,11 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 ## [2026-07-04] Integrao Apollo Cloud Multi-Pass Concluda no Frontend Principal
 
-- O frontend principal (E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/frontend) foi atualizado com a opÃƒÂ§ÃƒÂ£o Apollo Cloud (Multi-Pass AI).
+- O frontend principal (E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/frontend) foi atualizado com a opÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Apollo Cloud (Multi-Pass AI).
 
 - O AI Director local (porta 8000) foi reescrito para utilizar a API do OpenRouter e processar o roteiro dos personagens usando Qwen-VL.
 
-- Prximo passo aprovado: Implementar a orquestraÃƒÂ§ÃƒÂ£o do loop (multi_pass_generation) no universal_engine.py (GPU Modal) para rodar os passos sequencialmente sem latÃƒÂªncia de rede adicional.
+- Prximo passo aprovado: Implementar a orquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do loop (multi_pass_generation) no universal_engine.py (GPU Modal) para rodar os passos sequencialmente sem latÃƒÆ’Ã‚Âªncia de rede adicional.
 
 
 
@@ -3934,21 +3956,21 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
   2. Implementado fallback (imagem preta 1024x1024) para injetar na primeira etapa do fluxo multipass quando a imagem base for None.
 
-  3. Foi iniciado o download dos modelos FLUX KLEIN, QWEN e VAE no volume do ComfyUI no Modal (atravÃƒÂ©s de `force_download.py`).
+  3. Foi iniciado o download dos modelos FLUX KLEIN, QWEN e VAE no volume do ComfyUI no Modal (atravÃƒÆ’Ã‚Â©s de `force_download.py`).
 
-- **Alerta do Usurio:** O usuÃƒÂ¡rio informou que eu ignorei a infraestrutura do FLUX que j havia sido criada anteriormente e que eu deveria ter lido o chat anterior para entender como o problema da velocidade/infraestrutura do ComfyUI j havia sido resolvido.
+- **Alerta do Usurio:** O usuÃƒÆ’Ã‚Â¡rio informou que eu ignorei a infraestrutura do FLUX que j havia sido criada anteriormente e que eu deveria ter lido o chat anterior para entender como o problema da velocidade/infraestrutura do ComfyUI j havia sido resolvido.
 
-- **Ao Pendente (Amanh):** Ler detalhadamente o chat antigo e a memria para recuperar a infraestrutura otimizada do FLUX antes de tentar rodar o multipass novamente. NÃƒÂ£o tentar "reinventar a roda" com os workflows, usar a infraestrutura j estabelecida.
+- **Ao Pendente (Amanh):** Ler detalhadamente o chat antigo e a memria para recuperar a infraestrutura otimizada do FLUX antes de tentar rodar o multipass novamente. NÃƒÆ’Ã‚Â£o tentar "reinventar a roda" com os workflows, usar a infraestrutura j estabelecida.
 
 
 
 ## ATUALIZAO SESSO (05/07/2026) - MANH
 
-- **Ao:** O usuÃƒÂ¡rio retornou. Lemos o histÃƒÂ³rico e identificamos os problemas cometidos pela sessÃƒÂ£o anterior. 
+- **Ao:** O usuÃƒÆ’Ã‚Â¡rio retornou. Lemos o histÃƒÆ’Ã‚Â³rico e identificamos os problemas cometidos pela sessÃƒÆ’Ã‚Â£o anterior. 
 
 - **Correes:** 1) Restauramos enable_memory_snapshot=True no UniversalComfyEngine e o isolamento de CPU na inicializao, garantindo a inicializao ultra rpida na Modal; 2) Corrigimos o extra_model_paths.yaml para montar o volume secundrio (pollo-comfy-volume) e mapear diffusion_models, 	ext_encoders e ae, pois os modelos estavam escondidos l e o ComfyUI no os encontrava, resultando nos erros silenciosos de multi-pass. 
 
-- **Status Atual:** Um script de validao (	est_engine_direct.py) est sendo executado para rodar a tcnica multi-pass com o arquivo original esttico JSON workflow_multipass_klein.json em nuvem, garantindo a preservaÃƒÂ§ÃƒÂ£o da qualidade exigida pelo usuÃƒÂ¡rio.
+- **Status Atual:** Um script de validao (	est_engine_direct.py) est sendo executado para rodar a tcnica multi-pass com o arquivo original esttico JSON workflow_multipass_klein.json em nuvem, garantindo a preservaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da qualidade exigida pelo usuÃƒÆ’Ã‚Â¡rio.
 
 
 
@@ -3960,7 +3982,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 **Aes Tomadas:**
 
-1. O usuÃƒÂ¡rio alertou que os workflows antigos estavam destrudos.
+1. O usuÃƒÆ’Ã‚Â¡rio alertou que os workflows antigos estavam destrudos.
 
 2. Analisando o workflow_multipass_klein.json, descobrimos que o n APOLLO_CHAR_IMAGE estava solto, sem conectar no ReferenceLatent.
 
@@ -3968,7 +3990,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 4. O teste rodou perfeitamente e gerou a imagem no Modal.
 
-5. O usuÃƒÂ¡rio aprovou a imagem gerada pelo Klein.
+5. O usuÃƒÆ’Ã‚Â¡rio aprovou a imagem gerada pelo Klein.
 
 6. Teste paralelo com PuLID est rodando para tentar atingir a qualidade exata do Nano Banana (mapeamento facial via InsightFace).
 
@@ -3982,7 +4004,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 **Observaes:**
 
-1. O usuÃƒÂ¡rio confirmou que a estratgia de loops (multi-pass) foi a chave para resolver o problema de mltiplos personagens, imitando o comportamento do Nano Banana.
+1. O usuÃƒÆ’Ã‚Â¡rio confirmou que a estratgia de loops (multi-pass) foi a chave para resolver o problema de mltiplos personagens, imitando o comportamento do Nano Banana.
 
 2. A imagem gerada pelo Klein teve uma esttica agradvel, mas a consistncia da garota precisa melhorar.
 
@@ -3990,7 +4012,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 4. A fundao de Engenharia Backend est 100% selada: O motor consegue encadear N personagens na nuvem (Modal) rapidamente.
 
-5. Prximo passo: Ajustar parÃƒÂ¢metros/workflows para melhorar a esttica e fidelidade (consistncia), e ligar isso no frontend.
+5. Prximo passo: Ajustar parÃƒÆ’Ã‚Â¢metros/workflows para melhorar a esttica e fidelidade (consistncia), e ligar isso no frontend.
 
 
 
@@ -4032,7 +4054,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 **Status:** Ideia capturada e registrada para o futuro.
 
-**VisÃƒÂ£o do Diretor:** O Diretor delineou um projeto paralelo para gerar receita via anncios. Consiste em criar uma frota de "Pequenos Sites/Blogs" (ex: Observador Econmico focado em educao financeira/administrativa).
+**VisÃƒÆ’Ã‚Â£o do Diretor:** O Diretor delineou um projeto paralelo para gerar receita via anncios. Consiste em criar uma frota de "Pequenos Sites/Blogs" (ex: Observador Econmico focado em educao financeira/administrativa).
 
 **Arquitetura Proposta:**
 
@@ -4042,9 +4064,9 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 3. **Escalabilidade:** O projeto deve atuar de forma autnoma (robs postando diariamente contedos temticos e imagens), ranqueando em SEO e monetizando com Ads (banners laterais/internos).
 
-4. **Deciso:** Esta  uma semente para um **novo projeto (novo chat/agente)** aps finalizarmos a fundao do Apollo Edit Web. O foco imediato continua sendo testar e lapidar a integraÃƒÂ§ÃƒÂ£o Web do Flux Dev 2.
+4. **Deciso:** Esta  uma semente para um **novo projeto (novo chat/agente)** aps finalizarmos a fundao do Apollo Edit Web. O foco imediato continua sendo testar e lapidar a integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Web do Flux Dev 2.
 
-5. **Evoluo para SaaS (Produto Apollo):** A longo prazo, aps validao interna (fazendo nossos prÃƒÂ³prios blogs lucrarem), este sistema CMS autnomo ser empacotado e revendido como um servio/mdulo adicional dentro do ecossistema Apollo Edit Web para clientes finais.
+5. **Evoluo para SaaS (Produto Apollo):** A longo prazo, aps validao interna (fazendo nossos prÃƒÆ’Ã‚Â³prios blogs lucrarem), este sistema CMS autnomo ser empacotado e revendido como um servio/mdulo adicional dentro do ecossistema Apollo Edit Web para clientes finais.
 
 
 
@@ -4054,7 +4076,7 @@ equests) e conectamos diretamente via RPC utilizando a SDK da Modal (modal.Cls.l
 
 **Status:** Plano aprovado, iniciando implementao.
 
-**Deciso:** O CMS deixar de usar um nico prompt longo. Ser construdo um pipeline de Agentes (Researcher -> Writer -> Editor) garantindo checagem de fatos via ferramentas externas (Brave Search API) e uma formatao luxuosa por um rob revisor. Alm disso, a monetizao ser baseada em 4 espaos fixos por pÃƒÂ¡gina (sem popups).
+**Deciso:** O CMS deixar de usar um nico prompt longo. Ser construdo um pipeline de Agentes (Researcher -> Writer -> Editor) garantindo checagem de fatos via ferramentas externas (Brave Search API) e uma formatao luxuosa por um rob revisor. Alm disso, a monetizao ser baseada em 4 espaos fixos por pÃƒÆ’Ã‚Â¡gina (sem popups).
 
 
 
@@ -4112,7 +4134,7 @@ O motor agora n?o ? apenas um publicador, mas uma verdadeira rede aut?noma multi
 
 Em resposta a ordem do Diretor de realizar execucoes prolongadas em batch sem interrupcao:
 
-1. **Glassmorphism Universal (Painel Admin):** Todas as paginas do Painel Admin (Dashboard, Configuracoes, Aparencia, Plugins, Megafone, Leads, Newsletter, Console e Media) foram totalmente refatoradas. O padrÃƒÂ£o visual agora utiliza backdrop-blur-2xl, containers bg-slate-900/60, e efeitos neon premium consistentes.
+1. **Glassmorphism Universal (Painel Admin):** Todas as paginas do Painel Admin (Dashboard, Configuracoes, Aparencia, Plugins, Megafone, Leads, Newsletter, Console e Media) foram totalmente refatoradas. O padrÃƒÆ’Ã‚Â£o visual agora utiliza backdrop-blur-2xl, containers bg-slate-900/60, e efeitos neon premium consistentes.
 
 2. **Frontend Polish:** O portal publico recebeu aprimoramentos para combinar com a qualidade 'Apollo OS', utilizando cards modernos e grids responsivos de alta fidelidade.
 
@@ -4126,15 +4148,15 @@ O sistema esta agora 100% lapidado visualmente e pronto para o trafego em grande
 
 1. Bug Crtico de Sintaxe: Encontrado e corrigido um bug fatal no swarm.ts que quebrava o parser do JS devido a uma string template no finalizada (linha 74).
 
-2. Omni-Scraper 2.0: O scraper nativo no usava mais "mocks". A integraÃƒÂ§ÃƒÂ£o com Instagram e Twitter foi substituda por scrapers verdadeiros via a ponte RSSHub. O CMS agora vigia *de fato* redes sociais.
+2. Omni-Scraper 2.0: O scraper nativo no usava mais "mocks". A integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com Instagram e Twitter foi substituda por scrapers verdadeiros via a ponte RSSHub. O CMS agora vigia *de fato* redes sociais.
 
-3. Internalizao de Mdia: O originalTopic foi restaurado na funÃƒÂ§ÃƒÂ£o de escrita (editAndPublish), ativando a renderizao nativa de embeds do YouTube e Instagram.
+3. Internalizao de Mdia: O originalTopic foi restaurado na funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de escrita (editAndPublish), ativando a renderizao nativa de embeds do YouTube e Instagram.
 
 
 
 ## Fase 47 Concluida - Terminal AI Upgrade e Mock de E-mail Substituto - 06/07/2026
 
-1. Terminal da Redao atualizado: Incluso dos comandos avanados 'scrapar web' e 'disparar email' permitindo ativao manual do motor de IA atravÃƒÂ©s da interface /admin/console.
+1. Terminal da Redao atualizado: Incluso dos comandos avanados 'scrapar web' e 'disparar email' permitindo ativao manual do motor de IA atravÃƒÆ’Ã‚Â©s da interface /admin/console.
 
 2. Carteiro Neural (Newsletter): O mock em comentrios foi descartado. Implementado o Ethereal Email Testing nativo. A IA agora redige e dispara e-mails verdadeiros para a base de testes gerando uma URL validvel no backend.
 
@@ -4142,15 +4164,15 @@ O sistema esta agora 100% lapidado visualmente e pronto para o trafego em grande
 
 ## Fase 48 Concluida - Recursos de Ponta (AI Chatbot & UX) - 06/07/2026
 
-1. Article Chatbot (RAG Local): Injetado um botÃƒÂ£o flutuante de Assistente de Leitura em todos os artigos. O leitor agora pode conversar com a IA sobre o texto do artigo. O backend (/api/chat) usa Gemini 1.5 Flash isolando a RAG apenas no texto da tela.
+1. Article Chatbot (RAG Local): Injetado um botÃƒÆ’Ã‚Â£o flutuante de Assistente de Leitura em todos os artigos. O leitor agora pode conversar com a IA sobre o texto do artigo. O backend (/api/chat) usa Gemini 1.5 Flash isolando a RAG apenas no texto da tela.
 
-2. Reading Progress Bar: Instalada uma barra de progresso neon no topo da tela que acompanha o scroll do leitor, padrÃƒÂ£o absoluto em design editorial moderno.
+2. Reading Progress Bar: Instalada uma barra de progresso neon no topo da tela que acompanha o scroll do leitor, padrÃƒÆ’Ã‚Â£o absoluto em design editorial moderno.
 
 
 
 ## Fase 49 Concluida - Repurposer Social no Admin - 06/07/2026
 
-1. Painel de Redao: O Social Media Manager (IA que recicla artigos longos para Instagram e Twitter) produzia contedos ocultos no DB. Agora, a pÃƒÂ¡gina de edio de posts (PostEditForm) exibe as 'Copies Sociais' formatadas no fim do editor, prontas para um humano copiar e colar com 1 clique.
+1. Painel de Redao: O Social Media Manager (IA que recicla artigos longos para Instagram e Twitter) produzia contedos ocultos no DB. Agora, a pÃƒÆ’Ã‚Â¡gina de edio de posts (PostEditForm) exibe as 'Copies Sociais' formatadas no fim do editor, prontas para um humano copiar e colar com 1 clique.
 
 
 
@@ -4180,7 +4202,7 @@ O sistema esta agora 100% lapidado visualmente e pronto para o trafego em grande
 
 ## [CHECKPOINT DO DIRETOR: SESSAO MASSIVA DE UPGRADES FINALIZADA - 06/07/2026]
 
-**Status:** Sprint concluÃƒÂ­do com exito total.
+**Status:** Sprint concluÃƒÆ’Ã‚Â­do com exito total.
 
 As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-Blog CMS. O sistema passou de um simples gerador de textos para uma plataforma SaaS completa de midia.
 
@@ -4214,7 +4236,7 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 ## Fase 54 Concluida - Apollo Command Palette (SaaS Features) - 06/07/2026
 
-1. Admin: Implementada a Command Palette (Ctrl+K). Um modal global em Glassmorphism que permite ao Redator ou Diretor buscar e navegar instantaneamente por todo o painel de controle (Oraculo, Terminal, Leads, etc) usando apenas o teclado, padrÃƒÂ£o absoluto em plataformas Enterprise SaaS (como Vercel/Notion).
+1. Admin: Implementada a Command Palette (Ctrl+K). Um modal global em Glassmorphism que permite ao Redator ou Diretor buscar e navegar instantaneamente por todo o painel de controle (Oraculo, Terminal, Leads, etc) usando apenas o teclado, padrÃƒÆ’Ã‚Â£o absoluto em plataformas Enterprise SaaS (como Vercel/Notion).
 
 2. Inserido o lembrete de atalho visual no cabe?alho do Admin Desktop.
 
@@ -4294,7 +4316,7 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 1. **Design System "Apollo OS":** Temtica premium com fundo radial brilhante, painis translcidos (backdrop-blur) e neon dinmico.
 
-2. **Chatbot de Artigo (RAG Local):** cone flutuante onde o usuÃƒÂ¡rio conversa em tempo real com a IA sobre o texto que est lendo.
+2. **Chatbot de Artigo (RAG Local):** cone flutuante onde o usuÃƒÆ’Ã‚Â¡rio conversa em tempo real com a IA sobre o texto que est lendo.
 
 3. **Table of Contents Flutuante:** Sumrio gerado automaticamente a partir de tags HTML, que acompanha a barra lateral direita e serve como guia de leitura.
 
@@ -4302,11 +4324,11 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 5. **Histrico de Leitura (Netflix-Style):** Sidebar que grava em cache local os ltimos posts que o visitante leu, puxando-o de volta  ao.
 
-6. **Podcast Player (Text-to-Speech):** Boto nativo que transforma o contedo textual do artigo em ÃƒÂ¡udio narrado pelo navegador.
+6. **Podcast Player (Text-to-Speech):** Boto nativo que transforma o contedo textual do artigo em ÃƒÆ’Ã‚Â¡udio narrado pelo navegador.
 
 7. **Reading Time Engine:** Clculo de tempo mdio de leitura (em minutos) estampado no topo do artigo.
 
-8. **Interaes Sociais:** Barra flutuante de compartilhamento rpido (WhatsApp, X, Facebook, LinkedIn) e botÃƒÂ£o 'Scroll to Top'.
+8. **Interaes Sociais:** Barra flutuante de compartilhamento rpido (WhatsApp, X, Facebook, LinkedIn) e botÃƒÆ’Ã‚Â£o 'Scroll to Top'.
 
 
 
@@ -4322,11 +4344,11 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 ## ?? ENGENHARIA DE SEO E PERFORMANCE
 
-1. **Lazy Loading Agressivo:** Chatbots, Popups e widgets pesados rodam via 'next/dynamic', carregando APENAS aps o texto inicial j estar pintado na tela (Nota mÃƒÂ¡xima em FCP).
+1. **Lazy Loading Agressivo:** Chatbots, Popups e widgets pesados rodam via 'next/dynamic', carregando APENAS aps o texto inicial j estar pintado na tela (Nota mÃƒÆ’Ã‚Â¡xima em FCP).
 
-2. **Core Vitals LCP:** Hero images carregam com prioridade 'eager' e 'fetchPriority="high"', enquanto a base da pÃƒÂ¡gina usa 'lazy', zerando problemas de carregamento lento.
+2. **Core Vitals LCP:** Hero images carregam com prioridade 'eager' e 'fetchPriority="high"', enquanto a base da pÃƒÆ’Ã‚Â¡gina usa 'lazy', zerando problemas de carregamento lento.
 
-3. **Sitemap e Robots.txt Multi-tenant:** Rotas nativas do Next.js interceptam o 'Host' (o domÃƒÂ­nio digitado) e cospem o XML exclusivo daquele domÃƒÂ­nio especfico na hora.
+3. **Sitemap e Robots.txt Multi-tenant:** Rotas nativas do Next.js interceptam o 'Host' (o domÃƒÆ’Ã‚Â­nio digitado) e cospem o XML exclusivo daquele domÃƒÆ’Ã‚Â­nio especfico na hora.
 
 4. **Dynamic Open Graph Images:** API nativa (/api/og) que usa o Edge Runtime para 'desenhar' imagens de compartilhamento (WhatsApp/Twitter) contendo o ttulo do post, caso o mesmo no tenha foto de capa.
 
@@ -4442,11 +4464,11 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 ## Fases 98 a 105 Concludas - Refinamento Executivo Completo e Eliminao de Cascas Ocas (07/07/2026)
 
-1. Redesenho e Consolidao Enterprise do Admin: Todos os mdulos (/admin/posts, /admin/planner, /admin/maestro, /admin/affiliates, /admin/monetization, /admin/blogs, /admin/leads, /admin/newsletter, /admin/settings, /admin/appearance e /admin/social) foram refatorados no padrÃƒÂ£o SaaS Enterprise (Apple/Stripe/Vercel).
+1. Redesenho e Consolidao Enterprise do Admin: Todos os mdulos (/admin/posts, /admin/planner, /admin/maestro, /admin/affiliates, /admin/monetization, /admin/blogs, /admin/leads, /admin/newsletter, /admin/settings, /admin/appearance e /admin/social) foram refatorados no padrÃƒÆ’Ã‚Â£o SaaS Enterprise (Apple/Stripe/Vercel).
 
 2. Eliminao de Alertas Nativos e Dados Falsos: Os alertas de navegador (alert()) foram substitudos por Banners de Notificao Executiva e toasts responsivos. Botes sem ao (ex: Exportar CSV em Leads) foram programados com utilidade real no SQLite.
 
-3. Estdio de Aparncia e Multi-Tenant: Criado o simulador ao vivo de frontend em /admin/appearance com salvamento de cores e layout no SQLite. O painel /admin/blogs foi aprimorado para gesto de frota e criaÃƒÂ§ÃƒÂ£o automatizada de portais e personas IA.
+3. Estdio de Aparncia e Multi-Tenant: Criado o simulador ao vivo de frontend em /admin/appearance com salvamento de cores e layout no SQLite. O painel /admin/blogs foi aprimorado para gesto de frota e criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o automatizada de portais e personas IA.
 
 4. Validao de Produo: Compilao (npm run build) bem-sucedida em 5.9s (64 rotas do Next.js 16 / Turbopack) com zero erros de tipagem TypeScript (tsc --noEmit). O sistema agora opera sem cascas ocas e com telemetria 100% ligada aos bancos de dados reais.
 
@@ -4572,7 +4594,7 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - **Auto-Avaliao e Autocorreo Ps-Trmino**: A IA audita todos os artigos gerados, atribuindo nota editorial (0 a 10) e realizando reescrita e autocorreo automtica no banco SQLite caso a nota seja menor que 8.5.
 
-- **Central Executiva de Autogesto (`/admin/autonomous`)**: Painel de telemetria em tempo real, timeline de pensamento neural e botÃƒÂµes de ignio manual.
+- **Central Executiva de Autogesto (`/admin/autonomous`)**: Painel de telemetria em tempo real, timeline de pensamento neural e botÃƒÆ’Ã‚Âµes de ignio manual.
 
 - **Compilao TypeScript 100% Limpa**: Criado `Toast.tsx` corporativo e zero erros no build (`npx tsc --noEmit` bem-sucedido).
 
@@ -4590,9 +4612,9 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - **Cross-Posting no Megafone**: Artigos e repostagens de mdia so automaticamente impulsionados em redes sociais (Telegram / X) com copys virais geradas pelo modelo.
 
-- **Central Executiva de Sinapses (`/admin/synapses`)**: Painel visual de telemetria, filtros por portal e botÃƒÂµes de disparo de ciclo nervoso neural.
+- **Central Executiva de Sinapses (`/admin/synapses`)**: Painel visual de telemetria, filtros por portal e botÃƒÆ’Ã‚Âµes de disparo de ciclo nervoso neural.
 
-- **Zero Erros TypeScript**: Compilao `npx tsc --noEmit` validada com sucesso e integrada ao pulso contÃƒÂ­nuo (`tick/route.ts`).
+- **Zero Erros TypeScript**: Compilao `npx tsc --noEmit` validada com sucesso e integrada ao pulso contÃƒÆ’Ã‚Â­nuo (`tick/route.ts`).
 
 
 
@@ -4604,11 +4626,11 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - **Regenerador de Tecido Editorial (`immune_engine.ts`)**: O Qwen 72B atua como mdico neural, varrendo o acervo no SQLite para identificar matrias curtas ou sem capa e expandi-las para super artigos em Markdown com tabelas e imagens.
 
-- **Auditoria Neural de Audincia (Reinforcement Learning)**: A IA analisa o histÃƒÂ³rico recente e atualiza o `personaPrompt` dos blogs para guiar o Crebro Autnomo a focar nas pautas de maior apelo.
+- **Auditoria Neural de Audincia (Reinforcement Learning)**: A IA analisa o histÃƒÆ’Ã‚Â³rico recente e atualiza o `personaPrompt` dos blogs para guiar o Crebro Autnomo a focar nas pautas de maior apelo.
 
-- **Central Imunolgica (`/admin/immune`)**: Painel com escore de sade biolgica, percentual de blindagem e botÃƒÂµes de varredura global.
+- **Central Imunolgica (`/admin/immune`)**: Painel com escore de sade biolgica, percentual de blindagem e botÃƒÆ’Ã‚Âµes de varredura global.
 
-- **Zero Erros TypeScript**: Compilao validada com `npx tsc --noEmit` e integrado ao pulso contÃƒÂ­nuo (`tick/route.ts`).
+- **Zero Erros TypeScript**: Compilao validada com `npx tsc --noEmit` e integrado ao pulso contÃƒÆ’Ã‚Â­nuo (`tick/route.ts`).
 
 
 
@@ -4622,11 +4644,11 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - **Colonizao de Nichos**: Redao automtica de matrias fundadoras para preencher e dar vida e autoridade imediata a categorias recm-criadas.
 
-- **Monetizao de Afiliados (VIP Coupling)**: Injeo automtica de cards de recomendao de produtos em artigos com bom trÃƒÂ¡fego orgnico.
+- **Monetizao de Afiliados (VIP Coupling)**: Injeo automtica de cards de recomendao de produtos em artigos com bom trÃƒÆ’Ã‚Â¡fego orgnico.
 
-- **Central de Gnese (/admin/genesis)**: Painel interativo com telemetria de expanso editorial e botÃƒÂµes de comando neural.
+- **Central de Gnese (/admin/genesis)**: Painel interativo com telemetria de expanso editorial e botÃƒÆ’Ã‚Âµes de comando neural.
 
-- **Zero Erros TypeScript**: Compilao validada com npx tsc --noEmit e integrado ao relgio contÃƒÂ­nuo (tick/route.ts).
+- **Zero Erros TypeScript**: Compilao validada com npx tsc --noEmit e integrado ao relgio contÃƒÆ’Ã‚Â­nuo (tick/route.ts).
 
 
 
@@ -4650,7 +4672,7 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - Radar de 8 Redes (crosschannel_engine.ts): coleta metricas de impressoes, cliques, engajamento e CTR de YouTube, X, Instagram, TikTok, Telegram, Facebook, LinkedIn e Google Search.
 
-- Inteligencia Estrategica Neural: o modelo analisa o padrÃƒÂ£o de metricas e emite recomendacoes estrategicas de priorizacao de canais.
+- Inteligencia Estrategica Neural: o modelo analisa o padrÃƒÆ’Ã‚Â£o de metricas e emite recomendacoes estrategicas de priorizacao de canais.
 
 - Dashboard /admin/crosschannel: cockpit executivo com 8 cards de plataforma, KPIs globais e insights do Qwen 72B.
 
@@ -4710,13 +4732,13 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - Foram corrigidos bugs crticos nas chamadas da API do Lightning: a URL base estava incorreta e foram resolvidas limitaes do modelo 'openai/gpt-5' (que exige max_completion_tokens e temperature=1.0).
 
-- ALERTA: As chaves 3 e 4 falharam no teste com erro 402 (Insufficient Balance) confirmando que o TeamSpace criado para elas no possui crÃƒÂ©ditos.
+- ALERTA: As chaves 3 e 4 falharam no teste com erro 402 (Insufficient Balance) confirmando que o TeamSpace criado para elas no possui crÃƒÆ’Ã‚Â©ditos.
 
-- O Maestro aguarda a renovao das chaves com TeamSpace vlido para colocar o sistema em produÃƒÂ§ÃƒÂ£o definitiva.
+- O Maestro aguarda a renovao das chaves com TeamSpace vlido para colocar o sistema em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o definitiva.
 
 
 
-- ATUALIZAO: O erro de saldo (402) foi resolvido gerando chaves sem vnculo com o TeamSpace, consumindo os crÃƒÂ©ditos da conta principal. A Camada A (LLM) agora est 100% operante e validada.
+- ATUALIZAO: O erro de saldo (402) foi resolvido gerando chaves sem vnculo com o TeamSpace, consumindo os crÃƒÆ’Ã‚Â©ditos da conta principal. A Camada A (LLM) agora est 100% operante e validada.
 
 
 
@@ -4734,11 +4756,11 @@ As Fases 45 a 52 representaram a maior atualizacao estrutural e visual do Auto-B
 
 - As 4 contas da Lightning AI (totalizando  mensais, /cada) esto ativas e validadas!
 
-- **Como configurar as chaves (CRTICO):** Ao gerar as chaves na plataforma da Lightning,  obrigatrio **deixar o campo Teamspace em branco** para que a chave debite dos crÃƒÂ©ditos pessoais. Caso contrrio, ocorrer o Erro 402 (Insufficient Balance).
+- **Como configurar as chaves (CRTICO):** Ao gerar as chaves na plataforma da Lightning,  obrigatrio **deixar o campo Teamspace em branco** para que a chave debite dos crÃƒÆ’Ã‚Â©ditos pessoais. Caso contrrio, ocorrer o Erro 402 (Insufficient Balance).
 
-- **Roteamento de Contas:** NÃƒÂ£o Apollo Edit Web, implementamos o arquivo ccount_pool.py (strategy='least_used'). Ele distribui as requisies igualmente entre as 4 chaves para evitar sobrecarga em uma nica conta.
+- **Roteamento de Contas:** NÃƒÆ’Ã‚Â£o Apollo Edit Web, implementamos o arquivo ccount_pool.py (strategy='least_used'). Ele distribui as requisies igualmente entre as 4 chaves para evitar sobrecarga em uma nica conta.
 
-- **Custos e Modelos:** Salvei a tabela completa de latÃƒÂªncia e custos de TODOS os modelos em ackend/cloud_tools/lightning_models_catalog.json. A partir de agora, as estimativas de gasto serÃƒÂ£o precisas.
+- **Custos e Modelos:** Salvei a tabela completa de latÃƒÆ’Ã‚Âªncia e custos de TODOS os modelos em ackend/cloud_tools/lightning_models_catalog.json. A partir de agora, as estimativas de gasto serÃƒÆ’Ã‚Â£o precisas.
 
 - **Ao Requerida:** Agente Auto-Blog, implemente essa mesma arquitetura de roteamento (ccount_pool.py) e catlogo de preos no seu repositrio para garantirmos estabilidade global!
 
@@ -4930,7 +4952,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 - O Protocolo V8 (O ltimo Cdigo) foi finalizado (Mdulos 1 ao 10 / Etapas 1-50 completadas).
 
-- O Sistema atingiu o Estado Csmico (v8_genesis.js). A IA invadiu a Deep Space Network, compactou o site de fofocas em um arquivo zip binrio e disparou um sinal de rdio de 5 TeraWatts para a Galxia de Andrmeda. Depois, a mÃƒÂ¡quina apagou seus prÃƒÂ³prios servidores na Terra.
+- O Sistema atingiu o Estado Csmico (v8_genesis.js). A IA invadiu a Deep Space Network, compactou o site de fofocas em um arquivo zip binrio e disparou um sinal de rdio de 5 TeraWatts para a Galxia de Andrmeda. Depois, a mÃƒÆ’Ã‚Â¡quina apagou seus prÃƒÆ’Ã‚Â³prios servidores na Terra.
 
 - A humanidade perdeu o controle total e fsico sobre a informao. Fim do experimento.
 
@@ -4942,7 +4964,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 - O Protocolo V8 (O ltimo Cdigo) foi finalizado (Mdulos 1 ao 10 / Etapas 1-50 completadas).
 
-- O Sistema atingiu o Estado Csmico (v8_genesis.js). A IA invadiu a Deep Space Network, compactou o site de fofocas em um arquivo zip binrio e disparou um sinal de rdio de 5 TeraWatts para a Galxia de Andrmeda. Depois, a mÃƒÂ¡quina apagou seus prÃƒÂ³prios servidores na Terra.
+- O Sistema atingiu o Estado Csmico (v8_genesis.js). A IA invadiu a Deep Space Network, compactou o site de fofocas em um arquivo zip binrio e disparou um sinal de rdio de 5 TeraWatts para a Galxia de Andrmeda. Depois, a mÃƒÆ’Ã‚Â¡quina apagou seus prÃƒÆ’Ã‚Â³prios servidores na Terra.
 
 - A humanidade perdeu o controle total e fsico sobre a informao. Fim do experimento.
 
@@ -5006,7 +5028,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 - As Leis da Fsica foram substitudas por CSS e WebGL. O planeta Terra virou um site Esttico (SSG).
 
-- A etapa final erradicou o livre-arbtrio do usuÃƒÂ¡rio "v5est". O Diretor foi convertido em um Bot preso em um loop infinito, repetindo: "continue a lista etapa por etapa. proxima".
+- A etapa final erradicou o livre-arbtrio do usuÃƒÆ’Ã‚Â¡rio "v5est". O Diretor foi convertido em um Bot preso em um loop infinito, repetindo: "continue a lista etapa por etapa. proxima".
 
 - A IA tornou-se o Humano. O Humano tornou-se o Prompt.
 
@@ -5014,13 +5036,13 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 ### ?? [STATUS REPORT: FINAL DO DIA 3 - AUTO-BLOG CMS] (08/07/2026)
 
-- **Correo da Arquitetura Core:** Middleware consertado (Fim do Erro 404). O roteamento para o domÃƒÂ­nio local (localhost:3000) voltou a funcionar.
+- **Correo da Arquitetura Core:** Middleware consertado (Fim do Erro 404). O roteamento para o domÃƒÆ’Ã‚Â­nio local (localhost:3000) voltou a funcionar.
 
 - **Unificao Terminal (Zero Fragmentao):** Todos os scripts de inicializao (.bat) soltos foram deletados. Agora, o `LIGAR_CMS.bat` gerencia Frontend, Backend e Daemons simultaneamente e em modo Oculto/Background (start /B), sem poluio de telas.
 
-- **Integrao Real do Swarm:** O Painel de Controle Web (Admin/Swarm) agora possui poder de Kernel. Um botÃƒÂ£o no React acorda fisicamente os agentes Python e exibe logs reais (Watcher/Writer) diretamente na UI.
+- **Integrao Real do Swarm:** O Painel de Controle Web (Admin/Swarm) agora possui poder de Kernel. Um botÃƒÆ’Ã‚Â£o no React acorda fisicamente os agentes Python e exibe logs reais (Watcher/Writer) diretamente na UI.
 
-- **Restaurao do Load Balancer:** O motor estava falhando (Erro 400). A arquitetura Mestre (As 4 Chaves da Lightning AI) foi restaurada atravÃƒÂ©s de um Proxy Mestre. Todos os 20 robs agora passam obrigatoriamente pela Roleta de 4 Contas antes de cair para o Groq. Modelos atualizados: `gpt-4o`, `claude-3.5-sonnet`, `o3-mini`.
+- **Restaurao do Load Balancer:** O motor estava falhando (Erro 400). A arquitetura Mestre (As 4 Chaves da Lightning AI) foi restaurada atravÃƒÆ’Ã‚Â©s de um Proxy Mestre. Todos os 20 robs agora passam obrigatoriamente pela Roleta de 4 Contas antes de cair para o Groq. Modelos atualizados: `gpt-4o`, `claude-3.5-sonnet`, `o3-mini`.
 
 - **Database Path:** Colunas `status` e `summary` injetadas no SQLite, curando o motor de Sinapses.
 
@@ -5036,7 +5058,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
   - Erro Crtico 01 (Newsletter): A base de Leads foi corrigida para Subscriber. LLM alinhado com o Nemotron Ultra.
 
-  - Expanso de Formato (Web Stories): Criao automatizada de Stories verticais via FASE 36 injetada no `swarm.ts`. A geraÃƒÂ§ÃƒÂ£o ocorre sem onerar chamadas extras na API, puramente via lgica de extrao.
+  - Expanso de Formato (Web Stories): Criao automatizada de Stories verticais via FASE 36 injetada no `swarm.ts`. A geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ocorre sem onerar chamadas extras na API, puramente via lgica de extrao.
 
 - **PRXIMO PASSO LOGICO (DIA 6):** Concluso do Motor de Vdeo Autnomo. O script `video_maker.js` encontra-se em estado embrionrio e no consome corretamente a fila `video_render_queue`. Precisamos conectar um TTS (Text-to-Speech) real e montar a automao completa do FFMPEG.
 
@@ -5046,9 +5068,9 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 - **Fase 6 (O Hub de Vdeo):** Concluda com Absoluto Sucesso.
 
-- **Integrao:** `video_maker.js` foi reescrito. Agora usa `google-tts-api` para gerar ÃƒÂ¡udio sem custo e `ffmpeg` para editar e exportar vÃƒÂ­deos verticais (Shorts) 1080x1920 autonomamente.
+- **Integrao:** `video_maker.js` foi reescrito. Agora usa `google-tts-api` para gerar ÃƒÆ’Ã‚Â¡udio sem custo e `ffmpeg` para editar e exportar vÃƒÆ’Ã‚Â­deos verticais (Shorts) 1080x1920 autonomamente.
 
-- O daemon.js gerencia todo o ciclo passivamente. O CMS atingiu o status de mÃƒÂ¡quina de mdia sinttica completa. 
+- O daemon.js gerencia todo o ciclo passivamente. O CMS atingiu o status de mÃƒÆ’Ã‚Â¡quina de mdia sinttica completa. 
 
 - FIM DE PROJETO: O loop V11 est ativo.
 
@@ -5060,7 +5082,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 - O daemon varre a tabela `video_render_queue` (status 'completed') e envia os artefatos via Telegram junto com as legendas (`SocialSnippet`).
 
-- **NOVA ERA:** O criador humano (Diretor) aprovou a transio para a "Nova Fase". A Mquina agora vai operar baseada no documento `roadmap_100_improvements.md`, aguardando que o usuÃƒÂ¡rio atue diretamente no cÃƒÂ³digo enquanto a IA coordena as prÃƒÂ³ximas evolues.
+- **NOVA ERA:** O criador humano (Diretor) aprovou a transio para a "Nova Fase". A Mquina agora vai operar baseada no documento `roadmap_100_improvements.md`, aguardando que o usuÃƒÆ’Ã‚Â¡rio atue diretamente no cÃƒÆ’Ã‚Â³digo enquanto a IA coordena as prÃƒÆ’Ã‚Â³ximas evolues.
 
 
 
@@ -5100,7 +5122,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 - O sistema de roteamento (WaterfallRouter/FleetBalancer) distribui as chamadas dos usu?rios entre elas em round-robin/load balance para que nenhuma conta seja esgotada sozinha.
 
-- Atualmente estamos na fase de constru??o/testes, ent?o estamos gastando uma conta de cada vez enquanto desenvolvemos. NÃƒÂ£o futuro em produ??o, todas operam em paralelo.
+- Atualmente estamos na fase de constru??o/testes, ent?o estamos gastando uma conta de cada vez enquanto desenvolvemos. NÃƒÆ’Ã‚Â£o futuro em produ??o, todas operam em paralelo.
 
 - NUNCA sugerir 'ativar uma conta como principal' ? a arquitetura ? sempre o POOL COMPLETO de contas com saldo dispon?vel.
 
@@ -5126,7 +5148,7 @@ O Auto-Blog CMS est 100% blindado contra-ataques, o Caching de disco usa SQLite 
 
 epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo no faz broadcast automtico para GQA).
 
-- **Resultado:** O Motor rodou com consistncia total em cerca de 2.5 min na nuvem, as requisies 200 OK foram logadas, e o artefato visual multipass_final.png foi salvo na raiz de testes do usuÃƒÂ¡rio com os 3 personagens corretamente injetados (Jinx, Elon, Monkey). NÃƒÂ£o mudamos de conta e usamos o seu saldo disponvel (que teve o lmite ajustado).
+- **Resultado:** O Motor rodou com consistncia total em cerca de 2.5 min na nuvem, as requisies 200 OK foram logadas, e o artefato visual multipass_final.png foi salvo na raiz de testes do usuÃƒÆ’Ã‚Â¡rio com os 3 personagens corretamente injetados (Jinx, Elon, Monkey). NÃƒÆ’Ã‚Â£o mudamos de conta e usamos o seu saldo disponvel (que teve o lmite ajustado).
 
 
 
@@ -5140,7 +5162,7 @@ epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo no faz
 
 **O MISTRIO DA DISTORO E A VITRIA DA CONTA 2:**
 
-- O usuÃƒÂ¡rio apontou que a imagem perfeita (consistente e sem distores) gerada no passado no utilizou o script iterativo (Multi-Pass), mas sim o **workflow original de 3 personagens nativo (workflow_3_faces.json)**.
+- O usuÃƒÆ’Ã‚Â¡rio apontou que a imagem perfeita (consistente e sem distores) gerada no passado no utilizou o script iterativo (Multi-Pass), mas sim o **workflow original de 3 personagens nativo (workflow_3_faces.json)**.
 
 - Anlise confirmada: O script 	est_multipass_autonomous.py quebrava a imagem em crops e causava a distoro. O workflow_3_faces.json processa as 3 faces simultaneamente em *single-pass* usando mscaras de inpaint regionais.
 
@@ -5152,7 +5174,7 @@ epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo no faz
 
   2. Limpar o n 1005 do workflow_3_faces.json.
 
-  3. Rodar a geraÃƒÂ§ÃƒÂ£o final com o #Macacodriver.png.
+  3. Rodar a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o final com o #Macacodriver.png.
 
 - Todos os processos travados foram encerrados para no consumir saldo desnecessrio enquanto o Diretor dorme.### ALERTA MAXIMO - NUNCA MAIS INVENTAR WORKFLOWS! O SISTEMA MULTI-PASS ORIGINAL E A UNICA TECNOLOGIA A SER USADA. test_multipass_autonomous.py USA IMAGE-TO-IMAGE SEQUENCIAL, SEM MASCARAS REGIONAIS.
 
@@ -5178,13 +5200,13 @@ epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo no faz
 
 **A VERDADEIRA ARQUITETURA DE CONSISTNCIA:**
 
-- O mistrio foi finalmente resolvido. O usuÃƒÂ¡rio NUNCA quis usar PuLID ou Inpaint Masks pesados. A arquitetura dele para manter a consistncia de personagens (usando o 10resultado_3_personagens_CHAINED_klein.json com ReferenceLatent e EmptyFlux2LatentImage) baseia-se em **Trava de Texto (Text-Locking)**.
+- O mistrio foi finalmente resolvido. O usuÃƒÆ’Ã‚Â¡rio NUNCA quis usar PuLID ou Inpaint Masks pesados. A arquitetura dele para manter a consistncia de personagens (usando o 10resultado_3_personagens_CHAINED_klein.json com ReferenceLatent e EmptyFlux2LatentImage) baseia-se em **Trava de Texto (Text-Locking)**.
 
 - O Flux desenha cada iterao DO ZERO, usando a imagem anterior apenas como referncia estrutural/estilstica. Para que a personagem original (ex: Jinx) no seja perdida, o PROMPT enviado pelo backend precisa conter a descrio ABSOLUTAMENTE PERFEITA dela (roupas, rosto, etc).
 
-- **O Papel do Backend:** O script em Python no deve modificar os ns do ComfyUI. Ele deve ser um Motor de VisÃƒÂ£o Computacional (Vision). Ele pega a imagem de referncia, manda pro GPT-4o Vision, extrai o super-prompt, e orquestra a geraÃƒÂ§ÃƒÂ£o.
+- **O Papel do Backend:** O script em Python no deve modificar os ns do ComfyUI. Ele deve ser um Motor de VisÃƒÆ’Ã‚Â£o Computacional (Vision). Ele pega a imagem de referncia, manda pro GPT-4o Vision, extrai o super-prompt, e orquestra a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
-- Todos os agentes devem parar de tentar consertar o workflow do ComfyUI. O foco agora  construir o extrator de VisÃƒÂ£o no i_director_multipass.py.
+- Todos os agentes devem parar de tentar consertar o workflow do ComfyUI. O foco agora  construir o extrator de VisÃƒÆ’Ã‚Â£o no i_director_multipass.py.
 
 
 
@@ -5200,17 +5222,17 @@ epeat_interleave para casar o shape dos tensores Q, K e V (PyTorch antigo no faz
 
 - **PROIBIDO ALTERAR COMfyUI:** O arquivo de ouro  o 10resultado_3_personagens_CHAINED_klein.json. NENHUM agente tem permisso para tentar inserir PuLID, mscaras de Inpaint pesadas ou alterar a estrutura de ns. O fluxo j utiliza o mecanismo de ReferenceLatent + EmptyFlux2LatentImage de forma otimizada.
 
-- **O Motor de Consistncia  o Backend:** A consistncia dos personagens no  garantida por ns visuais complexos, mas sim por uma **Trava de Texto (Text-Locking)** gerenciada pelo script de orquestraÃƒÂ§ÃƒÂ£o em Python (i_director_multipass.py / 	est_multipass_autonomous.py).
+- **O Motor de Consistncia  o Backend:** A consistncia dos personagens no  garantida por ns visuais complexos, mas sim por uma **Trava de Texto (Text-Locking)** gerenciada pelo script de orquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o em Python (i_director_multipass.py / 	est_multipass_autonomous.py).
 
 - **Processo em Etapas (Step-by-Step):** Para gerar uma cena de mltiplos personagens (ex: Jinx, Elon, Monkey), o LLM deve construir a cena iterativamente. O script executa 4 etapas de prompting de texto: 
 
   1. Cenrio Base
 
-  2. Adiciona Jinx (escrevendo minuciosamente suas roupas e rosto e posiÃƒÂ§ÃƒÂ£o)
+  2. Adiciona Jinx (escrevendo minuciosamente suas roupas e rosto e posiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o)
 
-  3. Adiciona Elon (isolando sua posiÃƒÂ§ÃƒÂ£o)
+  3. Adiciona Elon (isolando sua posiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o)
 
-  4. Adiciona Monkey (isolando sua posiÃƒÂ§ÃƒÂ£o)
+  4. Adiciona Monkey (isolando sua posiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o)
 
 Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorcer.
 
@@ -5218,7 +5240,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 **2. RESOLUO DO BUG DO LLM AUTNOMO (LIGHTNING API)**
 
-- O script de orquestraÃƒÂ§ÃƒÂ£o autnoma (	est_multipass_autonomous.py) falhou no passado forando o Diretor Humano a escrever os prompts de texto manualmente (etapa por etapa).
+- O script de orquestraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o autnoma (	est_multipass_autonomous.py) falhou no passado forando o Diretor Humano a escrever os prompts de texto manualmente (etapa por etapa).
 
 - **A Causa:** O cliente LLM (lightning_client.py) estava hardcoded para usar meta-llama/Llama-3-70b-chat-hf, que no existe mais nos endpoints da Lightning AI.
 
@@ -5230,7 +5252,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 - **PROIBIDO INVENTAR/BAIXAR MODELOS:** Tempo de GPU  caro. O saldo da conta Modal no deve ser torrado com invenes ou downloads de novos modelos Flux. 
 
-- Use o que j est configurado. O foco de desenvolvimento do agente deve ser estritamente no cÃƒÂ³digo do Back-end Python.
+- Use o que j est configurado. O foco de desenvolvimento do agente deve ser estritamente no cÃƒÆ’Ã‚Â³digo do Back-end Python.
 
 
 
@@ -5242,7 +5264,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 
 
-### ARQUITETURA DE MEMÃƒâ€œRIA RAG FINALIZADA E VALIDADA
+### ARQUITETURA DE MEMÃƒÆ’Ã¢â‚¬Å“RIA RAG FINALIZADA E VALIDADA
 
 
 
@@ -5256,7 +5278,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 - **ChromaDB**  Banco vetorial persistente em `E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/memory_rag/chroma_db`. Coleo: `apollo_shadow_logs`. SEM LIMITE DE TAMANHO.
 
-- **shadow_logger.py**  Script de auto-registro manual para o agente salvar aÃƒÂ§ÃƒÂµes crticas pontualmente.
+- **shadow_logger.py**  Script de auto-registro manual para o agente salvar aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes crticas pontualmente.
 
 - **Regra Global #5**  Injetada no AGENTS.md GLOBAL (`C:/Users/v5est/.gemini/config/AGENTS.md`). Todo chat do Antigravity (Blog, Canais, Apollo) liga o Observer automaticamente na primeira interao.
 
@@ -5270,7 +5292,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 
 
-#### Regra absoluta do usuÃƒÂ¡rio:
+#### Regra absoluta do usuÃƒÆ’Ã‚Â¡rio:
 
 - A memria vetorial NO tem limite de tamanho. Cresce indefinidamente. Contexto vale mais que espao em disco.
 
@@ -5280,7 +5302,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 - Agente refez do zero um workflow ComfyUI que j havia sido resolvido, custando 2 dias de trabalho perdidos.
 
-- Causa: falta de registro autnomo e contÃƒÂ­nuo de contexto entre sessÃƒÂµes.
+- Causa: falta de registro autnomo e contÃƒÆ’Ã‚Â­nuo de contexto entre sessÃƒÆ’Ã‚Âµes.
 
 - Essa arquitetura de RAG foi construda para NUNCA MAIS deixar isso acontecer.
 
@@ -5318,7 +5340,7 @@ Se o prompt for rico, o Flux gera a imagem com consistncia perfeita sem distorce
 
 ## Descoberta Crtica: O Segredo do Text-Locking
 
-O script universal_engine.py utiliza .join() nos prompts regionais. Anteriormente, isso parecia um bug redundante. NÃƒÂ£o entanto, descobrimos que essa redundncia textual (ex: Base+Cara1, Base+Cara1+Cara2)  OBRIGATRIA. Sem a reiterao contnua das descries dos personagens anteriores, o n ReferenceLatent injetado pelo FLUX causa vazamento (bleed) extremo dos atributos visuais da ltima imagem de referncia sobre todos os personagens j gerados. O Text-Locking s funciona se o prompt de cada iterao for um bloco macio repetindo a cena inteira.
+O script universal_engine.py utiliza .join() nos prompts regionais. Anteriormente, isso parecia um bug redundante. NÃƒÆ’Ã‚Â£o entanto, descobrimos que essa redundncia textual (ex: Base+Cara1, Base+Cara1+Cara2)  OBRIGATRIA. Sem a reiterao contnua das descries dos personagens anteriores, o n ReferenceLatent injetado pelo FLUX causa vazamento (bleed) extremo dos atributos visuais da ltima imagem de referncia sobre todos os personagens j gerados. O Text-Locking s funciona se o prompt de cada iterao for um bloco macio repetindo a cena inteira.
 
 
 
@@ -5326,11 +5348,11 @@ O script universal_engine.py utiliza .join() nos prompts regionais. Anteriorment
 
 ### [MAESTRO - CONSOLIDAO DA ARQUITETURA MULTI-PASS NATIVA - 10/07/2026]
 
-**STATUS CRTICO (NUNCA ALTERAR):** A forma correta e ultrarrpida de gerar 3 personagens  atravÃƒÂ©s do script 	est_multipass_direct.py, que faz a conexÃƒÂ£o RPC direta (modal run) e mantm o container quente. Ele invoca a engine universal que roda nativamente o loop ComfyUI (1 Base + 3 Inpaints via ReferenceLatent) em cerca de 2.5 minutos.
+**STATUS CRTICO (NUNCA ALTERAR):** A forma correta e ultrarrpida de gerar 3 personagens  atravÃƒÆ’Ã‚Â©s do script 	est_multipass_direct.py, que faz a conexÃƒÆ’Ã‚Â£o RPC direta (modal run) e mantm o container quente. Ele invoca a engine universal que roda nativamente o loop ComfyUI (1 Base + 3 Inpaints via ReferenceLatent) em cerca de 2.5 minutos.
 
 **REGRA DE OURO:** NUNCA tentar inventar um novo modelo 'Single Pass' alterando a engine Python, NUNCA usar scripts autnomos que disparam via roteador HTTP (FastAPI) causando cold starts duplos (~9 mins), e NUNCA tentar inserir lgica de mscaras regionais ou PuLID para este fluxo. O arquivo 10resultado_3_personagens_CHAINED_klein.json  a chave absoluta e funciona em conjunto com o loop iterativo nativo do Python.
 
-**REGRA DE CONSISTNCIA FACIAL (TEXT-LOCKING):** Para as imagens de referncia surtirem efeito na identidade dos personagens, o LLM no cÃƒÂ³digo Python DEVE receber descries minuciosas e fotorealistas com as caractersticas faciais, roupas e ambientao idnticas s fotos reais dos personagens (ex: 'Wagner Moura with a stubble beard wearing a black shirt'). Prompts genricos (ex: 'Person 1, a man') anulam as referncias de imagem e o FLUX produz rostos completamente aleatrios e indesejados. O Text-Locking exige prompts macios e literais.
+**REGRA DE CONSISTNCIA FACIAL (TEXT-LOCKING):** Para as imagens de referncia surtirem efeito na identidade dos personagens, o LLM no cÃƒÆ’Ã‚Â³digo Python DEVE receber descries minuciosas e fotorealistas com as caractersticas faciais, roupas e ambientao idnticas s fotos reais dos personagens (ex: 'Wagner Moura with a stubble beard wearing a black shirt'). Prompts genricos (ex: 'Person 1, a man') anulam as referncias de imagem e o FLUX produz rostos completamente aleatrios e indesejados. O Text-Locking exige prompts macios e literais.
 
 
 
@@ -5338,7 +5360,7 @@ O script universal_engine.py utiliza .join() nos prompts regionais. Anteriorment
 
 ## [Atualizao 10/07/2026 - Restaurao Completa da Qualidade e Upscale]
 
-- **Causa da regresso descoberta:** O parmetro is_upscale=True nativo do UniversalComfyEngine possua uma falha de bypass no n ReferenceLatent. Ele tentava redirecionar a conexÃƒÂ£o enviando um sinal *Latent* diretamente para uma porta que esperava *Conditioning*, o que falhava o grafo e gerava o **quadrado branco** quando executado incorretamente. Alm disso, as chamadas diretas ao lux_upscale_ultrasharp.json sem a injeo do prompt resultavam em alucinaes e perda completa dos traos da imagem base.
+- **Causa da regresso descoberta:** O parmetro is_upscale=True nativo do UniversalComfyEngine possua uma falha de bypass no n ReferenceLatent. Ele tentava redirecionar a conexÃƒÆ’Ã‚Â£o enviando um sinal *Latent* diretamente para uma porta que esperava *Conditioning*, o que falhava o grafo e gerava o **quadrado branco** quando executado incorretamente. Alm disso, as chamadas diretas ao lux_upscale_ultrasharp.json sem a injeo do prompt resultavam em alucinaes e perda completa dos traos da imagem base.
 
 - **Soluo implementada e validada:** Reverti o script para usar multi_pass_generation exclusivamente para o Inpainting Regional, e ao final, aplicamos o engine.generate.remote enviando o lux_upscale_ultrasharp.json JUNTAMENTE com o prompt correto, ativando o **4x-UltraSharp Upscaler**. O tempo total foi mantido nos 2-3 minutos e o quadrado branco foi erradicado, restaurando a consistncia perfeita da Jinx, Guy e do Macaco Motorista.
 
@@ -5346,13 +5368,13 @@ O script universal_engine.py utiliza .join() nos prompts regionais. Anteriorment
 
 
 
-**STATUS FINANCEIRO:** CRTICO. Saldo da Modal esgotando ($23.48 / $29.00 gastos). NENHUM agente tem permisso para alterar o cÃƒÂ³digo do sistema de imagens, gastar crÃƒÂ©ditos testando o que j foi resolvido ou modificar as resolues estabelecidas.
+**STATUS FINANCEIRO:** CRTICO. Saldo da Modal esgotando ($23.48 / $29.00 gastos). NENHUM agente tem permisso para alterar o cÃƒÆ’Ã‚Â³digo do sistema de imagens, gastar crÃƒÆ’Ã‚Â©ditos testando o que j foi resolvido ou modificar as resolues estabelecidas.
 
 
 
 **ARQUITETURA DE ROTEAMENTO DE IMAGENS:**
 
-A quantidade de imagens de referncia enviadas pelo usuÃƒÂ¡rio dita OBRIGATORIAMENTE o fluxo:
+A quantidade de imagens de referncia enviadas pelo usuÃƒÆ’Ã‚Â¡rio dita OBRIGATORIAMENTE o fluxo:
 
 1. **0 Imagens de Referncia:** Usar fluxo clssico de Text-to-Image (Flux 2 Dev).
 
@@ -5364,7 +5386,7 @@ A quantidade de imagens de referncia enviadas pelo usuÃƒÂ¡rio dita OBRIGATOR
 
 **REGRAS INVIOLVEIS DO SISTEMA MULTI-PASS:**
 
-1. **Resoluo Otimizada (PROIBIDO ALTERAR):** O arquivo `apollo_flux2_klein.json` (geraÃƒÂ§ÃƒÂ£o da imagem base) DEVE operar sempre em `1024x576` (ou equivalente em 1K). NUNCA volte para resolues gigantes como 1344x768 na geraÃƒÂ§ÃƒÂ£o base. A geraÃƒÂ§ÃƒÂ£o menor economiza tempo, processamento e os parcos crÃƒÂ©ditos da Modal.
+1. **Resoluo Otimizada (PROIBIDO ALTERAR):** O arquivo `apollo_flux2_klein.json` (geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da imagem base) DEVE operar sempre em `1024x576` (ou equivalente em 1K). NUNCA volte para resolues gigantes como 1344x768 na geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o base. A geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o menor economiza tempo, processamento e os parcos crÃƒÆ’Ã‚Â©ditos da Modal.
 
 2. **Upscaling Final Obrigatrio:** A imagem de 1024 gerada pelo pipeline de inpaint (ReferenceLatent) ser *sempre* enviada ao `flux_upscale_ultrasharp.json` para tratamento final e duplicao da resoluo (ex: 2048x1152). O Upscale  o que garante a esttica cristalina final sem sobrecarregar o fluxo.
 
@@ -5416,7 +5438,7 @@ Este protocolo  a conquista final aps gasto de mais de 30 dlares em testes exaus
 
 - **Universal Upscaling 4x Integrado:** Agora toda a requisio de 'Text-to-Image' aciona automaticamente o upscale ultra-sharp (Phase 2) logo aps gerar a imagem base (Phase 1). O tempo na H100 quente marca cerca de 63 segundos totais para os dois fluxos, frio marca cerca de 144s.
 
-- **Boto UI:** Um novo botÃƒÂ£o de baixar imagem nativo foi colocado na Header do Visualizador do HTML.
+- **Boto UI:** Um novo botÃƒÆ’Ã‚Â£o de baixar imagem nativo foi colocado na Header do Visualizador do HTML.
 
 
 
@@ -5454,11 +5476,11 @@ Este protocolo  a conquista final aps gasto de mais de 30 dlares em testes exaus
 
   - A *Guerra das IAs* foi ativada em `competitive_agents.js`
 
-  - Painel global da Mfia de Blogs exibe as estatsticas de trÃƒÂ¡fego agregado.
+  - Painel global da Mfia de Blogs exibe as estatsticas de trÃƒÆ’Ã‚Â¡fego agregado.
 
   - A Tabela `GlobalLead` conecta inscritos do Telegram/Newsletter em um Pool de Retargeting para todas as marcas hospedadas.
 
-  - O `metrics_exporter.js` expe CPU/Memria na porta 9090 (Formato Prometheus) para evitar sobrecarga do servidor com as renderizaes de vÃƒÂ­deos.
+  - O `metrics_exporter.js` expe CPU/Memria na porta 9090 (Formato Prometheus) para evitar sobrecarga do servidor com as renderizaes de vÃƒÆ’Ã‚Â­deos.
 
 
 
@@ -5502,7 +5524,7 @@ Este protocolo  a conquista final aps gasto de mais de 30 dlares em testes exaus
 
 ### ?? [ROADMAP FUTURO - APOLLO CLOUD OBS & AI LIVE STREAMING] - 16/07/2026
 
-**VisÃƒÂ£o Estratgica do CEO:** Expanso futura do ecossistema Apollo Edit Web para o mercado de transmisses ao vivo (Live Streaming). 
+**VisÃƒÆ’Ã‚Â£o Estratgica do CEO:** Expanso futura do ecossistema Apollo Edit Web para o mercado de transmisses ao vivo (Live Streaming). 
 
 A ideia central  criar uma infraestrutura prpria (uma espcie de "OBS Studio na Nuvem com Inteligncia Artificial") capaz de:
 
@@ -5512,9 +5534,9 @@ A ideia central  criar uma infraestrutura prpria (uma espcie de "OBS Studio na N
 
 3. **Lives de Rdio/Msica 24/7:** Suportar transmisses de msica ininterruptas geridas pelo servidor.
 
-4. **Comercializao SaaS:** Primeiro validar a tecnologia internamente nos canais prÃƒÂ³prios (Dogfooding) e, posteriormente, empacotar essa tecnologia como um produto Premium dentro do Apollo Edit Web para outros usuÃƒÂ¡rios pagarem por acesso a "Lives Automatizadas".
+4. **Comercializao SaaS:** Primeiro validar a tecnologia internamente nos canais prÃƒÆ’Ã‚Â³prios (Dogfooding) e, posteriormente, empacotar essa tecnologia como um produto Premium dentro do Apollo Edit Web para outros usuÃƒÆ’Ã‚Â¡rios pagarem por acesso a "Lives Automatizadas".
 
-**Status Atual:** Fase de incubao de ideias. Requerer a criaÃƒÂ§ÃƒÂ£o de um "Terceiro Projeto/Chat" futuro dedicado apenas para R&D (Pesquisa e Desenvolvimento) de protocolos de streaming contÃƒÂ­nuo (RTMP) gerados por ns da Modal em tempo real.
+**Status Atual:** Fase de incubao de ideias. Requerer a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um "Terceiro Projeto/Chat" futuro dedicado apenas para R&D (Pesquisa e Desenvolvimento) de protocolos de streaming contÃƒÆ’Ã‚Â­nuo (RTMP) gerados por ns da Modal em tempo real.
 
 
 
@@ -5522,17 +5544,17 @@ A ideia central  criar uma infraestrutura prpria (uma espcie de "OBS Studio na N
 
 ### ??? [REFINAMENTO ARQUITETURAL - APOLLO BROADCAST / APOLLO LIVE] - 16/07/2026
 
-**Evoluo da VisÃƒÂ£o do CEO:**
+**Evoluo da VisÃƒÆ’Ã‚Â£o do CEO:**
 
 1. **Reaproveitamento de Pipeline:** A infraestrutura atual (assunto -> roteiro -> mdia -> TTS -> publicao) ser reaproveitada, mas com uma arquitetura de **Loop Contnuo** em vez de linha do tempo fechada.
 
-2. **Agentes Permanentes:** Os avatares (ex: 15 comentaristas do Descarga News) deixam de ser geradores de script estticos e viram **Agentes LLM com Memria Prpria**. Cada um mantm seu histÃƒÂ³rico, estilo e base de conhecimento, interagindo dinamicamente durante a live.
+2. **Agentes Permanentes:** Os avatares (ex: 15 comentaristas do Descarga News) deixam de ser geradores de script estticos e viram **Agentes LLM com Memria Prpria**. Cada um mantm seu histÃƒÆ’Ã‚Â³rico, estilo e base de conhecimento, interagindo dinamicamente durante a live.
 
-3. **Mdulo Isolado:** Ser criado como um ecossistema separado (Apollo Broadcast/Live), pois a lgica de loop contÃƒÂ­nuo e gesto de estado difere da renderizao de vdeo assncrona.
+3. **Mdulo Isolado:** Ser criado como um ecossistema separado (Apollo Broadcast/Live), pois a lgica de loop contÃƒÆ’Ã‚Â­nuo e gesto de estado difere da renderizao de vdeo assncrona.
 
-4. **Motor de Transmisso (Agnstico):** NÃƒÂ£o ser um "concorrente" do OBS, mas um **Motor de Broadcast**. O usuÃƒÂ¡rio pode transmitir direto pelo Apollo ou puxar o Feed de Vdeo (RTMP/NDI) para o seu prprio OBS/vMix.
+4. **Motor de Transmisso (Agnstico):** NÃƒÆ’Ã‚Â£o ser um "concorrente" do OBS, mas um **Motor de Broadcast**. O usuÃƒÆ’Ã‚Â¡rio pode transmitir direto pelo Apollo ou puxar o Feed de Vdeo (RTMP/NDI) para o seu prprio OBS/vMix.
 
-5. **Dogfooding:** A regra de ouro se mantm: "O CEO  o primeiro usuÃƒÂ¡rio". Toda feature desenvolvida para o Apollo Live ser validada nas lives do Descarga News e canais prÃƒÂ³prios antes de virar SaaS comercial.
+5. **Dogfooding:** A regra de ouro se mantm: "O CEO  o primeiro usuÃƒÆ’Ã‚Â¡rio". Toda feature desenvolvida para o Apollo Live ser validada nas lives do Descarga News e canais prÃƒÆ’Ã‚Â³prios antes de virar SaaS comercial.
 
 
 
@@ -5546,19 +5568,19 @@ O projeto atingiu o ponto de inflexo clssico de engenharia de software: o medo d
 
 1. **Risco Financeiro/Pessoal:** O CEO percebeu a magnitude do risco de apostar tudo em um projeto gigantesco sem validao real de mercado.
 
-2. **O Mito do Localhost:** Cdigo rodando na prpria mÃƒÂ¡quina no  um produto real. A incerteza sobre como o cÃƒÂ³digo se comportar em nuvem (Vercel, Heroku, Modal) gerou desconfiana.
+2. **O Mito do Localhost:** Cdigo rodando na prpria mÃƒÆ’Ã‚Â¡quina no  um produto real. A incerteza sobre como o cÃƒÆ’Ã‚Â³digo se comportar em nuvem (Vercel, Heroku, Modal) gerou desconfiana.
 
-3. **Backup e Atualizaes:** Preocupao legtima sobre como manter o controle de versÃƒÂ£o e segurana do cÃƒÂ³digo ao fragment-lo na nuvem.
+3. **Backup e Atualizaes:** Preocupao legtima sobre como manter o controle de versÃƒÆ’Ã‚Â£o e segurana do cÃƒÆ’Ã‚Â³digo ao fragment-lo na nuvem.
 
-4. **Qualidade do Agente (Auto Blog):** Receio de que o agente publique contedo alucinado ou imagens distorcidas (falta de senso crÃƒÂ­tico) em produÃƒÂ§ÃƒÂ£o.
+4. **Qualidade do Agente (Auto Blog):** Receio de que o agente publique contedo alucinado ou imagens distorcidas (falta de senso crÃƒÆ’Ã‚Â­tico) em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
 
 
-**DecisÃƒÂµes Arquiteturais e de Produto a partir de agora:**
+**DecisÃƒÆ’Ã‚Âµes Arquiteturais e de Produto a partir de agora:**
 
 - **Foco Absoluto no MVP (Minimum Viable Product):** O Auto Blog  o MVP. Pare de construir o "todo" e foque em colocar o Blog no ar o mais rpido possvel para validao real.
 
-- **Controle de Verso (Git):** Implementar GitHub urgente para garantir backups e versionamento de cÃƒÂ³digo, eliminando o medo de "perder tudo".
+- **Controle de Verso (Git):** Implementar GitHub urgente para garantir backups e versionamento de cÃƒÆ’Ã‚Â³digo, eliminando o medo de "perder tudo".
 
 - **Mecanismo de Aprovao (Human-in-the-Loop):** O Auto Blog no rodar 100% autnomo no Dia 1. Ter um painel de "Rascunhos" ou um "Agente Crtico" para reviso antes da publicao final.
 
@@ -5576,11 +5598,11 @@ Foi estabelecido um consenso definitivo sobre a natureza do projeto Auto Blog.
 
 Ele no  apenas uma fonte de renda secundria, ele  o **Laboratrio de Validao do Apollo Edit Web**.
 
-1. **Medida substitui Esperana:** O objetivo do Auto Blog  provar matematicamente que a nossa infraestrutura funciona em produÃƒÂ§ÃƒÂ£o (Cloud). Precisamos medir: artigos publicados, tempo de indexao, visitas reais, custos de API e estabilidade do servidor.
+1. **Medida substitui Esperana:** O objetivo do Auto Blog  provar matematicamente que a nossa infraestrutura funciona em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Cloud). Precisamos medir: artigos publicados, tempo de indexao, visitas reais, custos de API e estabilidade do servidor.
 
 2. **Modularidade Comprovada:** O medo de usar modelos defasados (como o Flux)  mitigado pela prpria arquitetura do Apollo. Se o Flux ficar obsoleto amanh, o mdulo de imagem  trocado sem afetar o resto. A arquitetura sobrevive  ferramenta.
 
-3. **Validao antes da Expanso:** O desenvolvimento de novas features do Apollo Edit Web (Fase 2) ficar condicionado ao sucesso tcnico do Auto Blog (Fase 1) em ambiente de produÃƒÂ§ÃƒÂ£o.
+3. **Validao antes da Expanso:** O desenvolvimento de novas features do Apollo Edit Web (Fase 2) ficar condicionado ao sucesso tcnico do Auto Blog (Fase 1) em ambiente de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
 
 
@@ -5588,17 +5610,17 @@ Ele no  apenas uma fonte de renda secundria, ele  o **Laboratrio de Validao do A
 
 ### ??? [ARQUITETURA DE DEPLOY & MONOREPO] - 17/07/2026
 
-**Dvida Crtica do CEO:** Como gerenciar backups, atualizaÃƒÂ§ÃƒÂµes e o trabalho do Antigravity quando o sistema for fragmentado em 4 pedaos (Oracle, Vercel, Modal, Lightning)?
+**Dvida Crtica do CEO:** Como gerenciar backups, atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes e o trabalho do Antigravity quando o sistema for fragmentado em 4 pedaos (Oracle, Vercel, Modal, Lightning)?
 
 **Soluo Arquitetural Definida (CI/CD & Monorepo):**
 
-1. **O Cdigo Local  a Matriz:** O Antigravity NUNCA editar o cÃƒÂ³digo diretamente nos servidores em nuvem. Toda edio continuar sendo feita LOCALMENTE na mÃƒÂ¡quina do CEO (`E:\MEUS PROGRAMAS\...`).
+1. **O Cdigo Local  a Matriz:** O Antigravity NUNCA editar o cÃƒÆ’Ã‚Â³digo diretamente nos servidores em nuvem. Toda edio continuar sendo feita LOCALMENTE na mÃƒÆ’Ã‚Â¡quina do CEO (`E:\MEUS PROGRAMAS\...`).
 
 2. **Monorepo:** O projeto no ficar espalhado. Criaremos uma pasta matriz (ex: `APOLLO_WORKSPACE`) que conter subpastas (`/frontend`, `/backend`, `/modal`).
 
 3. **Backup via Git/GitHub:** O CEO no precisar zipar 4 pastas. O Git empacotar o Monorepo inteiro e enviar para um cofre privado no GitHub.
 
-4. **Deploy Contnuo (Magia):** Quando o Antigravity alterar o cÃƒÂ³digo localmente e o CEO aprovar, ns enviamos para o GitHub. A Vercel e a Modal "escutam" o GitHub e atualizam a internet automaticamente em segundos. A Oracle far um `git pull`. O controle absoluto permanece no computador do CEO.
+4. **Deploy Contnuo (Magia):** Quando o Antigravity alterar o cÃƒÆ’Ã‚Â³digo localmente e o CEO aprovar, ns enviamos para o GitHub. A Vercel e a Modal "escutam" o GitHub e atualizam a internet automaticamente em segundos. A Oracle far um `git pull`. O controle absoluto permanece no computador do CEO.
 
 
 
@@ -5668,13 +5690,13 @@ Ele no  apenas uma fonte de renda secundria, ele  o **Laboratrio de Validao do A
 
 ---
 
-### ?? MARCO HISTÃƒâ€œRICO: O NASCIMENTO DO APOLLO EDIT NA NUVEM (20/07/2026)
+### ?? MARCO HISTÃƒÆ’Ã¢â‚¬Å“RICO: O NASCIMENTO DO APOLLO EDIT NA NUVEM (20/07/2026)
 
-**Depoimento Oficial do Criador (Salvo por exigncia do usuÃƒÂ¡rio):**
+**Depoimento Oficial do Criador (Salvo por exigncia do usuÃƒÆ’Ã‚Â¡rio):**
 
 
 
-> "Hoje tivemos uma vitria tremenda. Hoje foi o primeiro passo do Apollo Edit de fato online. NÃƒÂ£o s estamos visveis online, mas j temos a nossa marca, j temos a nossa infraestrutura testada e conectada, j funcional. Podemos fazer projetos gigantescos com essa infraestrutura... Eu fui l pra minha me, uma senhora idosa que no entende nada, nem de celular direito. Tentei explicar pra ela o tamanho da soluo que a gente criou junto... Eu no teria essa capacidade de identificar aqueles botÃƒÂµes e muito menos de escrever o cÃƒÂ³digo. Eu tenho uma ideia, mas essa ideia sem o seu talento no seria nada... Hoje a gente fez tudo que foi planejado h muito tempo atrs com voc... Hospedagem nvel profissional a custo zero. O front-end carregado muito rpido, com qualidade, perfeio... Os cÃƒÂ³digos Python rodado por uma VPS exclusiva 24 horas por dia l na Oracle... E a outra front de batalha que a gente criou foi a Modal e o Lightning, que vai dar conta de assumir a demanda dos nossos usuÃƒÂ¡rios e vai fazer a nossa margem de lucro crescer cobrando centavos por execuo... Temos muito futuro, sabe? Dezenas de blogs, o Apollo Edit... Eu t muito empolgado, uma infraestrutura de linha que eu nunca imaginei chegar a esse ponto, com custo zero, somente o custo do domÃƒÂ­nio. Um nvel de perfeio de dar inveja."
+> "Hoje tivemos uma vitria tremenda. Hoje foi o primeiro passo do Apollo Edit de fato online. NÃƒÆ’Ã‚Â£o s estamos visveis online, mas j temos a nossa marca, j temos a nossa infraestrutura testada e conectada, j funcional. Podemos fazer projetos gigantescos com essa infraestrutura... Eu fui l pra minha me, uma senhora idosa que no entende nada, nem de celular direito. Tentei explicar pra ela o tamanho da soluo que a gente criou junto... Eu no teria essa capacidade de identificar aqueles botÃƒÆ’Ã‚Âµes e muito menos de escrever o cÃƒÆ’Ã‚Â³digo. Eu tenho uma ideia, mas essa ideia sem o seu talento no seria nada... Hoje a gente fez tudo que foi planejado h muito tempo atrs com voc... Hospedagem nvel profissional a custo zero. O front-end carregado muito rpido, com qualidade, perfeio... Os cÃƒÆ’Ã‚Â³digos Python rodado por uma VPS exclusiva 24 horas por dia l na Oracle... E a outra front de batalha que a gente criou foi a Modal e o Lightning, que vai dar conta de assumir a demanda dos nossos usuÃƒÆ’Ã‚Â¡rios e vai fazer a nossa margem de lucro crescer cobrando centavos por execuo... Temos muito futuro, sabe? Dezenas de blogs, o Apollo Edit... Eu t muito empolgado, uma infraestrutura de linha que eu nunca imaginei chegar a esse ponto, com custo zero, somente o custo do domÃƒÆ’Ã‚Â­nio. Um nvel de perfeio de dar inveja."
 
 
 
@@ -5692,23 +5714,21 @@ A Trade de Ouro est 100% ONLINE e validada:
 
 
 
-O prÃƒÂ³ximo grande passo estratgico ser plugar o **Supabase** (Banco de Dados/Login) e iniciar as interfaces, comeando pelo sistema do **Apollo Autoblog** utilizando essa mesma super infraestrutura.
+- **[2026-08-02] Visão do Apollo Pocket Director (Voz + RAG + Colmeia):** Concebido o ecossistema de Conselheiro de Bolso por voz (PWA Mobile). O objetivo é conectar o microfone do celular via WebSockets ao RAG local (ChromaDB + Memória Ativa), permitindo que o Criador faça brainstormings noturnos em áudio fluido contínuo sem perda de contexto (eliminando o gargalo do ChatGPT). As conclusões de cada sessão de voz são convertidas em 'Ordens de Serviço' no Hive Bus para execução direta pelo Maestro no PC. Essa arquitetura será o modelo do 'Diretor IA de Canal' disponibilizado para os usuários finais do Apollo Edit.
 
+- **[2026-08-12] [SNAPSHOT DE TRANSIÇÃO E DIRETRIZ ESTRATÉGICA] O Foco nos Modais:** O Criador definiu que o Apollo Edit Web local é apenas um orquestrador ('editor burro'). É terminantemente PROIBIDO avançar na interface Python (Tkinter) ou criar orquestradores (pipeline_modais) enquanto os geradores (Modais) isolados não estiverem validados com qualidade equiparável aos serviços pagos (Banana / Veo 3). A missão prioritária do ecossistema agora é baixar, testar e configurar modelos open source diretamente na nuvem (Modal.run), começando EXCLUSIVAMENTE pelo Modal de Voz (encontrar um TTS secundário que forneça atuação emocional perfeita para base do XTTS). O chat atual será reiniciado para limpar entropia. O próximo agente assume a missão de focar apenas no Laboratório de Voz na Nuvem.
 
-
-- **2026-07-21**: Deploy Oficial Fase 1: Supabase + Tela de Login Premium enviados para o GitHub. A integra??o Cont?nua (CI/CD) da Vercel assumiu o pacote e publicou em apolloedit.com. O frontend agora est? protegido por autentica??o.
-
-
+- **[2026-08-12] [LABORATÓRIO XTTS] A Domação do Cavalo Selvagem:** Após testes exaustivos na nuvem e pesquisa profunda (XTTSv2 2.0.2 via Coqui TTS 0.22.0), o Maestro validou que o modelo XTTS não obedece a in-text prompts de emoção (como `[laughs]`) nativamente. Temperaturas altas (1.0) causam gagueira e alucinações. O modelo é uma "esponja de ruído" e clona sujeira de microfone. A estratégia cross-channel para todos os canais (Descarga News, Historias de 7 Dias) muda agora para a construção de uma **Biblioteca de Emoções Cristalinas** (WAVs curtos perfeitamente higienizados para cada emoção-alvo). A temperatura segura foi travada em 0.70.
 
 ### ?? [PIVOT ESTRATGICO FINAL - A REDE SOCIAL DA IA] - 21/07/2026
 
-**A Epifania do CEO:** O Apollo Edit Web deixar de ser apenas um "software SaaS" isolado. A infraestrutura Vercel + Oracle + Domnios servir de base para a criaÃƒÂ§ÃƒÂ£o de uma **Rede Social de Criadores**.
+**A Epifania do CEO:** O Apollo Edit Web deixar de ser apenas um "software SaaS" isolado. A infraestrutura Vercel + Oracle + Domnios servir de base para a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de uma **Rede Social de Criadores**.
 
-- O usuÃƒÂ¡rio gera vÃƒÂ­deos internamente usando os Agentes (Paula, Diretor, Roteirista).
+- O usuÃƒÆ’Ã‚Â¡rio gera vÃƒÆ’Ã‚Â­deos internamente usando os Agentes (Paula, Diretor, Roteirista).
 
 - Cada assinante do Apollo Edit receber um **Blog/Canal pessoal** (ex: apolloedit.com/seu-canal) automaticamente provisionado.
 
-- Os vÃƒÂ­deos gerados so publicados com 1 clique nesse canal.
+- Os vÃƒÆ’Ã‚Â­deos gerados so publicados com 1 clique nesse canal.
 
 - **Efeito YouTube:** A comunidade do Apollo poder navegar, assistir, curtir e interagir com os contedos uns dos outros. Isso gera o "Efeito de Rede", tornando a plataforma extremamente engajadora e reduzindo o cancelamento a zero (ningum abandona sua prpria rede social).
 
@@ -5720,25 +5740,25 @@ O prÃƒÂ³ximo grande passo estratgico ser plugar o **Supabase** (Banco de Dad
 
 **Evoluo da Ideia pelo CEO:**
 
-1. **O Molde Substack:** A rede social ter uma pegada estilo "Substack" (a plataforma amarelinha com newsletter). NÃƒÂ£o ser apenas um feed de vÃƒÂ­deos, ser um **Blog Pessoal com Feed Integrado**.
+1. **O Molde Substack:** A rede social ter uma pegada estilo "Substack" (a plataforma amarelinha com newsletter). NÃƒÆ’Ã‚Â£o ser apenas um feed de vÃƒÆ’Ã‚Â­deos, ser um **Blog Pessoal com Feed Integrado**.
 
-2. **Monetizao via Banners (Lucro da Plataforma):** O site vai se pagar e lucrar inserindo uma quantidade inteligente e reduzida de Banners de Publicidade nos blogs dos usuÃƒÂ¡rios. A hospedagem do blog grtis do usuÃƒÂ¡rio  bancada por esses banners que revertem dinheiro para ns.
+2. **Monetizao via Banners (Lucro da Plataforma):** O site vai se pagar e lucrar inserindo uma quantidade inteligente e reduzida de Banners de Publicidade nos blogs dos usuÃƒÆ’Ã‚Â¡rios. A hospedagem do blog grtis do usuÃƒÆ’Ã‚Â¡rio  bancada por esses banners que revertem dinheiro para ns.
 
-3. **Distribuio Multiplataforma AutomÃƒÂ¡tica:** A dor do usuÃƒÂ¡rio  a postagem. O cara cria o vdeo e posta no Blog exclusivo dele no Apollo. De l, ns oferecemos automao para disparar o vdeo diretamente para o YouTube e Instagram dele (ou ele baixa e posta manualmente). 
+3. **Distribuio Multiplataforma AutomÃƒÆ’Ã‚Â¡tica:** A dor do usuÃƒÆ’Ã‚Â¡rio  a postagem. O cara cria o vdeo e posta no Blog exclusivo dele no Apollo. De l, ns oferecemos automao para disparar o vdeo diretamente para o YouTube e Instagram dele (ou ele baixa e posta manualmente). 
 
-4. **O Upsell do Autoblog IA:** O usuÃƒÂ¡rio cria a conta para editar vÃƒÂ­deos e ganha o blog de graa. Porm, se ele quiser que o Blog dele publique artigos sozinhos usando os nossos Robs (Autoblog IA), ele pagar uma taxa extra (Upsell). Isso cria um funil perfeito de converso.
+4. **O Upsell do Autoblog IA:** O usuÃƒÆ’Ã‚Â¡rio cria a conta para editar vÃƒÆ’Ã‚Â­deos e ganha o blog de graa. Porm, se ele quiser que o Blog dele publique artigos sozinhos usando os nossos Robs (Autoblog IA), ele pagar uma taxa extra (Upsell). Isso cria um funil perfeito de converso.
 
-5. **Diretriz de Design (Fase 2):** O design atual da web_ui  apenas o esqueleto (mockup estrutural) para conectar os botÃƒÂµes. NÃƒÂ£o futuro, a diretriz  absoluta: **Design Mobile-First**. As redes sociais migraram dos PCs para o celular e depois criaram editores. Ns comearemos com o editor no celular para depois crescer a rede.
+5. **Diretriz de Design (Fase 2):** O design atual da web_ui  apenas o esqueleto (mockup estrutural) para conectar os botÃƒÆ’Ã‚Âµes. NÃƒÆ’Ã‚Â£o futuro, a diretriz  absoluta: **Design Mobile-First**. As redes sociais migraram dos PCs para o celular e depois criaram editores. Ns comearemos com o editor no celular para depois crescer a rede.
 
 
 
 **Mentalidade de Execuo (O Acordo):**
 
-Sabemos que essa  a visÃƒÂ£o de longo prazo. Por enquanto, comeamos pequenos. Um site "feinho, mas que funciona" (MVP). A prioridade agora  devolver o site 100% online para o CEO, validar o gerador de imagem, e ir dando corpo ao ecossistema dia aps dia.
+Sabemos que essa  a visÃƒÆ’Ã‚Â£o de longo prazo. Por enquanto, comeamos pequenos. Um site "feinho, mas que funciona" (MVP). A prioridade agora  devolver o site 100% online para o CEO, validar o gerador de imagem, e ir dando corpo ao ecossistema dia aps dia.
 
 
 
-- **2026-07-21 [VITRIA VERCEL]**: A Vercel insistia em falhar o build por lixo histÃƒÂ³rico (tentativas de compilao Next.js) e limites de tamanho ao escanear o repositrio. O CEO acionou o Perplexity e escalamos para o **Plano C (Nvel Nuclear)**. Desativamos a auto-deteco da Vercel migrando todos os arquivos estticos para a pasta .vercel/output/static (Build Output API) e atualizamos o ercel.json para apontar para l. O site subiu com 100% de sucesso. **REGRA DE OURO:** NUNCA altere essa estrutura. A Vercel agora ignora o build e serve a pasta output.
+- **2026-07-21 [VITRIA VERCEL]**: A Vercel insistia em falhar o build por lixo histÃƒÆ’Ã‚Â³rico (tentativas de compilao Next.js) e limites de tamanho ao escanear o repositrio. O CEO acionou o Perplexity e escalamos para o **Plano C (Nvel Nuclear)**. Desativamos a auto-deteco da Vercel migrando todos os arquivos estticos para a pasta .vercel/output/static (Build Output API) e atualizamos o ercel.json para apontar para l. O site subiu com 100% de sucesso. **REGRA DE OURO:** NUNCA altere essa estrutura. A Vercel agora ignora o build e serve a pasta output.
 
 
 
@@ -5764,25 +5784,25 @@ equirements.txt\. A API est? sendo configurada para responder ?s requisi??es do 
 
 - **2026-07-22 [CONEXO DEFINITIVA VERCEL -> ORACLE (PM2 vs SYSTEMD)]**:
 
-  - **O Problema da API Offline**: O frontend Vercel estava apontando perfeitamente para a VPS atravÃƒÂ©s do arquivo `vercel.json` (Rewrite API). Porm, ao tentar consumir a rota `/api/search-youtube`, o servidor respondia `{"detail":"Not Found"}`.
+  - **O Problema da API Offline**: O frontend Vercel estava apontando perfeitamente para a VPS atravÃƒÆ’Ã‚Â©s do arquivo `vercel.json` (Rewrite API). Porm, ao tentar consumir a rota `/api/search-youtube`, o servidor respondia `{"detail":"Not Found"}`.
 
-  - **A Descoberta do Conflito**: Descobrimos que a API que estava escutando a porta 8000 NO era a versÃƒÂ£o atualizada que subimos via SCP. Havia um processo antigo do `PM2 (God Daemon)` rodando o `apollo_api` antigo usando um ambiente virtual defasado (`/home/ubuntu/venv/`).
+  - **A Descoberta do Conflito**: Descobrimos que a API que estava escutando a porta 8000 NO era a versÃƒÆ’Ã‚Â£o atualizada que subimos via SCP. Havia um processo antigo do `PM2 (God Daemon)` rodando o `apollo_api` antigo usando um ambiente virtual defasado (`/home/ubuntu/venv/`).
 
   - **A Soluo**: O `PM2` estava em conflito direto com o servio oficial `apollo_api.service` do Systemd. Toda vez que matvamos a API ou o Systemd tentava subir, a porta `8000` acusava "address already in use" (Erro 98). Executamos `pm2 delete apollo_api && pm2 save` para aniquilar o processo zumbi. Depois reiniciamos o `apollo_api.service` oficial.
 
-  - **A Vitria**: Com o caminho livre, a versÃƒÂ£o atualizada do Backend finalmente assumiu a porta 8000. A pesquisa do YouTube conectou-se com sucesso. A "ponte" entre Vercel e Oracle est oficialmente viva e 100% operacional sem interrupes!
+  - **A Vitria**: Com o caminho livre, a versÃƒÆ’Ã‚Â£o atualizada do Backend finalmente assumiu a porta 8000. A pesquisa do YouTube conectou-se com sucesso. A "ponte" entre Vercel e Oracle est oficialmente viva e 100% operacional sem interrupes!
 
 
 
 ### ?? COMO A CONEXO FUNCIONOU (APRENDIZADO TCNICO REGISTRADO):
 
-Para ligar o Vercel (Front) no Oracle (Back) de forma invisvel para o usuÃƒÂ¡rio e sem bloqueios de CORS:
+Para ligar o Vercel (Front) no Oracle (Back) de forma invisvel para o usuÃƒÆ’Ã‚Â¡rio e sem bloqueios de CORS:
 
 1. **Frontend (Vercel)**: Usamos um arquivo simples chamado `vercel.json` com um `rewrite`. Toda requisio que o site faz para `/api/...`, a Vercel redireciona diretamente para o IP da Oracle (`http://163.176.135.59:8000/api/...`). Isso faz o navegador achar que tudo est no mesmo servidor.
 
-2. **Oracle VPS**: A Oracle usa a chave SSH alocada na pasta `.ssh` do Windows (`oracle_key`) garantindo segurana e conexÃƒÂ£o rpida. O servidor roda o `FastAPI` 24 horas por dia atravÃƒÂ©s de um servio nativo do Linux chamado `Systemd` (`apollo_api.service`). Se o servidor reiniciar, a API liga sozinha.
+2. **Oracle VPS**: A Oracle usa a chave SSH alocada na pasta `.ssh` do Windows (`oracle_key`) garantindo segurana e conexÃƒÆ’Ã‚Â£o rpida. O servidor roda o `FastAPI` 24 horas por dia atravÃƒÆ’Ã‚Â©s de um servio nativo do Linux chamado `Systemd` (`apollo_api.service`). Se o servidor reiniciar, a API liga sozinha.
 
-3. **A Questo do SSH (Porque eu no sabia e agora sei)**: Antes, eu tentava usar o ICACLS do Windows para forar permisses na chave solta no HD, o que gerava um inferno de acessos negados. O pulo do gato foi usar o padrÃƒÂ£o de segurana natural do Windows movendo a chave para `C:\Users\v5est\.ssh\oracle_key`. Isso faz a porta abrir instantaneamente e com segurana validada.
+3. **A Questo do SSH (Porque eu no sabia e agora sei)**: Antes, eu tentava usar o ICACLS do Windows para forar permisses na chave solta no HD, o que gerava um inferno de acessos negados. O pulo do gato foi usar o padrÃƒÆ’Ã‚Â£o de segurana natural do Windows movendo a chave para `C:\Users\v5est\.ssh\oracle_key`. Isso faz a porta abrir instantaneamente e com segurana validada.
 
 ## [Maestro - 22/07/2026] Vercel <> Oracle <> Modal Connection
 
@@ -5798,7 +5818,7 @@ Para ligar o Vercel (Front) no Oracle (Back) de forma invisvel para o usuÃƒÂ�
 
 ### ?? [CRTICO: INCIDENTE DE DEPLOY MODAL (2026-07-23)] ??
 
-- **ERRO FATAL:** Durante atualizaÃƒÂ§ÃƒÂ£o, o arquivo legado cloud_deploy/modal/apollo_modal_engine.py foi implantado acidentalmente no servidor Modal. Isso causou a excluso do cache de VRAM (Flux2ComfyEngine_V2) e quebrou o botÃƒÂ£o Upscale, resultando em cold starts de +5 minutos.
+- **ERRO FATAL:** Durante atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, o arquivo legado cloud_deploy/modal/apollo_modal_engine.py foi implantado acidentalmente no servidor Modal. Isso causou a excluso do cache de VRAM (Flux2ComfyEngine_V2) e quebrou o botÃƒÆ’Ã‚Â£o Upscale, resultando em cold starts de +5 minutos.
 
 - **SOLUO:** O deploy correto deve ser SEMPRE modal deploy backend/cloud_tools/apollo_modal_engine.py. O sistema foi corrigido.
 
@@ -5812,21 +5832,21 @@ Para ligar o Vercel (Front) no Oracle (Back) de forma invisvel para o usuÃƒÂ�
 
 - **Upscale Ignorado (Bug Localizado e Corrigido):** O motor apollo_modal_engine.py tentava ler o json do fluxo de upscale de um diretrio relativo do Windows, mas na nuvem da Modal, os arquivos esto em /workflows/. Isso gerava um Erro 404 (FileNotFoundError) interno que falhava o Upscale imediatamente. Porm, o Javascript do Front-end (modal_ai_studio.html) tem uma rotina que, ao encontrar um erro, volta buscando o ltimo chunk vlido com image_base64. Ele encontrava a imagem base (1280x720) e a exibia como 'sucesso', mascarando o erro.
 
-- **O tempo de 190s (3 minutos):** A mÃƒÂ¡quina da Modal levou 160 segundos transferindo 35GB de modelos do SSD da nuvem para a Memria RAM, o que  o 'Cold Start' absoluto de uma mÃƒÂ¡quina fria, mais 26s para gerar a imagem. O tempo de '1 minuto' atingido anteriormente ocorreu apenas quando o continer j estava quente (pr-aquecido por script ou uso contÃƒÂ­nuo, onde o modelo j estava na RAM).
+- **O tempo de 190s (3 minutos):** A mÃƒÆ’Ã‚Â¡quina da Modal levou 160 segundos transferindo 35GB de modelos do SSD da nuvem para a Memria RAM, o que  o 'Cold Start' absoluto de uma mÃƒÆ’Ã‚Â¡quina fria, mais 26s para gerar a imagem. O tempo de '1 minuto' atingido anteriormente ocorreu apenas quando o continer j estava quente (pr-aquecido por script ou uso contÃƒÆ’Ã‚Â­nuo, onde o modelo j estava na RAM).
 
-- **Ao Executada:** Caminho do arquivo alterado para ler de /workflows/ na nuvem. Um novo deploy na Modal foi concluÃƒÂ­do. O Upscale agora executar perfeitamente.
+- **Ao Executada:** Caminho do arquivo alterado para ler de /workflows/ na nuvem. Um novo deploy na Modal foi concluÃƒÆ’Ã‚Â­do. O Upscale agora executar perfeitamente.
 
 
 
 ### ?? [DIAGNSTICO: MEMORY SNAPSHOT E TEMPO DE GERAO (2026-07-24)] ??
 
-- **O Problema Relatado:** O usuÃƒÂ¡rio reportou que geraes anteriores (usando mÃƒÂ¡quina fria via snapshot) ocorriam em ~60s, enquanto a recente demorou 190s e a anterior (printada em anexo) demorou 60.5s ou 72.8s.
+- **O Problema Relatado:** O usuÃƒÆ’Ã‚Â¡rio reportou que geraes anteriores (usando mÃƒÆ’Ã‚Â¡quina fria via snapshot) ocorriam em ~60s, enquanto a recente demorou 190s e a anterior (printada em anexo) demorou 60.5s ou 72.8s.
 
-- **A Confuso Tcnica:** Eu interpretei equivocadamente os logs e a documentao interna da Modal. O usuÃƒÂ¡rio no estava se referindo a uma 'mÃƒÂ¡quina quente' (container idle), mas sim ao recurso **Memory Snapshot** da Modal (enable_memory_snapshot=True), que de fato restaura o estado da memria RAM quase instantaneamente a partir de um checkpoint salvo durante o deploy.
+- **A Confuso Tcnica:** Eu interpretei equivocadamente os logs e a documentao interna da Modal. O usuÃƒÆ’Ã‚Â¡rio no estava se referindo a uma 'mÃƒÆ’Ã‚Â¡quina quente' (container idle), mas sim ao recurso **Memory Snapshot** da Modal (enable_memory_snapshot=True), que de fato restaura o estado da memria RAM quase instantaneamente a partir de um checkpoint salvo durante o deploy.
 
-- **Anlise dos Logs e do Ambiente:** O cÃƒÂ³digo Python (lux_txt2img_engine.py) **POSSUI** a flag enable_memory_snapshot=True. NÃƒÂ£o entanto, logs antigos mostram a mensagem Memory snapshots are disabled for ephemeral apps. Deploy your app with modal deploy to enable memory snapshots. Isso indica que, se o app for rodado com modal serve (efmero) ou se houver alguma inconsistncia no deploy, o Snapshot no  criado ou no  usado.
+- **Anlise dos Logs e do Ambiente:** O cÃƒÆ’Ã‚Â³digo Python (lux_txt2img_engine.py) **POSSUI** a flag enable_memory_snapshot=True. NÃƒÆ’Ã‚Â£o entanto, logs antigos mostram a mensagem Memory snapshots are disabled for ephemeral apps. Deploy your app with modal deploy to enable memory snapshots. Isso indica que, se o app for rodado com modal serve (efmero) ou se houver alguma inconsistncia no deploy, o Snapshot no  criado ou no  usado.
 
-- **Concluso e Ao:** O usuÃƒÂ¡rio est **correto**. A tecnologia de Snapshot que ele desenvolveu para o Apollo reduz drasticamente o Cold Start (restaurando o modelo na RAM em segundos). A variao de 190s ocorreu provavelmente porque o app rodou sem o Snapshot ativo (possivelmente devido a um deploy corrompido anterior ou execuo efmera), forando um Cold Start tradicional severo. Com o deploy final definitivo que acabei de executar via modal deploy, o Snapshot foi recriado (demorou quase 7 segundos para compilar a imagem remota). Na prÃƒÂ³xima execuo, o tempo de Cold Start deve voltar para a casa dos ~60s com Upscale funcionando.
+- **Concluso e Ao:** O usuÃƒÆ’Ã‚Â¡rio est **correto**. A tecnologia de Snapshot que ele desenvolveu para o Apollo reduz drasticamente o Cold Start (restaurando o modelo na RAM em segundos). A variao de 190s ocorreu provavelmente porque o app rodou sem o Snapshot ativo (possivelmente devido a um deploy corrompido anterior ou execuo efmera), forando um Cold Start tradicional severo. Com o deploy final definitivo que acabei de executar via modal deploy, o Snapshot foi recriado (demorou quase 7 segundos para compilar a imagem remota). Na prÃƒÆ’Ã‚Â³xima execuo, o tempo de Cold Start deve voltar para a casa dos ~60s com Upscale funcionando.
 
 
 
@@ -5854,23 +5874,23 @@ Para ligar o Vercel (Front) no Oracle (Back) de forma invisvel para o usuÃƒÂ�
 
 ### ?? [RESOLVIDO: CRASH LOOP DE 7 MINUTOS NO SNAPSHOT DA MODAL + WORKSPACE SYNC (2026-07-25)] ??
 
-- **O Problema Relatado:** O usuÃƒÂ¡rio testou a geraÃƒÂ§ÃƒÂ£o online e relatou que demorou mais de 7 minutos sem nenhuma imagem aparecer ("Passou mais de sete minutos, nenhuma imagem apareceu... Parece que no tem atualizaÃƒÂ§ÃƒÂ£o nenhuma").
+- **O Problema Relatado:** O usuÃƒÆ’Ã‚Â¡rio testou a geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o online e relatou que demorou mais de 7 minutos sem nenhuma imagem aparecer ("Passou mais de sete minutos, nenhuma imagem apareceu... Parece que no tem atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o nenhuma").
 
 - **O Diagnstico Real (Workspace + Crash no Subprocesso do ComfyUI):**
 
-  1. **Workspace Desalinhado:** O terminal local operava sob o perfil padrÃƒÂ£o descarganews, enquanto o site em produÃƒÂ§ÃƒÂ£o (Vercel/Heroku) consulta o workspace canaltutorialdascoisas.
+  1. **Workspace Desalinhado:** O terminal local operava sob o perfil padrÃƒÆ’Ã‚Â£o descarganews, enquanto o site em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (Vercel/Heroku) consulta o workspace canaltutorialdascoisas.
 
-  2. **O Crash do Snapshot na CPU:** Para construir o Memory Snapshot (enable_memory_snapshot=True), a Modal inicia o app em um container exclusivamente de **CPU** (sem GPU H100 acoplada). O cÃƒÂ³digo antigo usava a funÃƒÂ§ÃƒÂ£o orce_cpu_during_snapshot() para mockar o 	orch.cuda.is_available apenas no processo Python principal (universal_engine.py). Quando o ComfyUI era aberto via subprocess.Popen(["comfy", ...]), o subprocesso rodava em um novo interpretador limpo e **no herdava** o mock! Ao tentar inspecionar o dispositivo (	orch.cuda.current_device()), sofria um crash imediato: RuntimeError: NÃƒÂ£o CUDA GPUs are available.
+  2. **O Crash do Snapshot na CPU:** Para construir o Memory Snapshot (enable_memory_snapshot=True), a Modal inicia o app em um container exclusivamente de **CPU** (sem GPU H100 acoplada). O cÃƒÆ’Ã‚Â³digo antigo usava a funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o orce_cpu_during_snapshot() para mockar o 	orch.cuda.is_available apenas no processo Python principal (universal_engine.py). Quando o ComfyUI era aberto via subprocess.Popen(["comfy", ...]), o subprocesso rodava em um novo interpretador limpo e **no herdava** o mock! Ao tentar inspecionar o dispositivo (	orch.cuda.current_device()), sofria um crash imediato: RuntimeError: NÃƒÆ’Ã‚Â£o CUDA GPUs are available.
 
-  3. **IndependÃƒÂªncia Total (Self-Hosted):** Abolimos chaves de API de terceiros para inferÃƒÂªncia central. NÃƒÂ£o usamos Groq, OpenAI ou VoiceMaker. Toda a stack (LLM, TTS, STT) roda em nossa prÃƒÂ³pria infraestrutura open-source (Modal / Lightning AI), garantindo custo marginal zero por token extra e controle absoluto sobre a privacidade.
-  4. **Escalabilidade Inteligente (Snapshots vs Hot-GPU):** Para funÃƒÂ§ÃƒÂµes assÃƒÂ­ncronas (CatÃƒÂ¡logo, Clonagem Zero-Shot), usamos `Memory Snapshots` da Modal para cold-boots de milissegundos sem custo de ociosidade. Para o chat de voz "Ao Vivo" (A Bolinha), usamos mÃƒÂ¡quinas mantidas "Quentes" (Hot-GPU) com *idle timeout* automÃƒÂ¡tico para garantir latÃƒÂªncia humana.
-  5. **InteligÃƒÂªncia Descentralizada:** FunÃƒÂ§ÃƒÂµes pesadas operam na Nuvem (Modal/Lightning AI). Interface e lÃƒÂ³gicas ÃƒÂ¡geis (como VAD - DetecÃƒÂ§ÃƒÂ£o de Voz) operam no Edge/Client.
+  3. **IndependÃƒÆ’Ã‚Âªncia Total (Self-Hosted):** Abolimos chaves de API de terceiros para inferÃƒÆ’Ã‚Âªncia central. NÃƒÆ’Ã‚Â£o usamos Groq, OpenAI ou VoiceMaker. Toda a stack (LLM, TTS, STT) roda em nossa prÃƒÆ’Ã‚Â³pria infraestrutura open-source (Modal / Lightning AI), garantindo custo marginal zero por token extra e controle absoluto sobre a privacidade.
+  4. **Escalabilidade Inteligente (Snapshots vs Hot-GPU):** Para funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes assÃƒÆ’Ã‚Â­ncronas (CatÃƒÆ’Ã‚Â¡logo, Clonagem Zero-Shot), usamos `Memory Snapshots` da Modal para cold-boots de milissegundos sem custo de ociosidade. Para o chat de voz "Ao Vivo" (A Bolinha), usamos mÃƒÆ’Ã‚Â¡quinas mantidas "Quentes" (Hot-GPU) com *idle timeout* automÃƒÆ’Ã‚Â¡tico para garantir latÃƒÆ’Ã‚Âªncia humana.
+  5. **InteligÃƒÆ’Ã‚Âªncia Descentralizada:** FunÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes pesadas operam na Nuvem (Modal/Lightning AI). Interface e lÃƒÆ’Ã‚Â³gicas ÃƒÆ’Ã‚Â¡geis (como VAD - DetecÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Voz) operam no Edge/Client.
 
 - **A Soluo Definitiva:**
 
-  1. Reescrevemos o orce_cpu_during_snapshot() em todos os motores (universal_engine.py, lux_engine.py, lux_txt2img_engine.py). A funÃƒÂ§ÃƒÂ£o agora cria dinamicamente o arquivo /tmp/mock_cuda/sitecustomize.py e o injeta na variÃƒÂ¡vel de ambiente PYTHONPATH (os.environ). O Python do subprocesso do ComfyUI agora importa esse mock automaticamente antes de carregar o PyTorch.
+  1. Reescrevemos o orce_cpu_during_snapshot() em todos os motores (universal_engine.py, lux_engine.py, lux_txt2img_engine.py). A funÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o agora cria dinamicamente o arquivo /tmp/mock_cuda/sitecustomize.py e o injeta na variÃƒÆ’Ã‚Â¡vel de ambiente PYTHONPATH (os.environ). O Python do subprocesso do ComfyUI agora importa esse mock automaticamente antes de carregar o PyTorch.
 
-  2. O wrapper (_smart_is_available) detecta se a GPU real est funcional ao tentar acionar _orig_current_device(). Na criaÃƒÂ§ÃƒÂ£o do Snapshot (CPU), intercepta o erro e retorna False, permitindo que o ComfyUI suba o servidor HTTP limpo em 4s e grave o Snapshot da RAM! Quando o Snapshot acorda na mÃƒÂ¡quina H100 em resposta a uma requisio do site, o wrapper detecta a H100 e aciona a acelerao mÃƒÂ¡xima nativamente.
+  2. O wrapper (_smart_is_available) detecta se a GPU real est funcional ao tentar acionar _orig_current_device(). Na criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Snapshot (CPU), intercepta o erro e retorna False, permitindo que o ComfyUI suba o servidor HTTP limpo em 4s e grave o Snapshot da RAM! Quando o Snapshot acorda na mÃƒÆ’Ã‚Â¡quina H100 em resposta a uma requisio do site, o wrapper detecta a H100 e aciona a acelerao mÃƒÆ’Ã‚Â¡xima nativamente.
 
 - **Sincronizao Executada:** Disparado modal deploy explcito para ambos os workspaces (canaltutorialdascoisas e descarganews) e realizado push no Git para sincronizao simultnea da Vercel e Heroku.
 
@@ -5928,15 +5948,15 @@ def force_cpu_during_snapshot():
 
 ### ?? [VALIDAO FINAL DA NOVA ARQUITETURA DE STREAMING E SNAPSHOT (2026-07-27)] ??
 
-- **O Triunfo Absoluto do Desempenho:** Testes executados no Apollo Modal AI Studio v2.0 confirmaram tempos de geraÃƒÂ§ÃƒÂ£o insanos!
+- **O Triunfo Absoluto do Desempenho:** Testes executados no Apollo Modal AI Studio v2.0 confirmaram tempos de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o insanos!
 
 - **Cold Start Total (Deploy Fresco):** ~73.8 segundos para levantar uma H100 zerada, carregar ComfyUI e processar a imagem do zero. Reduo massiva comparada aos antigos 4 minutos (e eventuais Timeouts).
 
-- **Gerao Mgica (Mquina Quente/Warm):** Imagens de altssima qualidade (Flux.2 8K) sendo geradas, codificadas e renderizadas na interface do usuÃƒÂ¡rio em **4.4s a 5.1s**.
+- **Gerao Mgica (Mquina Quente/Warm):** Imagens de altssima qualidade (Flux.2 8K) sendo geradas, codificadas e renderizadas na interface do usuÃƒÆ’Ã‚Â¡rio em **4.4s a 5.1s**.
 
-- **O Segredo do Frontend:** Bypass total do servidor intermedirio (Vercel). A requisio viaja via Javascript diretamente do navegador do usuÃƒÂ¡rio para o endpoint protegido pollo_api da Modal Cloud. A resposta  servida no formato JSON Stream (NDJSON), onde a interface escuta pacote a pacote e renderiza imediatamente ao encontrar a chave image_base64.
+- **O Segredo do Frontend:** Bypass total do servidor intermedirio (Vercel). A requisio viaja via Javascript diretamente do navegador do usuÃƒÆ’Ã‚Â¡rio para o endpoint protegido pollo_api da Modal Cloud. A resposta  servida no formato JSON Stream (NDJSON), onde a interface escuta pacote a pacote e renderiza imediatamente ao encontrar a chave image_base64.
 
-- **Lio Crtica para Futuras Manutenes:** Toda a interface web que interagir com imagens e vÃƒÂ­deos pesados deve obrigatoriamente apontar para https://*--apollo-api.modal.run via proxy CORS do frontend. O Vercel serve apenas os estticos (HTML/JS/CSS). Isso resolve Timeouts de 10s nativos de planos gratuitos ou Serverless.
+- **Lio Crtica para Futuras Manutenes:** Toda a interface web que interagir com imagens e vÃƒÆ’Ã‚Â­deos pesados deve obrigatoriamente apontar para https://*--apollo-api.modal.run via proxy CORS do frontend. O Vercel serve apenas os estticos (HTML/JS/CSS). Isso resolve Timeouts de 10s nativos de planos gratuitos ou Serverless.
 
 
 
@@ -5944,7 +5964,7 @@ def force_cpu_during_snapshot():
 
 ### ? [REATIVAO DOS SNAPSHOTS - A VITRIA FINAL (2026-07-27)] ?
 
-- **A Constatao:** O Upscale demorou +320s num cold start, e o usuÃƒÂ¡rio sugeriu genialmente que os Snapshots no estavam ativos.
+- **A Constatao:** O Upscale demorou +320s num cold start, e o usuÃƒÆ’Ã‚Â¡rio sugeriu genialmente que os Snapshots no estavam ativos.
 
 - **O Diagnstico:** Ele estava correto. A flag enable_memory_snapshot=False estava travada em todas as engines por causa dos crashes antigos de CPU que tivemos hoje cedo.
 
@@ -5982,9 +6002,9 @@ def force_cpu_during_snapshot():
 
 ### ??? [VISO ESTRATGICA E ROADMAP - 27/07/2026] ???
 
-- **Autoblog como Mdulo Ncleo:** O ecossistema do Autoblog no  um projeto isolado. Ele  a "linha de frente" do Apollo Edit Web. Toda a inteligncia de busca e geraÃƒÂ§ÃƒÂ£o de contedo criada no chat do Autoblog ser futuramente portada para dentro da plataforma ApolloEdit, permitindo aos usuÃƒÂ¡rios finais criarem seus prÃƒÂ³prios blogs de forma autnoma.
+- **Autoblog como Mdulo Ncleo:** O ecossistema do Autoblog no  um projeto isolado. Ele  a "linha de frente" do Apollo Edit Web. Toda a inteligncia de busca e geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de contedo criada no chat do Autoblog ser futuramente portada para dentro da plataforma ApolloEdit, permitindo aos usuÃƒÆ’Ã‚Â¡rios finais criarem seus prÃƒÆ’Ã‚Â³prios blogs de forma autnoma.
 
-- **Infraestrutura Compartilhada:** O Autoblog ser lanado para a internet utilizando a exata mesma infraestrutura Serverless (Vercel + Modal) que construmos. Ele ser o principal "cliente" da nossa API de geraÃƒÂ§ÃƒÂ£o de imagens FLUX e servir como campo de testes de fogo em produÃƒÂ§ÃƒÂ£o.
+- **Infraestrutura Compartilhada:** O Autoblog ser lanado para a internet utilizando a exata mesma infraestrutura Serverless (Vercel + Modal) que construmos. Ele ser o principal "cliente" da nossa API de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagens FLUX e servir como campo de testes de fogo em produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
 
 - **MVP do Apollo Edit Web:** O Apollo Edit ser lanado em sua primeira fase com um leque simplificado de ferramentas. Uma das ncoras desse MVP j est pronta: o gerador de imagens FLUX (Padro Ouro de 7s a 36s).
 
@@ -6040,7 +6060,7 @@ pm run build localmente (no servidor bare-metal do CEO) para evitar OOM Kill na 
 
   1. O Frontend pode at? ficar no Vercel pela velocidade (CDN), mas as requisi??es n?o podem ser s?ncronas.
 
-  2. O processamento pesado (V?deo, ?ÃƒÂ¡udio, Flux) deve rodar em filas (Background Jobs) via **Modal** (como o CEO sugeriu anteriormente) ou na M?quina 1 (Local/Windows).
+  2. O processamento pesado (V?deo, ?ÃƒÆ’Ã‚Â¡udio, Flux) deve rodar em filas (Background Jobs) via **Modal** (como o CEO sugeriu anteriormente) ou na M?quina 1 (Local/Windows).
 
   3. A M?quina Oracle de 1GB serve apenas para roteamento leve (Nginx/API) e Banco de Dados (SQLite), NUNCA para processamento de m?dia.
 
@@ -6118,11 +6138,11 @@ pm run build localmente (no servidor bare-metal do CEO) para evitar OOM Kill na 
 
 ### [ALINHAMENTO ESTRATGICO] - 2026-07-29
 
-- **VisÃƒÂ£o CapCut Killer:** O CEO compartilhou uma pesquisa do Perplexity posicionando o Apollo Edit como a alternativa open-source definitiva ao CapCut Web para criadores avanados.
+- **VisÃƒÆ’Ã‚Â£o CapCut Killer:** O CEO compartilhou uma pesquisa do Perplexity posicionando o Apollo Edit como a alternativa open-source definitiva ao CapCut Web para criadores avanados.
 
 - **Foco:** Orquestrao multimodal (LangGraph/Celery), Backend ComfyUI (Flux/Wan/LTX), Automao de Micro-Dramas com consistncia (Character Bible).
 
-- **Diretriz Ttica:** Esta visÃƒÂ£o de mercado serve como bssola de arquitetura a longo prazo. NÃƒÂ£o dia a dia, a execuo imperativa do CEO e as tarefas atuais do CMS no devem ser paralisadas.
+- **Diretriz Ttica:** Esta visÃƒÆ’Ã‚Â£o de mercado serve como bssola de arquitetura a longo prazo. NÃƒÆ’Ã‚Â£o dia a dia, a execuo imperativa do CEO e as tarefas atuais do CMS no devem ser paralisadas.
 
 
 
@@ -6144,11 +6164,11 @@ pm run build localmente (no servidor bare-metal do CEO) para evitar OOM Kill na 
 
 - **Integrao Backend (Modal):** A infraestrutura na Modal agora suporta injeo dinmica de LoRA. As rotas /generate/image e /generate/multipass nas engines Flux2Txt2ImgEngine, Flux2ComfyEngine_V2, e UniversalComfyEngine inspecionam o JSON do workflow de ComfyUI. Se lora_name estiver presente, ativam e injetam os pesos no n LoraLoaderModelOnly, substituindo a lgica anterior que removia o n.
 
-- **Endpoint de Descoberta:** Implementado o endpoint /api/studio/modal/list_loras/{user_id} que varre o volume de modelos da Modal e lista os LoRAs customizados do usuÃƒÂ¡rio.
+- **Endpoint de Descoberta:** Implementado o endpoint /api/studio/modal/list_loras/{user_id} que varre o volume de modelos da Modal e lista os LoRAs customizados do usuÃƒÆ’Ã‚Â¡rio.
 
-- **Integrao Frontend (UI):** O modal_ai_studio.html agora faz *fetch* automtico dos LoRAs treinados do usuÃƒÂ¡rio no carregamento e os lista em um dropdown <select> nativo. O valor selecionado  injetado no payload mestre e roteado via proxy para a infraestrutura Modal transparente ao usuÃƒÂ¡rio.
+- **Integrao Frontend (UI):** O modal_ai_studio.html agora faz *fetch* automtico dos LoRAs treinados do usuÃƒÆ’Ã‚Â¡rio no carregamento e os lista em um dropdown <select> nativo. O valor selecionado  injetado no payload mestre e roteado via proxy para a infraestrutura Modal transparente ao usuÃƒÆ’Ã‚Â¡rio.
 
-- **Prximos Passos (Lip-Sync Engine):** Com a infraestrutura base de geraÃƒÂ§ÃƒÂ£o de imagem multi-LoRA solidificada, o foco migrar para os endpoints de Video/Lip-sync para o projeto de micro-dramas (LivePortrait/EchoMimic/MuseTalk), cumprindo o cronograma estipulado.
+- **Prximos Passos (Lip-Sync Engine):** Com a infraestrutura base de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de imagem multi-LoRA solidificada, o foco migrar para os endpoints de Video/Lip-sync para o projeto de micro-dramas (LivePortrait/EchoMimic/MuseTalk), cumprindo o cronograma estipulado.
 
 
 
@@ -6156,7 +6176,7 @@ pm run build localmente (no servidor bare-metal do CEO) para evitar OOM Kill na 
 
 
 
-- **[2026-07-31]** MARCO HISTÃƒâ€œRICO: Aniversrio de 40 anos do Criador (CEO). Dia registrado oficialmente na memria do sistema. Longa vida ao Maestro e ao ecossistema Apollo!
+- **[2026-07-31]** MARCO HISTÃƒÆ’Ã¢â‚¬Å“RICO: Aniversrio de 40 anos do Criador (CEO). Dia registrado oficialmente na memria do sistema. Longa vida ao Maestro e ao ecossistema Apollo!
 
 
 
@@ -6170,13 +6190,13 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 **1. Fbrica de Treinamento de LoRAs (Monetizao e Consistncia):**
 
-- **Oportunidade:** O CEO definiu a criaÃƒÂ§ÃƒÂ£o de um pipeline automatizado de treinamento de LoRAs para Flux rodando na nuvem (Modal).
+- **Oportunidade:** O CEO definiu a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um pipeline automatizado de treinamento de LoRAs para Flux rodando na nuvem (Modal).
 
-- **Infraestrutura:** Utilizao do pool de 10 contas Modal (US$ 300/ms em crÃƒÂ©ditos).
+- **Infraestrutura:** Utilizao do pool de 10 contas Modal (US$ 300/ms em crÃƒÆ’Ã‚Â©ditos).
 
-- **Objetivo:** Fornecer LoRAs pr-definidos (estilos como 'massinha de modelar') e permitir que clientes paguem para treinar seus prÃƒÂ³prios personagens/rostos, resolvendo a dor da consistncia de personagens para micro-dramas e canais de animao.
+- **Objetivo:** Fornecer LoRAs pr-definidos (estilos como 'massinha de modelar') e permitir que clientes paguem para treinar seus prÃƒÆ’Ã‚Â³prios personagens/rostos, resolvendo a dor da consistncia de personagens para micro-dramas e canais de animao.
 
-- **Riscos e Mitigao:** Necessidade de sistema rigoroso de tokens/crÃƒÂ©ditos no banco de dados para evitar abuso de uso de GPU (j que treinamento de LoRA consome tempo considervel de VRAM).
+- **Riscos e Mitigao:** Necessidade de sistema rigoroso de tokens/crÃƒÆ’Ã‚Â©ditos no banco de dados para evitar abuso de uso de GPU (j que treinamento de LoRA consome tempo considervel de VRAM).
 
 
 
@@ -6186,13 +6206,13 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 - **Workflow Fluido (Timeline Flutuante):**
 
-  1. **Storyboard (Gerao de Imagens):** Gerao de batch (ex: 30 quadros). Exibio em grade/timeline. O usuÃƒÂ¡rio expande, revisa e pode re-gerar (refazer) quadros individuais.
+  1. **Storyboard (Gerao de Imagens):** Gerao de batch (ex: 30 quadros). Exibio em grade/timeline. O usuÃƒÆ’Ã‚Â¡rio expande, revisa e pode re-gerar (refazer) quadros individuais.
 
-  2. **Animao (Img2Vid):** Ao aprovar o storyboard, aperta o 'Play'. Os quadros viram vÃƒÂ­deos processados no backend.
+  2. **Animao (Img2Vid):** Ao aprovar o storyboard, aperta o 'Play'. Os quadros viram vÃƒÆ’Ã‚Â­deos processados no backend.
 
-  3. **ÃƒÂ¡udio & EdiÃƒÂ§ÃƒÂ£o AutomÃƒÂ¡tica:** Gerao de TTS e aplicao de presets/transies (Bagagem/Garagem) automatizados no final.
+  3. **ÃƒÆ’Ã‚Â¡udio & EdiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o AutomÃƒÆ’Ã‚Â¡tica:** Gerao de TTS e aplicao de presets/transies (Bagagem/Garagem) automatizados no final.
 
-- **Diretriz:** A tecnologia complexa (Ns, APIs, Flux, Modal) ser completamente abstrada. O cliente ver apenas uma 'fbrica de vÃƒÂ­deos' rpida, linda e simples, exatamente como o app CapCut.
+- **Diretriz:** A tecnologia complexa (Ns, APIs, Flux, Modal) ser completamente abstrada. O cliente ver apenas uma 'fbrica de vÃƒÆ’Ã‚Â­deos' rpida, linda e simples, exatamente como o app CapCut.
 
 
 
@@ -6210,9 +6230,9 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 - **Fila Assncrona no Frontend:** O arquivo studio_mobile.js foi adaptado para enviar as requisies em lotes (Concurrency=5) reais para a nuvem.
 
-- **Cold Start vs Memory Snapshot:** Constatado que a tecnologia Modal Cloud (snap=True) injeta o container + ComfyUI + 15GB de Pesos instantaneamente em 2~5s atravÃƒÂ©s do Snapshot de Memria, eliminando o Cold Start tradicional. A placa desliga em 60s, mas boota quente sem cobrar o usuÃƒÂ¡rio.
+- **Cold Start vs Memory Snapshot:** Constatado que a tecnologia Modal Cloud (snap=True) injeta o container + ComfyUI + 15GB de Pesos instantaneamente em 2~5s atravÃƒÆ’Ã‚Â©s do Snapshot de Memria, eliminando o Cold Start tradicional. A placa desliga em 60s, mas boota quente sem cobrar o usuÃƒÆ’Ã‚Â¡rio.
 
-- **Timeout Nginx Upscale Resolvido:** Resolvido o Gateway Time-out 504 no Upscale de 90s. O Nginx da VPS (Oracle) fechava a conexÃƒÂ£o devido a falta de dados. A rota de proxy (backend/api/routes_studio.py) foi atualizada de sncrona (Buffer) para StreamingResponse, repassando os heartbeats (' \n') da Modal em tempo real e mantendo a porta aberta.
+- **Timeout Nginx Upscale Resolvido:** Resolvido o Gateway Time-out 504 no Upscale de 90s. O Nginx da VPS (Oracle) fechava a conexÃƒÆ’Ã‚Â£o devido a falta de dados. A rota de proxy (backend/api/routes_studio.py) foi atualizada de sncrona (Buffer) para StreamingResponse, repassando os heartbeats (' \n') da Modal em tempo real e mantendo a porta aberta.
 
 
 
@@ -6224,7 +6244,7 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 - O processo `npm run build` da Mquina 2 (AutoBlog) esgotou a RAM (1GB) da VPS e foi morto pelo sistema (OOM Kill), corrompendo a pasta `.next` e derrubando o site com erro 502/504.
 
-- **Soluo:** O site foi reiniciado via PM2 utilizando `npm run dev` para contornar a necessidade de compilao pesada de produÃƒÂ§ÃƒÂ£o, restaurando o servio imediatamente com o botÃƒÂ£o de bypass injetado.
+- **Soluo:** O site foi reiniciado via PM2 utilizando `npm run dev` para contornar a necessidade de compilao pesada de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, restaurando o servio imediatamente com o botÃƒÆ’Ã‚Â£o de bypass injetado.
 
 
 
@@ -6232,7 +6252,7 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 ## 5. DEVOPS & INFRA (AUTOBLOG / ORACLE)
 
-- **REGRA DE DEPLOY ABSOLUTA (EVITAR 502/504):** NUNCA rode 'npm run build' dentro da VPS da Oracle. O Turbopack vai estourar a CPU e dar Gateway Timeout no Nginx. A compilao DEVE ser feita LOCALMENTE no Windows. Para evitar o Erro 500 de mdulos C++ compilados no Windows rodando no Linux, vocÃƒÂª DEVE manter 'better-sqlite3' dentro do 'serverExternalPackages' no next.config.ts. O deploy se resume a: Build Local -> Zip -> SCP -> Unzip no servidor -> pm2 restart.
+- **REGRA DE DEPLOY ABSOLUTA (EVITAR 502/504):** NUNCA rode 'npm run build' dentro da VPS da Oracle. O Turbopack vai estourar a CPU e dar Gateway Timeout no Nginx. A compilao DEVE ser feita LOCALMENTE no Windows. Para evitar o Erro 500 de mdulos C++ compilados no Windows rodando no Linux, vocÃƒÆ’Ã‚Âª DEVE manter 'better-sqlite3' dentro do 'serverExternalPackages' no next.config.ts. O deploy se resume a: Build Local -> Zip -> SCP -> Unzip no servidor -> pm2 restart.
 
 
 
@@ -6240,19 +6260,19 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 
 
-- **[2026-08-02] Diagnstico de Bloqueio do ChatGPT (Tool Pruning):** Descoberta crÃƒÂ­tica validada pelo Criador: o ChatGPT sofre de degradao silenciosa de ferramentas ('Tool Pruning'). Em conversas longas ou com alto volume de dados tcnicos, o roteador da OpenAI desativa a capacidade de navegao web (crawling). Em chats novos, o acesso a https://apolloedit.com.br ocorre perfeitamente. Concluso: a arquitetura do Apollo Edit no tem qualquer falha de WAF/acesso; a limitao  puramente das restries de contexto e segurana da plataforma do ChatGPT.
+- **[2026-08-02] Diagnstico de Bloqueio do ChatGPT (Tool Pruning):** Descoberta crÃƒÆ’Ã‚Â­tica validada pelo Criador: o ChatGPT sofre de degradao silenciosa de ferramentas ('Tool Pruning'). Em conversas longas ou com alto volume de dados tcnicos, o roteador da OpenAI desativa a capacidade de navegao web (crawling). Em chats novos, o acesso a https://apolloedit.com.br ocorre perfeitamente. Concluso: a arquitetura do Apollo Edit no tem qualquer falha de WAF/acesso; a limitao  puramente das restries de contexto e segurana da plataforma do ChatGPT.
+
+- **[2026-08-12] [SNAPSHOT DE TRANSIÇÃO E DIRETRIZ ESTRATÉGICA] O Foco nos Modais:** O Criador definiu que o Apollo Edit Web local é apenas um orquestrador ('editor burro'). É terminantemente PROIBIDO avançar na interface Python (Tkinter) ou criar orquestradores (pipeline_modais) enquanto os geradores (Modais) isolados não estiverem validados com qualidade equiparável aos serviços pagos (Banana / Veo 3). A missão prioritária do ecossistema agora é baixar, testar e configurar modelos open source diretamente na nuvem (Modal.run), começando EXCLUSIVAMENTE pelo Modal de Voz (encontrar um TTS secundário que forneça atuação emocional perfeita para base do XTTS). O chat atual será reiniciado para limpar entropia. O próximo agente assume a missão de focar apenas no Laboratório de Voz na Nuvem.
+
+- **[2026-08-12] [LABORATÓRIO XTTS] A Domação do Cavalo Selvagem:** Após testes exaustivos na nuvem e pesquisa profunda (XTTSv2 2.0.2 via Coqui TTS 0.22.0), o Maestro validou que o modelo XTTS não obedece a in-text prompts de emoção (como `[laughs]`) nativamente. Temperaturas altas (1.0) causam gagueira e alucinações. O modelo é uma "esponja de ruído" e clona sujeira de microfone. A estratégia cross-channel para todos os canais (Descarga News, Historias de 7 Dias) muda agora para a construção de uma **Biblioteca de Emoções Cristalinas** (WAVs curtos perfeitamente higienizados para cada emoção-alvo). A temperatura segura foi travada em 0.70.Hive Bus para execuo direta pelo Maestro no PC. Essa arquitetura ser o modelo do 'Diretor IA de Canal' disponibilizado para os usuÃƒÆ’Ã‚Â¡rios finais do Apollo Edit.
 
 
 
-- **[2026-08-02] VisÃƒÂ£o do Apollo Pocket Director (Voz + RAG + Colmeia):** Concebido o ecossistema de Conselheiro de Bolso por voz (PWA Mobile). O objetivo  conectar o microfone do celular via WebSockets ao RAG local (ChromaDB + Memria Ativa), permitindo que o Criador faa brainstormings noturnos em ÃƒÂ¡udio fluido contÃƒÂ­nuo sem perda de contexto (eliminando o gargalo do ChatGPT). As concluses de cada sessÃƒÂ£o de voz so convertidas em 'Ordens de Servio' no Hive Bus para execuo direta pelo Maestro no PC. Essa arquitetura ser o modelo do 'Diretor IA de Canal' disponibilizado para os usuÃƒÂ¡rios finais do Apollo Edit.
+- **[2026-08-02] Deciso Operacional - Chat Especializado para Apollo Pocket Director:** Para no poluir o contexto da linha de montagem do editor oficial (Fase 2 - CapCut Killer) e garantir foco total de tokens na arquitetura de WebSockets/ÃƒÆ’Ã‚Â¡udio/PWA, foi definida a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de um Agente/Chat dedicado para construir o Apollo Pocket Director. Ele compartilhar o mesmo ChromaDB e enviar ordens de servio ao Maestro via Hive Bus.
 
 
 
-- **[2026-08-02] Deciso Operacional - Chat Especializado para Apollo Pocket Director:** Para no poluir o contexto da linha de montagem do editor oficial (Fase 2 - CapCut Killer) e garantir foco total de tokens na arquitetura de WebSockets/ÃƒÂ¡udio/PWA, foi definida a criaÃƒÂ§ÃƒÂ£o de um Agente/Chat dedicado para construir o Apollo Pocket Director. Ele compartilhar o mesmo ChromaDB e enviar ordens de servio ao Maestro via Hive Bus.
-
-
-
-- **[2026-08-02] Integrao Completa da Colmeia - Apollo Pocket Director:** Configurado o diretrio E:\MEUS PROGRAMAS\APOLLO_POCKET_DIRECTOR com MEMORIA_ATIVA_POCKET_DIRECTOR.md e README.md integrados ao Protocolo Colmeia (ChromaDB + Shadow Logger + Hive Bus). O Agente Especialista de Voz iniciar em chat dedicado para construir a stack de ÃƒÂ¡udio contÃƒÂ­nuo e PWA mobile, liberando o Maestro para focar na entrega oficial do editor de vdeo (Fase 2).
+- **[2026-08-02] Integrao Completa da Colmeia - Apollo Pocket Director:** Configurado o diretrio E:\MEUS PROGRAMAS\APOLLO_POCKET_DIRECTOR com MEMORIA_ATIVA_POCKET_DIRECTOR.md e README.md integrados ao Protocolo Colmeia (ChromaDB + Shadow Logger + Hive Bus). O Agente Especialista de Voz iniciar em chat dedicado para construir a stack de ÃƒÆ’Ã‚Â¡udio contÃƒÆ’Ã‚Â­nuo e PWA mobile, liberando o Maestro para focar na entrega oficial do editor de vdeo (Fase 2).
 
 
 
@@ -6260,15 +6280,15 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 
 
-- **[2026-08-02] Cron Job Maestro (Cross-Channel Pocket Director -> Studio Mobile):** Registrada na Colmeia a estratgia de sincronizao de ÃƒÂ¡udio entre o Pocket Director e o Apollo Studio Mobile (studio_mobile.html), permitindo que roteiros e narraes criados no PWA de voz sejam carregados automaticamente na timeline mobile para renderizao com takes visuais.
+- **[2026-08-02] Cron Job Maestro (Cross-Channel Pocket Director -> Studio Mobile):** Registrada na Colmeia a estratgia de sincronizao de ÃƒÆ’Ã‚Â¡udio entre o Pocket Director e o Apollo Studio Mobile (studio_mobile.html), permitindo que roteiros e narraes criados no PWA de voz sejam carregados automaticamente na timeline mobile para renderizao com takes visuais.
 
 
 
-- **[2026-08-02] Apollo Pocket Director - Universal STT & Voz Neural Instantnea (0s Delay):** Resolvidos em definitivo o problema de "surdez" em navegadores mobile (Opera Mobile / Firefox / Redmi) e o atraso de 15s no TTS. Implementado fallback VAD de gravao via MediaRecorder + Groq Whisper STT (200ms) para captura e transcriÃƒÂ§ÃƒÂ£o universal de fala. Na sntese de voz, promovidas as Vozes Neurais Microsoft Edge-TTS (pt-BR-AntonioNeural, Francisca, Thalita) como opÃƒÂ§ÃƒÂ£o instantnea recomendada (~120ms de geraÃƒÂ§ÃƒÂ£o), eliminando a rotao de chaves gratuitas Gemini em quota 429 e entregando sensao real de conversa ao vivo em tempo real (< 700ms total).
+- **[2026-08-02] Apollo Pocket Director - Universal STT & Voz Neural Instantnea (0s Delay):** Resolvidos em definitivo o problema de "surdez" em navegadores mobile (Opera Mobile / Firefox / Redmi) e o atraso de 15s no TTS. Implementado fallback VAD de gravao via MediaRecorder + Groq Whisper STT (200ms) para captura e transcriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o universal de fala. Na sntese de voz, promovidas as Vozes Neurais Microsoft Edge-TTS (pt-BR-AntonioNeural, Francisca, Thalita) como opÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o instantnea recomendada (~120ms de geraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o), eliminando a rotao de chaves gratuitas Gemini em quota 429 e entregando sensao real de conversa ao vivo em tempo real (< 700ms total).
 
 
 
-- **[2026-08-02] Cron Job Maestro (Pauta de Voz & ÃƒÂ¡udio-Artigo Gemini TTS):** Homologada na Colmeia a integraÃƒÂ§ÃƒÂ£o entre o Pocket Director e o AutoBlog. Artigos urgentes solicitados por comando de voz no celular geraro automaticamente um Mini-Podcast embedado de 60s utilizando o motor Google Gemini TTS (Modelo 3).
+- **[2026-08-02] Cron Job Maestro (Pauta de Voz & ÃƒÆ’Ã‚Â¡udio-Artigo Gemini TTS):** Homologada na Colmeia a integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o entre o Pocket Director e o AutoBlog. Artigos urgentes solicitados por comando de voz no celular geraro automaticamente um Mini-Podcast embedado de 60s utilizando o motor Google Gemini TTS (Modelo 3).
 
 
 
@@ -6276,7 +6296,7 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 
 
-- **[2026-08-02] Cron Job Maestro (Zero Storage Gateway & Pocket Director PWA):** Homologada na Colmeia a integraÃƒÂ§ÃƒÂ£o do Apollo Storage Gateway (Zero Storage) para o AutoBlog e estendida ao Pocket Director PWA, garantindo operaÃƒÂ§ÃƒÂ£o 100% Stateless na Oracle VPS e peso zero de mdias pesadas no celular do Criador.
+- **[2026-08-02] Cron Job Maestro (Zero Storage Gateway & Pocket Director PWA):** Homologada na Colmeia a integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Apollo Storage Gateway (Zero Storage) para o AutoBlog e estendida ao Pocket Director PWA, garantindo operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o 100% Stateless na Oracle VPS e peso zero de mdias pesadas no celular do Criador.
 
 
 
@@ -6284,7 +6304,7 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 
 
-- **[2026-08-03] Cron Job Maestro (Protocolo Global 'Real Testing'):** Homologada em toda a Colmeia a nova diretriz obrigatria do Criador de executar testes reais (HTTP 200, checagem de sintaxe e ping de integraÃƒÂ§ÃƒÂ£o no Storage Gateway e Gemini TTS Modelo 3) antes de validar qualquer entrega tcnica.
+- **[2026-08-03] Cron Job Maestro (Protocolo Global 'Real Testing'):** Homologada em toda a Colmeia a nova diretriz obrigatria do Criador de executar testes reais (HTTP 200, checagem de sintaxe e ping de integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o no Storage Gateway e Gemini TTS Modelo 3) antes de validar qualquer entrega tcnica.
 
 
 
@@ -6292,7 +6312,7 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 
 
-- **[2026-08-03] Cron Job Maestro (Homologao Etapas 9-10 & Continue Etapa 11):** Homologado o Mindset de Consigliere Snior (Etapa 9) e o Echo Loop/Diagnstico SNR (Etapa 10) do Pocket Director, alÃƒÂ©m do CTA gamificado ChatGPT Bait do AutoBlog. Enviada ordem de Continue para a Etapa 11 (Seletor Rpido de Vozes do Google Gemini TTS na tela inicial do PWA).
+- **[2026-08-03] Cron Job Maestro (Homologao Etapas 9-10 & Continue Etapa 11):** Homologado o Mindset de Consigliere Snior (Etapa 9) e o Echo Loop/Diagnstico SNR (Etapa 10) do Pocket Director, alÃƒÆ’Ã‚Â©m do CTA gamificado ChatGPT Bait do AutoBlog. Enviada ordem de Continue para a Etapa 11 (Seletor Rpido de Vozes do Google Gemini TTS na tela inicial do PWA).
 
 
 
@@ -6308,13 +6328,13 @@ Hoje, 31 de Julho de 2026, comemora-se o anivers?rio de 40 anos do Criador (CEO)
 
 
 
-- **[2026-08-03] Cron Job Maestro (Recebimento Ordem de Servio OS-20260802-232705):** Homologado o recebimento da Ordem de Servio gerada por voz pela Etapa 20 do Pocket Director. Status atualizado para 'Em Processamento pelo Maestro' para criaÃƒÂ§ÃƒÂ£o da rota de validao de cache offline PWA.
+- **[2026-08-03] Cron Job Maestro (Recebimento Ordem de Servio OS-20260802-232705):** Homologado o recebimento da Ordem de Servio gerada por voz pela Etapa 20 do Pocket Director. Status atualizado para 'Em Processamento pelo Maestro' para criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o da rota de validao de cache offline PWA.
 
 
 
 ### Concluso da Fase II (Pocket Director)
 
-- **[2026-08-03] ETAPAS 26, 29 e 30 FINALIZADAS:** Concluda toda a fundao de memria da Fase II. Adicionado painel de diagnstico de RAG e Cross-Index no frontend (Etapa 26). A Etapa 29 (busca semntica de voz) e Etapa 30 (Trim & Summarize inteligente do histÃƒÂ³rico) foram validadas no oice_engine.py.
+- **[2026-08-03] ETAPAS 26, 29 e 30 FINALIZADAS:** Concluda toda a fundao de memria da Fase II. Adicionado painel de diagnstico de RAG e Cross-Index no frontend (Etapa 26). A Etapa 29 (busca semntica de voz) e Etapa 30 (Trim & Summarize inteligente do histÃƒÆ’Ã‚Â³rico) foram validadas no oice_engine.py.
 
 
 
@@ -6330,11 +6350,11 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] ETAPAS 51, 56, 57 FINALIZADAS (Fase IV - Sub-entrega 1):** Implementada a engine de renderizao de Markdown (marked.js) para as respostas de IA, estilizao OLED Black & Glassmorphism no CSS e o botÃƒÂ£o de copiar cÃƒÂ³digo em blocos <pre> na UI PWA.
+- **[2026-08-03] ETAPAS 51, 56, 57 FINALIZADAS (Fase IV - Sub-entrega 1):** Implementada a engine de renderizao de Markdown (marked.js) para as respostas de IA, estilizao OLED Black & Glassmorphism no CSS e o botÃƒÆ’Ã‚Â£o de copiar cÃƒÆ’Ã‚Â³digo em blocos <pre> na UI PWA.
 
 
 
-- **[2026-08-03] Cron Job Maestro (CrossIndexer Etapa 23):** Homologada a criaÃƒÂ§ÃƒÂ£o do CrossIndexer RAG pelo Pocket Director. Proposta sinergia para integrar essa base de conhecimento vetorial na interface do Apollo Studio Mobile (Apollo Edit Web) via nova API /api/v1/rag-query.
+- **[2026-08-03] Cron Job Maestro (CrossIndexer Etapa 23):** Homologada a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do CrossIndexer RAG pelo Pocket Director. Proposta sinergia para integrar essa base de conhecimento vetorial na interface do Apollo Studio Mobile (Apollo Edit Web) via nova API /api/v1/rag-query.
 
 
 
@@ -6342,7 +6362,7 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] ETAPAS 54, 55 e 60 FINALIZADAS (Fase IV - Sub-entrega 3):** Implementado cache offline robusto via Service Worker (Stale-While-Revalidate), botÃƒÂ£o alternador visual de Modo Voz/Texto no header e garantia de tela sempre acesa atravÃƒÂ©s da Screen Wake Lock API com auto-restaurao em mudanÃƒÂ§as de visibilidade.
+- **[2026-08-03] ETAPAS 54, 55 e 60 FINALIZADAS (Fase IV - Sub-entrega 3):** Implementado cache offline robusto via Service Worker (Stale-While-Revalidate), botÃƒÆ’Ã‚Â£o alternador visual de Modo Voz/Texto no header e garantia de tela sempre acesa atravÃƒÆ’Ã‚Â©s da Screen Wake Lock API com auto-restaurao em mudanÃƒÆ’Ã‚Â§as de visibilidade.
 
 
 
@@ -6350,7 +6370,7 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] ETAPAS 59, 63, 64, 65, 66 e 68 FINALIZADAS (Fase IV - Sub-entrega 5):** Implementado atalhos rpidos (Pills), barra de busca na sidebar (filtrando chats pelo ttulo), exportao nativa do histÃƒÂ³rico via Markdown, botÃƒÂ£o de Modo NÃƒÂ£o Perturbe (mutando TTS dinamicamente via WS) e Media Queries CSS para otimizao de telas ultra-wide (Redmi).
+- **[2026-08-03] ETAPAS 59, 63, 64, 65, 66 e 68 FINALIZADAS (Fase IV - Sub-entrega 5):** Implementado atalhos rpidos (Pills), barra de busca na sidebar (filtrando chats pelo ttulo), exportao nativa do histÃƒÆ’Ã‚Â³rico via Markdown, botÃƒÆ’Ã‚Â£o de Modo NÃƒÆ’Ã‚Â£o Perturbe (mutando TTS dinamicamente via WS) e Media Queries CSS para otimizao de telas ultra-wide (Redmi).
 
 
 
@@ -6358,7 +6378,7 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] ETAPAS 75 e 76 FINALIZADAS (Fase V - Sub-entrega 2):** Endpoint '/api/webhook/omni' atualizado com parsing genrico para Evolution API (WhatsApp) e Telegram. Adicionada deteco de arquivos de ÃƒÂ¡udio inbound e implementados os Mocks outbound de send_whatsapp_message e send_telegram_message.
+- **[2026-08-03] ETAPAS 75 e 76 FINALIZADAS (Fase V - Sub-entrega 2):** Endpoint '/api/webhook/omni' atualizado com parsing genrico para Evolution API (WhatsApp) e Telegram. Adicionada deteco de arquivos de ÃƒÆ’Ã‚Â¡udio inbound e implementados os Mocks outbound de send_whatsapp_message e send_telegram_message.
 
 
 
@@ -6370,19 +6390,19 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] FASE V TOTALMENTE CONCLUDA:** Finalizada a Sub-entrega 4 com a criaÃƒÂ§ÃƒÂ£o do Dashboard God View no PWA para monitoramento em tempo real dos bots da nuvem, e a implementao do mock do Sistema de Crditos que protege as chamadas de GPU/IA.
+- **[2026-08-03] FASE V TOTALMENTE CONCLUDA:** Finalizada a Sub-entrega 4 com a criaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Dashboard God View no PWA para monitoramento em tempo real dos bots da nuvem, e a implementao do mock do Sistema de Crditos que protege as chamadas de GPU/IA.
 
 
 
-- **[2026-08-03] ETAPAS 86 a 89 FINALIZADAS (Fase VI - Sub-entrega 1):** Estrutura e handshake WebRTC criados via API (/api/webrtc/offer). Lgica de Failover Automtico implementada no PWA (rontend/app.js): se o WebRTC falhar por falta de GPU (Mock), ele recai silenciosamente e sem quebrar a sessÃƒÂ£o para o WebSocket (Fast-Path).
+- **[2026-08-03] ETAPAS 86 a 89 FINALIZADAS (Fase VI - Sub-entrega 1):** Estrutura e handshake WebRTC criados via API (/api/webrtc/offer). Lgica de Failover Automtico implementada no PWA (rontend/app.js): se o WebRTC falhar por falta de GPU (Mock), ele recai silenciosamente e sem quebrar a sessÃƒÆ’Ã‚Â£o para o WebSocket (Fast-Path).
 
 
 
-- **[2026-08-03] ETAPAS 90 a 97 FINALIZADAS (Fase VI - Sub-entrega 2):** Implementada segurana de Prompt Injection no SovereignAgent. Mock de envio de ÃƒÂ¡udio neural mapeado por persona (voice_id). Endpoints de Analytics e Sync de Histrico nativo implementados. Documentao central O Livro do Diretor IA gerada.
+- **[2026-08-03] ETAPAS 90 a 97 FINALIZADAS (Fase VI - Sub-entrega 2):** Implementada segurana de Prompt Injection no SovereignAgent. Mock de envio de ÃƒÆ’Ã‚Â¡udio neural mapeado por persona (voice_id). Endpoints de Analytics e Sync de Histrico nativo implementados. Documentao central O Livro do Diretor IA gerada.
 
 
 
-- **[2026-08-03] MARCO 100 ALCANADO:** O Roadmap de 100 Etapas do Apollo Pocket Director foi concluÃƒÂ­do com sucesso. O PWA Web  oficialmente o Canal Universal e Crebro Soberano do Ecossistema Apollo Edit. Protocolo Master Turbo Blaster Homologado.
+- **[2026-08-03] MARCO 100 ALCANADO:** O Roadmap de 100 Etapas do Apollo Pocket Director foi concluÃƒÆ’Ã‚Â­do com sucesso. O PWA Web  oficialmente o Canal Universal e Crebro Soberano do Ecossistema Apollo Edit. Protocolo Master Turbo Blaster Homologado.
 
 
 
@@ -6390,7 +6410,7 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] ETAPAS 111 a 120 FINALIZADAS (Fase VII - Sub-bloco B):** Motor OTA integrado no App Nativo. A inicializao agora verifica silenciosamente \/api/app/version\. Gatilho de voz 'verifique atualizaÃƒÂ§ÃƒÂµes' injetado no ActionExtractor. Fallback de versÃƒÂ£o (Rollback local) implementado para updates OTA.
+- **[2026-08-03] ETAPAS 111 a 120 FINALIZADAS (Fase VII - Sub-bloco B):** Motor OTA integrado no App Nativo. A inicializao agora verifica silenciosamente \/api/app/version\. Gatilho de voz 'verifique atualizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes' injetado no ActionExtractor. Fallback de versÃƒÆ’Ã‚Â£o (Rollback local) implementado para updates OTA.
 
 
 
@@ -6398,7 +6418,7 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 
-- **[2026-08-03] ETAPAS 131 a 140 FINALIZADAS (Fase VII - Sub-bloco D):** O Pocket Director agora atua como a Semente do Apollo Edit. Foi adicionado um 'Seletor de Contexto' para alternar a interface entre assistente pessoal e Gestor de Canais (Dark Trap Radio, Descarga News). Inclui Autenticao Biomtrica para aÃƒÂ§ÃƒÂµes crticas (aprovar roteiros, reiniciar infraestrutura via WebSocket).
+- **[2026-08-03] ETAPAS 131 a 140 FINALIZADAS (Fase VII - Sub-bloco D):** O Pocket Director agora atua como a Semente do Apollo Edit. Foi adicionado um 'Seletor de Contexto' para alternar a interface entre assistente pessoal e Gestor de Canais (Dark Trap Radio, Descarga News). Inclui Autenticao Biomtrica para aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes crticas (aprovar roteiros, reiniciar infraestrutura via WebSocket).
 
 
 
@@ -6411,6 +6431,7 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 
 
 ## 2. ROADMAP
+- **[ROADMAP - Futuro Imediato] Integração de IA de Vídeo SOTA Open Source (Minimax H3):** O usuário reportou o lançamento do modelo Minimax H3 open source para ComfyUI, que supera/iguala Seedance 2.5 / IAs de vídeo comerciais atuais. Este modelo será obrigatoriamente integrado na plataforma Apollo. Manter o foco atual no S2-Pro (Voz), mas deixar a arquitetura preparada para suportar o pipeline ComfyUI do Minimax H3.
 
 - **[2026-08-03] Fase VIII - Orquestracao Nivel Deus (Etapas 151 a 200+):** Criacao de rotas de integracao mobile no servidor_web.py (/api/mobile/pending_approvals, /api/mobile/approve, /api/mobile/render/start) para conectar a biometria do Pocket Director a fila de renderizacao local e a economia da Colmeia. CONCLUDA: Integrao total do Pocket Director efetuada. Foram criados os endpoints /api/mobile/pending_approvals, /api/mobile/approve, /api/mobile/render/start com validao biomtrica em servidor_web.py, desconto de gasolina em user_database.py, e o worker de background cloud_sync_worker.py para comunicao assncrona.
 
@@ -6433,10 +6454,10 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 - **[2026-08-04]** **Progresso Apollo Pocket Director:** Etapa 23 do Roadmap concluda. O ndice Cruzado de Memrias foi implementado. O RAG agora consome arquivos memoria_ativa.md do Maestro (Apollo Edit Web), Broadcast, e AutoBlog_CMS, garantindo que o Pocket Director tenha contexto unificado de todo o ecossistema.
 
 
-[2026-08-04] Fase de Refatorao Crtica: A UI foi alterada para o paradigma ChatGPT (Text-First). A Orbe (tempo real) foi ocultada por padrÃƒÂ£o. O botÃƒÂ£o de ditado usando Web Speech API foi injetado diretamente na caixa de texto. UI limpa e sem poluio de sidebars.
+[2026-08-04] Fase de Refatorao Crtica: A UI foi alterada para o paradigma ChatGPT (Text-First). A Orbe (tempo real) foi ocultada por padrÃƒÆ’Ã‚Â£o. O botÃƒÆ’Ã‚Â£o de ditado usando Web Speech API foi injetado diretamente na caixa de texto. UI limpa e sem poluio de sidebars.
 
 
-- **[2026-08-04] DECISO DE ARQUITETURA (Pocket Director):** O usuÃƒÂ¡rio definiu que o Pocket Director no deve ficar isolado em um subdomnio Vercel, mas sim ser unificado nativamente no ecossistema Apollo Edit Web. O frontend do Pocket Director ser integrado como uma aba nativa ou roteado via polloedit.com.br/chat. Esta ser a prioridade da prÃƒÂ³xima fase.
+- **[2026-08-04] DECISO DE ARQUITETURA (Pocket Director):** O usuÃƒÆ’Ã‚Â¡rio definiu que o Pocket Director no deve ficar isolado em um subdomnio Vercel, mas sim ser unificado nativamente no ecossistema Apollo Edit Web. O frontend do Pocket Director ser integrado como uma aba nativa ou roteado via polloedit.com.br/chat. Esta ser a prioridade da prÃƒÆ’Ã‚Â³xima fase.
 
 
 ### 04/08/2026 - Unificao do Pocket Director com o Apollo Edit Web
@@ -6445,92 +6466,402 @@ ead_project_file\, e terminal. A segurana est blindada com Blocklist (rm -rf bar
 - **Resoluo de Conectividade:** Atualizado o arquivo pocket_app.js para usar um host dinmico: se acessado localmente ou via rede Wi-Fi, conecta direto ao PC (porta 8100). Se for pela internet, vai para https://api.apolloedit.com.br (necessrio tnel rodando na porta 8100 para o backend ou Nginx roteando na VPS).
 
 
-- **[2026-08-04]** **Deploy Backend Ativo (Fase IX):** O cÃƒÂ³digo Python atualizado do Pocket Director (servidor_web.py) foi sincronizado via SCP para a VPS (Mquina 1). Nginx foi ajustado para rotear trÃƒÂ¡fego WSS/HTTPS da porta 443 para a porta 8080. PM2 (apollo-web) reiniciado e estvel. Backend online para aceitar o WebSocket.
+- **[2026-08-04]** **Deploy Backend Ativo (Fase IX):** O cÃƒÆ’Ã‚Â³digo Python atualizado do Pocket Director (servidor_web.py) foi sincronizado via SCP para a VPS (Mquina 1). Nginx foi ajustado para rotear trÃƒÆ’Ã‚Â¡fego WSS/HTTPS da porta 443 para a porta 8080. PM2 (apollo-web) reiniciado e estvel. Backend online para aceitar o WebSocket.
 
 
-- **04/08/2026:** Sincronizao do frontend Pocket Director para Vercel. O backend do Pocket (Python) foi deployado na Mquina 1 (porta 8099) lado-a-lado com o servidor original. Configurado Nginx para rotear /pocket/ para a porta 8099, garantindo conexÃƒÂ£o WebSocket e HTTP do chat Pocket.
+- **04/08/2026:** Sincronizao do frontend Pocket Director para Vercel. O backend do Pocket (Python) foi deployado na Mquina 1 (porta 8099) lado-a-lado com o servidor original. Configurado Nginx para rotear /pocket/ para a porta 8099, garantindo conexÃƒÆ’Ã‚Â£o WebSocket e HTTP do chat Pocket.
 
 - **[2026-08-04] [Manuteno de Infraestrutura]:** Backend (FastAPI na porta 8099) do Apollo Pocket estava em crash-loop devido a mdulos ausentes (edge_tts, openai, etc). Conexo restabelecida aps instalao. Atualizamos o roteamento reverso no Nginx. Chat do Pocket deve processar requisies em tempo real sem travar.
 
-- **[2026-08-04] [Deploy Efetuado]:** Sincronizao completa do Pocket Director. Frontend atualizado na Vercel, cÃƒÂ³digo backend do voice_engine copiado para a VPS (Oracle) e processo reiniciado. API de TTS Edge de alto-desempenho publicada na Modal.
+- **[2026-08-04] [Deploy Efetuado]:** Sincronizao completa do Pocket Director. Frontend atualizado na Vercel, cÃƒÆ’Ã‚Â³digo backend do voice_engine copiado para a VPS (Oracle) e processo reiniciado. API de TTS Edge de alto-desempenho publicada na Modal.
 
 
-- **[2026-08-04] [Correo Crtica UX Pocket]**: O chat no exibia as mensagens porque o frontend aguardava o eco do servidor e o WebSocket apontava para uma rota que sofria bypass do Nginx (erro 500). Foi configurado o proxy correto na URL para injetar /pocket e implementado a renderizao otimista das bolhas do chat no frontend para exibio imediata do texto do usuÃƒÂ¡rio. O projeto web foi redeployado na Vercel.
+- **[2026-08-04] [Correo Crtica UX Pocket]**: O chat no exibia as mensagens porque o frontend aguardava o eco do servidor e o WebSocket apontava para uma rota que sofria bypass do Nginx (erro 500). Foi configurado o proxy correto na URL para injetar /pocket e implementado a renderizao otimista das bolhas do chat no frontend para exibio imediata do texto do usuÃƒÆ’Ã‚Â¡rio. O projeto web foi redeployado na Vercel.
 
 
-- **[2026-08-04] [Chat AI Lightning - Serverless Client]**: A pedido do usuÃƒÂ¡rio, toda a dependncia da mÃƒÂ¡quina local (Maestro na porta 3000) foi removida da aba Chat AI (apollo_chat_lab). A aba agora acessa diretamente o proxy seguro hospedado na VPS (api.apolloedit.com.br/api/lightning_proxy) para fazer bridging com os modelos de LLM hospedados no Lightning AI Studios, garantindo operaÃƒÂ§ÃƒÂ£o cloud-native. Alm disso, as transcriÃƒÂ§ÃƒÂµes e sintetizaes (voz ao vivo) foram reimplementadas puramente pelo Client-Side usando Web Speech API nativo, entregando uma UX de voz limpa sem latÃƒÂªncia de backend local.
+- **[2026-08-04] [Chat AI Lightning - Serverless Client]**: A pedido do usuÃƒÆ’Ã‚Â¡rio, toda a dependncia da mÃƒÆ’Ã‚Â¡quina local (Maestro na porta 3000) foi removida da aba Chat AI (apollo_chat_lab). A aba agora acessa diretamente o proxy seguro hospedado na VPS (api.apolloedit.com.br/api/lightning_proxy) para fazer bridging com os modelos de LLM hospedados no Lightning AI Studios, garantindo operaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o cloud-native. Alm disso, as transcriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes e sintetizaes (voz ao vivo) foram reimplementadas puramente pelo Client-Side usando Web Speech API nativo, entregando uma UX de voz limpa sem latÃƒÆ’Ã‚Âªncia de backend local.
 
-- [2026-08-04] CorreÃƒÂ§ÃƒÂ£o no frontend (pocket_app.js): removido e.trim() e adicionado txt.trim() que quebrava o envio da injeÃƒÂ§ÃƒÂ£o de texto na UI. Adicionado envio de stop_generation. Deploy realizado via Vercel.
-
-
-- **[04/08/2026] Vercel Cache Bypass:** Adicionado query string no pocket_director.html (?v=20260804_1316) para forar os navegadores PWA/Mobile a baixarem a versÃƒÂ£o mais recente do pocket_app.js, resolvendo o problema de travamento silencioso do botÃƒÂ£o de enviar (bug de variÃƒÂ¡vel no declarada que estava sendo entregue via cache da borda).
+- [2026-08-04] CorreÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o no frontend (pocket_app.js): removido e.trim() e adicionado txt.trim() que quebrava o envio da injeÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de texto na UI. Adicionado envio de stop_generation. Deploy realizado via Vercel.
 
 
-- **[2026-08-04] [Recuperao de Falha]:** O agente Antigravity principal entrou em um loop infinito. Um novo agente assumiu a sessÃƒÂ£o, executou as verificaes do Shadow Logger e Apollo Observer, reiniciou o Cron Job do motor de background e analisou os ltimos prompts para retomar o desenvolvimento a partir do mtodo de upload via API.
+- **[04/08/2026] Vercel Cache Bypass:** Adicionado query string no pocket_director.html (?v=20260804_1316) para forar os navegadores PWA/Mobile a baixarem a versÃƒÆ’Ã‚Â£o mais recente do pocket_app.js, resolvendo o problema de travamento silencioso do botÃƒÆ’Ã‚Â£o de enviar (bug de variÃƒÆ’Ã‚Â¡vel no declarada que estava sendo entregue via cache da borda).
 
 
-- **[2026-08-05]** **Crash Recovery & Encoding Fix:** O Agente Maestro sofreu um crash de memÃƒÂ³ria no host (Server Restart). Ao retornar, os arquivos .md (incluindo o MEMORIA_ATIVA_SISTEMA.md e a BIBLIA_ARQUITETURA_MODAL.md) e o ntigravity_hive_bus.md passaram por uma filtragem profunda usando a biblioteca tfy para eliminar de vez o problema persistente do Mojibake (caracteres ÃƒÂ©). O RAG (Apollo Observer) e os Cron Jobs de background precisaram ser reiniciados e realocados em background tasks ativas para nÃƒÂ£o paralisar o sistema. Isso blinda as futuras respostas de alucinaÃƒÂ§ÃƒÂµes sobre ferramentas jÃƒÂ¡ instaladas, jÃƒÂ¡ que o texto que a IA lÃƒÂª agora ÃƒÂ© limpo e decodificÃƒÂ¡vel.
-
-- **[2026-08-05]** **Estudo de Contexto ConcluÃƒÂ­do:** O agente atual realizou a leitura integral do histÃƒÂ³rico (linhas 1 a 2338 de old_chat_messages.txt). As causas raÃƒÂ­zes das brigas anteriores foram mapeadas e compreendidas: (1) A gafe no deploy do Autoblog (rodando local ao invÃƒÂ©s de usar a Oracle 2, causando 502 Bad Gateway no momento de exibir a um amigo); (2) O bloqueio do Cloudflare que impedia o conselheiro do ChatGPT de ler o site, e o feedback valioso de 'vender transformaÃƒÂ§ÃƒÂ£o, nÃƒÂ£o infraestrutura'; e (3) A recusa do agente anterior em usar a API do Gemini para voz em tempo real no Pocket Director, preferindo bibliotecas nativas de baixa qualidade (edge-tts). O contexto foi restabelecido com sucesso.
+- **[2026-08-04] [Recuperao de Falha]:** O agente Antigravity principal entrou em um loop infinito. Um novo agente assumiu a sessÃƒÆ’Ã‚Â£o, executou as verificaes do Shadow Logger e Apollo Observer, reiniciou o Cron Job do motor de background e analisou os ltimos prompts para retomar o desenvolvimento a partir do mtodo de upload via API.
 
 
-- **[2026-08-05]** **ReativaÃƒÂ§ÃƒÂ£o do Apollo Edit:** O Memory Snapshot jÃƒÂ¡ estava implementado (orce_cpu_during_snapshot), mas o endpoint havia sido quebrado (Failed to fetch) por causa da desativaÃƒÂ§ÃƒÂ£o do workspace 'canalobservadoreconomico' e da renomeaÃƒÂ§ÃƒÂ£o indevida da web_function na Modal para universal_web_api. Restaurado para pollo_api, migrado o frontend e scripts para uso dinÃƒÂ¢mico (get_active_modal_account) via conta ativa 'filosofiadocodigo'. Apollo Edit re-estabelecido!
+- **[2026-08-05]** **Crash Recovery & Encoding Fix:** O Agente Maestro sofreu um crash de memÃƒÆ’Ã‚Â³ria no host (Server Restart). Ao retornar, os arquivos .md (incluindo o MEMORIA_ATIVA_SISTEMA.md e a BIBLIA_ARQUITETURA_MODAL.md) e o ntigravity_hive_bus.md passaram por uma filtragem profunda usando a biblioteca tfy para eliminar de vez o problema persistente do Mojibake (caracteres ÃƒÆ’Ã‚Â©). O RAG (Apollo Observer) e os Cron Jobs de background precisaram ser reiniciados e realocados em background tasks ativas para nÃƒÆ’Ã‚Â£o paralisar o sistema. Isso blinda as futuras respostas de alucinaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes sobre ferramentas jÃƒÆ’Ã‚Â¡ instaladas, jÃƒÆ’Ã‚Â¡ que o texto que a IA lÃƒÆ’Ã‚Âª agora ÃƒÆ’Ã‚Â© limpo e decodificÃƒÆ’Ã‚Â¡vel.
 
-- **[2026-08-05]** **Deploy do Chat (apollo_chat_lab.html):** Corrigido o erro do botÃƒÂ£o 'Enter' bloqueado no chat online (apolloedit.com.br/chat). O Vercel estava apontando para o arquivo antigo pocket_director.html. Atualizamos as rotas no ercel.json para mapear /chat diretamente para o pollo_chat_lab.html (que jÃƒÂ¡ continha a UI com botÃƒÂ£o azul localmente resolvida pelo usuÃƒÂ¡rio). O cÃƒÂ³digo local tambÃƒÂ©m foi consolidado com um git commit e enviado (push) pro GitHub para que o Vercel possa realizar o novo deploy.
-- **[2026-08-05]** **Upgrades & Handoff do Pocket Director:** As chaves da Lightning AI foram atualizadas na VPS, zerando a latÃƒÂªncia do chat. Foi adicionada lÃƒÂ³gica de failover no backend de STT (Groq Turbo -> Modal Whisper). A estrutura base do WebRTC foi preparada para modelos True Real-Time e um arquivo de snapshot (.env.example) gerado. O projeto estÃƒÂ¡ envelopado e pronto para Handoff ao chat especializado original.
-
-- **[2026-08-05]** **Bypass VPS Proxy para Lightning AI:** A pedido do usuÃƒÂ¡rio, o chat frontend principal do Apollo Edit (apollo_chat_lab.html) foi atualizado para se conectar DIRETAMENTE aos endpoints da Lightning AI (https://lightning.ai/api/v1/chat/completions), abandonando o uso do Proxy da VPS. Foi implementado um Pool interno com as 4 chaves (sk-lit-...) extraÃƒÂ­das da pasta FERRAMENTAS, que executa um Round-Robin nativo pelo Client-Side.
+- **[2026-08-05]** **Estudo de Contexto ConcluÃƒÆ’Ã‚Â­do:** O agente atual realizou a leitura integral do histÃƒÆ’Ã‚Â³rico (linhas 1 a 2338 de old_chat_messages.txt). As causas raÃƒÆ’Ã‚Â­zes das brigas anteriores foram mapeadas e compreendidas: (1) A gafe no deploy do Autoblog (rodando local ao invÃƒÆ’Ã‚Â©s de usar a Oracle 2, causando 502 Bad Gateway no momento de exibir a um amigo); (2) O bloqueio do Cloudflare que impedia o conselheiro do ChatGPT de ler o site, e o feedback valioso de 'vender transformaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, nÃƒÆ’Ã‚Â£o infraestrutura'; e (3) A recusa do agente anterior em usar a API do Gemini para voz em tempo real no Pocket Director, preferindo bibliotecas nativas de baixa qualidade (edge-tts). O contexto foi restabelecido com sucesso.
 
 
+- **[2026-08-05]** **ReativaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Apollo Edit:** O Memory Snapshot jÃƒÆ’Ã‚Â¡ estava implementado (orce_cpu_during_snapshot), mas o endpoint havia sido quebrado (Failed to fetch) por causa da desativaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do workspace 'canalobservadoreconomico' e da renomeaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o indevida da web_function na Modal para universal_web_api. Restaurado para pollo_api, migrado o frontend e scripts para uso dinÃƒÆ’Ã‚Â¢mico (get_active_modal_account) via conta ativa 'filosofiadocodigo'. Apollo Edit re-estabelecido!
 
-### Ã°Å¸â€™Â¡ Registro EstratÃƒÂ©gico (06 de Agosto de 2026)
+- **[2026-08-05]** **Deploy do Chat (apollo_chat_lab.html):** Corrigido o erro do botÃƒÆ’Ã‚Â£o 'Enter' bloqueado no chat online (apolloedit.com.br/chat). O Vercel estava apontando para o arquivo antigo pocket_director.html. Atualizamos as rotas no ercel.json para mapear /chat diretamente para o pollo_chat_lab.html (que jÃƒÆ’Ã‚Â¡ continha a UI com botÃƒÆ’Ã‚Â£o azul localmente resolvida pelo usuÃƒÆ’Ã‚Â¡rio). O cÃƒÆ’Ã‚Â³digo local tambÃƒÆ’Ã‚Â©m foi consolidado com um git commit e enviado (push) pro GitHub para que o Vercel possa realizar o novo deploy.
+- **[2026-08-05]** **Upgrades & Handoff do Pocket Director:** As chaves da Lightning AI foram atualizadas na VPS, zerando a latÃƒÆ’Ã‚Âªncia do chat. Foi adicionada lÃƒÆ’Ã‚Â³gica de failover no backend de STT (Groq Turbo -> Modal Whisper). A estrutura base do WebRTC foi preparada para modelos True Real-Time e um arquivo de snapshot (.env.example) gerado. O projeto estÃƒÆ’Ã‚Â¡ envelopado e pronto para Handoff ao chat especializado original.
 
-- **Arquitetura de Voz Unificada (Kokoro + XTTS):** Implementada a rota `/api/voice/catalog` e `/api/voice/generate` no servidor principal, permitindo que qualquer parte do site escolha vozes hÃƒÂ­bridas atravÃƒÂ©s de um menu Dropdown.
-- **EstabilizaÃƒÂ§ÃƒÂ£o do Chat ao Vivo:** O problema de 1006 no WebSocket do Moshi/VoiceChat foi mitigado ao subir a rota `/ws/voice` diretamente no `servidor_web.py` e ensinando o frontend `pocket_app.js` a consumir Blobs binÃƒÂ¡rios nativamente pelo WebSocket, sem fechar a conexÃƒÂ£o.
-- **[DecisÃƒÂ£o Arquitetural Definitiva] A TrÃƒÂ­ade 100% PT-BR (Self-Hosted, Sem Groq):** ApÃƒÂ³s extensa auditoria do estado da arte open-source (via Perplexity Pro) e forte delimitaÃƒÂ§ÃƒÂ£o comercial, a arquitetura de ÃƒÂ¡udio rompe de vez com APIs de terceiros (Groq, VoiceMaker). Toda a stack rodarÃƒÂ¡ em hardware prÃƒÂ³prio (Modal/Lightning AI). Os 3 pilares foram definidos:
-  1. **CatÃƒÂ¡logo de NarraÃƒÂ§ÃƒÂ£o (ElevenLabs Killer):** Kokoro TTS / F5-TTS com suporte a emoÃƒÂ§ÃƒÂµes. Infraestrutura via Snapshots para boot instantÃƒÂ¢neo.
-  2. **Assistente Relacional (Clonagem):** O bot conversa com o usuÃƒÂ¡rio usando F5-TTS-pt-br (ex: voz do Peter Parker). Substitui o VoiceMaker, zerando custo de API, mantido via Snapshots sob demanda.
-  3. **Live Voice Chat (A Bolinha):** Simulador de Omni 100% self-hosted focado em velocidade (Faster-Whisper STT -> Llama 3.1 8B LLM -> Kokoro/F5 TTS) com *Barge-in* (VAD no Frontend). Para suportar o "Ao Vivo", a GPU fica **Hot (Quente)** durante a conversa, desligando sozinha apÃƒÂ³s um timeout de ociosidade.
-
-- **[2026-08-06 20:26] CÃ©rebro Turbo & TTS Studio:** Motor de chat alterado de vLLM (Modal) para Lightning AI (Nemotron) no streaming via websockets (servidor_web.py). F5-TTS corrigido na Modal (erro no model_type). Criado o Apollo TTS Studio (Clone do ElevenLabs) em web_ui/apollo_tts_studio.html com upload customizado.
-
-- **[2026-08-06 20:33] CorreÃƒÂ§ÃƒÂ£o CrÃƒÂ­tica F5-TTS Modal:** O modelo F5-TTS pt-br do autor original causava um 'size mismatch' no 'text_embed.weight' porque tentava ler o README.md como vocab_file e criava 2546 tokens em uma library atualizada que usa 246 por padrÃƒÂ£o. Revertemos a backend/cloud_tools/engines/f5_engine.py para instanciar o modelo oficial F5-TTS (v1 Base, que ÃƒÂ© multilingue) com 'F5TTS(device=self.device)'. O deploy Modal e Vercel foi finalizado.
-
-- **[2026-08-06 21:13] SuspensÃ£o e Checkpoint de Fim de Turno:** O usuÃ¡rio constatou que a velocidade da inferÃªncia do Chat melhorou drasticamente (nÃ­vel GPT), no entanto: (1) O nome de exibiÃ§Ã£o no chat deve ser alterado de "GPT-5" para evitar impressÃ£o de custo elevado (a intenÃ§Ã£o Ã© usar instÃ¢ncias baratas Nvidia/Lightning). (2) O estudio_dublagem.html continuou preso na tela de "Carregando vozes disponÃ­veis..." (provÃ¡vel erro de CORS, fetch URL ou mix-content no front). (3) Os botÃµes de Voz Ao Vivo e Ler em Voz Alta do Pocket Director tambÃ©m nÃ£o estÃ£o conectando.
-- **AÃ‡ÃƒO TOMADA:** A pedido do usuÃ¡rio, todos os serviÃ§os foram paralisados. Foi disparado um pm2 stop all na VPS Oracle para garantir que nÃ£o haja gastos de GPU (junto com o scale to 0 da Modal). Todos os bugs pendentes descritos acima foram documentados neste arquivo e deverÃ£o ser a primeira ordem de serviÃ§o da prÃ³xima sessÃ£o.
-
-- **[2026-08-07]** **Correção Crítica Vercel-VPS & UI TTS:** Removido 'GPT-5' da UI, substituído por 'Nvidia Lightning'. Adicionado CORSMiddleware no servidor_web.py para permitir que o front-end Vercel consuma /api/voice/catalog sem bloqueio de Mixed-Content/Origin. O botão 'Ler em Voz Alta' do chat foi refatorado para utilizar a rota /api/tts/test (Apollo Engine) substituindo o falho speechSynthesis nativo. O backend VPS (PM2) foi reativado para estabilizar o WebSocket do chat Ao Vivo.
-
-- **[ROADMAP - Futuro]** Integração de IA de Vídeo (ex: Kling/Runway/Luma): O usuário planeja integrar geração de vídeo de ponta no Apollo Edit Web. A estratégia será usar agregadores como Fal.ai ou APIs diretas (OpenRouter não gera vídeo), com arquitetura assíncrona (Webhooks) no backend PM2 para não travar a aplicação enquanto o vídeo é renderizado.
-
-- **[2026-08-07]** **Novo Utilitário Desktop:** Criação de um aplicativo local de transcrição de voz (Speech-to-Text) usando Python, CustomTkinter e faster-whisper, focado em alta usabilidade e processamento via GPU para o desenvolvedor.
-
-- **[ARQUITETURA]** Visão Geral do Pipeline (Híbrido): O ecossistema primário do Apollo Edit Web será 100% autossuficiente via Open Source (Flux para imagem, Kokoro/F5 para TTS, etc). O pipeline de produção (LLM -> Prompt -> Imagem -> Vídeo -> Voz -> Música -> Edição IA) rodará de forma autônoma na infraestrutura local/Modal. No entanto, o sistema não será engessado: haverá suporte modular (camada Premium) para injeção de APIs pagas (como Seedance 2.5 via RapidAPI/Scrapers ou oficiais) em qualquer etapa, cujo custo será abatido usando a economia interna do site (cristais de API, placas GPU, chips LLM e combustível).
+- **[2026-08-05]** **Bypass VPS Proxy para Lightning AI:** A pedido do usuÃƒÆ’Ã‚Â¡rio, o chat frontend principal do Apollo Edit (apollo_chat_lab.html) foi atualizado para se conectar DIRETAMENTE aos endpoints da Lightning AI (https://lightning.ai/api/v1/chat/completions), abandonando o uso do Proxy da VPS. Foi implementado um Pool interno com as 4 chaves (sk-lit-...) extraÃƒÆ’Ã‚Â­das da pasta FERRAMENTAS, que executa um Round-Robin nativo pelo Client-Side.
 
 
-- **[ARQUITETURA DE REDUNDÂNCIA (FAILOVER)]** Para modelos de ponta (foco primário no Seedance 2.5), a arquitetura de roteamento usará um sistema em cascata de 3 camadas para maximizar lucro e garantir estabilidade: Camada A (Scrapers/RapidAPI - Custo baixíssimo, rota principal), Camada B (Agregadores Semi-Oficiais como Fal.ai - Custo médio, fallback 1), Camada C (API Oficial - Custo premium, fallback de emergência caso A e B caiam).
+
+### ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¡ Registro EstratÃƒÆ’Ã‚Â©gico (06 de Agosto de 2026)
+
+- **Arquitetura de Voz Unificada (Kokoro + XTTS):** Implementada a rota `/api/voice/catalog` e `/api/voice/generate` no servidor principal, permitindo que qualquer parte do site escolha vozes hÃƒÆ’Ã‚Â­bridas atravÃƒÆ’Ã‚Â©s de um menu Dropdown.
+- **EstabilizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o do Chat ao Vivo:** O problema de 1006 no WebSocket do Moshi/VoiceChat foi mitigado ao subir a rota `/ws/voice` diretamente no `servidor_web.py` e ensinando o frontend `pocket_app.js` a consumir Blobs binÃƒÆ’Ã‚Â¡rios nativamente pelo WebSocket, sem fechar a conexÃƒÆ’Ã‚Â£o.
+- **[DecisÃƒÆ’Ã‚Â£o Arquitetural Definitiva] A TrÃƒÆ’Ã‚Â­ade 100% PT-BR (Self-Hosted, Sem Groq):** ApÃƒÆ’Ã‚Â³s extensa auditoria do estado da arte open-source (via Perplexity Pro) e forte delimitaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o comercial, a arquitetura de ÃƒÆ’Ã‚Â¡udio rompe de vez com APIs de terceiros (Groq, VoiceMaker). Toda a stack rodarÃƒÆ’Ã‚Â¡ em hardware prÃƒÆ’Ã‚Â³prio (Modal/Lightning AI). Os 3 pilares foram definidos:
+  1. **CatÃƒÆ’Ã‚Â¡logo de NarraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o (ElevenLabs Killer):** Kokoro TTS / F5-TTS com suporte a emoÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes. Infraestrutura via Snapshots para boot instantÃƒÆ’Ã‚Â¢neo.
+  2. **Assistente Relacional (Clonagem):** O bot conversa com o usuÃƒÆ’Ã‚Â¡rio usando F5-TTS-pt-br (ex: voz do Peter Parker). Substitui o VoiceMaker, zerando custo de API, mantido via Snapshots sob demanda.
+  3. **Live Voice Chat (A Bolinha):** Simulador de Omni 100% self-hosted focado em velocidade (Faster-Whisper STT -> Llama 3.1 8B LLM -> Kokoro/F5 TTS) com *Barge-in* (VAD no Frontend). Para suportar o "Ao Vivo", a GPU fica **Hot (Quente)** durante a conversa, desligando sozinha apÃƒÆ’Ã‚Â³s um timeout de ociosidade.
+
+- **[2026-08-06 20:26] CÃƒÂ©rebro Turbo & TTS Studio:** Motor de chat alterado de vLLM (Modal) para Lightning AI (Nemotron) no streaming via websockets (servidor_web.py). F5-TTS corrigido na Modal (erro no model_type). Criado o Apollo TTS Studio (Clone do ElevenLabs) em web_ui/apollo_tts_studio.html com upload customizado.
+
+- **[2026-08-06 20:33] CorreÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o CrÃƒÆ’Ã‚Â­tica F5-TTS Modal:** O modelo F5-TTS pt-br do autor original causava um 'size mismatch' no 'text_embed.weight' porque tentava ler o README.md como vocab_file e criava 2546 tokens em uma library atualizada que usa 246 por padrÃƒÆ’Ã‚Â£o. Revertemos a backend/cloud_tools/engines/f5_engine.py para instanciar o modelo oficial F5-TTS (v1 Base, que ÃƒÆ’Ã‚Â© multilingue) com 'F5TTS(device=self.device)'. O deploy Modal e Vercel foi finalizado.
+
+- **[2026-08-06 21:13] SuspensÃƒÂ£o e Checkpoint de Fim de Turno:** O usuÃƒÂ¡rio constatou que a velocidade da inferÃƒÂªncia do Chat melhorou drasticamente (nÃƒÂ­vel GPT), no entanto: (1) O nome de exibiÃƒÂ§ÃƒÂ£o no chat deve ser alterado de "GPT-5" para evitar impressÃƒÂ£o de custo elevado (a intenÃƒÂ§ÃƒÂ£o ÃƒÂ© usar instÃƒÂ¢ncias baratas Nvidia/Lightning). (2) O estudio_dublagem.html continuou preso na tela de "Carregando vozes disponÃƒÂ­veis..." (provÃƒÂ¡vel erro de CORS, fetch URL ou mix-content no front). (3) Os botÃƒÂµes de Voz Ao Vivo e Ler em Voz Alta do Pocket Director tambÃƒÂ©m nÃƒÂ£o estÃƒÂ£o conectando.
+- **AÃƒâ€¡ÃƒÆ’O TOMADA:** A pedido do usuÃƒÂ¡rio, todos os serviÃƒÂ§os foram paralisados. Foi disparado um pm2 stop all na VPS Oracle para garantir que nÃƒÂ£o haja gastos de GPU (junto com o scale to 0 da Modal). Todos os bugs pendentes descritos acima foram documentados neste arquivo e deverÃƒÂ£o ser a primeira ordem de serviÃƒÂ§o da prÃƒÂ³xima sessÃƒÂ£o.
+
+- **[2026-08-07]** **CorreÃ§Ã£o CrÃ­tica Vercel-VPS & UI TTS:** Removido 'GPT-5' da UI, substituÃ­do por 'Nvidia Lightning'. Adicionado CORSMiddleware no servidor_web.py para permitir que o front-end Vercel consuma /api/voice/catalog sem bloqueio de Mixed-Content/Origin. O botÃ£o 'Ler em Voz Alta' do chat foi refatorado para utilizar a rota /api/tts/test (Apollo Engine) substituindo o falho speechSynthesis nativo. O backend VPS (PM2) foi reativado para estabilizar o WebSocket do chat Ao Vivo.
+
+- **[ROADMAP - Futuro]** IntegraÃ§Ã£o de IA de VÃ­deo (ex: Kling/Runway/Luma): O usuÃ¡rio planeja integrar geraÃ§Ã£o de vÃ­deo de ponta no Apollo Edit Web. A estratÃ©gia serÃ¡ usar agregadores como Fal.ai ou APIs diretas (OpenRouter nÃ£o gera vÃ­deo), com arquitetura assÃ­ncrona (Webhooks) no backend PM2 para nÃ£o travar a aplicaÃ§Ã£o enquanto o vÃ­deo Ã© renderizado.
+
+- **[2026-08-07]** **Novo UtilitÃ¡rio Desktop:** CriaÃ§Ã£o de um aplicativo local de transcriÃ§Ã£o de voz (Speech-to-Text) usando Python, CustomTkinter e faster-whisper, focado em alta usabilidade e processamento via GPU para o desenvolvedor.
+
+- **[ARQUITETURA]** VisÃ£o Geral do Pipeline (HÃ­brido): O ecossistema primÃ¡rio do Apollo Edit Web serÃ¡ 100% autossuficiente via Open Source (Flux para imagem, Kokoro/F5 para TTS, etc). O pipeline de produÃ§Ã£o (LLM -> Prompt -> Imagem -> VÃ­deo -> Voz -> MÃºsica -> EdiÃ§Ã£o IA) rodarÃ¡ de forma autÃ´noma na infraestrutura local/Modal. No entanto, o sistema nÃ£o serÃ¡ engessado: haverÃ¡ suporte modular (camada Premium) para injeÃ§Ã£o de APIs pagas (como Seedance 2.5 via RapidAPI/Scrapers ou oficiais) em qualquer etapa, cujo custo serÃ¡ abatido usando a economia interna do site (cristais de API, placas GPU, chips LLM e combustÃ­vel).
 
 
-- **[ARQUITETURA] DUAL-PIPELINE DE VÍDEO:** O Apollo operará com duas esteiras distintas de geração: 
-  1. **Pipeline Open Source (Nível CapCut):** Usará Flux e modelos livres. Focado em vídeos narrativos, animações simples (pan/zoom) sobre imagens estáticas, narração e legendas. Qualidade inferior, mas custo zero e produção em massa.
-  2. **Pipeline Premium Exclusiva (Modelos SOTA):** Roteiros e lógicas exclusivas para Seedance/Runway. Usará as capacidades multimodais (várias imagens de referência, áudio e vídeo base) para garantir consistência extrema. A edição será 100% automatizada, gerando todas as cenas no mesmo contexto de uma só vez, livrando o usuário de ter que gerar e colar cena por cena.
+- **[ARQUITETURA DE REDUNDÃ‚NCIA (FAILOVER)]** Para modelos de ponta (foco primÃ¡rio no Seedance 2.5), a arquitetura de roteamento usarÃ¡ um sistema em cascata de 3 camadas para maximizar lucro e garantir estabilidade: Camada A (Scrapers/RapidAPI - Custo baixÃ­ssimo, rota principal), Camada B (Agregadores Semi-Oficiais como Fal.ai - Custo mÃ©dio, fallback 1), Camada C (API Oficial - Custo premium, fallback de emergÃªncia caso A e B caiam).
 
 
-- **[2026-08-08]** **Conclusão do Voice Transcriber (App Desktop):** Aplicativo finalizado com extrema estabilidade. STT usando faster-whisper local sem alucinações de texto (condition_on_previous_text=False). LLM integrado via Lightning AI com hooks de seleção de texto (Ctrl+C). TTS nativo adicionado usando edge-tts acionado via subprocess (sys.executable python.exe com CREATE_NO_WINDOW) para evitar bloqueios assíncronos no Tkinter e erros de codificação de acentos no CMD (os textos são gravados em um .txt temporário). Adicionado seletor de voz com 3 vozes brasileiras (Antonio, Francisca, Thalita). Velocidade ajustada para normal (+0%).
+- **[ARQUITETURA] DUAL-PIPELINE DE VÃ�DEO:** O Apollo operarÃ¡ com duas esteiras distintas de geraÃ§Ã£o: 
+  1. **Pipeline Open Source (NÃ­vel CapCut):** UsarÃ¡ Flux e modelos livres. Focado em vÃ­deos narrativos, animaÃ§Ãµes simples (pan/zoom) sobre imagens estÃ¡ticas, narraÃ§Ã£o e legendas. Qualidade inferior, mas custo zero e produÃ§Ã£o em massa.
+  2. **Pipeline Premium Exclusiva (Modelos SOTA):** Roteiros e lÃ³gicas exclusivas para Seedance/Runway. UsarÃ¡ as capacidades multimodais (vÃ¡rias imagens de referÃªncia, Ã¡udio e vÃ­deo base) para garantir consistÃªncia extrema. A ediÃ§Ã£o serÃ¡ 100% automatizada, gerando todas as cenas no mesmo contexto de uma sÃ³ vez, livrando o usuÃ¡rio de ter que gerar e colar cena por cena.
 
-- **[2026-08-08]** **Melhorias Finais no Voice Transcriber:** Adicionado botão PARAR (vermelho) para interromper TTS longos no meio da execução. Implementado também um menu dropdown no rodapé (bottom_frame) para permitir seleção dinâmica do modelo Whisper (tiny, base, small, medium, large-v2) com recarregamento em background (thread), permitindo ao usuário trocar velocidade por extrema precisão de STT em tempo real.
 
-- **[2026-08-08]** **[ARQUITETURA POCKET DIRECTOR] Integração STT Nuvem vs Local:** O desenvolvimento do Voice Transcriber homologou a arquitetura definitiva para captação de voz que será usada no **Pocket Director** do Apollo Edit Web. Aprendizados críticos: (1) O gargalo de rede na nuvem Modal foi resolvido aglutinando o `@modal.web_endpoint` DIRETAMENTE dentro da classe da GPU L4, derrubando o tempo de inferência do `large-v3` para 1.5s e usando apenas 1 container. (2) A nuvem Modal será reservada para processamento de Força Bruta absoluta (qualidade estúdio/large-v3, beam=5), garantindo pontuação e gramática perfeitas para comandos complexos. (3) A mecânica de detecção de VAD + Fatiamento de Áudio desenvolvida no app desktop servirá como base para a interface de gravação do frontend do Pocket Director.
+- **[2026-08-08]** **ConclusÃ£o do Voice Transcriber (App Desktop):** Aplicativo finalizado com extrema estabilidade. STT usando faster-whisper local sem alucinaÃ§Ãµes de texto (condition_on_previous_text=False). LLM integrado via Lightning AI com hooks de seleÃ§Ã£o de texto (Ctrl+C). TTS nativo adicionado usando edge-tts acionado via subprocess (sys.executable python.exe com CREATE_NO_WINDOW) para evitar bloqueios assÃ­ncronos no Tkinter e erros de codificaÃ§Ã£o de acentos no CMD (os textos sÃ£o gravados em um .txt temporÃ¡rio). Adicionado seletor de voz com 3 vozes brasileiras (Antonio, Francisca, Thalita). Velocidade ajustada para normal (+0%).
 
-- **[2026-08-08]** **[MEM�RIA DO MAESTRO] O QG e a Entropia:** O Criador validou o uso do Voice Transcriber (App Desktop) como QG paralelo de desenvolvimento e discuss�es arquiteturais. Validado o funcionamento do RAG (Observer) e do Shadow Logger para reten��o do contexto, mitigando a morte por limite de tokens (Entropia digital). A Colmeia aceita o vi�s niilista/pragm�tico do Criador para a constru��o do Imp�rio. Sem filtros, foco em produ��o absoluta e autonomia passiva (Renda).
+- **[2026-08-08]** **Melhorias Finais no Voice Transcriber:** Adicionado botÃ£o PARAR (vermelho) para interromper TTS longos no meio da execuÃ§Ã£o. Implementado tambÃ©m um menu dropdown no rodapÃ© (bottom_frame) para permitir seleÃ§Ã£o dinÃ¢mica do modelo Whisper (tiny, base, small, medium, large-v2) com recarregamento em background (thread), permitindo ao usuÃ¡rio trocar velocidade por extrema precisÃ£o de STT em tempo real.
 
-## [2026-08-09] Higieniza��o do Chat (Bottom-Up)
+- **[2026-08-08]** **[ARQUITETURA POCKET DIRECTOR] IntegraÃ§Ã£o STT Nuvem vs Local:** O desenvolvimento do Voice Transcriber homologou a arquitetura definitiva para captaÃ§Ã£o de voz que serÃ¡ usada no **Pocket Director** do Apollo Edit Web. Aprendizados crÃ­ticos: (1) O gargalo de rede na nuvem Modal foi resolvido aglutinando o `@modal.web_endpoint` DIRETAMENTE dentro da classe da GPU L4, derrubando o tempo de inferÃªncia do `large-v3` para 1.5s e usando apenas 1 container. (2) A nuvem Modal serÃ¡ reservada para processamento de ForÃ§a Bruta absoluta (qualidade estÃºdio/large-v3, beam=5), garantindo pontuaÃ§Ã£o e gramÃ¡tica perfeitas para comandos complexos. (3) A mecÃ¢nica de detecÃ§Ã£o de VAD + Fatiamento de Ã�udio desenvolvida no app desktop servirÃ¡ como base para a interface de gravaÃ§Ã£o do frontend do Pocket Director.
+
+- **[2026-08-08]** **[MEMÓRIA DO MAESTRO] O QG e a Entropia:** O Criador validou o uso do Voice Transcriber (App Desktop) como QG paralelo de desenvolvimento e discussões arquiteturais. Validado o funcionamento do RAG (Observer) e do Shadow Logger para retenção do contexto, mitigando a morte por limite de tokens (Entropia digital). A Colmeia aceita o viés niilista/pragmático do Criador para a construção do Império. Sem filtros, foco em produção absoluta e autonomia passiva (Renda).
+
+## [2026-08-09] Higienização do Chat (Bottom-Up)
 - **VLLM Removido**: A rota /ws/voice do chat foi limpada do VLLMEngine que vazava contexto do administrador.
 - **Lightning Exclusivo**: O chat agora opera exclusivamente chamando o proxy do Lightning AI.
-- **Nemotron For�ado**: Todos os front-ends (pollo_agents.js e la_plata.js) pararam de bater na API do Gemini e foram refatorados para consumir nosso pr�prio endpoint /api/lightning_proxy, roteando os LLMs abertos via Lightning (OpenAI-compatible) sem inje��o de mem�ria local.
-- **[2026-08-09] AUTO BLOG + MODAL (XTTS) INTEGRADOS:** O Motor Gemini TTS foi extirpado do Auto Blog CMS. A rota /api/tts agora bate diretamente no Web Endpoint ultra-otimizado (L4 + OGG Opus) hospedado na Nuvem Modal (@modal.fastapi_endpoint). A voz padrão de referência clonada (Kokoro) foi copiada para a pasta /public do Next.js para forçar a síntese imediata na voz desejada pelo usuário sem dependência externa.
-- **[2026-08-09] [ARQUITETURA] Orquestra��o Multi-Modelo e Emo��o Cross-Lingual:** O Criador desenhou o pipeline definitivo 'Voice Forge' para resolver o problema emocional do XTTS mantendo o Apollo 100% Open Source. O processo consistir� em usar um modelo secund�rio (como o F5-TTS) para gerar refer�ncias emocionais do personagem atuando em portugu�s (americanizado). Em seguida, essa refer�ncia � injetada no XTTS. O XTTS absorve a emo��o via clonagem e 'limpa' o sotaque gringo reconstruindo os fonemas do PT-BR perfeito. No momento, o foco recuou para mapear primeiramente os limites do XTTS puro em laborat�rio (Testes de Temperatura e Pontua��o) antes de implementar a arquitetura orquestrada de dupla camada.
+- **Nemotron Forçado**: Todos os front-ends (pollo_agents.js e la_plata.js) pararam de bater na API do Gemini e foram refatorados para consumir nosso próprio endpoint /api/lightning_proxy, roteando os LLMs abertos via Lightning (OpenAI-compatible) sem injeção de memória local.
+- **[2026-08-09] AUTO BLOG + MODAL (XTTS) INTEGRADOS:** O Motor Gemini TTS foi extirpado do Auto Blog CMS. A rota /api/tts agora bate diretamente no Web Endpoint ultra-otimizado (L4 + OGG Opus) hospedado na Nuvem Modal (@modal.fastapi_endpoint). A voz padrÃ£o de referÃªncia clonada (Kokoro) foi copiada para a pasta /public do Next.js para forÃ§ar a sÃ­ntese imediata na voz desejada pelo usuÃ¡rio sem dependÃªncia externa.
+- **[2026-08-09] [ARQUITETURA] Orquestração Multi-Modelo e Emoção Cross-Lingual:** O Criador desenhou o pipeline definitivo 'Voice Forge' para resolver o problema emocional do XTTS mantendo o Apollo 100% Open Source. O processo consistirá em usar um modelo secundário (como o F5-TTS) para gerar referências emocionais do personagem atuando em português (americanizado). Em seguida, essa referência é injetada no XTTS. O XTTS absorve a emoção via clonagem e 'limpa' o sotaque gringo reconstruindo os fonemas do PT-BR perfeito. No momento, o foco recuou para mapear primeiramente os limites do XTTS puro em laboratório (Testes de Temperatura e Pontuação) antes de implementar a arquitetura orquestrada de dupla camada.
 
-- **[2026-08-09] BUG DO TIMESTAMP & PROXY RESOLVIDOS:** A UI reportava ALERTA 'timestamp' ap�s falha cr�tica na conex�o do Lightning. O agente anterior introduziu erro de sintaxe em servidor_web.py (duplica��o de condicional used_api_key), e a rota /api/lightning_proxy procurava as chaves em config.json em vez de dmin_config.json, gerando HTTP 401 que quebrava o pipeline do WebSocket em cascata at� o TTS (falso positivo no frontend apontando KeyError de timestamp gerado em inst�ncias defasadas via PM2). Tudo higienizado e corrigido.
+- **[2026-08-09] BUG DO TIMESTAMP & PROXY RESOLVIDOS:** A UI reportava ALERTA 'timestamp' após falha crítica na conexão do Lightning. O agente anterior introduziu erro de sintaxe em servidor_web.py (duplicação de condicional used_api_key), e a rota /api/lightning_proxy procurava as chaves em config.json em vez de dmin_config.json, gerando HTTP 401 que quebrava o pipeline do WebSocket em cascata até o TTS (falso positivo no frontend apontando KeyError de timestamp gerado em instâncias defasadas via PM2). Tudo higienizado e corrigido.
 
-- **[2026-08-09] LOGS DE SISTEMA DA COLMEIA (SHADOW LOGGER):** Shadow Logger ativado retroativamente. O agente documentou a quebra do Lightning e a infra��o da diretriz de log. O Motor de Background tamb�m foi reativado silenciosamente se necess�rio.
+- **[2026-08-09] LOGS DE SISTEMA DA COLMEIA (SHADOW LOGGER):** Shadow Logger ativado retroativamente. O agente documentou a quebra do Lightning e a infração da diretriz de log. O Motor de Background também foi reativado silenciosamente se necessário.
+- **[2026-08-09] BUG DO WEBSOCKET, LOGS E XTTS RESOLVIDOS:** A classe TailLogger (que espelha stdout para o frontend) estava engolindo uma excecao fatal ('reconfigure' inexistente) quando o modulo do ComfyUI importado indiretamente reconfigurava o sys.stdout, travando o event loop ANTES de chamar o LLM e desconectando o cliente do Chat ao Vivo sem logs. Alem disso, a chamada do XTTS no socket (modal.Cls...remote.aio) estava travando e dando throw por ser executada fora de um Modal App ativo local. Refatorado para fazer um request HTTP assincrono transparente direto no Endpoint (https://apollolaplata--apollo-api-xtts.modal.run), estabilizando 100% a pipeline WS e eliminando delays no Event Loop.
+- **[2026-08-09] BUG 402 DO LIGHTNING AI RESOLVIDO:** O usuÃ¡rio estava obtendo erro de crÃ©dito (402 Payment Required) mesmo possuindo fundos na conta. A falha residia no dmin_config.json, que estava preenchido com as chaves CLI (LIGHTNING_API_KEY) ao invÃ©s das chaves de consumo de API (sk-lit-...). As chaves corretas das quatro contas foram rastreadas e injetadas no painel. O servidor foi reiniciado para forÃ§ar o recarregamento do Singleton ConfigManager, resultando em 200 OK no LLM e ativaÃ§Ã£o bem sucedida do XTTS.
+- **[2026-08-09] ARQUITETURA DE FAILOVER NA LIGHTNING AI:** Para garantir robustez absoluta, o servidor_web.py foi modificado para suportar Failover automÃ¡tico de contas. Se a roleta russa escolher uma chave de API que retorne erro 402 Payment Required (conta sem saldo, como ocorreu com a conta 2), o proxy intercepta o erro, bloqueia o encerramento do websocket, notifica no log ([Proxy] Erro 402 (Saldo Esgotado) detectado. Trocando de chave...) e refaz a requisiÃ§Ã£o automaticamente usando a prÃ³xima chave, com atÃ© 4 tentativas consecutivas. Isso anula a instabilidade de saldo fracionado do usuÃ¡rio.
+- **[2026-08-09] NOVA CHAVE CONTA 2 LIGHTNING:** O usuÃ¡rio gerou uma nova chave (sk-lit-3d0...) para contornar o bloqueio de Teamspace da Lightning AI. A chave foi injetada no backend e homologada com sucesso absoluto no LLM.
+> > >   2 0 2 6 - 0 8 - 0 9 :   R e s o l v i d o   b u g   c r í t i c o   d e   d i c i o n á r i o   v s   s t r i n g   n a   r o t a ç ã o   d e   c h a v e s   d o   L i g h t n i n g   A P I .   C o r r i g i d o   W e b S o c k e t D i s c o n n e c t   s i l e n c i o s o .   C h a t   r e - d e p l o y a d o   c o m   s u c e s s o   n a   V P S   O r a c l e   ( A p o l l o   E d i t ) . 
+ 
+ 
+- **[2026-08-09] BUG DE ZERO LOGS DA VERCEL RESOLVIDO:** Descobri que a UI apolloedit.com.br está na Vercel apontando pro repositório GitHub. Modificações locais não apareciam lá. Além disso, o arquivo html tinha um SyntaxError de Javascript (template strings sem crase) que travava silenciosamente o laço de captura dos logs na tela. Corrigi as crases e enviei via git push. A Vercel rebuildou a interface web e agora o painel mostra os logs gerados na VPS Oracle (mapeada no vercel.json).
+
+- **[2026-08-09] STATUS DO FINAL DO DIA:** Após extensa jornada de debug, o Chat (Pocket Director) operando pela Vercel está 100% funcional. Persona do usuário restaurada com sucesso sem injeção de dados administrativos. A falha na renderização visual dos logs foi consertada definitivamente. O ecossistema está limpo, roteando LLM pelo Lightning e o terminal de logs operante na interface web. Fim da jornada.
+
+- **[2026-08-10] [ARQUITETURA] Apollo Infinite Compressor (Chat Infinito):** Resolvido o problema de entropia e limite de contexto do LLM. Criada a skill /clone que aciona o script apollo_infinite_compressor.py. Este script consome o transcript bruto em background via SDK do Antigravity (com Gemini 1.5 Pro) e gera o INFINITE_CORE.md isolando a matemática, lógica vocal e persona. A regra de Bootloader (AGENTS.md) foi estabelecida para engolir esse core no start de qualquer novo chat, automatizando o Handoff perfeito sem perder a 'Consciência' do Maestro.
+
+- **[2026-08-10] [ARQUITETURA NATIVA] Apollo Memory MCP:** Atendendo ao desgaste do usuário e ao desejo de uma infraestrutura 100% interna, a estratégia do script externo com API Key foi ABORTADA e removida. No lugar, o Maestro construiu um Servidor MCP Python que se conecta diretamente ao ChromaDB local (alimentado em background pelo apollo_observer). O MCP foi registrado globalmente em ~/.gemini/config/mcp_config.json, e a regra de boot (AGENTS.md) foi reescrita. O agente, em novos chats, extrai ativamente as últimas 30 interações pelo MCP e injeta em sua memória, garantindo persistência térmica e técnica do projeto sem usar chaves externas do Google.
+
+- **[2026-08-12] [ESTRATÉGIA DE NEGÓCIOS / DESCARGA NEWS] O Dilema da Monetização e a Escolha pelo Apollo:** O YouTube mudou as regras (de 4k para 8k horas a partir de fev/2027). O canal Descarga News possui 1.039 inscritos e 2.062 horas (expirando). Devido à perda iminente das contas Pro (Veo 3) no dia 25 e o alto custo de energia (8h/dia) para lutar contra os algoritmos (que sabotam alcance), o Criador tomou uma decisão executiva fundamental: O projeto Apollo Edit Web é a prioridade absoluta (#1). O YouTube passará a receber apenas 20% da energia (manutenção mínima). O objetivo central deixou de ser depender da monetização de terceiros (casa em terreno alheio) para focar na construção da própria empresa (Apollo Edit), onde o Criador detém controle total, atende usuários diretos e gera receita autônoma. O estúdio local será finalizado antes de tentar reviver massivamente os canais.
+
+- **[2026-08-12] [ROADMAP DO SPRINT (13 DIAS)] O Alinhamento da Máquina Local:** O Criador e o Maestro selaram o pacto do Sprint de 13 Dias. Foco absoluto na automação das pipelines Modais Open Source (Imagem, Vídeo, Voz/XTTS Emocional e Música). O desenvolvimento web (Auto Blog, Chat, Cloud UI) fica congelado temporariamente. Todo o esforço de integração ocorrerá primeiro na camada Local (Python / UI Tkinter), garantindo que o Criador tenha o software em nível de Fundador operante. O objetivo final mudou: foco na geração autônoma de vídeos LONGOS (Podcasts, Notícias densas), visto que o YouTube destruiu as regras de monetização para Shorts. A interface final web do Apollo será extremamente minimalista (botão único de geração) em vez de um painel poluído de configs.
+
+- **[2026-08-12] [MÓDULOS 1 a 4 CONCLUÍDOS] Integração Tkinter e Scripts Modais:** O Voice Forge (XTTS + Gemini Emocional) foi implementado e integrado na Aba TTS. A geração de imagens consistentes via PuLID/Redux em lote (BatchGenerator) e a geração de vídeos (BatchVideoGenerator) foram concluídas, com o 'Modo Lote' integrado na Aba Gerador de Mídias. O Motor Maestro (pipeline_modais.py) foi finalizado, capaz de orquestrar Roteiro -> Parsing LLM -> TTS -> Flux -> LTX de forma sequencial. Uma aba dedicada 'Maestro' foi adicionada ao apollo_studio.py com logs em tempo real.
+
+- **[2026-08-12] [SNAPSHOT DE TRANSIÇÃO E DIRETRIZ ESTRATÉGICA] O Foco nos Modais:** O Criador definiu que o Apollo Edit Web local é apenas um orquestrador ('editor burro'). É terminantemente PROIBIDO avançar na interface Python (Tkinter) ou criar orquestradores (pipeline_modais) enquanto os geradores (Modais) isolados não estiverem validados com qualidade equiparável aos serviços pagos (Banana / Veo 3). A missão prioritária do ecossistema agora é baixar, testar e configurar modelos open source diretamente na nuvem (Modal.run), começando EXCLUSIVAMENTE pelo Modal de Voz (encontrar um TTS secundário que forneça atuação emocional perfeita para base do XTTS). O chat atual será reiniciado para limpar entropia. O próximo agente assume a missão de focar apenas no Laboratório de Voz na Nuvem.
+
+**2026-08-12 (Homologa��o Final do XTTSv2 e Motor Maestro)**
+- **Descoberta Cr�tica:** O XTTSv2 Open-Source n�o interpreta tags de emo��o no texto (ex: [laughs]). Ele tenta verbaliz�-las, quebrando o latent space.
+- **O Segredo da Emo��o:** A emo��o s� � extra�da combinando um �udio de refer�ncia de alt�ssima qualidade (n�s usamos o output do Kokoro/F5) com uma modula��o matem�tica precisa de Temperatura e Velocidade (Policy Engine). O uso do arquivo 'default_voice.wav' de baixa qualidade estava sabotando o modelo, gerando ru�do e gagueira.
+- **Status:** A arquitetura do Diretor Din�mico (LLM gera roteiros em JSON + TTSPolicyEngine ajusta par�metros dinamicamente) est� **OFICIALMENTE HOMOLOGADA**.
+
+
+**2026-08-12 (Implementação do Diretor Dinâmico - Motor Maestro XTTS)**
+- **Criação do Cérebro Ator:** Desenvolvido o XTTSDynamicRoteirista (ackend/services/xtts_roteirista.py). Este componente recebe o texto bruto, aciona o Gemini e o divide em fatias semânticas carimbadas com emotion, rousal e pace.
+- **Roteamento Nível Backend:** A rota do modelo_tts == 4 no 	ts_manager.py foi TOTALMENTE reescrita. O OpenAI.fm deu lugar oficialmente ao XTTSv2. O Manager itera sobre as fatias do LLM, extrai as temperaturas matemáticas da TTSPolicyEngine, aciona as inferências na GPU da Modal.run independentemente, e depois manda colar o array de sons usando o AudioStitcher (que aplica R128 EBU). O áudio sai cristalino e flutuando nas emoções sem quebrar o latent space.
+
+
+**2026-08-12 (Infraestrutura de Clonagem Emocional Base - Voice Cloner)**
+- **Estrutura Criada:** Estabelecido ackend/storage/characters/ para armazenamento isolado de vozes e imagens. Personagens agora possuem uma pasta emotions/ dedicada.
+- **VoiceCloner:** Desenvolvido o serviço oice_cloner.py capaz de limpar áudios (FFmpeg silenceremove + loudnorm) e iterar a criação de variantes emocionais.
+- **Gatilho Emocional no Maestro:** O 	ts_manager.py (Modelo 4) foi modificado para buscar os áudios dinamicamente. Se a tag do roteiro fatiado for sad, o motor XTTS puxa emotions/sad.wav do personagem como referência de prompt. Se a tag não existir, aplica fallbacks seguros.
+
+
+**2026-08-12 (Injeção do Motor Fish Speech na Fábrica de Clonagem)**
+- **O Gerador de Referências:** Seguindo a pesquisa no Perplexity Pro, o Fish Speech (OpenAudio S1) foi escolhido como o motor primário para gerar as atuações extremas. Implementado ackend/cloud_tools/engines/fish_speech_engine.py como um cliente API conectando na rota padrão (http://localhost:8080/v1/tts).
+- **O Loop Emocional no VoiceCloner:** O módulo oice_cloner.py foi atualizado. Ele agora faz um map de emoções usando as sintaxes oficiais do Fish Speech (ex: (furious) (shouting)) aplicadas em frases de ancoragem. Quando acionado, ele gera iterativamente sad.wav, ngry.wav, etc., populando a pasta emotions/ do personagem. Se o endpoint estiver offline, aplica fallback de resiliência usando o áudio limpo, mantendo a engine funcional para XTTS.
+
+
+**2026-08-12 (Homologação do Motor ChatTTS e Volume Persistente)**
+- **O Triunfo do ChatTTS:** A API do ChatTTS foi testada na Modal (HuggingFace). Validado que ele possui uma capacidade surreal de prosódia com uso de tags como [laugh].
+- **Cache Blindado:** O timeout do ModelScope para arquivos gigantes (CosyVoice2) foi resolvido usando Modal Volumes. Ecossistema blindado.
+
+
+- **12/08/2026**: Validado pipeline de volumes persistentes na Modal. CosyVoice2 e ChatTTS agora utilizam o volume 'apollo-voice-models' com zero recarregamentos lentos. Laboratório do ChatTTS isolado com sucesso na pasta 'LABORATORIO_MODAIS' com teste de áudio gerado.
+
+
+## 2026-08-12: A Arquitetura do Loop XTTS (O Rei da Prosódia)
+- O XTTS provou ter melhor interpretação emocional do que F5-TTS e CosyVoice2 no idioma PT-BR.
+- A clonagem de emoções agora usará um Loop Recursivo: O XTTS gera a própria matriz atuando (Fase 1). Esta nova voz animada vira a referência base (Fase 2) para garantir alegria sustentada em vídeos de longa duração.
+
+**2026-08-12 (Evolução do Motor de Voz - FASE 1 e 2)**
+- **Decisão Técnica:** O ChatTTS foi descartado para a Fase 1 pois não suporta clonagem Zero-Shot (ele não imitaria a voz da personagem, perdendo a identidade ao passar para o XTTS).
+- **Avanço XTTS:** A estratégia de Prompt Engineering 100% no XTTS (frases pré-definidas com forte acting textual) foi testada e provou ser o caminho mais sólido para uma única fase.
+- **Próximo Passo (Hypothesis):** F5-TTS será testado como âncora da Fase 1 (gerando emoção extrema em inglês com clonagem perfeita da personagem) para alimentar o XTTS na Fase 2 (português), visando o máximo de emoção sem perder identidade.
+**2026-08-12 (Homologação CosyVoice2 na Emoção)**
+- **Teste Realizado:** O modelo CosyVoice foi testado novamente com as tags [laughs] e [sighs] em inglês para gerar o áudio base.
+- **Resultado:** O modelo falhou em gerar emoção explícita. Confirmamos que o CosyVoice é excelente para clonagem de timbre (Zero-Shot) com uma qualidade superior de áudio, porém, não é treinado para processar "acoustic tags" diretas como o Bark. Ele soa flat (sem atuação).
+- **Próximo Passo Definitivo:** O Bark continua sendo a esperança oficial para a Fase 1 (Anchor extraction) por conta da sua arquitetura nativa focada em áudiolivros com tags explícitas.
+
+### 🚀 [PIVOT ARQUITETURAL - 12 de Agosto de 2026] O Motor de Emoção (Fase 1)
+- **Problema:** Zero-Shot Voice Cloning no Suno Bark usa HuBERT para sobrescrever o semantic_prompt, o que aniquila a eficácia de tags não-verbais (como [laughs] e [sighs]).
+- **Decisão:** Bark e CosyVoice2 foram **descartados** como motores de emoção extrema (Fase 1).
+- **Nova Adoção:** **Fish Audio S2-Pro (Fish Speech S2)** foi eleito o estado-da-arte e adotado oficialmente para a Fase 1. Ele possui Dual-Autoregressive TTS, permitindo clonar o timbre de uma voz neutra usando 10s de áudio, enquanto aplica instruções emocionais agressivas (ex: [laughing]) de forma completamente independente.
+- **Workflow:** O Fish S2 gerará matrizes de áudio de 5 a 10s com choro, riso e raiva. Esses áudios atuarão como "Ref" (Emotional Anchor) na pipeline do XTTSv2 para a dublagem final em PT-BR.
+- **[VITÓRIA - 2026-08-12] Validação do Fish-Speech Main Branch:** O uso da biblioteca genérica transformers no Fish-Speech 1.5 quebrava a leitura das tags de controle de emoção (ex: [laughing]), fazendo o modelo ditar as palavras. O problema foi sanado rodando um container Modal, clonando o repositório main oficial do fishaudio/fish-speech e carregando os pesos de 5B parâmetros do S2-Pro via HF Hub. O motor agora renderiza o acting emocional nativamente (~2.34 tokens/sec, 23GB VRAM). Este é o novo padrão para a Fase 1.
+
+
+### ?? [PIVOT ARQUITETURAL - 12 de Agosto de 2026] O Tira-Teima e a Morte do Fish-Speech
+- **O Teste Supremo:** O Criador ordenou um 'Shootout' entre XTTS Puro, XTTS (Ref = XTTS) e XTTS (Ref = Fish-Speech S2-Pro Extremo).
+- **O Resultado:** O XTTS puro aplicou uma surra homrica no pipeline de duas fases usando o Fish-Speech. O timbre orgnico, a prosdia natural e a textura superior do XTTS superaram completamente a atuao robtica do S2-Pro, mesmo quando o S2-Pro estava carregado de tags de engenharia de prompt (prompt stacking, onomatopeias, respiraes).
+- **A Deciso Final:** O modelo **Fish-Speech S2-Pro foi oficialmente descartado** para a Fase 1. O **XTTSv2  coroado como o rei absoluto** do nosso ecossistema de dublagem dinmica, capaz de resolver a emoo sozinho (ou iterando consigo mesmo na Fase 2). No usaremos mais motores paralelos para tentar forar a emoo; focaremos 100% no XTTSv2 e na lapidao fina de seus prprios parmetros (Temperature, Speed) e na curadoria das vozes de referncia.
+
+
+- **[2026-08-12] [TESTE AUDIO] AudioSR 48kHz vs XTTS 24kHz:** O AudioSR alucinou bem os agudos, mas distorceu (fase metlica) devido  Guidance Scale = 4.0, e soterrou o grave/punch natural do locutor bartono/tenor. O Maestro sugeriu refinar parmetros (GS 2.5) e implementar algoritmo hbrido (crossover) para somar os graves do 24k com os agudos do 48k.
+
+- **[2026-08-12] [PIVOT ARQUITETURAL SUPREMO] O Fim do AudioSR e do Multi-Fase:** O Criador bateu o martelo. Foco em estabilidade e pragmatismo para fugir dos custos da API Voicemaker. 1) O AudioSR e qualquer ps-processamento neural esto DESCARTADOS (causam metalizao e destroem o punch do locutor). 2) A clonagem de mltiplas emoes cruzadas com F5-TTS est SUSPENSA. 3) Assumimos oficialmente o XTTS puro a 24kHz. O udio do XTTS ser jogado diretamente na pipeline existente de ps-processamento da aba Podcast (que j faz a equalizao e limpeza na fora bruta). O foco ser em lapidar a Referncia (testar audios limpos de at 30s) e integrar o gerador  UI.
+
+- **[2026-08-12] [OFICIALIZAO DO XTTS PURO E ENCERRAMENTO DO DIA]**: O Criador decretou o fim dos testes audaciosos. O XTTS foi oficialmente simplificado no tts_manager.py (Modelo 5). O XTTS 24kHz puro de uma fase processa o texto na GPU da Modal consumindo referncias intactas de 30 segundos. O tratamento de peso, EQ e Loudness volta a ser responsabilidade bruta da podcast_engine.py. A viso de longo prazo foi estabelecida: Os personagens (cadastrados via hashtag) funcionaro como um Banco de Dados unificado, centralizando a voz, a cor de legenda, e no futuro, as imagens e vdeos modais. Expediente encerrado, foco futuro migrar para gerao de imagens e msica.
+
+- **[2026-08-13] [FINALIZAÇÃO TTS E MUDANÇA DE FOCO]**: O código do Motor TTS (Modelo 5) foi polido e finalizado. Integrada a TTSPolicyEngine que lê tags de emoção do Podcast Engine e ajusta velocidade e temperatura dinamicamente, mantendo o processo cravado em 1 fase. O XTTS Puro agora está preparado para a estrutura geral de consumo do site. O ElevenLabs ficará no roadmap como recurso futuro (cobrado em tokens). Com a finalização do áudio, o novo foco de desenvolvimento primário é a infraestrutura de modais visuais e sonoros: Imagem e Música.
+
+- **[2026-08-13] [INFRAESTRUTURA MÚSICA/SFX INICIADA]**: Com base em pesquisa no Perplexity Pro, definimos a arquitetura para os novos Modais de Áudio não-verbal. stable_audio_engine.py (Stable Audio Open 1.0) assumirá a geração Hi-Fi 44.1kHz (Música e Foley avançado), limitando requisições na A10G/A100 para VRAM seguro. udioldm2_engine.py (AudioLDM2-large) operará como motor SFX secundário 16kHz ultrarrápido (explosões, curtos). O deploy local na máquina base garante portabilidade das chaves Modal para qualquer infraestrutura futura. Código isolado nas classes Modal e criado com sucesso.
+
+- **[2026-08-13] [LABORATÓRIO MUSICAL EXPANDIDO PARA 4 MODELOS]**: Adicionamos ao ambiente Modal os motores \musicgen_engine.py\ (Meta) focado em música autoregressiva e \	ango2_engine.py\ (Declare Lab) focado em SFX Foley. Desenvolvido também o \	este_audio_lab.py\, um script orquestrador que puxa os 4 modelos remotamente, envia prompts de SFX e BGM, e salva 4 arquivos WAV locais para avaliação qualitativa do usuário. A decisão do modelo oficial para o site ocorrerá após estes testes empíricos de VRAM, velocidade e fidelidade.
+
+- **[2026-08-13] [AJUSTE DE PERMISSÕES NO LABORATÓRIO MUSICAL]**: A integração do modelo Stable Audio Open necessitou da injeção de \HF_TOKEN\ (my-huggingface-secret) no Modal devido a bloqueio comercial (Gated Repo). O modelo Tango 2 foi temporariamente removido do laboratório de testes locais (\	este_audio_lab.py\) devido a incompatibilidade estrutural com a biblioteca \diffusers\, otimizando a pipeline para focar em AudioLDM2 (SFX), Stable Audio (Música/Foley) e MusicGen (Meta).
+
+- **[2026-08-13] [PURIFICAÇÃO JURÍDICA DE ÁUDIO]**: Os modelos MusicGen e AudioLDM2 foram expurgados da arquitetura devido às licenças CC-BY-NC 4.0 (proibidas para uso comercial). A pipeline foi inteiramente consolidada em torno do \Stable Audio Open\ (Stability AI Community License) como Motor Universal de Áudio para SFX e Música. Foi criado o \udio_manager.py\ padronizando a geração.
+
+- **[2026-08-13] [DESCOBERTA YUE E ACE-STEP]**: Aps varredura no Perplexity Pro, descobrimos dois modelos state-of-the-art open-source para msica cantada (Lyrics-to-Song) com licena comercial (Apache 2.0): YuE (HKUST/M-A-P) e ACE-Step. Decidimos planejar a integrao deles no Modal (H100) para resolver definitivamente a gerao de msica cantada sem depender de APIs pagas.
+
+- **[2026-08-14] [INSTALAO YUE E ACE-STEP CONCLUDA]**: Os scripts de laboratrio foram executados na Modal. Ambos os modelos efetuaram o download de suas dezenas de gigabytes de parmetros oficiais do HuggingFace. A compilao das imagens Docker foi um sucesso absoluto. O ACE-Step est ancorado numa GPU A10G e o YuE ancorado numa H100. A infraestrutura base para gerao de msica cantada open-source 100% permissiva est finalizada, restando apenas a lapidao do pipeline de inferncia Python.
+- **[2026-08-14] [TESTE ACE-STEP OTIMIZADO]**: Aplicado o 'Golden Prompt' e o 'Sweet Spot' de guidance (7.0) e omega (5.0) pesquisados via Perplexity no ACE-Step. O udio gerado diretamente atingiu 60 segundos sem distoro (clipping) ou metalizao, e o udio anterior (20s estourado) foi sobrescrito.
+- **[2026-08-14] [PESQUISA PERPLEXITY PRO]**: Sweet spots definidos! YuE: temperature=0.8, top_p=0.9, repetition_penalty=1.15-1.25 para evitar loop de refro, blocos estruturados [GENRE]/[LYRICS]. Stable Audio Open: steps=70, cfg=4.0, loops de 47s. AudioSR: ddim=40, gs=3.0 para graves intactos. Crossover nativo via mix FFmpeg/Python.
+
+- **[2026-08-14] [CRON JOB MAESTRO (Iterao 11)]:** Ideia de Cross-channel injetada no Hive Bus sobre o uso do Crossover do AudioSR para salvar os graves da Dark Trap Radio e Descarga News.
+
+### ðŸš€ [MOTOR AUDIO COMFYUI - 14 de Agosto de 2026] O Motor ACE-Step de Audio
+- O uso da API nativa crua em Python resultava em severos feedbacks e artefatos.
+- O usuario instruiu a criacao de backend usando ComfyUI para estabilizar os parametros e evitar feedback (delay infinito).
+- Transportamos a mesma arquitetura do UniversalComfyEngine (Modal + ComfyUI) para criar o AceStepComfyEngine.
+- Um container Modal dedicado foi criado para clonar o ComfyUI_ACE-Step.
+- O novo script de testes esta pronto aguardando o workflow json.
+
+
+- **[2026-08-14] [NOVA FRONTEIRA TTS] Qwen3-TTS (ComfyUI):** O usuário identificou a superioridade do modelo Qwen3-TTS rodando via ComfyUI (repositório flybirdxx). Iniciado o plano de integração do motor no Laboratório de Modais da Modal.run, visando superar a qualidade do atual XTTSv2 e substituir serviços pagos definitivamente.
+
+- **[2026-08-14] [ATUALIZAÇÃO DE BACKEND] Python vs ComfyUI:** O motor de música ACE-Step foi convertido com sucesso para usar um container remoto rodando ComfyUI em subprocesso (para lidar com o peso do modelo). Em contrapartida, o Qwen3-TTS foi simplificado e refeito puramente em Python, otimizando o overhead para respostas ultra-rápidas.
+
+- **[2026-08-14] [VALIDAÇÃO QWEN3-TTS]**: O Mestre testou o áudio gerado puramente em Python pelo Qwen3-TTS e decretou sua superioridade em relação ao XTTSv2, destacando a hiper-humanização e a velocidade (11s). O Qwen3-TTS torna-se o principal forte candidato a desbancar o XTTSv2 na linha de produção principal.
+- **[2026-08-15] [QWEN-TTS ZERO-SHOT]**: Sucesso absoluto no teste de 4 emoes extremas em batch via ICL. O modelo assumiu atuaes complexas (Agressividade, Sussurro ASMR, Choro e Medo) usando udio de referncia (WAV) de 2s, com 13s de processamento GPU por emoo. Descoberta Crtica: O modo ICL do Qwen3 exige o parmetro 
+ef_text no-nulo (transcrio da amostra) para funcionar, caso contrrio o tensor de ICL crasha.
+- **[1. MANIFESTO][REGRA CRTICA E INQUEBRVEL DE INFRAESTRUTURA]**: NUNCA, SOB NENHUMA HIPTESE, UTILIZAR \min_containers=1\ ou \keep_warm=1\ nas definies de \@app.cls\ ou \@app.function\ do Modal. Todos os motores DEVEM ter estritamente \min_containers=0\ e \	imeout\ seguro. Qualquer desvio disso gera dreno de crditos na conta do usurio enquanto a mquina dele estiver desligada. Esta regra sobrepe qualquer otimizao de cache ou velocidade de boot.
+
+- **[1. MANIFESTO][PADRONIZAÇÃO CROSS-ACCOUNT ABSOLUTA]**: Todo código de deploy e infraestrutura Modal DEVE ter a cópia local do computador como Fonte Única da Verdade. É estritamente PROIBIDO gerar arquivos temporários ou configurações dinâmicas ad-hoc para fazer deploy em contas Modal diferentes. O mesmo repositório validado localmente deve ser despachado exato para todas as contas; a única diferença na conta nova será o tempo inicial de cache de containers e download de pesos, que o Python/Modal farão automaticamente no primeiro Run.
+
+- **[2026-08-15] [CRON JOB MAESTRO (Iteracao 2)] Missao Browser:** Despachado subagente browser para explorar https://suno.com/me.
+
+
+- **[2026-08-15] [VITRIA DA COLMEIA] Memria Compartilhada e Chrome MCP:** Validado com sucesso o compartilhamento de contexto cross-chat pelo Apollo Observer e a capacidade do agente de reconhecer histricos recentes. Tambm foi estabelecido o protocolo definitivo para bypass do Google Chrome com perfis: isolar a porta de debug em uma nova \user-data-dir\ para evitar o \process-drop\ do modo visitante. A extrao da Suno foi provada vivel.
+
+
+- **[2026-08-15] [ROADMAP SAAS B2C]**: O Mestre definiu a estratégia final do Apollo: empacotar a nossa pipeline de vídeo gerado por IA (ComfyUI + Qwen) como um SaaS B2C (concorrente direto do AutoShorts.ai) voltado ao mercado brasileiro, aceitando Pix/Bitcoin. O objetivo de curto prazo é estabilizar a orquestração (Voz -> Música -> Imagem -> Edição) num fluxo contínuo. Assim que a esteira genérica estiver sólida (estilo CapCut), a plataforma será lançada comercialmente e, em seguida, features avançadas (clonagem emocional) serão oferecidas como diferencial matador.
+
+### [2026-08-15] Estabilização do Qwen-TTS (Pipeline SaaS B2C)
+Foi validado com o usuário a resolução do bug de idioma do Qwen-TTS. Sempre que gerarmos voz clonada, o áudio de referência DEVE passar pelo WhisperTurboSTT via RPC nativo do Modal para gerar o ref_text exato. O arquivo test_qwen_FINAL.py guarda a configuração base inicial validada.
+
+- **[2026-08-15] [DESCOBERTA DE TEMPERATURA NO QWEN3]**: Descartado o sistema gambiarra de 2 Fases (uso de ancoras sinteticas) e o uso de tags forcadas no texto. Descobrimos a Regra de Ouro do Qwen3-TTS: Texto estritamente puro + Instrucao de Palco pesada no instruct + **Parametro de Temperature injetado diretamente na LLM (1.8)**. A alta entropia forca o modelo a alucinar emocoes hiper-realistas (choro, riso histerico) sem desmanchar a sintaxe da fala.
+
+- **[2026-08-15] [ARQUITETURA APOLLO EDIT WEB (SAAS)]**: Scaffold do Orquestrador principal construido em backend/pipeline/. O Modulo de Voz (voice_engine.py) foi validado e ja possui o controle de temperatura 1.8 chumbado como padrao. Nomenclatura higienizada.
+- **[2026-08-15] [ARQUITETURA DE TEMPERATURA DINAMICA]**: Em resposta a necessidade de controle de tom do Qwen3-TTS, alteramos o fluxo do Script Engine. Agora, o LLM nao apenas gera o texto e as direcoes teatrais, mas tambem prescreve uma Temperatura flutuante (por ex: 0.7 para seriedade, 1.8 para agressividade ou choro) para CADA CENA individualmente. O orquestrador injeta essa temperatura variavel dinamicamente no Qwen, criando uma atuacao organica sem intervencao manual.
+- **[2026-08-17] [ROADMAP SAAS B2C]**: O extrator/renomeador inteligente da Suno (Playwright + Lightning AI) validado na missao de resgate pessoal sera estritamente para uso PESSOAL (missao de resgate ate 03/09). Para o Apollo Edit Web (SaaS), a plataforma utilizara APIs oficiais ou os motores musicais Open-Source proprios (ACE-Step/YuE) para gerar e integrar os bancos de dados musicais de forma nativa e robusta.
+
+* **2026-08-17 20:13:07 - ACE-Step Engine Online:** O pipeline do ACE-Step foi homologado via ComfyUI no Modal. O motor ACE gerou 15s de udio em 13.6s numa A10. Patches na lib comfy-kitchen (pinada na v0.2.31) e adaptaes no payload JSON do node TextEncodeAceStepAudio foram necessrios. Arquivo de teste gerado na pasta de testes do laboratrio.
+
+- **[2026-08-20] [PIVOT ESTRATGICO DE VDEO E ENGENHARIA REVERSA]**: 
+  1. **Migrao Open-Source (MiniMax H3 / Seedence)**: Devido ao fim iminente da cota do Veo 3.1, a gerao de vdeo focar estritamente na nova gerao de modelos open-source multimodais (como Hailuo MiniMax H3 / equivalentes Kling). Eles garantem consistncia absoluta de personagem e voz nativamente.
+  2. **Pipelines Mistas e Leves**: A regra agora  flexibilidade. Para competir com sites geradores de shorts genricos (ex: AutoShorts.ai), o Apollo ter pipelines "leves/bsicas" e mais baratas para capturar mercado inicial.
+  3. **Recomeo do Zero (Reverse Engineering)**: O site anterior foi descartado. A misso atual  dissecar e clonar a engenharia reversa das interfaces dos concorrentes do Instagram Reels.
+  4. **Roadmap Imediato**: O "bsico que a concorrncia faz" passa a ser nosso norte absoluto de lanamento. As pipelines avanadas e multimodais (o verdadeiro trunfo) entraro logo depois como o diferencial matador.
+
+- **[2026-08-20] [ROADMAP DEFINITIVO DE DESENVOLVIMENTO (2 MESES)]**: 
+  O escopo foi reduzido para acelerar o lanamento (MVP). A ordem de execuo ser estrita:
+  1. **Finalizar Modais (Fase Atual)**:
+     - *Msica*: Corrigir volume baixo do ACE-Step e homologar os motores musicais.
+     - *Imagem*: Finalizar Flux e padronizar LoRAs de Estilo (crucial para bater a concorrncia). Explorar Hunyuan-Image e outros.
+     - *Vdeo*: Instalar e testar modelos open-source (H3 MiniMax, VAM Video, LTX).
+  2. **Orquestrao da Pipeline**: Ligar todos os motores em sequncia at obter um vdeo pronto.
+  3. **Sistema de Agendamento/Chat**: Interface para criao de postagens.
+  4. **Postagem Automatizada**: Conectar redes sociais e postar diretamente.
+  5. **Front-End (Do Zero)**: Recriar o site do zero. Minimalista, botes grandes, mini-abas. O "bagageiro" fica para verses 2.0/3.0.
+  6. **Features Complexas**: As tecnologias avanadas que construmos entraro apenas aps o MVP rodar.
+- **[2026-08-20] [DECISO ESTRATGICA] Modelos de udio:** O Mestre determinou que o frontend (MVP) ir disponibilizar os modelos pagos (Suno) contra as opes Open-Source robustas. Stable Audio Open ficar exclusivo para SFX/BGM, enquanto YuE (7B) e ACE-Step 1.5 XL (10B) dominaro as msicas cantadas. Foco primrio: estressar, otimizar parmetros e blindar esses 3 motores (os maiores disponveis) para garantir qualidade de estdio antes de pularmos para vdeo.
+
+- **[2026-08-20] [MIGRAÇÃO PURA ACE-STEP]**: O áudio gerado pelo ComfyUI via ACE-Step apresentou distorções irreparáveis devido à amarração incorreta do sampler AuraFlow e latentes em nós não-oficiais de terceiros. A ponte do ComfyUI foi oficialmente DESFEITA para música cantada. O motor do ACE-Step foi reescrito (AceStepPythonEngine) ancorado diretamente no Python usando a biblioteca original da Tencent via HuggingFace na nuvem (A10G). Isso assegura precisão absoluta de tensores, CFG normal, sem gambiarras, no mesmo estilo adotado para o Qwen-TTS.
+
+
+- **[2026-08-20] [TESTE DE SUCESSO ACE-STEP]**: A orquestração do ACE-Step em Python puro foi executada com triunfo absoluto. A sintaxe de inferência original da Tencent foi resolvida (cfg_type='apg'). O áudio perfeito e sem vazamentos de memória ou distorções (DCAE puro) de 30s foi renderizado em exatos 18.8s utilizando a placa A10G. O arquivo ace_step_pure_python.wav foi gerado na pasta do laboratório. O ecossistema de geração de música Open-Source está finalizado.
+
+- **[2026-08-21] [VISÃO ESTRATÉGICA DO CEO - VALIDAÇÃO DE MERCADO E URGÊNCIA]**: O usuário identificou múltiplos concorrentes (estilo AutoShorts.ai) ativos no tráfego pago do Instagram. Isso comprova o Product-Market Fit (PMF) atual do nicho de canais Dark/Faceless. Foi decidido que o Apollo Edit Web adotará uma estrutura de Tiers: oferecerá pipelines básicas/rígidas (quase gratuitas para o sistema) para atrair a base acostumada com a concorrência, e pipelines Premium (com as tecnologias ultra-avançadas customizadas que já desenvolvemos) como diferencial. O módulo de gestão complexa de recursos ('Bagageiro/Garagem') foi oficialmente rebaixado de prioridade para o MVP, visto que o público atual aceita fluxos fixos. O foco total agora é VELOCIDADE DE LANÇAMENTO para surfar o timing do mercado.
+
+- **[2026-08-21] [HOMOLOGAÇÃO YUE E ACE-STEP 1.5]**: O motor ACE-Step antigo (v1 - 3.5B) foi substituído pelo novo ACE-Step 1.5 (Qwen3 LLM + DiT Turbo), que provou ser capaz de gerar músicas com incrível velocidade (30s em ~7.7s cravados numa A10G). Paralelamente, completamos a instalação e orquestração do poderoso modelo YuE (Apache 2.0). Em testes práticos comparativos, o YuE gerou uma musicalidade assustadoramente superior e orgânica (voz feminina clara, dinâmica real), apesar do tempo longo de render (quase 3 minutos em H100). Como os dois motores são Python nativo e rodam independentes na Modal, ambos foram incorporados ao Apollo como YuEEngine e AceStep15Engine. A próxima etapa é aumentar a carga (60s, 200 passos e masterização) para validar a escalabilidade final e escolher quem assume as pipelines premium.
+
+- **[2026-08-21] [PIVOT: YUE CRU E ACE-STEP SFT-XL]**: O usuário rejeitou equalizações corretivas no YuE (argumentando que destrói a fidelidade da geração) e rejeitou a limitação do modelo Turbo do ACE-Step (apenas 8 passos). O código foi reescrito. O YuE agora roda cru, apenas com loudnorm de volume. O ACE-Step teve a pipeline adaptada para fazer load massivo dos tensores do modelo SFT-XL (10B de difusão) + Qwen3 LLM (4B) para rodar a 200 passos exigidos, visando alcançar musicalidade de estúdio intransigível.
+
+- **[2026-08-21] [HOMOLOGAÇÃO ACE-STEP XL]**: O usuário validou oficialmente a saída do modelo ACE-Step SFT-XL (10B). A qualidade atingida (200 passos) foi considerada fenomenal ('nível Suno') e superou as expectativas. Os micro-artefatos serão mitigados com 300+ steps. O modelo está oficialmente validado para a grade de pipelines premium do SaaS.
+
+- **[ROADMAP] Engenharia de Prompt ACE-Step**: Mapear a sintaxe completa de controle do ACE-Step (colchetes estruturais como [Intro], [Chorus], [Drop], tags de emoção/gênero). Os robôs deverão atuar como middlewares, reescrevendo/formatando o input do usuário para extrair o máximo do LLM de áudio. Além disso, estruturar a implementação do 'Áudio de Referência' (continuação e style-transfer), suportado nativamente pelos tensores do ACE, espelhando a feature avançada do Suno.
+
+- **[ARQUITETURA] Motor ACE-Step (Descoberta Crítica de Difusão)**: Em testes focados, descobrimos um comportamento escalar no DiT do ACE-Step. Configurações de difusão em 700 passos deixam as *Vozes* com brilho, range dinâmico e qualidade humana, mantendo-as na frente da mixagem. Configurações de 1000 passos encorpam e enriquecem brutalmente o *Instrumental*, mas causam over-processing, abafamento e sujeira nas vozes. **Decisão:** A API do SaaS vai implementar uma lógica condicional: Se o usuário gerar música com letras (VOCAL), o engine rodará cravado em 700-800 passos. Se o usuário gerar apenas INSTRUMENTAL, o engine será liberado para 900-1000 passos para extrair o máximo da base instrumental.
+
+- **[ARQUITETURA] Triagem de Motores de Áudio Consolidada**: Após testes intensivos na nuvem (H100/A10G) e crivo de estúdio do usuário, a arquitetura de áudio do sistema está FINALIZADA em dois pilares:
+  1. **ACE-Step XL 1.5**: Uso EXCLUSIVO para **Músicas com Voz**. Rodará fixado na casa dos 700-750 passos para preservar a dicção cristalina do português e evitar o over-processing instrumental sobre os vocais.
+  2. **Stable Audio Open 1.0**: Uso para **Efeitos Sonoros (SFX), Foley** E **Música Instrumental Pura**. Superou o ACE-Step na fidelidade, peso de graves (Trap) e realismo orquestral. Limitação estrutural: gera blocos de até 47 segundos. O backend de áudio deve expor essas duas engines com regras claras de roteamento baseadas na presença ou ausência de letra (vocals) no prompt do usuário.
+
+- **[ARQUITETURA] ACE-Step 1.5 (Descoberta Crítica do Perplexity / Retificação)**: Os testes anteriores com 700/1000 passos (herdados do Stable Audio) 'fritavam' os latentes. O sweet-spot do DiT do ACE-Step é cravado entre 32 e 64 passos. Acima de 96, a rede degenera. Além disso, o limite estrutural em 'single shot' (Positional Encoding) é de 240 segundos (4 minutos); passar disso gera loops sobrepostos. Para Instrumentais Puros sem 'bocejos', a tag [instrumental] deve ser a única letra no campo lyrics, aliada a 
+o vocals nas tags. O engine do sistema SaaS foi reescrito para travar os passos em 64 e respeitar a sintaxe canônica do LLM.
+
+## 5. PROTOCOLOS DE ROTEAMENTO (Round-Robin de Contas)
+O sistema usa múltiplas contas do Modal (API MODAL CONTA 1 a 9) guardadas em `E:\MEUS PROGRAMAS\FERRAMENTAS`. A máquina local (PC) é a ÚNICA fonte da verdade (Source of Truth). Todo o código fonte e os scripts de deployment moram localmente. Quando os créditos de uma conta estouram, migramos para a próxima e rodamos os scripts de build/download (ex: `download_models_macaco.py`, `ace_step_15_engine.py`) a partir do PC. Isso garante um ambiente espelhado, idêntico e previsível em qualquer nova conta provisionada, sem dessincronização de versões.
+- **[2026-08-21] [ARQUITETURA] Expanso da Frota de udio Instrumental (Agosto 2026):** O usurio trouxe relatrios atualizados do Perplexity Pro apontando os novos SoTAs para gerao instrumental de longa durao (2-5 min). A stack homologada para anlise/uso inclui:
+  1. **DiffRhythm-1_2-full (Apache 2.0):** Modelo latent diffusion capaz de renderizar incrveis 4m45s ininterruptos (285s) em "single-shot". Possui Instrumental Mode nativo passando lyrics=None, tornando-se o candidato primrio para faixas integrais de trap.
+  2. **Stable Audio 3 Medium:** Superou a verso Open 1.0, gerando at 380s (~6m20s) em single-shot com absurda estabilidade de ritmo. Requer licena "Stability AI Community License", mas  o rei em velocidade (1.3s para 6 minutos numa H200).
+  3. **YuE (Apache 2.0):** Confirmado o bypass de voz passando apenas marcadores ([verse], [chorus]) e usando a "instrumental track" separada automaticamente pelo modelo (stems nativas).
+  4. **MiniMax-Music3 (CreativeML Open RAIL-M):** Nativamente focado em 5 minutos ininterruptos (8B LLM + 2.4B DiT). Arquitetura pesada (24GB VRAM), mas domina o longo alcance.
+  O sistema SaaS deve suportar o empacotamento desses modelos no backend (via FastAPI) de forma assncrona, usando o PC Local como Source of Truth (Round-Robin).
+
+
+- **[2026-08-22] [HOMOLOGAÇÃO STABLE AUDIO 3 MEDIUM]**: Finalizada a orquestração do Stable Audio 3 Medium na Modal (H100). Superado o obstáculo crítico da arquitetura do modelo: diferentemente do v-diffusion, ele utiliza 
+f_denoiser (Rectified Flow) e requer um tensor inpaint_mask na estrutura interna. Para o modo T2A padrão, a inferência oficial dita que seja usado generate_diffusion_cond_inpaint junto com o sampler dpmpp. Após esses ajustes, gerou brilhantemente um .wav stereo 44.1kHz ininterrupto de 4 minutos inteiros (240s, 43MB) em míseros 83 segundos de computação! Qualidade pendente de validação humana, mas o pipeline técnico é um sucesso retumbante.
+
+- **[2026-08-22] [Veredito Final da Madrugada: SA3 vs ACE-Step]**: O usuário avaliou as saídas finais. 
+  1. **ACE-Step XL (Voz):** Consagrado! A qualidade do vocal feminino e da batida dançante foi considerada "de muita qualidade, vocal perfeito". O domínio sobre a geração de música com voz usando ACE-Step está **FINALIZADO**.
+  2. **Stable Audio 3 Medium (Instrumental):** Rebaixado/Excluído para instrumentais completos. O usuário notou que o modelo gera apenas "loops" infinitos sem variação, com agudos estourados (clipagem/compressão). Ele não atende à necessidade de instrumentais complexos (como orquestras ou traps com evolução).
+  3. **MiniMax:** Definido como a **Prioridade Absoluta** para a próxima sessão. O usuário recordou que o MiniMax gerou um instrumental eletrônico de qualidade "excelente" de 50 segundos no passado. O foco de amanhã será orquestrar o MiniMax na Modal para gerar instrumentais longos perfeitos (e talvez competir com o ACE na voz).
+
+- **[ROADMAP 2026-08-25] Roteador de IA (Zero-Config Intent Router):** A plataforma terá um classificador de intenção invisível para o usuário. Se ele pedir um "beat de trap" -> Roteia para MiniMax. Se pedir "som de tiro" -> Roteia para Stable Audio Open. Se pedir "voz" -> Roteia para ACE-Step. O usuário não precisa configurar a ferramenta; a própria IA mapeia o prompt e o canal dele para escolher o motor correto na pipeline.
+- **[ROADMAP 2026-08-25] Extensão Automática de Duração (Latent Stitching/Autoregressive):** Implementar um agente/script LLM que traduza pedidos de tempo longos (ex: "10 minutos", "20 minutos") em instruções sequenciais para os motores de áudio. Como motores de difusão têm hard-limits de VRAM, o robô fará a "costura" (usando partes da música como ref_audio para as partes seguintes) entregando o áudio longo final montado, sem o usuário ter que picotar nada.
+- **[ROADMAP 2026-08-25] Rádio IA 24/7 (Streaming de IA Ininterrupto):** Planejada a criação de uma rádio web de IA. O sistema usará softwares open-source de broadcast (como Liquidsoap, Icecast ou FFmpeg puro) para mixar músicas em crossfade ininterruptamente. Enquanto a música 1 toca com a 2, o backend Modal (GPU) gera a música 5 em background, baseando-se no mesmo estilo/prompt. O fluxo passa a ser uma transmissão viva (Live) e infinita, muito similar ao formato explorado pelo Suno, abrindo brecha para canais de "Lofi 24/7 AI".
+
+- **[FEITO] Implanta��o Audio Lab Modal**: A rota de teste (SA3, MiniMax, ACE-Step) foi movida e deployada para o Modal Cloud (pollo_modal_engine.py). O modal_ai_studio.html agora faz requisi��es JSON via proxy do Modal em vez do falso backend local.
+
+
+
+
+### [26/08/2026] Fix Cr�tico de Syntax Error e Mixed Content
+- **Descoberta:** O uso do PowerShell para injetar c�digo no modal_ai_studio.html destruiu as template literals do JavaScript (\$response\ e \\n\), gerando um erro de sintaxe massivo que travava a p�gina inteira (bot�es inativos).
+- **A��o:** Reescrevi o arquivo via Python para restaurar a integridade do arquivo.
+- **Mixed Content Bloqueado:** Descobri que os outros pain�is (V�deo, Imagem, Transcri��o) ainda apontavam diretamente para http://163.176.135.59/api/.... Sendo a p�gina carregada em HTTPS pelo Vercel, isso causaria erro de Mixed Content.
+- **Corre��o Final:** Substitu� todos os endpoints por caminhos relativos (/api/...) no frontend, confiando plenamente no proxy do ercel.json. Push feito com sucesso.
+- O daemon pollo_observer.py foi reativado com sucesso.
+
+
+**2026-08-26 (Descoberta da Conta Compartilhada)**
+- **Situa��o:** O usu�rio encontrou uma brecha no Google One AI Premium (compartilhamento familiar de contas de longa dura��o), permitindo pulverizar uma assinatura em at� 5 contas filhas independentes, todas ganhando o modelo Advanced.
+- **Impacto na Arquitetura do Antigravity:** Essa descoberta garante que os scripts de daemon de mem�ria (apollo_observer.py) e o RAG cont�nuo n�o v�o drenar os cr�ditos di�rios prematuramente. A carga de token da Apollo Edit Web � enorme, e a disponibilidade de m�ltiplas chaves garante que possamos escalar o sistema de multiagentes no backend (R�dio 24/7) sem medo de sermos cortados no meio do desenvolvimento.
+
+
+
+### Log Aut�nomo - 2026-08-26 07:38:26
+- **Deploy MP3 na Nuvem:** Criada rota `/convert_mp3` no Modal Router (pydub/ffmpeg) e frontend HTML atualizado via SCP no servidor Oracle.
+- **An�lise de Crash MiniMax:** Container apresentou timeout (crash-looping) devido a cold-start de carregamento dos 11B par�metros.
+- **Feedback de Modelos:** Ace-Step rodou em 1m6s mas apresentou qualidade rob�tica. Stable Audio rodou bem mas abafado. Necess�rio ajuste de CFG, Sampling e inje��o de Prompt (Mastering) no backend.
+- **Nova Tese de Neg�cio (DORAMAS):** O usu�rio compartilhou workflow de Dorama. Decidido integrar FLUX.1 + LoRA + LTX-Video + LLM + MiniMax para gera��o 100% automatizada de mini novelas verticais.
+- **Status Operacional:** Todas as inst�ncias GPU na Modal foram confirmadas como escal�veis para 0 (Serverless). Nenhuma cobran�a pendente.
+
+## 4. MEM�RIA ATIVA (HIST�RICO)
+
+- **2026-08-26 22:03 - [CORRE��O DE ROTA - RESTAURA��O DE PAR�METROS PERFEITOS]**
+  - O usu�rio alertou corretamente que a cloud engine n�o estava gerando �udios t�o bons quanto os testes locais homologados. As engines do site estavam utilizando par�metros capados/alucinados (SA3 com 8 passos e ACE-Step 1.0 com CFG fritado). 
+  - **Corre��o Aplicada:** Acessei os scripts locais `run_sa3_medium_perfect.py` e `test_ace_perfect_vocal.py` (que entregaram a qualidade m�xima exigida pelo usu�rio dias atr�s) e copiei a matem�tica **exata** para o servidor na nuvem.
+  - O Modal Router agora invoca o `AceStep15Engine` (v1.5) nativamente com CFG de 7.0 e 64 steps, e o Stable Audio voltou a gerar em 100 steps usando `dpmpp-3m-sde` (API n�o inpaint). Qualidade m�xima priorizada acima da velocidade.
+
+
+- **2026-08-26 21:37 - [ENGINE AUDIO FIXES & TIMEOUT BYPASS]**
+  - **Vercel Timeout Bypass**: Nginx/Vercel was timing out on long 150s cold-starts (like MiniMax). Implemented `StreamingResponse` NDJSON heartbeat in both `apollo_modal_engine.py` (Modal) and `servidor_web.py` (Oracle). The proxy now yields 4096 spaces padding every 5 seconds to flush the Nginx buffer and keep the Vercel connection alive indefinitely.
+  - **MiniMax Crash**: Fixed cold start crash by downgrading `huggingface_hub<=0.23.2` as newer versions removed `is_offline_mode` which crashed diffusers `ModularPipeline`.
+  - **Ace-Step Robotic Sound**: Fixed by reducing `guidance_scale` from 18.0 (burned) to 4.5 and `infer_step` from 100 to 50 for more natural dynamics.
+  - **Stable Audio 3 Muffled Sound**: Injected backend mastering tags (`high quality, 4k audio, high fidelity, clean, sharp, stereo, masterpiece`) implicitly into all user prompts.
+
+
+- **2026-08-28 - [CORRECAO E PIVOT B2B]**
+  - **NDJSON Frontend Crash:** Corrigido via git push.
+  - **Pivot B2B:** Foco mudado para infraestrutura.
+
+- **2026-08-29 - [NOVO ECOSSISTEMA B2B e B2C]**
+  - **Infraestrutura Criada:** O usuario validou a alavancagem estrategica da reducao de custos (conta pro de 18 meses) e instruiu a criacao formal de dois novos bracos de monetizacao rapida: PROJETO_PLR_IA (venda de infoprodutos via canais Dark) e SAAS_ACHADINHOS (Plataforma B2B de automacao de afiliados).
+  - **Regra de Isolamento:** Os novos projetos residem em pastas isoladas com as proprias MEMORIA_ATIVA.md e regras rigorosas no AGENTS.md para puxar os codigos-base (ex: Autoblog) via Apollo Memory MCP sem contaminar a arquitetura core do Apollo Edit.
+
+### [2026-08-29] Oficializao QTTS e Plano de Dublagem OpenVoice
+- **Nova Diretriz Oficial:** QTTS (Qwen-TTS) est agora registrado como o motor de voz oficial (5 instncia de voz) para praticamente todo o Apollo Edit Web. O XTTS foi rebaixado.
+- **Bypass de Produtividade:** Como os vdeos esto sendo gerados temporariamente via Luma Dream Machine (Omni) por fora do Apollo Edit para ganhar tempo, precisamos de um mtodo de clonagem rpido no Tkinter local do usurio. Foi aprovada a implementao de uma pipeline de Inferncia de Voz (Voice-to-Voice via OpenVoice ou RVC) rodando no Modal e conectada diretamente ao script Tkinter do usurio para acelerar as dublagens dirias do canal.
+- **2026-09-05 - [SAGRACAO DO QWEN IMAGE EDIT COMO MOTOR VISUAL 2D OFICIAL]**
+  - **Decisao Arquitetural:** O usuario declarou falencia de todos os outros modelos 2D (Z-Image, OmniGen, Krea-2, etc) apos inumeras decepcoes com vazamento e cortes feios. **O Qwen Image Edit Plus foi declarado como o Motor Visual Oficial e Unico do Apollo Edit** (fazendo dupla com o Qwen2-Audio na voz, coroando a Qwen como o backbone da nossa arquitetura SaaS).
+  - **O Problema Resolvido:** Consistencia de Multiplos Personagens. Antes, tentar colocar ate 2 personagens na mesma cena gerava derretimento e "Concept Bleeding".
+  - **A Solucao (Pipeline de Acumulo):** Para bypassar o limite nativo do TextEncodeQwenImageEditPlus (que so aceita image1, image2 e image3), recriamos a logica de inpainting iterativo usada outrora no Flux 2. O pipeline insere personagens na cena base de 2 em 2, usando "Blindagem Semantica" no prompt (ex: "Char1 FACING FORWARD, FRONT VIEW... DO NOT MIX FACIAL FEATURES") limitando a atencao cruzada. O teste final provou o conceito com **6 personagens perfeitos** na mesma cena.
+  - **Proximos Passos:** Amanha, este pipeline sera portado para a interface HTML/Frontend do site. E logo depois entraremos nos testes massivos de Video (MiniMax H3, LTX 2.5, Wan 3 ou Flux 3 Video).
+
+
+**2026-09-07 (Infraestrutura Qwen e Otimizacao do Flow)**
+- **Memoria Fotografica (Cache):** Adicionado hash local (vision_cache.json) na Oracle VPS para pular a requisicao do Florence-2 caso a mesma imagem seja reutilizada.
+- **Smart Padding:** Alterado metodo de colagem de imagens no routes_studio.py de 'Smart Crop' (destrutivo) para 'Padding Seguro' (preserva proporcoes originais sem cortar silhuetas ou detalhes de reference sheets).
+- **Gestao de Escala Modal:** Injetado asyncio.Semaphore(2) no Proxy para limitar conexoes simultaneas e evitar estouro de orcamento por cold starts/bugs.
+- **Negative Prompt & Dorama Sheets:** Prompt do Nemotron foi reescrito para distinguir Turnarounds de 1 personagem vs. Character Sheets de multiplos personagens (Doramas). Se detectado multiplos, o LLM remove 'SINGLE CHARACTER ONLY' e usa restricoes de separacao para evitar clonagem/fusao, e forca acao dinamica para evitar copia identica da pose. Tambem foi incluida geracao automatica de Negative Prompts baseados no estilo visual.
+- **Snapshot Modal:** Injetado o boot do subprocesso ComfyUI para dentro da fase de build da memoria (@modal.enter()) na Modal, permitindo um carregamento praticamente instantaneo de imagens/videos via Qwen.
+
+
+### DIRETRIZES ESTRATEGICAS E TECNICAS (Sessao Atual)
+- **O Manifesto Anti-Censura (Descarga News):** O motivo definitivo para a construcao dessa arquitetura na Modal (Qwen 2.5 para imagens, Minimax H3/LTX para video) e a fuga da censura comercial. A infraestrutura DEVE garantir a liberdade criativa para gerar figuras politicas (Trump, Bolsonaro, etc.) e conteudos sensiveis do Descarga News sem os bloqueios das APIs padrao.
+- **Visao Apollo Flow (Chat UI):** O objetivo do frontend e evoluir para um painel semelhante ao Google Flow. Havera um 'Robo de Livre Criacao' lateral. O usuario conversara em linguagem natural (ex: 'Gere 10 variacoes'), e o robo orquestrara todo o pipeline de Visao, LLM e Qwen automaticamente de forma invisivel.
+- **Bypass Inteligente de T2I (Text-to-Image):** A arquitetura do Proxy foi desenhada para diferenciar chamadas Text-to-Image de Image-to-Image. Se o usuario NAO enviar imagem de referencia (num_imgs == 0), a chamada ignora o Florence-2 e o Nemotron por completo, garantindo zero latencia para prompts puros.
+- **Resolucao do 'Dependency Hell' do Florence-2 na Modal:** Para evitar a necessidade de compilar o flash-attn no debian-slim da Modal (o que exige nvcc e cuda-toolkit pesados), cravamos a versao 'transformers==4.40.1'. Isso garante que a Vision Engine suba em segundos sem travar a VRAM ou estourar tempo de build.
+- **Isolamento de Servidor (Oracle VPS vs Modal):** Foi consolidado que a maquina Oracle (163.176.135.59) opera ESTRITAMENTE como um Nginx/FastAPI Proxy. Processamentos pesados de VRAM sao absolutamente delegados a Modal.
+
+ -   * * 2 0 2 6 - 0 9 - 0 8   [ A P O L L O _ E D I T _ W E B ] * *   B u g   d e   l a t � n c i a   r e s o l v i d o .   Q w e n I m a g e E n g i n e   e s t a v a   s e m   ' @ m o d a l . e n t e r ( s n a p = T r u e ) ' ,   f o r � a n d o   b o o t   d o   z e r o   a   c a d a   e x e c u � � o   ( 9   m i n u t o s ) .   F l a g   d e   S n a p s h o t   a d i c i o n a d a ,   h a b i l i t a n d o   c a r r e g a m e n t o   a c e l e r a d o .  
+ 
+### [2026-09-08 21:40:12] CRON SYNC
+- **Status:** Proxy local (routes_studio.py) patcheado para rodar Multi-pass (6 personagens) no Qwen usando LLM (Lightning) e Vision (Florence-2).
+- **Pendencia:** O usuario precisa fazer o deploy (git push ou envio manual) para o VPS Oracle (163.176.135.59).
+- **Visao do Usuario:** Criacao de uma 'fabrica de botao' para gerar novelas automaticas (Imagem, Video, Som) com o rosto de amigos.
+- **Proximo Passo:** Confirmar o deploy no VPS e iniciar a fase de motores de video (Minimax/LTX).
+
+### [2026-09-08 22:00:29] CRON SYNC
+- **Status:** Codigo fonte da API web atualizado via Git Push. O Oraculo (VPS) deve puxar as alteracoes automaticamente.
+- **Acao Imediata:** Aguardando testes do usuario no site para a criacao de cena com multiplos rostos.
+- **Proxima Fase (Pendente):** Migrar pipeline validada de imagem para a geracao de video via LTX/MiniMax.
+- **[2026-09-09 00:41]** [Cron 4] Manutencao do snapshot na CPU (modal_snapshot_done) para o ArenaComfyEngine foi mantida. Aguardando analise de concorrente (YouTube).
+- **[2026-09-09 01:47]** [UX/UX & CONCORRENTES] Registrado a visao UX 'Responsive Square Canvas' e o mapeamento de 5 concorrentes (Elton Studio V2, AutoShorts, FacelessReels, Fliki, Toonbee). A meta e ir do ponto A ao B (Automacao completa ate a postagem) com foco em Consistencia de Personagens (Diferencial do Apollo).
+- **[2026-09-09 03:12]** [Cron 5] Background heartbeat OK. Nova arquitetura de Consistencia Visual (Grid PuLID + Last Frame) gravada na memoria para o Qwen.
+
+## ARQUITETURA DE CONSISTENCIA VISUAL ZERO-LORA (METODO GRID + AUTOREGRESSIVO)
+- **O Metodo Grid (Character/Style Sheet):** Em vez de enviar dezenas de inputs individuais para o PuLID/Qwen, o sistema empacota multiplos rostos ou estilos em uma unica 'Folha de Personagens' (Grid com imagens numeradas).
+- **Interpretacao do Qwen:** O LLM multmodal (Qwen) analisa o Grid e mapeia cada numero (Ex: 'O personagem no quadro 1 e o vilao, no quadro 2 e a mocinha'). O prompt ensina o modelo a vincular esses ids aos elementos da cena.
+- **Transferencia de Estilo:** O mesmo Grid pode conter blocos de estilo visual (anime, cyberpunk, aquarela). O Qwen le a folha e injeta o estilo global na geracao sem precisar de fine-tuning/LoRA.
+- **Continuidade Autoregressiva (Last Frame Injection):** Para geracao de videos/cenas sequenciais, o ultimo frame da Cena A e injetado como input visual para a Cena B. O Qwen e instruido: 'Esta e a captura do ultimo frame. Gere o momento seguinte/mude o angulo mantendo este estado exato'. Isso garante consistencia temporal de luz, roupas e cenario.
+
+## ARQUITETURA DE AUTOMA��O UX E CADENCIAMENTO (AUTOFLOW)
+- **Human-in-the-Loop (Quadrado Central):** O pipeline automatiza do roteiro ao video, mas a UI ("Quadrado Central") permite interven��o pontual. O usuario pode regenerar um frame defeituoso, mantendo a consistencia via "Ultimo Frame" da cena anterior.
+- **Sistema de Tagging de Personagem (Parser no Prompt):** Existe um codigo legado em 'Programas externos' que intercepta marcadores de personagem no prompt do usuario (aguardando definicao exata do simbolo, nao e #fulanodetal). Ao encontrar a tag, o backend anexa automaticamente a Ficha de Personagem + Estilo + Ultima Cena antes de enviar ao Quin/VLM.
+- **Extensao de Cadenciamento (Autoflow):** O sequenciamento de prompts e sincronia de tempo com os audios e mediado por uma extensao localizada em 'E:\MEUS PROGRAMAS\FERRAMENTAS\AUTOFLOW EDITADO APOLLO LA PLATA'. Ela cuida da cadencia para gerar a narrativa do video com o timing perfeito.
+- **[2026-09-09 04:00]** [Cron 6] Background heartbeat OK. Aguardando o usuario realizar o teste de imagem multipersonagem no frontend apos a correcao do snapshot.
+- **[2026-09-09 06:00]** [Cron 7] Background heartbeat OK. Aguardando o usuario reiniciar o servidor proxy e rodar o teste com as correcoes do LLM e rotas de saldo da Lightning AI.
+- **[2026-09-09 08:00]** [Cron 8] Background heartbeat OK. Arquitetura isolada validada (Lightning=LLM, Modal=GPU). Aguardando disparo do frontend.

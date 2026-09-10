@@ -1,4 +1,4 @@
-Ôªø# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/cloud_tools/engines/f5_engine.py'
@@ -10,13 +10,13 @@ old_block = r'''            # Converter para bytes WAV
             sf.write\(out_io, wav, samplerate=sr, format='WAV'\)
             return out_io.getvalue\(\)'''
 
-new_block = r'''            # Salvar como WAV tempor√°rio e converter direto para MP3 na nuvem via FFmpeg
+new_block = r'''            # Salvar como WAV tempor·rio e converter direto para MP3 na nuvem via FFmpeg
             import subprocess
             wav_path = tempfile.mktemp(suffix=".wav")
             mp3_path = tempfile.mktemp(suffix=".mp3")
             sf.write(wav_path, wav, samplerate=sr, format='WAV')
             
-            # O ffmpeg j√° foi instalado no image do Modal via apt_install
+            # O ffmpeg j· foi instalado no image do Modal via apt_install
             subprocess.run(
                 ['ffmpeg', '-y', '-i', wav_path, '-f', 'mp3', '-b:a', '64k', mp3_path],
                 stdout=subprocess.DEVNULL,

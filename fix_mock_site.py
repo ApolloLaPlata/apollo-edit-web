@@ -1,4 +1,4 @@
-﻿import re
+import re
 
 files = [
     r'backend\cloud_tools\engines\universal_engine.py',

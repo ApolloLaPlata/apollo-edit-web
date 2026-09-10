@@ -1,0 +1,286 @@
+[MiniMax] H100 Pronta!
+[MiniMax] Duracao alvo: 60.0s | Instrumental: False
+
+Error in block: (text_encoder, MiniMaxMusic3TextEncoderStep)
+Error details: 'NoneType' object is not callable
+Traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+
+Error in block: (MiniMaxMusic3Blocks):
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 189, in run_input_sync
+    values = io_context.call_function_sync()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/container_io_manager.py", line 218, in call_function_sync
+    expected_value_or_values = self.finalized_function.callable(*args, **kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/backend/cloud_tools/engines/minimax_engine.py", line 44, in generate
+    audio = self.pipe(
+            ^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 2936, in __call__
+    _, state = self._blocks(self, state)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+[MiniMax] Duracao alvo: 30.0s | Instrumental: False
+
+Error in block: (text_encoder, MiniMaxMusic3TextEncoderStep)
+Error details: 'NoneType' object is not callable
+Traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+
+Error in block: (MiniMaxMusic3Blocks):
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 189, in run_input_sync
+    values = io_context.call_function_sync()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/container_io_manager.py", line 218, in call_function_sync
+    expected_value_or_values = self.finalized_function.callable(*args, **kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/backend/cloud_tools/engines/minimax_engine.py", line 44, in generate
+    audio = self.pipe(
+            ^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 2936, in __call__
+    _, state = self._blocks(self, state)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+[MiniMax] Duracao alvo: 10.0s | Instrumental: False
+
+Error in block: (text_encoder, MiniMaxMusic3TextEncoderStep)
+Error details: 'NoneType' object is not callable
+Traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+
+Error in block: (MiniMaxMusic3Blocks):
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 189, in run_input_sync
+    values = io_context.call_function_sync()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/container_io_manager.py", line 218, in call_function_sync
+    expected_value_or_values = self.finalized_function.callable(*args, **kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/backend/cloud_tools/engines/minimax_engine.py", line 44, in generate
+    audio = self.pipe(
+            ^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 2936, in __call__
+    _, state = self._blocks(self, state)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+[MiniMax] Duracao alvo: 10.0s | Instrumental: False
+
+Error in block: (text_encoder, MiniMaxMusic3TextEncoderStep)
+Error details: 'NoneType' object is not callable
+Traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+
+Error in block: (MiniMaxMusic3Blocks):
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 189, in run_input_sync
+    values = io_context.call_function_sync()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/container_io_manager.py", line 218, in call_function_sync
+    expected_value_or_values = self.finalized_function.callable(*args, **kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/backend/cloud_tools/engines/minimax_engine.py", line 44, in generate
+    audio = self.pipe(
+            ^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 2936, in __call__
+    _, state = self._blocks(self, state)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+Task exception was never retrieved
+future: <Task finished name='Task-59' coro=<aio_get() done, defined at /pkg/synchronicity/async_wrap.py:26> exception=TypeError("'NoneType' object is not callable")>
+Traceback (most recent call last):
+  File "/pkg/modal/_object.py", line 45, in wrapped
+    return await method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_functions.py", line 2020, in get
+    return await self._invocation().poll_function(timeout=timeout, index=index)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_functions.py", line 329, in poll_function
+    return await _process_result(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_utils/function_utils.py", line 548, in _process_result
+    raise exc_with_hints(exc)
+  File "<ta-01M13KQZCW9Q9AZNM7SEGG41ZR>:/root/backend/cloud_tools/engines/minimax_engine.py", line 44, in generate
+  File "<ta-01M13KQZCW9Q9AZNM7SEGG41ZR>:/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 2936, in __call__
+  File "<ta-01M13KQZCW9Q9AZNM7SEGG41ZR>:/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+  File "<ta-01M13KQZCW9Q9AZNM7SEGG41ZR>:/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+  File "<ta-01M13KQZCW9Q9AZNM7SEGG41ZR>:/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+  File "<ta-01M13KQZCW9Q9AZNM7SEGG41ZR>:/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+TypeError: 'NoneType' object is not callable
+   POST /generate/audio_lab -> 200 OK  (duration: 941.3 ms, execution: 899.4 ms)
+[modal-client] 2026-08-28T07:18:46+0000 Warning: function name 'apollo_api' collision! Overriding existing function [backend.cloud_tools.engines.universal_engine].apollo_api with new function [apollo_modal_engine].apollo_api
+[Router] Spawning MinimaxEngine
+[MiniMax] Duracao alvo: 10.0s | Instrumental: False
+
+Error in block: (text_encoder, MiniMaxMusic3TextEncoderStep)
+Error details: 'NoneType' object is not callable
+Traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+
+Error in block: (MiniMaxMusic3Blocks):
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 189, in run_input_sync
+    values = io_context.call_function_sync()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/container_io_manager.py", line 218, in call_function_sync
+    expected_value_or_values = self.finalized_function.callable(*args, **kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/backend/cloud_tools/engines/minimax_engine.py", line 44, in generate
+    audio = self.pipe(
+            ^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 2936, in __call__
+    _, state = self._blocks(self, state)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/modular_pipeline.py", line 1150, in __call__
+    pipeline, state = block(pipeline, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/diffusers/modular_pipelines/minimax_music3/encoders.py", line 211, in __call__
+    input_ids = components.tokenizer(text, return_tensors="pt")["input_ids"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+   POST /generate/audio_lab -> 200 OK  (duration: 208.5 ms, execution: 168.0 ms)
+[modal-client] 2026-08-28T07:21:13+0000 Warning: function name 'apollo_api' collision! Overriding existing function [backend.cloud_tools.engines.universal_engine].apollo_api with new function [apollo_modal_engine].apollo_api
+[Router] Spawning MinimaxEngine
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.1.1
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+Modular Diffusers is currently an experimental feature under active development. The API is subject to breaking changes in future releases.
+[MiniMax] Carregando pesos do Volume...
+/usr/local/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Guiders are currently an experimental feature under active development. The API is subject to breaking changes in future releases.
+
+[1AFetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]

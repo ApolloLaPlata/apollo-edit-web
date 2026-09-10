@@ -1,4 +1,4 @@
-﻿import re
+import re
 
 def extract_force_cpu(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:

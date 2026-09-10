@@ -10,7 +10,7 @@ import json
 import time
 
 BASE_URL = "https://roxingo--apollo-render-router"
-OUTPUT_DIR = r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\testes_modal_output"
+OUTPUT_DIR = r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def log(msg):

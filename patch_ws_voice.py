@@ -1,4 +1,4 @@
-ï»¿import sys
+import sys
 import re
 
 filepath = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\servidor_web.py'
@@ -29,9 +29,9 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
             channel_cfg = cm.get(channel, {})
             contexto = channel_cfg.get("channel_context", "")
             
-            system_prompt = f"VocÃª Ã© a IA de comunicaÃ§Ã£o em tempo real do canal '{channel}' do Apollo Edit Web. Fale em portuguÃªs do brasil com um tom muito natural e humano. Responda SEMPRE de forma ultra curta e rÃ¡pida, em no mÃ¡ximo 1 ou 2 frases curtas, para manter a conversa fluida e nÃ£o gastar tempo. {contexto}"
+            system_prompt = f"Você é a IA de comunicação em tempo real do canal '{channel}' do Apollo Edit Web. Fale em português do brasil com um tom muito natural e humano. Responda SEMPRE de forma ultra curta e rápida, em no máximo 1 ou 2 frases curtas, para manter a conversa fluida e não gastar tempo. {contexto}"
             
-            # Carrega uma voz de referÃªncia padrÃ£o caso exista
+            # Carrega uma voz de referência padrão caso exista
             ref_bytes = b""
             if os.path.exists("default_voice.wav"):
                 with open("default_voice.wav", "rb") as f:
@@ -55,7 +55,7 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                     data = resp.json()
                     full_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
                     
-                    # Envia em pequenos pedaÃ§os (simulando stream para o TTS)
+                    # Envia em pequenos pedaços (simulando stream para o TTS)
                     import textwrap
                     chunks = textwrap.wrap(full_text, 80)
                     for chunk in chunks:
@@ -67,7 +67,7 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                     await websocket.send_text(json.dumps({"type": "error", "message": "Lightning falhou"}))
                     
         except asyncio.CancelledError:
-            print(f"[WS] GeraÃ§Ã£o interrompida (Task Cancelada) no canal {channel}")
+            print(f"[WS] Geração interrompida (Task Cancelada) no canal {channel}")
         except Exception as e:
             print(f"[WS] Erro no pipeline Lightning/TTS: {e}")
             await websocket.send_text(json.dumps({"type": "error", "message": str(e)}))
@@ -97,7 +97,7 @@ async def ws_voice(websocket: WebSocket, channel: str = "default"):
                     stt = SenseVoiceSTTEngine()
                     text = await stt.transcribe_audio.remote.aio(audio_data)
                     if text and text.strip():
-                        print(f"[WS UsuÃ¡rio - Canal {channel}]: {text}")
+                        print(f"[WS Usuário - Canal {channel}]: {text}")
                         if current_generation_task and not current_generation_task.done():
                             current_generation_task.cancel()
                         await websocket.send_text(json.dumps({"type": "transcript", "text": text}))

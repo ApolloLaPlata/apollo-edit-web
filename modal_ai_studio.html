@@ -418,6 +418,7 @@
             <button class="tab-btn active" onclick="showTab('img')">🖼️ Imagem</button>
             <button class="tab-btn" onclick="showTab('vid')">🎬 Vídeo</button>
             <button class="tab-btn" onclick="showTab('audio')">🎤 Áudio</button>
+            <button class="tab-btn" onclick="showTab('music')">🎵 Música</button>
         </div>
 
         <!-- TAB: IMAGEM -->
@@ -559,6 +560,31 @@
             </div>
         </div>
 
+        <!-- TAB: MÚSICA -->
+        <div id="tab-music" style="display:none;">
+            <div class="card">
+                <div class="card-title">🎵 Gerador de Música / SFX</div>
+                
+                <div class="field-label">Motor de Inteligência Artificial</div>
+                <select id="musicModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="acestep">ACE-Step 1.5 (Melhor para batidas e estilos musicais)</option>
+                    <option value="sa3">Stable Audio 3 (Melhor para Efeitos Sonoros e Sound Design)</option>
+                    <option value="minimax">MiniMax Music3 (Melhor para Vocais e Músicas Completas)</option>
+                </select>
+
+                <div class="field-label">Descreva o som desejado</div>
+                <textarea id="musicPrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom: 15px;"></textarea>
+                
+                <div class="field-label">Duração (Segundos)</div>
+                <input type="number" id="musicDuration" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                
+                <button class="btn btn-primary" id="btnGenerateMusic" onclick="generateMusicStudio()" style="width:100%;">
+                    🎧 Gerar Música (Conta 9)
+                </button>
+                <div class="log-box" id="musicStatus" style="margin-top:10px;">Aguardando comando...</div>
+            </div>
+        </div>
+
     </aside>
 
     <!-- ═══ PAINEL DE PREVIEW ═══ -->
@@ -693,13 +719,81 @@ function clearPreview() {
 }
 
 function showTab(name) {
-    ['img','vid','audio'].forEach(t => {
-        document.getElementById('tab-'+t).style.display = (t === name) ? 'block' : 'none';
+    ['img','vid','audio','music'].forEach(t => {
+        const el = document.getElementById('tab-'+t);
+        if (el) el.style.display = (t === name) ? 'block' : 'none';
+        
         document.querySelectorAll('.tab-btn').forEach((b,i) => {
-            const tabs = ['img','vid','audio'];
+            const tabs = ['img','vid','audio','music'];
             b.classList.toggle('active', tabs[i] === name);
         });
     });
+}
+
+async function generateMusicStudio() {
+    const prompt = document.getElementById("musicPrompt").value;
+    const duration = document.getElementById("musicDuration").value;
+    const engine = document.getElementById("musicModel").value;
+    
+    if (!prompt) {
+        alert("Por favor, digite um prompt para a música.");
+        return;
+    }
+    
+    const btn = document.getElementById("btnGenerateMusic");
+    const statusBox = document.getElementById("musicStatus");
+    
+    btn.innerText = "⏳ Gerando...";
+    btn.style.pointerEvents = "none";
+    statusBox.innerText = "Iniciando motor na Nuvem (Conta 9)...";
+    log(`🎵 Solicitando geração de música: ${engine} (${duration}s)`, 'info');
+    
+    try {
+        const response = await fetch("/api/audio/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                prompt: prompt,
+                duration: duration,
+                engine: engine
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            statusBox.innerText = "✅ Música gerada com sucesso!";
+            log(`✅ Arquivo de áudio gerado: ${result.file_url}`, 'success');
+            
+            // Adicionar ao painel de preview
+            const preview = document.getElementById('previewContainer');
+            preview.innerHTML = `
+                <div style="padding: 20px; text-align: center;">
+                    <h3 style="color: white; margin-bottom: 20px;">🎶 Resultado da Música</h3>
+                    <audio controls autoplay style="width: 100%;">
+                        <source src="${result.file_url}" type="audio/mpeg">
+                        Seu navegador não suporta o elemento de áudio.
+                    </audio>
+                    <br><br>
+                    <a href="${result.file_url}" download class="btn btn-primary">Baixar Arquivo</a>
+                </div>
+            `;
+            
+            if (window.apolloTransferOS) { 
+                window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Gerador de Musica", null, { url: window.location.origin + result.file_url }); 
+            }
+        } else {
+            statusBox.innerText = "❌ Erro: " + result.error;
+            log(`❌ Erro na música: ${result.error}`, 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        statusBox.innerText = "❌ Falha na conexão";
+        log(`❌ Falha: ${err.message}`, 'error');
+    } finally {
+        btn.innerText = "🎧 Gerar Música (Conta 9)";
+        btn.style.pointerEvents = "all";
+    }
 }
 
 function copyLogs() {

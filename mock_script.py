@@ -1,4 +1,4 @@
-﻿import os
+import os
 import torch
 _orig_is_available = getattr(torch.cuda, ""is_available"", lambda: False)
 _orig_current_device = getattr(torch.cuda, ""current_device"", lambda: 0)

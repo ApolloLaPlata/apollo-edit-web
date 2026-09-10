@@ -267,6 +267,7 @@ class TabPersonagens(ctk.CTkFrame):
         ttk.Radiobutton(f_radio_g, text="2. Moss TTS (VPS)", variable=self.var_global_modelo, value=2, command=self.save_global_modelo).pack(side=tk.LEFT, padx=15)
         ttk.Radiobutton(f_radio_g, text="3. Applio RVC + Google", variable=self.var_global_modelo, value=3, command=self.save_global_modelo).pack(side=tk.LEFT, padx=15)
         ttk.Radiobutton(f_radio_g, text="4. OpenAI.fm", variable=self.var_global_modelo, value=4, command=self.save_global_modelo).pack(side=tk.LEFT, padx=15)
+        ttk.Radiobutton(f_radio_g, text="5. Qwen-TTS (Modal)", variable=self.var_global_modelo, value=5, command=self.save_global_modelo).pack(side=tk.LEFT, padx=15)
         
         self.var_modo_madrugada = tk.BooleanVar(value=self.config_manager.get("modo_madrugada", False))
         ctk.CTkSwitch(frame_global, text="🌙 Ativar MODO MADRUGADA (O bot assume o mouse e clica no ProtonVPN sozinho na falha do IP)", 
@@ -480,11 +481,15 @@ class TabPersonagens(ctk.CTkFrame):
         path = filedialog.askopenfilename(title="Selecione o áudio de referência (.wav, .mp3)", filetypes=[("Audio Files", "*.wav *.mp3")])
         if path:
             self.var_audio_moss.set(path)
+            if self.var_nome.get():
+                self.save_character()
 
     def _ask_file(self, var, ext):
         path = filedialog.askopenfilename(title=f"Selecione o arquivo ({ext})", filetypes=[(f"Arquivo {ext}", ext)])
         if path:
             var.set(path)
+            if self.var_nome.get():
+                self.save_character()
 
     def on_character_select(self, event):
         sel = self.listbox.curselection()

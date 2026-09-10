@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 target_file = r'backend\cloud_tools\engines\universal_engine.py'
 with open(target_file, 'r', encoding='utf-8') as f:

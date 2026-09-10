@@ -1,0 +1,7 @@
+DEPLOY STDOUT:
+
+DEPLOY STDERR:
+[modal-client] 2026-08-25T22:43:57-0500 Warning: function name 'apollo_api' collision! Overriding existing function [backend.cloud_tools.engines.universal_engine].apollo_api with new function [apollo_modal_engine].apollo_api
+┌─ Error ─────────────────────────────────────────────────────────────────────┐
+│ Token not found                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘

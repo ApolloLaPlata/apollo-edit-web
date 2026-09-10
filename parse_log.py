@@ -1,4 +1,4 @@
-﻿import json
+import json
 with open(r'C:\Users\v5est\.gemini\antigravity\brain\1a81570a-dcb0-4985-9cbf-0bca86071582\.system_generated\tasks\task-24336.log', 'r') as f:
     text = f.read()
     # The output format is:

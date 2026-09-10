@@ -80,6 +80,42 @@ class VideoRVCProcessor:
             raise
 
     def process_rvc(self, vocals_path: str, temp_dir: str, character_config: dict) -> str:
+        motor = character_config.get("motor_dublagem", "rvc_local")
+        output_rvc_path = os.path.join(temp_dir, f"rvc_{os.path.basename(vocals_path)}")
+        
+        if motor == "modal_openvoice":
+            self._log(f"Processando Dublagem via Modal (OpenVoice v2)...")
+            import base64
+            import requests
+            
+            ref_audio = character_config.get("audio_ref_moss", "")
+            if not os.path.exists(ref_audio):
+                raise ValueError(f"Áudio de referência OpenVoice não encontrado: {ref_audio}")
+                
+            with open(vocals_path, "rb") as f:
+                source_b64 = base64.b64encode(f.read()).decode("utf-8")
+            with open(ref_audio, "rb") as f:
+                ref_b64 = base64.b64encode(f.read()).decode("utf-8")
+                
+            try:
+                resp = requests.post(
+                    "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/generate/voice_clone",
+                    json={"source_audio_b64": source_b64, "reference_audio_b64": ref_b64},
+                    timeout=300
+                )
+                if resp.status_code == 200 and resp.json().get("success"):
+                    audio_res = base64.b64decode(resp.json()["audio_base64"])
+                    with open(output_rvc_path, "wb") as f:
+                        f.write(audio_res)
+                    self._log(f"Dublagem OpenVoice concluída com sucesso!")
+                    return output_rvc_path
+                else:
+                    raise Exception(f"Erro na API Modal: {resp.text}")
+            except Exception as e:
+                self._log(f"Erro ao processar OpenVoice Modal: {e}")
+                raise e
+
+        # FLUXO RVC LOCAL PADRÃO
         # Puxa as configs globais na hora H
         vps_config = self.config_manager.get('vps_config', {})
         rvc_mode = vps_config.get('rvc_mode', 'local')
@@ -98,8 +134,6 @@ class VideoRVCProcessor:
         
         if not pth_file:
             raise ValueError("Personagem selecionado não possui modelo PTH configurado.")
-            
-        output_rvc_path = os.path.join(temp_dir, f"rvc_{os.path.basename(vocals_path)}")
         
         try:
             try:

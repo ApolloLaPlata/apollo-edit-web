@@ -118,108 +118,63 @@ class TTSManager:
             if not audio_ref or not os.path.exists(audio_ref):
                 print(f"❌ Áudio de referência do Moss TTS principal não encontrado: {audio_ref}")
                 return False
-                
-            # O Roteamento de Voz agora aponta nativamente para o nosso Proxy Local (servidor_web.py/api)
-            # que gerencia o balanceamento entre as 4 contas da Modal.
-            url = "http://127.0.0.1:8000/api/studio/modal/generate_tts"
             
-            print(f"🚀 Enviando requisição para Gateway Modal Apollo ({url})...")
+            url = "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/generate/tts"
+            import time, requests, base64
+            print(f"📡 Enviando requisição para Router Modal Moss-TTS ({url})...")
             
-            # As emoções no MOSS-TTS são definidas estritamente pelo áudio de referência.
-            texto_final_moss = text
+            try:
+                with open(audio_ref, "rb") as f:
+                    audio_base64 = base64.b64encode(f.read()).decode("utf-8")
+                    
+                payload = {
+                    "engine": "moss",
+                    "text": text,
+                    "reference_audio_base64": audio_base64,
+                    "language": "Portuguese"
+                }
                 
-            max_retries = 3
-            for attempt in range(max_retries):
-                try:
-                    import requests
-                    import base64
-                    import time
-                    import json
-                    
-                    with open(audio_ref, "rb") as f:
-                        audio_base64 = base64.b64encode(f.read()).decode('utf-8')
-                        
-                    payload = {
-                        "text": texto_final_moss,
-                        "reference_audio_base64": audio_base64
-                    }
-                    
-                    print(f"📡 [Tentativa {attempt+1}/{max_retries}] Conectando ao Gateway Modal...")
-                    start_time = time.time()
-                    
-                    # Como o TTS pode demorar, e a Modal pode retornar streaming de espaços, usamos stream=True
-                    response = requests.post(url, json=payload, stream=True, timeout=600)
+                max_retries = 3
+                for attempt in range(max_retries):
+                    print(f"🔄 [Tentativa {attempt+1}/{max_retries}] Conectando ao Moss-TTS Modal...")
+                    t0 = time.time()
+                    response = requests.post(url, json=payload, timeout=600, stream=True)
                     
                     if response.status_code == 200:
-                        data = None
+                        import json
+                        audio_res = None
                         for line in response.iter_lines():
                             if line:
-                                text_line = line.decode('utf-8').strip()
-                                if text_line:  # Ignora linhas em branco do keep-alive
-                                    try:
-                                        data = json.loads(text_line)
+                                line_str = line.decode('utf-8').strip()
+                                if not line_str: continue
+                                try:
+                                    data = json.loads(line_str)
+                                    if data.get("status") == "success" and "audio_base64" in data:
+                                        audio_res = base64.b64decode(data["audio_base64"])
                                         break
-                                    except json.JSONDecodeError:
-                                        continue
-
-                        total_time = time.time() - start_time
+                                    elif data.get("status") == "error":
+                                        print(f"❌ [Moss-TTS] Erro do Servidor: {data.get('message')}")
+                                        if attempt == max_retries - 1: return False
+                                except json.JSONDecodeError:
+                                    pass
                         
-                        if data and data.get("status") == "success":
-                            output_audio_base64 = data.get("audio_base64")
-                            if output_audio_base64:
-                                import subprocess
-                                os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
-                                
-                                temp_wav = output_path + ".temp.wav"
-                                with open(temp_wav, "wb") as f:
-                                    f.write(base64.b64decode(output_audio_base64))
-                                    
-                                print(f"🔄 Convertendo WAV→MP3 (libmp3lame 192kbps)...")
-                                cmd_convert = [
-                                    'ffmpeg', '-y',
-                                    '-i', temp_wav,
-                                    '-c:a', 'libmp3lame', '-b:a', '192k',
-                                    '-ar', '44100', '-ac', '1',
-                                    output_path
-                                ]
-                                conv_result = subprocess.run(cmd_convert, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-                                
-                                if os.path.exists(temp_wav):
-                                    os.remove(temp_wav)
-                                    
-                                if conv_result.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                                    print(f"✅ Áudio Moss TTS (Modal) salvo com sucesso: {output_path} (Tempo: {total_time:.1f}s)")
-                                    return True
-                                else:
-                                    print(f"❌ Falha na conversão WAV→MP3. ffmpeg return code: {conv_result.returncode}")
-                                    return False
-                            else:
-                                print("❌ Áudio Base64 não retornado pela API Modal.")
-                                return False
+                        if audio_res:
+                            with open(output_path, "wb") as f:
+                                f.write(audio_res)
+                            print(f"✅ [Moss-TTS] Áudio recebido e salvo com sucesso em {time.time() - t0:.2f}s!")
+                            return True
                         else:
-                            print(f"❌ Erro reportado pelo Modal: {data.get('error', 'Desconhecido')}")
-                            return False
+                            print("❌ [Moss-TTS] Erro: Resposta incompleta do servidor.")
                     else:
-                        print(f"❌ Erro HTTP {response.status_code}: {response.text}")
-                        return False
+                        print(f"❌ [Moss-TTS] Falha na requisição (HTTP {response.status_code}): {response.text[:200]}")
                         
-                except requests.exceptions.RequestException as e:
-                    print(f"❌ Erro de conexão local com Proxy na Tentativa {attempt+1}: {e}")
                     if attempt < max_retries - 1:
-                        print("⏳ Aguardando 3 segundos para tentar reconectar...")
-                        import time
                         time.sleep(3)
                     else:
-                        print("❌ Número máximo de tentativas atingido.")
-                        import traceback
-                        traceback.print_exc()
                         return False
-                except Exception as e:
-                    print(f"❌ Erro inesperado no Moss TTS Modal: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    return False
-            
+            except Exception as e:
+                print(f"❌ Erro ao rotear para Moss TTS: {e}")
+                return False
         elif modelo_tts == 3:
             print(f"🎧 Roteando para Google TTS + Applio RVC (Modelo 3) para o personagem {character_name}")
             
@@ -612,6 +567,68 @@ class TTSManager:
                 if os.path.exists(base_audio_path):
                     os.rename(base_audio_path, output_path)
                 return True
+
+        elif modelo_tts == 5:
+            print(f"[Qwen-TTS] Roteando para Qwen-TTS na NUVEM MODAL (Modelo 5) para o personagem {character_name}")
+            
+            audio_ref = personagem.get("audio_ref_moss", "")
+            if not audio_ref or not os.path.exists(audio_ref):
+                print(f"[Erro] Áudio de referência não configurado ou ausente para {character_name}.")
+                return False
+                
+            import time
+            import requests
+            import base64
+            
+            start_time = time.time()
+            try:
+                print("[Qwen-TTS] Conectando ao Roteador Modal...")
+                
+                with open(audio_ref, "rb") as f:
+                    ref_b64 = base64.b64encode(f.read()).decode('utf-8')
+                    
+                payload = {
+                    "engine": "qwen",
+                    "text": text,
+                    "reference_audio_base64": ref_b64,
+                    "language": "Portuguese"
+                }
+                
+                url = "https://historiasde7dias--apollo-render-router-apollo-api.modal.run/generate/tts"
+                response = requests.post(url, json=payload, timeout=600, stream=True)
+                
+                if response.status_code == 200:
+                    import json
+                    audio_res = None
+                    for line in response.iter_lines():
+                        if line:
+                            line_str = line.decode('utf-8').strip()
+                            if not line_str: continue
+                            try:
+                                data = json.loads(line_str)
+                                if data.get("status") == "success" and "audio_base64" in data:
+                                    audio_res = base64.b64decode(data["audio_base64"])
+                                    break
+                                elif data.get("status") == "error":
+                                    print(f"❌ [Qwen-TTS] Erro do Servidor: {data.get('message')}")
+                                    return False
+                            except json.JSONDecodeError:
+                                pass
+                    
+                    if audio_res:
+                        with open(output_path, "wb") as f:
+                            f.write(audio_res)
+                        print(f"✅ [Qwen-TTS] Clone perfeito gerado em {time.time() - start_time:.2f}s!")
+                        return True
+                    else:
+                        print("❌ [Qwen-TTS] Erro: Resposta incompleta do servidor.")
+                        return False
+                else:
+                    print(f"❌ [Qwen-TTS] Erro HTTP {response.status_code}: {response.text}")
+                    return False
+            except Exception as e:
+                print(f"❌ Erro ao rotear para Qwen-TTS: {e}")
+                return False
 
         else:
             print(f"❌ Modelo TTS roteado desconhecido ou inválido: {modelo_tts}")

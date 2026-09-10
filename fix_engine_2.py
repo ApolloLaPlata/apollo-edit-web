@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 import codecs
 
 path = 'backend/cloud_tools/engines/flux_engine.py'

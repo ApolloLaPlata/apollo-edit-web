@@ -1,4 +1,4 @@
-﻿import re
+import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/servidor_web.py'
 with open(path, 'r', encoding='utf-8') as f:

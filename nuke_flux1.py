@@ -1,4 +1,4 @@
-﻿import codecs
+import codecs
 import re
 
 # 1. Rewrite flux_engine.py
@@ -19,7 +19,7 @@ else:
 # We can just build a completely new top part since we know exactly what we need.
 
 new_flux_engine = '''"""
-Apollo Modal Engine — FLUX 2 DEV
+Apollo Modal Engine � FLUX 2 DEV
 =================================================
 Roda na GPU H100 via ComfyUI Headless.
 Suporta aspect ratios (horizontal, vertical, square).

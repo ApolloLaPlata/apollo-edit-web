@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 import re
 
 filepath = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\frontend\la_plata.js'

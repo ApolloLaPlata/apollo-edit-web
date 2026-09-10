@@ -1,4 +1,4 @@
-﻿def fix_mojibake(filepath):
+def fix_mojibake(filepath):
     try:
         with open(filepath, 'r', encoding='utf-8-sig') as f:
             text = f.read()

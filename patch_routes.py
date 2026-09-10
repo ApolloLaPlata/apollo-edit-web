@@ -1,112 +1,115 @@
-import os
+import re
 import json
 
-file_path = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\servidor_web.py'
+with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\api\routes_studio.py', 'r', encoding='utf-8') as f:
+    code = f.read()
 
-with open(file_path, 'r', encoding='utf-8') as f:
-    content = f.read()
+pattern = re.compile(
+    r'(if req_json\.get\("model"\) == "qwen-image" and images_b64 and len\(images_b64\) >= 1 and not req_json\.get\("dynamic_steps"\):)(.*?)(print\(f"\[PROXY DEBUG\] Erro ao injetar LLM: \{e\}", flush=True\))',
+    re.DOTALL
+)
 
-search_text = """    except Exception as e:
-        return {"success": False, "error": str(e)}
+new_block = r'''if req_json.get("model") == "qwen-image" and images_b64 and len(images_b64) >= 1 and not req_json.get("dynamic_steps"):
+                num_imgs = len(images_b64)
+                print(f"[PROXY DEBUG] Detectado Qwen com {num_imgs} imagens. Acionando LLM estrutural...", flush=True)
+                
+                admin_cfg_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "admin_config.json"))
+                lit_key = ""
+                if os.path.exists(admin_cfg_path):
+                    with open(admin_cfg_path, 'r', encoding='utf-8') as f:
+                        c = json.load(f)
+                        keys = c.get("api_config", {}).get("lightning_chat", {}).get("api_keys", [])
+                        if keys:
+                            lit_key = keys[0]
+                
+                if lit_key:
+                    import modal
+                    import asyncio
+                    import hashlib
+                    import json
+                    
+                    vision_descriptions = []
+                    cache_file = os.path.join(os.path.dirname(__file__), "vision_cache.json")
+                    
+                    try:
+                        cache_data = {}
+                        if os.path.exists(cache_file):
+                            with open(cache_file, "r", encoding="utf-8") as cf:
+                                cache_data = json.load(cf)
+                                
+                        for idx, b64 in enumerate(images_b64):
+                            img_hash = hashlib.sha256(b64[:10000].encode('utf-8')).hexdigest()
+                            if img_hash in cache_data:
+                                vision_descriptions.append(f"Image {idx}: {cache_data[img_hash]}")
+                                print(f"[PROXY DEBUG] Imagem {idx} lida do cache.", flush=True)
+                            else:
+                                def call_vision(img_b64=b64):
+                                    engine = modal.Cls.lookup("apollo-vision-engine", "FlorenceVisionEngine")
+                                    return engine().analyze_image.remote(img_b64)
+                                print(f"[PROXY DEBUG] Chamando Vision Engine para Imagem {idx}...", flush=True)
+                                desc = await asyncio.to_thread(call_vision)
+                                cache_data[img_hash] = desc
+                                vision_descriptions.append(f"Image {idx}: {desc}")
+                                
+                        with open(cache_file, "w", encoding="utf-8") as cf:
+                            json.dump(cache_data, cf)
+                            
+                    except Exception as ve:
+                        print(f"[PROXY DEBUG] Erro Vision Engine: {ve}", flush=True)
+                        vision_descriptions.append("Fallback: Error analyzing images.")
+                        
+                    combined_vision = "\n".join(vision_descriptions)
+                    
+                    llm_prompt = f"""You are an expert AI prompt engineer for Qwen 2.5 Image Edit.
+The user provided {num_imgs} reference images. Raw prompt: "{req_json.get('prompt')}"
 
-# ===== ROTAS PARA O NARRADOR"""
+Our Vision AI analyzed the images:
+{combined_vision}
 
-replace_text = """    except Exception as e:
-        return {"success": False, "error": str(e)}
+Task: Rewrite the user's prompt into a highly detailed, descriptive prompt suitable for Qwen.
+Rules:
+1. Describe the final scene clearly in English. Do NOT copy exact poses if the user requested a NEW scene.
+2. If {num_imgs} == 1: Add "SINGLE CHARACTER ONLY, NO CLONES, DO NOT REPEAT".
+3. If {num_imgs} > 1: It is a Multi-Pass! Group the images into sequential logical steps (max 2 images per pass).
+   - Pass 1 (Base scene): "prompt": "Create a scene... Add the character from Image 0..."
+   - Pass 2+ (Editing): "prompt": "EDIT THIS SCENE. Keep existing elements exactly as they are. Add the character from Image 1..."
+4. Generate an intelligent "negative_prompt" to exclude things the user DOES NOT want.
+5. Output ONLY a valid JSON array of objects. Each object must have: "prompt" (string), "negative_prompt" (string, optional), "image_indices" (array of ints).
+Make sure ALL {num_imgs} indices are used. No markdown blocks."""
 
-# ===== ROTAS DO GERENCIADOR DE MULTI-VOZES (XTTS + KOKORO) =====
-@app.get("/api/voice/catalog")
-def get_voice_catalog():
-    import os
-    import glob
-    catalog = [
-        {"id": "kokoro_pf_dora", "name": "Kokoro - Dora (Feminino)", "engine": "kokoro", "type": "standard"},
-        {"id": "kokoro_pm_lucas", "name": "Kokoro - Lucas (Masculino)", "engine": "kokoro", "type": "standard"}
-    ]
-    xtts_dir = os.path.join(BASE_DIR, "backend", "voices", "xtts")
-    if os.path.exists(xtts_dir):
-        for wav_file in glob.glob(os.path.join(xtts_dir, "*.wav")):
-            base_name = os.path.splitext(os.path.basename(wav_file))[0]
-            clean_name = base_name.replace("_ref", "").capitalize()
-            catalog.append({"id": f"xtts_{base_name}", "name": f"XTTS Clone - {clean_name}", "engine": "xtts", "type": "zero-shot"})
-    return {"success": True, "catalog": catalog}
-
-import urllib.request
-import base64
-from fastapi import Request
-
-@app.get("/api/tts/test")
-@app.post("/api/voice/generate")
-async def voice_generate(request: Request):
-    text = ""
-    voice_id = ""
-    if request.method == "GET":
-        text = request.query_params.get("text", "")
-        voice_id = request.query_params.get("voice", "kokoro_pf_dora")
-    else:
-        data = await request.json()
-        text = data.get("text", "")
-        voice_id = data.get("voice_id", "kokoro_pf_dora")
-        
-    if not text:
-        from fastapi.responses import JSONResponse
-        return JSONResponse({"error": "Texto não fornecido"}, status_code=400)
-        
-    MODAL_USER = "filosofiadocodigo"
-    
-    if voice_id.startswith("kokoro_"):
-        kokoro_voice = voice_id.replace("kokoro_", "")
-        url = f"https://{MODAL_USER}--apollo-api-tts.modal.run/"
-        req = urllib.request.Request(url, method="POST")
-        req.add_header("Content-Type", "application/json")
-        import json
-        payload = json.dumps({"text": text, "voice": kokoro_voice}).encode('utf-8')
-        try:
-            with urllib.request.urlopen(req, data=payload) as response:
-                audio_bytes = response.read()
-                from fastapi.responses import Response
-                return Response(content=audio_bytes, media_type="audio/wav")
+                    async with httpx.AsyncClient(timeout=45.0) as lc:
+                        llm_success = False
+                        for k in keys:
+                            try:
+                                llm_res = await lc.post(
+                                    "https://lightning.ai/api/v1/chat/completions",
+                                    headers={"Authorization": f"Bearer {k}", "Content-Type": "application/json"},
+                                    json={
+                                        "model": "nvidia-nemotron-3-ultra-550b-a55b",
+                                        "messages": [{"role": "user", "content": llm_prompt}]
+                                    }
+                                )
+                                if llm_res.status_code == 200:
+                                    llm_success = True
+                                    res_content = llm_res.json()["choices"][0]["message"]["content"]
+                                    s_idx = res_content.find('[')
+                                    e_idx = res_content.rfind(']')
+                                    if s_idx != -1 and e_idx != -1:
+                                        dynamic_steps = json.loads(res_content[s_idx:e_idx+1])
+                                        req_json["dynamic_steps"] = dynamic_steps
+                                        if len(dynamic_steps) > 0 and "negative_prompt" in dynamic_steps[0]:
+                                            req_json["negative_prompt"] = dynamic_steps[0]["negative_prompt"]
+                                        
+                                        body = json.dumps(req_json).encode("utf-8")
+                                        print(f"[PROXY DEBUG] LLM Dynamic Steps: {dynamic_steps}", flush=True)
+                                    break
+                            except Exception as ex:
+                                print(f"[PROXY DEBUG] Excecao na chave: {ex}", flush=True)
+                        
         except Exception as e:
-            from fastapi.responses import JSONResponse
-            return JSONResponse({"error": f"Erro Kokoro Modal: {str(e)}"}, status_code=500)
-            
-    elif voice_id.startswith("xtts_"):
-        wav_name = voice_id.replace("xtts_", "")
-        xtts_dir = os.path.join(BASE_DIR, "backend", "voices", "xtts")
-        wav_path = os.path.join(xtts_dir, f"{wav_name}.wav")
-        
-        if not os.path.exists(wav_path):
-            from fastapi.responses import JSONResponse
-            return JSONResponse({"error": f"Áudio de referência não encontrado: {wav_path}"}, status_code=404)
-            
-        with open(wav_path, "rb") as f:
-            ref_bytes = f.read()
-            ref_b64 = base64.b64encode(ref_bytes).decode('utf-8')
-            
-        url = f"https://{MODAL_USER}--apollo-api-xtts.modal.run/"
-        req = urllib.request.Request(url, method="POST")
-        req.add_header("Content-Type", "application/json")
-        import json
-        payload = json.dumps({"text": text, "ref_audio_base64": ref_b64}).encode('utf-8')
-        
-        try:
-            with urllib.request.urlopen(req, data=payload) as response:
-                audio_bytes = response.read()
-                from fastapi.responses import Response
-                return Response(content=audio_bytes, media_type="audio/wav")
-        except Exception as e:
-            from fastapi.responses import JSONResponse
-            return JSONResponse({"error": f"Erro XTTS Modal: {str(e)}"}, status_code=500)
-            
-    from fastapi.responses import JSONResponse
-    return JSONResponse({"error": "Engine desconhecida"}, status_code=400)
+            print(f"[PROXY DEBUG] Erro ao injetar LLM: {e}", flush=True)'''
 
-# ===== ROTAS PARA O NARRADOR"""
-
-if search_text in content:
-    content = content.replace(search_text, replace_text)
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(content)
-    print("Sucesso!")
-else:
-    print("Falhou ao achar string alvo")
+new_code = pattern.sub(new_block, code)
+with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\api\routes_studio.py', 'w', encoding='utf-8') as f:
+    f.write(new_code)
+print("Patched successfully!")

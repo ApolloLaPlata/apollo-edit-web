@@ -1,0 +1,4 @@
+interface:
+  display_name: "H7D Micro Battle Sora"
+  short_description: "Prompts JSON para batalhas curtas em Sora/Veo no estilo H7D."
+  default_prompt: "Crie uma Micro Battle H7D em JSON para Sora 2, com titulo, descricao e tags."

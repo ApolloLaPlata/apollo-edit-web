@@ -5669,6 +5669,53 @@ class ChatRequest(BaseModel):
 app.mount("/ext_apps", StaticFiles(directory=os.path.join(BASE_DIR, "Programas externos")), name="programas_externos")
 
 
+@app.post("/api/audio/generate")
+async def audio_generate(req: Request):
+    try:
+        body = await req.json()
+        prompt = body.get("prompt")
+        engine = body.get("engine", "acestep")
+        duration = body.get("duration", 30)
+        
+        # Destino travado na Conta 9 (radiodarktrap) para os Modelos de Música!
+        modal_url = "https://radiodarktrap--apollo-render-router-apollo-api.modal.run/generate/audio_lab"
+        
+        import httpx
+        import uuid
+        import os
+        
+        model_map = {
+            "acestep": "ace-step",
+            "sa3": "sa3",
+            "minimax": "minimax"
+        }
+        
+        payload = {
+            "model": model_map.get(engine, engine),
+            "prompt": prompt,
+            "duration": float(duration)
+        }
+        
+        print(f"[Audio Generator] Solicitando {engine} na conta radiodarktrap...")
+        async with httpx.AsyncClient(timeout=1200.0) as client:
+            resp = await client.post(modal_url, json=payload)
+            resp.raise_for_status()
+            
+            audio_data = resp.content
+            filename = f"gen_music_{uuid.uuid4().hex[:8]}.mp3"
+            
+            os.makedirs("temp", exist_ok=True)
+            filepath = os.path.join("temp", filename)
+            with open(filepath, "wb") as f:
+                f.write(audio_data)
+                
+            print(f"[Audio Generator] Salvo em {filepath}")
+            return {"success": True, "file_url": f"/temp/{filename}"}
+            
+    except Exception as e:
+        print(f"[Audio Generator] Erro: {e}")
+        return {"success": False, "error": str(e)}
+
 @app.post("/api/audio/lab_test")
 async def audio_lab_test(
     model: str = Form(...),

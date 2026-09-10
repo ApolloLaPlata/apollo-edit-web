@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 
 files = [
     r'backend\cloud_tools\engines\flux_engine.py',

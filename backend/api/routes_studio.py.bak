@@ -1,0 +1,261 @@
+import os
+import json
+import httpx
+import uuid
+import asyncio
+from fastapi import APIRouter, Request, HTTPException, BackgroundTasks, Response
+from fastapi.responses import JSONResponse, StreamingResponse
+
+router = APIRouter(prefix="/api/studio/modal", tags=["Studio Modal Proxy"])
+
+DB_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cloud_tools", "cloud_accounts_db.json"))
+
+JOBS = {}
+
+def get_active_modal_account():
+    if not os.path.exists(DB_FILE):
+        return None
+    with open(DB_FILE, "r", encoding="utf-8") as f:
+        try:
+            accounts = json.load(f)
+        except:
+            return None
+    for acc in accounts:
+        if acc.get("provider") == "modal" and acc.get("is_active"):
+            return acc
+    return None
+
+async def process_modal_job(job_id: str, method: str, url: str, headers: dict, body: bytes):
+    async with httpx.AsyncClient(timeout=300.0) as client:
+        try:
+            response = await client.request(
+                method=method,
+                url=url,
+                headers=headers,
+                content=body
+            )
+            try:
+                content = response.json()
+            except:
+                content = response.text
+                
+            JOBS[job_id] = {
+                "status": "success" if response.status_code == 200 else "error",
+                "status_code": response.status_code,
+                "content": content
+            }
+        except Exception as e:
+            JOBS[job_id] = {
+                "status": "error",
+                "status_code": 500,
+                "content": {"error": str(e)}
+            }
+
+@router.get("/status/{job_id}")
+async def get_job_status(job_id: str):
+    if job_id not in JOBS:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return JSONResponse(status_code=200, content=JOBS[job_id])
+
+@router.api_route("/{path:path}", methods=["GET", "POST", "OPTIONS"])
+async def proxy_to_modal(path: str, request: Request, background_tasks: BackgroundTasks):
+    if request.method == "OPTIONS":
+        return JSONResponse(status_code=200, content={"status": "ok"})
+    
+    # --- INTERNAL LOCK (BOT PROTECTION) ---
+    expected_lock = os.environ.get("APOLLO_SECRET_LOCK", "apollo-beta-key-2026")
+    client_lock = request.headers.get("x-apollo-lock")
+    if client_lock != expected_lock:
+        raise HTTPException(status_code=401, detail="Unauthorized access. Bot protection is active.")
+    # --------------------------------------
+    
+    acc = get_active_modal_account()
+    if not acc:
+        raise HTTPException(status_code=503, detail="Nenhuma conta Modal ativa configurada na Colmeia.")
+        
+    workspace = acc.get("workspace")
+    if not workspace:
+        raise HTTPException(status_code=500, detail="Workspace modal nao configurado.")
+
+    remote_path = path
+    if path == "generate_image":
+        remote_path = "generate/image"
+    elif path == "generate_video":
+        remote_path = "generate/video"
+    elif path == "generate_universal":
+        remote_path = "generate/universal"
+    elif path == "generate_tts":
+        remote_path = "generate/tts"
+        
+    modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/{remote_path}"
+    print(f"[PROXY DEBUG] Routing to: {modal_url}", flush=True)
+    
+    headers = {}
+    if acc.get("proxy_secret"):
+        headers["Authorization"] = f"Bearer {acc.get('proxy_secret')}"
+    
+    if "content-type" in request.headers:
+        headers["Content-Type"] = request.headers["content-type"]
+            
+    body = await request.body()
+    
+    # --- INTERCEPT QWEN MULTI-PASS FOR LLM LIGHTNING ---
+    if remote_path == "generate/image":
+        try:
+            req_json = json.loads(body.decode("utf-8"))
+            images_b64 = req_json.get("reference_images_base64", [])
+            if req_json.get("model") == "qwen-image" and images_b64 and len(images_b64) >= 1 and not req_json.get("dynamic_steps"):
+                num_imgs = len(images_b64)
+                if num_imgs > 1:
+                    print(f"[PROXY DEBUG] Juntando {num_imgs} imagens em um unico grid para otimizar a geracao...", flush=True)
+                    try:
+                        from PIL import Image
+                        import io
+                        import math
+                        import base64
+                        
+                        pil_imgs = []
+                        for b64 in images_b64:
+                            b = b64.split(",")[1] if "," in b64 else b64
+                            pil_imgs.append(Image.open(io.BytesIO(base64.b64decode(b))).convert("RGB"))
+                        
+                        # Calcula grid
+                        cols = math.ceil(math.sqrt(num_imgs))
+                        rows = math.ceil(num_imgs / cols)
+                        
+                        w, h = 512, 512 # resize basico para caber na VRAM/Contexto
+                        grid = Image.new("RGB", size=(cols * w, rows * h), color=(255, 255, 255))
+                        for i, img in enumerate(pil_imgs):
+                            img = img.resize((w, h))
+                            grid.paste(img, box=(i % cols * w, i // cols * h))
+                            
+                        buf = io.BytesIO()
+                        grid.save(buf, format="JPEG", quality=85)
+                        stitched_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+                        
+                        # Sobrescreve para usar o grid unico
+                        images_b64 = [stitched_b64]
+                        req_json["reference_images_base64"] = images_b64
+                        num_imgs = 1
+                        print("[PROXY DEBUG] Imagens juntadas com sucesso num unico Character Sheet grid.", flush=True)
+                    except Exception as e:
+                        print(f"[PROXY DEBUG] Erro ao juntar imagens: {e}", flush=True)
+
+                print(f"[PROXY DEBUG] Detectado Qwen Multi-Pass com {num_imgs} imagens. Acionando LLM estrutural...", flush=True)
+                
+                # Load API key from admin_config.json
+                admin_cfg_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "admin_config.json"))
+                lit_key = ""
+                if os.path.exists(admin_cfg_path):
+                    with open(admin_cfg_path, 'r', encoding='utf-8') as f:
+                        c = json.load(f)
+                        keys = c.get("api_config", {}).get("api_keys", [])
+                        if keys:
+                            lit_key = keys[0]
+                
+                if lit_key:
+                    if num_imgs == 1:
+                      vision_desc = ""
+                      try:
+                          import modal
+                          import asyncio
+                          def call_vision():
+                              engine = modal.Cls.lookup("apollo-vision-engine", "FlorenceVisionEngine")
+                              return engine().analyze_image.remote(images_b64[0])
+                          
+                          print("[PROXY DEBUG] Chamando Vision Engine (Florence-2) para analisar a referencia...", flush=True)
+                          vision_desc = await asyncio.to_thread(call_vision)
+                          print(f"[PROXY DEBUG] Florence-2 resultado: {vision_desc}", flush=True)
+                      except Exception as ve:
+                          print(f"[PROXY DEBUG] Erro na Vision Engine: {ve}", flush=True)
+                          
+                      llm_prompt = f"""You are an expert AI prompt engineer for Qwen 2.5 Image Edit.
+  The user provided 1 reference image of a character/subject and a raw prompt: \"{req_json.get('prompt')}\"
+  
+  Our Vision AI analyzed the reference image and described it as:
+  "{vision_desc}"
+  
+  Your task is to rewrite the user's prompt into a highly detailed, descriptive prompt suitable for Qwen.
+Rules for Qwen:
+1. Describe the final scene clearly and comprehensively in English.
+2. Incorporate the character/subject naturally into the environment described by the user.
+3. CRITICAL: The user might provide a "turnaround sheet" (a character shown from multiple angles). You MUST apply "Semantic Shielding" to force the AI to draw the character ONLY ONCE. Always include terms like "SINGLE CHARACTER ONLY, NO CLONES, DO NOT REPEAT, SINGLE INSTANCE, FOCUS ON ONE SUBJECT".
+4. Output ONLY a valid JSON array with exactly ONE object.
+Format:
+[
+  {{
+    "prompt": "The highly detailed rewritten prompt here...",
+    "image_indices": [0]
+  }}
+]
+Do not include markdown blocks or any other text."""
+                else:
+                    llm_prompt = f"""You are an expert AI prompt engineer for Qwen 2.5. The user wants an iterative multi-pass process.
+Global prompt: \"{req_json.get('prompt')}\"
+
+We have {num_imgs} character reference images (indices 0 to {num_imgs - 1}).
+Group the images into sequential logical steps (max 3 images per pass).
+Return ONLY a valid JSON array of objects. Each object must have:
+- "prompt": string (Pass 1 generates the base scene. Pass 2+ must start with 'EDIT THIS SCENE. Keep existing elements exactly as they are...' and add the new elements).
+- "image_indices": array of integers.
+Make sure ALL {num_imgs} indices are used. No markdown blocks."""
+                    
+                    async with httpx.AsyncClient(timeout=10.0) as lc:
+                        llm_res = await lc.post(
+                            "https://lightning.ai/api/v1/chat/completions",
+                            headers={"Authorization": f"Bearer {lit_key}", "Content-Type": "application/json"},
+                            json={
+                                "model": "nvidia-nemotron-3-ultra-550b-a55b",
+                                "messages": [{"role": "user", "content": llm_prompt}]
+                            }
+                        )
+                        if llm_res.status_code == 200:
+                            content = llm_res.json()["choices"][0]["message"]["content"]
+                            s_idx = content.find('[')
+                            e_idx = content.rfind(']')
+                            if s_idx != -1 and e_idx != -1:
+                                dynamic_steps = json.loads(content[s_idx:e_idx+1])
+                                req_json["dynamic_steps"] = dynamic_steps
+                                body = json.dumps(req_json).encode("utf-8")
+                                print(f"[PROXY DEBUG] LLM Dynamic Steps Injetados com sucesso: {dynamic_steps}", flush=True)
+                        else:
+                            print(f"[PROXY DEBUG] Erro no LLM: {llm_res.text}", flush=True)
+        except Exception as e:
+            print(f"[PROXY DEBUG] Erro ao injetar LLM: {e}", flush=True)
+    # ---------------------------------------------------
+
+    # Execucao com Streaming para repassar heartbeats e evitar 504 no Nginx
+    client = httpx.AsyncClient(timeout=300.0)
+    try:
+        req = client.build_request(
+            method=request.method,
+            url=modal_url,
+            headers=headers,
+            content=body
+        )
+        response = await client.send(req, stream=True)
+        
+        async def stream_gen():
+            try:
+                async for chunk in response.aiter_raw():
+                    yield chunk
+            finally:
+                await response.aclose()
+                await client.aclose()
+                
+        return StreamingResponse(
+            stream_gen(),
+            status_code=response.status_code,
+            media_type=response.headers.get("content-type", "application/json")
+        )
+    except Exception as e:
+        await client.aclose()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+
+
+
+

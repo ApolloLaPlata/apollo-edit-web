@@ -1,4 +1,4 @@
-﻿import re
+import re
 
 # Update mercado.html
 with open('mercado.html', 'r', encoding='utf-8') as f:

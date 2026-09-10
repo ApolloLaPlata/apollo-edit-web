@@ -1,0 +1,89 @@
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.1.1
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+Modular Diffusers is currently an experimental feature under active development. The API is subject to breaking changes in future releases.
+[MiniMax] Carregando pesos do Volume...
+/usr/local/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Guiders are currently an experimental feature under active development. The API is subject to breaking changes in future releases.
+/usr/local/lib/python3.11/site-packages/torch/nn/utils/weight_norm.py:143: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+
+[1AFetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]
+[1AFetching 2 files:  50%|█████     | 1/2 [00:46<00:46, 46.43s/it]Fetching 2 files: 100%|██████████| 2/2 [00:46<00:00, 23.22s/it]
+
+[1ALoading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+[1ALoading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.22s/it]
+[1ALoading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]
+[1ALoading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]
+
+[1AFetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]
+[1AFetching 4 files:  25%|██▌       | 1/4 [01:02<03:08, 62.90s/it]
+[1AFetching 4 files:  50%|█████     | 2/4 [01:05<00:55, 27.63s/it]
+[1AFetching 4 files:  75%|███████▌  | 3/4 [01:10<00:17, 17.12s/it]
+[1AFetching 4 files: 100%|██████████| 4/4 [01:25<00:00, 16.15s/it]
+[1AFetching 4 files: 100%|██████████| 4/4 [01:25<00:00, 21.28s/it]
+
+[1ALoading weights:   0%|          | 0/399 [00:00<?, ?it/s]
+[1ALoading weights:  25%|██▌       | 100/399 [00:00<00:00, 981.44it/s]
+[1ALoading weights: 100%|██████████| 399/399 [00:00<00:00, 2526.76it/s]
+[MiniMax] H100 Pronta!
+[MiniMax] Duracao alvo: 5.0s | Instrumental: False
+
+[1A  0%|          | 0/30 [00:00<?, ?it/s]
+[1A  3%|▎         | 1/30 [00:00<00:07,  3.68it/s]
+[1A 10%|█         | 3/30 [00:00<00:03,  8.01it/s]
+[1A 17%|█▋        | 5/30 [00:00<00:02, 10.09it/s]
+[1A 23%|██▎       | 7/30 [00:00<00:02, 11.21it/s]
+[1A 30%|███       | 9/30 [00:00<00:01, 12.07it/s]
+[1A 37%|███▋      | 11/30 [00:01<00:01, 12.57it/s]
+[1A 43%|████▎     | 13/30 [00:01<00:01, 12.89it/s]
+[1A 50%|█████     | 15/30 [00:01<00:01, 13.22it/s]
+[1A 57%|█████▋    | 17/30 [00:01<00:00, 13.33it/s]
+[1A 63%|██████▎   | 19/30 [00:01<00:00, 13.50it/s]
+[1A 70%|███████   | 21/30 [00:01<00:00, 13.49it/s]
+[1A 77%|███████▋  | 23/30 [00:01<00:00, 13.54it/s]
+[1A 83%|████████▎ | 25/30 [00:02<00:00, 13.60it/s]
+[1A 90%|█████████ | 27/30 [00:02<00:00, 13.55it/s]
+[1A 97%|█████████▋| 29/30 [00:02<00:00, 13.52it/s]
+[1A100%|██████████| 30/30 [00:02<00:00, 12.46it/s]
+[MiniMax] Concluido em 13.08 segundos!
+   POST /generate/audio_lab -> 200 OK  (duration: 198.8 s, execution: 194.8 s)
+[modal-client] 2026-08-28T08:49:48+0000 Warning: function name 'apollo_api' collision! Overriding existing function [backend.cloud_tools.engines.universal_engine].apollo_api with new function [apollo_modal_engine].apollo_api
+[Router] Spawning MinimaxEngine
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.1.1
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+Modular Diffusers is currently an experimental feature under active development. The API is subject to breaking changes in future releases.
+[MiniMax] Carregando pesos do Volume...
+/usr/local/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Guiders are currently an experimental feature under active development. The API is subject to breaking changes in future releases.
+
+[1AFetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]

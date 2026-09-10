@@ -1,0 +1,32 @@
+{
+  "3": {
+    "inputs": {
+      "text": "Isso é um teste do motor Qwen três T T S rodando perfeitamente no backend da colmeia!",
+      "speaker": "Eric",
+      "model_choice": "1.7B",
+      "device": "auto",
+      "precision": "bf16",
+      "language": "Portuguese",
+      "seed": 123456789,
+      "instruct": "fixed",
+      "max_new_tokens": 2048,
+      "top_p": 0.8,
+      "top_k": 20,
+      "temperature": 1.0,
+      "repetition_penalty": 1.05,
+      "attention": "auto",
+      "unload_model_after_generate": false
+    },
+    "class_type": "FB_Qwen3TTSCustomVoice"
+  },
+  "4": {
+    "inputs": {
+      "filename_prefix": "output/Qwen",
+      "audio": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "SaveAudio"
+  }
+}

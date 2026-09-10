@@ -20,17 +20,24 @@ Este arquivo √© estritamente confidencial e cont√©m as credenciais do Pool de Co
 
 ---
 *Nota do Sistema:* O RenderRouter consumir√° este arquivo (.env derivado) para fazer a rota√ß√£o autom√°tica quando uma conta esgotar a cota mensal.
-## ?? APOLLO STORAGE GATEWAY (Roteador de MÌdia)
+## ?? APOLLO STORAGE GATEWAY (Roteador de Mdia)
 - **Conta 1 (Cloudflare R2 - Imagens < 5MB):**
-  - R2_ACCOUNT_ID: [Pendente inserÁ„o]
-  - R2_ACCESS_KEY_ID: [Pendente inserÁ„o]
-  - R2_SECRET_ACCESS_KEY: [Pendente inserÁ„o]
+  - R2_ACCOUNT_ID: [Pendente insero]
+  - R2_ACCESS_KEY_ID: [Pendente insero]
+  - R2_SECRET_ACCESS_KEY: [Pendente insero]
   - R2_BUCKET_NAME: apollo-media
   - R2_PUBLIC_DOMAIN: https://cdn.seu-dominio.com
-- **Conta 2 (Oracle OCI - VÌdeos 5MB-50MB):**
-  - OCI_NAMESPACE: [Pendente inserÁ„o]
-  - OCI_REGION: [Pendente inserÁ„o]
-  - OCI_ACCESS_KEY_ID: [Pendente inserÁ„o]
-  - OCI_SECRET_ACCESS_KEY: [Pendente inserÁ„o]
+- **Conta 2 (Oracle OCI - Vdeos 5MB-50MB):**
+  - OCI_NAMESPACE: [Pendente insero]
+  - OCI_REGION: [Pendente insero]
+  - OCI_ACCESS_KEY_ID: [Pendente insero]
+  - OCI_SECRET_ACCESS_KEY: [Pendente insero]
   - OCI_BUCKET_NAME: apollo-videos
 
+
+## ‚òÅÔ∏è MODAL (Conta 9)
+- **Conta 9 (radiodarktrap@gmail.com):**
+  - Token ID: ak-X1kyQjDHfgpRWQ8eoJ8FvH
+  - Token Secret: as-m0q2t2Z9a2dHf1jEdvlR6M
+  - Proxy Auth ID: wk-DzjQoLsimRqP9CKGaVsxfj
+  - Proxy Auth Secret: ws-h9w0SsVCOEwcWMMVf9pdWz

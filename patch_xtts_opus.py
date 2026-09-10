@@ -1,4 +1,4 @@
-ï»¿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/cloud_tools/engines/xtts_engine.py'
@@ -11,7 +11,7 @@ old_block = r'''            # Converter para bytes WAV
             sf.write(out_io, wav, samplerate=24000, format='WAV')
             return out_io.getvalue()'''
 
-new_block = r'''            # CONVERSÃƒO OPUS 100% EM MEMÃ“RIA (Nativo para o Chat)
+new_block = r'''            # CONVERSÃO OPUS 100% EM MEMÓRIA (Nativo para o Chat)
             import subprocess
             out_io = io.BytesIO()
             # O XTTSv2 usa 24000 de samplerate geralmente

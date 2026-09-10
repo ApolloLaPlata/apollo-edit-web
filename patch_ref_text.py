@@ -1,4 +1,4 @@
-Ôªø# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 
 path = 'E:/MEUS PROGRAMAS/APOLLO_EDIT_WEB/backend/cloud_tools/engines/f5_engine.py'
@@ -11,10 +11,10 @@ text = text.replace(
     'def generate_voice(self, text: str, reference_audio_bytes: bytes = None, ref_text: str = ""):'
 )
 
-# Substituir a atribui√ß√£o de ref_text
+# Substituir a atribuiÁ„o de ref_text
 text = text.replace(
-    'ref_text = "" # F5 infere sozinho ou a gente n√£o passa texto de ref',
-    '# ref_text j√° √© recebido por par√¢metro'
+    'ref_text = "" # F5 infere sozinho ou a gente n„o passa texto de ref',
+    '# ref_text j· È recebido por par‚metro'
 )
 
 with open(path, 'w', encoding='utf-8') as f:

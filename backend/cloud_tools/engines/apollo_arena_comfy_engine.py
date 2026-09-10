@@ -11,17 +11,152 @@ arena_comfy_image = universal_comfy_image
 
 @contextmanager
 def force_cpu_during_snapshot():
+    import os
+    import sys
     import torch
-    orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
-    orig_current_device = getattr(torch.cuda, "current_device", lambda: torch.device("cpu"))
 
-    torch.cuda.is_available = lambda: False
-    torch.cuda.current_device = lambda: torch.device("cpu")
+    # Garante que o arquivo indicador NÃƒO existe no inicio do boot CPU
+    if os.path.exists("/tmp/modal_snapshot_done"):
+        try:
+            os.remove("/tmp/modal_snapshot_done")
+        except Exception:
+            pass
+
+    mock_dir = "/tmp/mock_cuda"
+    os.makedirs(mock_dir, exist_ok=True)
+    site_path = os.path.join(mock_dir, "sitecustomize.py")
+    with open(site_path, "w") as f:
+        f.write('''import os
+import torch
+_orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
+_orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
+_orig_device_count = getattr(torch.cuda, "device_count", lambda: 0)
+_orig_memory_stats = getattr(torch.cuda, "memory_stats", lambda device=None: {})
+_orig_mem_get_info = getattr(torch.cuda, "mem_get_info", lambda device=None: (85899345920, 85899345920))
+
+def _safe_memory_stats(device=None):
+    try:
+        stats = _orig_memory_stats(device)
+        if isinstance(stats, dict) and 'reserved_bytes.all.current' not in stats:
+            return {
+                'reserved_bytes.all.current': 0,
+                'allocated_bytes.all.current': 0,
+                'active_bytes.all.current': 0,
+                'inactive_split_bytes.all.current': 0
+            }
+        return stats
+    except Exception:
+        return {
+            'reserved_bytes.all.current': 0,
+            'allocated_bytes.all.current': 0,
+            'active_bytes.all.current': 0,
+            'inactive_split_bytes.all.current': 0
+        }
+
+def _safe_mem_get_info(device=None):
+    try:
+        return _orig_mem_get_info(device)
+    except Exception:
+        return (85899345920, 85899345920)
+
+def _safe_is_available():
+    if not os.path.exists("/tmp/modal_snapshot_done"):
+        return False
+    try:
+        return _orig_is_available()
+    except Exception:
+        return False
+
+def _safe_current_device():
+    try:
+        return _orig_current_device()
+    except Exception:
+        return 0
+
+def _safe_device_count():
+    try:
+        res = _orig_device_count()
+        return res if res > 0 else 1
+    except Exception:
+        return 1
+
+torch.cuda.memory_stats = _safe_memory_stats
+torch.cuda.mem_get_info = _safe_mem_get_info
+torch.cuda.is_available = _safe_is_available
+torch.cuda.current_device = _safe_current_device
+torch.cuda.device_count = _safe_device_count
+print("[sitecustomize] Holy Grail CUDA & VRAM stats fallback active for ComfyUI boot!")
+''')
+
+    old_pythonpath = os.environ.get("PYTHONPATH", "")
+    os.environ["PYTHONPATH"] = f"{mock_dir}:{old_pythonpath}" if old_pythonpath else mock_dir
+
+    orig_is_available = getattr(torch.cuda, "is_available", lambda: False)
+    orig_current_device = getattr(torch.cuda, "current_device", lambda: 0)
+    orig_device_count = getattr(torch.cuda, "device_count", lambda: 0)
+    orig_memory_stats = getattr(torch.cuda, "memory_stats", lambda device=None: {})
+    orig_mem_get_info = getattr(torch.cuda, "mem_get_info", lambda device=None: (85899345920, 85899345920))
+
+    def safe_memory_stats(device=None):
+        try:
+            stats = orig_memory_stats(device)
+            if isinstance(stats, dict) and 'reserved_bytes.all.current' not in stats:
+                return {
+                    'reserved_bytes.all.current': 0,
+                    'allocated_bytes.all.current': 0,
+                    'active_bytes.all.current': 0,
+                    'inactive_split_bytes.all.current': 0
+                }
+            return stats
+        except Exception:
+            return {
+                'reserved_bytes.all.current': 0,
+                'allocated_bytes.all.current': 0,
+                'active_bytes.all.current': 0,
+                'inactive_split_bytes.all.current': 0
+            }
+
+    def safe_mem_get_info(device=None):
+        try:
+            return orig_mem_get_info(device)
+        except Exception:
+            return (85899345920, 85899345920)
+
+    def safe_is_available():
+        if not os.path.exists("/tmp/modal_snapshot_done"):
+            return False
+        try:
+            return orig_is_available()
+        except Exception:
+            return False
+
+    def safe_current_device():
+        try:
+            return orig_current_device()
+        except Exception:
+            return 0
+
+    def safe_device_count():
+        try:
+            res = orig_device_count()
+            return res if res > 0 else 1
+        except Exception:
+            return 1
+
+    torch.cuda.memory_stats = safe_memory_stats
+    torch.cuda.mem_get_info = safe_mem_get_info
+    torch.cuda.is_available = safe_is_available
+    torch.cuda.current_device = safe_current_device
+    torch.cuda.device_count = safe_device_count
+
     try:
         yield
     finally:
+        torch.cuda.memory_stats = orig_memory_stats
+        torch.cuda.mem_get_info = orig_mem_get_info
         torch.cuda.is_available = orig_is_available
         torch.cuda.current_device = orig_current_device
+        torch.cuda.device_count = orig_device_count
 
 
 @app.cls(
@@ -36,7 +171,7 @@ def force_cpu_during_snapshot():
 class ArenaComfyEngine:
     FORCE_REBUILD = 1 
 
-    @modal.enter()
+    @modal.enter(snap=True)
     def load_model(self):
         import subprocess
         import urllib.request
@@ -74,6 +209,7 @@ class ArenaComfyEngine:
             f.write(yaml_content)
 
         self.comfy_process = None
+        self._ensure_comfyui_running()
 
     def _ensure_comfyui_running(self):
         import urllib.request
@@ -271,13 +407,14 @@ apollo:
             print(f"[ArenaComfyEngine] Failed to patch PuLID: {e}")
         # -------------------
 
-        self.comfy_process = subprocess.Popen(
-            ["comfy", "--workspace", "/comfyui", "launch", "--",
-             "--listen", "127.0.0.1", "--port", "8188", "--highvram", "--extra-model-paths-config", "/comfyui/extra_model_paths.yaml", "--use-split-cross-attention"],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            text=True
-        )
+        with force_cpu_during_snapshot():
+            self.comfy_process = subprocess.Popen(
+                ["comfy", "--workspace", "/comfyui", "launch", "--",
+                 "--listen", "127.0.0.1", "--port", "8188", "--highvram", "--extra-model-paths-config", "/comfyui/extra_model_paths.yaml", "--use-split-cross-attention"],
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True
+            )
 
         server_up = False
         start_time = time.time()
@@ -292,6 +429,10 @@ apollo:
                 
         if not server_up:
             print("Timeout waiting for ComfyUI to start")
+        else:
+            with open("/tmp/modal_snapshot_done", "w") as f_snap:
+                f_snap.write("done")
+            print("[ArenaComfyEngine] Flag /tmp/modal_snapshot_done criada com sucesso!")
 
     @modal.method()
     def generate(self, workflow_json: dict, source_image_b64: str = None, source_image_name: str = "referencia.jpg", multiple_images: dict = None):
@@ -375,6 +516,7 @@ apollo:
             except Exception as e:
                 pass
             time.sleep(2)
+
 
 
 

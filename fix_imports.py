@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 files_to_fix = [
     r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\cloud_tools\tool_image_gen_flux.py",

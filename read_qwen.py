@@ -1,0 +1,11 @@
+import modal
+app = modal.App('read-qwen')
+from backend.cloud_tools.engines.universal_engine import universal_comfy_image
+@app.function(image=universal_comfy_image)
+def run():
+  import os
+  os.system('cat /comfyui/comfy_extras/nodes_qwen.py')
+
+@app.local_entrypoint()
+def main():
+  run.remote()

@@ -45,6 +45,7 @@ universal_comfy_image = (
             "git clone https://github.com/chflame163/ComfyUI_LayerStyle.git /comfyui/custom_nodes/ComfyUI_LayerStyle && cd /comfyui/custom_nodes/ComfyUI_LayerStyle && sed -i -E '/^torch([=><].*)?$/d' requirements.txt && pip install -r requirements.txt",
             "git clone https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler.git /comfyui/custom_nodes/ComfyUI-SeedVR2_VideoUpscaler && cd /comfyui/custom_nodes/ComfyUI-SeedVR2_VideoUpscaler && sed -i -E '/^torch([=><].*)?$/d' requirements.txt && pip install -r requirements.txt",
             "git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git /comfyui/custom_nodes/ComfyUI_UltimateSDUpscale",
+            "git clone https://github.com/Goldlionren/ComfyUI_JR_MiniMaxH3Node.git /comfyui/custom_nodes/ComfyUI_JR_MiniMaxH3Node && cd /comfyui/custom_nodes/ComfyUI_JR_MiniMaxH3Node && pip install -r requirements.txt",
             "pip install --upgrade diffusers==0.31.0",
             "comfy --workspace /comfyui node install https://github.com/WASasquatch/was-node-suite-comfyui"
         ]

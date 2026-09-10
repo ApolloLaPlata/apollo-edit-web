@@ -7,16 +7,9 @@ def testar_direto():
     url = "https://roxingo--apollo-render-router-apollo-api.modal.run/generate/image"
     print('Acessando URL:', url)
     
-    from PIL import Image
-    import io
-    blank = Image.new("RGB", (1280, 720), (255, 255, 255))
-    buf = io.BytesIO()
-    blank.save(buf, format="PNG")
-    img1_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
-    
     payload = {
         'prompt': 'A cinematic ultra-realistic 4k shot of a futuristic cyberpunk city with flying cars',
-        'reference_images_base64': [img1_b64],
+        'reference_images_base64': [],
         'aspect_ratio': 'horizontal',
         'model': 'qwen-image',
         'preset': 'fast',
@@ -25,6 +18,7 @@ def testar_direto():
         'format': 'image/jpeg'
     }
     
+    t0 = time.time()
     r = requests.post(url, json=payload)
     data = r.json()
     job_id = data.get('job_id')
@@ -42,12 +36,9 @@ def testar_direto():
             import json
             content = json.loads(s_data.get('content'))
             if content.get('status') == 'success':
-                print('SUCESSO!')
+                t_total = time.time() - t0
+                print(f'SUCESSO! Tempo total: {t_total:.2f} segundos.')
                 img_b64 = content.get('image_base64')
-                out_path = r'C:\Users\v5est\.gemini\antigravity\brain\a22deae7-7753-458c-a40d-92e685f8af3e\teste_qwen_ROXINGO.jpg'
-                with open(out_path, 'wb') as img_f:
-                    img_f.write(base64.b64decode(img_b64))
-                print('IMAGEM SALVA EM:', out_path)
             else:
                 print('Erro no container:', content)
             break

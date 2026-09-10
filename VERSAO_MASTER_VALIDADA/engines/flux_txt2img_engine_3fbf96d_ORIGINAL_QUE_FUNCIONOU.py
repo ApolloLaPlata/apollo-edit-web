@@ -1,4 +1,4 @@
-﻿import modal
+import modal
 import os
 
 flux2_txt2img_image = (
@@ -123,7 +123,7 @@ class Flux2Txt2ImgEngine:
                     time.sleep(1)
             
             if server_up:
-                print("[Flux2Txt2ImgEngine] Servidor aguardando requisi├º├Áes.")
+                print("[Flux2Txt2ImgEngine] Servidor aguardando requisi+�+�es.")
             else:
                 raise RuntimeError("Falha no boot do ComfyUI no tempo limite.")
 
@@ -221,7 +221,7 @@ class Flux2Txt2ImgEngine:
                 except Exception as e:
                     pass
                 
-                # Timeout de seguran├ºa: 5 minutos
+                # Timeout de seguran+�a: 5 minutos
                 if time.time() - t0 > 300:
                     return {
                         "status": "error",

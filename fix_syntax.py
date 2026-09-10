@@ -1,15 +1,10 @@
-﻿import codecs
+﻿import re
 
-path = 'backend/cloud_tools/apollo_modal_engine.py'
-with codecs.open(path, 'r', 'utf-8') as f:
-    content = f.read()
+with open('/home/ubuntu/apollo_edit/servidor_web.py', 'r', encoding='utf-8') as f:
+    text = f.read()
 
-# Replace literal newline with \n in the python source
-content = content.replace('yield json.dumps(res) + "\n"', 'yield json.dumps(res) + "\\n"')
-content = content.replace('yield " \n"', 'yield " \\n"')
-content = content.replace('yield json.dumps({"status": "error", "message": f"Erro na Modal: {str(e)}"}) + "\n"', 'yield json.dumps({"status": "error", "message": f"Erro na Modal: {str(e)}"}) + "\\n"')
+# Procura o erro b" no final da linha e troca por b"\n"
+text = text.replace('b"\n', 'b"\\n"')
 
-with codecs.open(path, 'w', 'utf-8') as f:
-    f.write(content)
-
-print("Fixed syntax error")
+with open('/home/ubuntu/apollo_edit/servidor_web.py', 'w', encoding='utf-8') as f:
+    f.write(text)

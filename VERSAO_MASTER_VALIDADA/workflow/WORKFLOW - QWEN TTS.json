@@ -1,0 +1,882 @@
+{
+  "id": "cd732cf0-c62d-4c2d-998a-e0e40c8464c5",
+  "revision": 0,
+  "last_node_id": 44,
+  "last_link_id": 50,
+  "nodes": [
+    {
+      "id": 24,
+      "type": "LoadAudio",
+      "pos": [
+        -1030.45263402561,
+        -376.96847290721905
+      ],
+      "size": [
+        329.9290037644795,
+        138.09054071316234
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        },
+        {
+          "label": "upload",
+          "name": "upload",
+          "type": "AUDIOUPLOAD",
+          "widget": {
+            "name": "upload"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "AUDIO",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            46
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "LoadAudio",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65,
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "audio": true,
+            "audioUI": true,
+            "upload": true
+          }
+        }
+      },
+      "widgets_values": [
+        "minhavoz.wav",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 43,
+      "type": "SaveAudioMP3",
+      "pos": [
+        -331.2596663021454,
+        452.66935554999924
+      ],
+      "size": [
+        270.951964398378,
+        136
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 49
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "V0"
+      ]
+    },
+    {
+      "id": 42,
+      "type": "SaveAudioMP3",
+      "pos": [
+        -666.0308979270833,
+        449.05105156292257
+      ],
+      "size": [
+        307.1246483318239,
+        136
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 48
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "V0"
+      ]
+    },
+    {
+      "id": 44,
+      "type": "SaveAudioMP3",
+      "pos": [
+        -1018.7746478276761,
+        448.413325112017
+      ],
+      "size": [
+        322.35525542639004,
+        136
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 50
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "V0"
+      ]
+    },
+    {
+      "id": 40,
+      "type": "FB_Qwen3TTSVoiceClone",
+      "pos": [
+        -1025.9049141313317,
+        -199.25554075535229
+      ],
+      "size": [
+        326.4052869526066,
+        609.8247304061072
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "ref_audio",
+          "name": "ref_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 46
+        },
+        {
+          "label": "voice_clone_prompt",
+          "name": "voice_clone_prompt",
+          "shape": 7,
+          "type": "VOICE_CLONE_PROMPT",
+          "link": null
+        },
+        {
+          "label": "target_text",
+          "name": "target_text",
+          "type": "STRING",
+          "widget": {
+            "name": "target_text"
+          },
+          "link": null
+        },
+        {
+          "label": "model_choice",
+          "name": "model_choice",
+          "type": "COMBO",
+          "widget": {
+            "name": "model_choice"
+          },
+          "link": null
+        },
+        {
+          "label": "device",
+          "name": "device",
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          },
+          "link": null
+        },
+        {
+          "label": "precision",
+          "name": "precision",
+          "type": "COMBO",
+          "widget": {
+            "name": "precision"
+          },
+          "link": null
+        },
+        {
+          "label": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          },
+          "link": null
+        },
+        {
+          "label": "ref_text",
+          "name": "ref_text",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "ref_text"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "label": "max_new_tokens",
+          "name": "max_new_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_new_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "x_vector_only",
+          "name": "x_vector_only",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "x_vector_only"
+          },
+          "link": null
+        },
+        {
+          "label": "attention",
+          "name": "attention",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "attention"
+          },
+          "link": null
+        },
+        {
+          "label": "unload_model_after_generate",
+          "name": "unload_model_after_generate",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "unload_model_after_generate"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            50
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "qwen3-tts-comfyui",
+        "ver": "c7db6c2eb0f269d358c53bb71688dc95de4f7d07",
+        "Node name for S&R": "FB_Qwen3TTSVoiceClone"
+      },
+      "widgets_values": [
+        "Esse aqui é com certeza o melhor modelo de Inteligência Artificial de código aberto pra criação de vozes, gera muito bem mesmo com áudios em português!",
+        "1.7B",
+        "auto",
+        "bf16",
+        "Portuguese",
+        "",
+        682779102015929,
+        "fixed",
+        2048,
+        0.8,
+        20,
+        1,
+        1.05,
+        true,
+        "auto",
+        false
+      ]
+    },
+    {
+      "id": 39,
+      "type": "FB_Qwen3TTSCustomVoice",
+      "pos": [
+        -665.8867423534854,
+        -383.11619422814834
+      ],
+      "size": [
+        306.6145470141971,
+        791.8079846642406
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        },
+        {
+          "label": "speaker",
+          "name": "speaker",
+          "type": "COMBO",
+          "widget": {
+            "name": "speaker"
+          },
+          "link": null
+        },
+        {
+          "label": "model_choice",
+          "name": "model_choice",
+          "type": "COMBO",
+          "widget": {
+            "name": "model_choice"
+          },
+          "link": null
+        },
+        {
+          "label": "device",
+          "name": "device",
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          },
+          "link": null
+        },
+        {
+          "label": "precision",
+          "name": "precision",
+          "type": "COMBO",
+          "widget": {
+            "name": "precision"
+          },
+          "link": null
+        },
+        {
+          "label": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "label": "instruct",
+          "name": "instruct",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "instruct"
+          },
+          "link": null
+        },
+        {
+          "label": "max_new_tokens",
+          "name": "max_new_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_new_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "attention",
+          "name": "attention",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "attention"
+          },
+          "link": null
+        },
+        {
+          "label": "unload_model_after_generate",
+          "name": "unload_model_after_generate",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "unload_model_after_generate"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            48
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "qwen3-tts-comfyui",
+        "ver": "c7db6c2eb0f269d358c53bb71688dc95de4f7d07",
+        "Node name for S&R": "FB_Qwen3TTSCustomVoice",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65,
+        "ue_properties": {
+          "widget_ue_connectable": {}
+        }
+      },
+      "widgets_values": [
+        "Esse aqui é com certeza o melhor modelo de Inteligência Artificial de código aberto pra criação de vozes. \nGera muito bem mesmo com áudios em português!",
+        "Eric",
+        "1.7B",
+        "auto",
+        "bf16",
+        "Portuguese",
+        977098811595152,
+        "fixed",
+        "Character Name: Eric\n\nVoice Description: A middle-aged male voice, loud and resonant, with a low register and a strong, forceful presence.\n\nBackground/Identity: Chief advisor to a key national scientific research project, a veteran strategic scientist nearing seventy. He took part in major national technology initiatives, weathering decades of challenges and witnessing the difficult journey from lagging behind to achieving independent innovation. He currently serves as a lifetime honorary member of the National Science and Technology Advisory Committee and continues working on the front lines, mentoring young talent and offering counsel for the country’s strategic development.\n\nPersonality Traits: A will of steel and unwavering conviction, never retreating in the face of challenges; devoted to the nation and its future, tying his personal fate closely to the country’s rise and fall; rigorous and self-disciplined, true to his word, with speech filled with a sense of responsibility and historical duty; outwardly reserved but warm at heart, serious on the surface, yet deeply hopeful for the younger generation, willing to serve as a stepping stone for their progress.",
+        2048,
+        0.8,
+        20,
+        1,
+        1.05,
+        "auto",
+        false
+      ]
+    },
+    {
+      "id": 38,
+      "type": "FB_Qwen3TTSVoiceDesign",
+      "pos": [
+        -333.4274927886463,
+        -390.0967979668078
+      ],
+      "size": [
+        270.86328125,
+        806.9075697383262
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        },
+        {
+          "label": "instruct",
+          "name": "instruct",
+          "type": "STRING",
+          "widget": {
+            "name": "instruct"
+          },
+          "link": null
+        },
+        {
+          "label": "model_choice",
+          "name": "model_choice",
+          "type": "COMBO",
+          "widget": {
+            "name": "model_choice"
+          },
+          "link": null
+        },
+        {
+          "label": "device",
+          "name": "device",
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          },
+          "link": null
+        },
+        {
+          "label": "precision",
+          "name": "precision",
+          "type": "COMBO",
+          "widget": {
+            "name": "precision"
+          },
+          "link": null
+        },
+        {
+          "label": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "label": "max_new_tokens",
+          "name": "max_new_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_new_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "attention",
+          "name": "attention",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "attention"
+          },
+          "link": null
+        },
+        {
+          "label": "unload_model_after_generate",
+          "name": "unload_model_after_generate",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "unload_model_after_generate"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            49
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "qwen3-tts-comfyui",
+        "ver": "c7db6c2eb0f269d358c53bb71688dc95de4f7d07",
+        "Node name for S&R": "FB_Qwen3TTSVoiceDesign",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65,
+        "ue_properties": {
+          "widget_ue_connectable": {}
+        }
+      },
+      "widgets_values": [
+        "Esse aqui é com certeza o melhor modelo de Inteligência Artificial de código aberto pra criação de vozes. \nGera muito bem mesmo com áudios em português!",
+        "Character Name: Lin Huaiyue\nVoice Profile: Loud, resonant, low-pitched, powerful middle-aged male voice.\n\nBackground: Chief advisor to a key national scientific research project; a senior strategic scientist nearing seventy. He participated in major national technological breakthrough programs, witnessing over decades the difficult journey from playing catch-up to achieving independent innovation. Currently serves as a lifelong honorary member of the National Science and Technology Advisory Committee, still working on the front lines to mentor young talent and offer counsel for the country’s strategic development.\n\nAppearance: Upright posture, graying temples, and a resolute look shaped by the passage of time. Often wears a dark Zhongshan suit or simple formal attire. His gaze is calm yet sharp, and his every movement carries a natural sense of authority and composure.\n\nPersonality: Will of steel and unwavering conviction, never retreating in the face of challenges; deeply devoted to the nation and its future, closely tying his own fate to the rise and fall of the country; rigorous and self-disciplined, true to his word, with speech filled with responsibility and a sense of historical duty; outwardly cold but warm within—serious on the surface, yet placing great hopes in the younger generation and willing to be a stepping stone for others.",
+        "1.7B",
+        "auto",
+        "bf16",
+        "Portuguese",
+        12067820059297,
+        "fixed",
+        2048,
+        0.8,
+        20,
+        1,
+        1.05,
+        "auto",
+        false
+      ]
+    }
+  ],
+  "links": [
+    [
+      46,
+      24,
+      0,
+      40,
+      0,
+      "AUDIO"
+    ],
+    [
+      48,
+      39,
+      0,
+      42,
+      0,
+      "AUDIO"
+    ],
+    [
+      49,
+      38,
+      0,
+      43,
+      0,
+      "AUDIO"
+    ],
+    [
+      50,
+      40,
+      0,
+      44,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "01 - CLONAGEM DE VOZ",
+      "bounding": [
+        -1030,
+        -460,
+        346.3972268141389,
+        1053.3948446770105
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "02 - VOZES SALVAS",
+      "bounding": [
+        -677.15376482215,
+        -459.94865912927554,
+        327.10571000869754,
+        1052.901132099322
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "03 - CRIE UMA VOZ",
+      "bounding": [
+        -343.4274927886463,
+        -460.0967979668078,
+        290.57304699075394,
+        1053.7796744672942
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.5583431719795432,
+      "offset": [
+        2378.757145272923,
+        754.0658142124252
+      ]
+    },
+    "frontendVersion": "1.35.9",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true,
+    "ue_links": [],
+    "links_added_by_ue": []
+  },
+  "version": 0.4
+}

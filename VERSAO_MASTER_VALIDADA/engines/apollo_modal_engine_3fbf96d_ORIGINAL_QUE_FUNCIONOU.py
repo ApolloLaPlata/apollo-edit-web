@@ -1,11 +1,11 @@
-ï»¿"""
+"""
 Apollo Modal Router
 ===================
-Este â”œÂ® o Roteador Central (Gateway).
-Ele recebe requisiâ”œÂºâ”œÃes JSON da sua API/Backend Node/PHP/etc.,
-identifica qual modelo (LTX 13B ou Wan) o usuâ”œÃ­rio escolheu
-baseado no preset, e dispara o comando de forma assâ”œÂ¡ncrona (ou aguarda)
-direto para as GPUs especâ”œÂ¡ficas (L4 ou A100).
+Este +® o Roteador Central (Gateway).
+Ele recebe requisi+º+Áes JSON da sua API/Backend Node/PHP/etc.,
+identifica qual modelo (LTX 13B ou Wan) o usu+írio escolheu
+baseado no preset, e dispara o comando de forma ass+¡ncrona (ou aguarda)
+direto para as GPUs espec+¡ficas (L4 ou A100).
 # Modificado para forcar deploy
 """
 
@@ -25,7 +25,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imports top-level para garantir que o Modal faâ”œÂºa o trace e os publique junto com o app
+# Imports top-level para garantir que o Modal fa+ºa o trace e os publique junto com o app
 import backend.cloud_tools.engines.wan_engine
 import backend.cloud_tools.engines.ltx_engine
 import backend.cloud_tools.engines.flux_engine
@@ -47,7 +47,7 @@ router_image = (
 
 web_app = FastAPI(title="Apollo Render API")
 
-# Configuraâ”œÂºâ”œÃºo de CORS para permitir requisiâ”œÂºâ”œÃes do Frontend React (localhost ou Vercel/Netlify)
+# Configura+º+úo de CORS para permitir requisi+º+Áes do Frontend React (localhost ou Vercel/Netlify)
 web_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -137,7 +137,7 @@ def api_generate_image(req: ImageRequest):
             if final_res and final_res.get("status") == "success":
                 if not req.use_upscale:
                     # Sem upscale: retorna a imagem base diretamente
-                    print("[Router] use_upscale=False Ã”Ã‡Ã¶ retornando imagem base sem upscale.")
+                    print("[Router] use_upscale=False ÔÇö retornando imagem base sem upscale.")
                     yield json.dumps(final_res) + "\n"
                 else:
                     # FASE 2: UPSCALE (quando use_upscale=True)
@@ -172,7 +172,7 @@ def api_generate_image(req: ImageRequest):
                     except Exception as e:
                         yield json.dumps({"status": "error", "message": f"Erro no Roteamento Upscale: {str(e)}"}) + "\n"
             else:
-                # Falhou na geraâ”œÂºâ”œÃºo base, apenas retorna o erro
+                # Falhou na gera+º+úo base, apenas retorna o erro
                 if final_res:
                     yield json.dumps(final_res) + "\n"
                     
@@ -188,13 +188,13 @@ def api_generate_video(req: VideoRequest):
         model = req.model.lower()
         preset = req.preset.lower()
         
-        # Limite agressivo sugerido para I2V no LTX (Prevenâ”œÂºâ”œÃºo de VRAM OOM)
+        # Limite agressivo sugerido para I2V no LTX (Preven+º+úo de VRAM OOM)
         if model == "ltx" and preset == "fast" and req.image_base64:
             if req.duration > 2:
                 return {
                     "status": "error", 
                     "error_type": "invalid_duration",
-                    "message": f"Modo FAST I2V suporta no mâ”œÃ­ximo 2s. Use modo PRO para duraâ”œÂºâ”œÃes maiores."
+                    "message": f"Modo FAST I2V suporta no m+íximo 2s. Use modo PRO para dura+º+Áes maiores."
                 }
         
         if model == "ltx":
@@ -212,7 +212,7 @@ def api_generate_video(req: VideoRequest):
         else:
             return {"status": "error", "message": f"Modelo desconhecido: {model}. Use 'ltx' ou 'wan'."}
             
-        # Spawn assâ”œÂ¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
+        # Spawn ass+¡ncrono para evitar o limite de 150s do Modal HTTP Gateway
         job = engine.generate.spawn(
             prompt=req.prompt,
             image_base64=req.image_base64,
@@ -228,7 +228,7 @@ def api_generate_video(req: VideoRequest):
             while True:
                 try:
                     # Tenta pegar o resultado com timeout curto. 
-                    # Se nâ”œÃºo terminou, cai no TimeoutError e envia um espaâ”œÂºo (heartbeat)
+                    # Se n+úo terminou, cai no TimeoutError e envia um espa+ºo (heartbeat)
                     res = await fc.get.aio(timeout=5.0)
                     yield json.dumps(res)
                     break
@@ -263,7 +263,7 @@ def api_generate_tts(req: TTSRequest):
             while True:
                 try:
                     res = await fc.get.aio(timeout=5.0)
-                    # res â”œÂ® bytes de â”œÃ­udio. Devemos retornar em base64.
+                    # res +® bytes de +íudio. Devemos retornar em base64.
                     import base64
                     b64_audio = base64.b64encode(res).decode('utf-8')
                     yield json.dumps({"status": "success", "audio_base64": b64_audio})
@@ -341,7 +341,7 @@ def api_generate_multipass(req: MultiPassRequest):
                 
                 if res and res.get("status") == "success":
                     if not req.use_upscale:
-                        print("[Router Multipass] use_upscale=False Ã”Ã‡Ã¶ retornando imagem base sem upscale.")
+                        print("[Router Multipass] use_upscale=False ÔÇö retornando imagem base sem upscale.")
                         yield json.dumps(res) + "\n"
                     else:
                         try:

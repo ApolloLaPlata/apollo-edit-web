@@ -1,4 +1,4 @@
-﻿import os
+import os
 import glob
 
 def fix_mojibake(file_path):
@@ -7,7 +7,7 @@ def fix_mojibake(file_path):
     
     try:
         # Tenta decodificar o UTF-8 corrompido como latin-1 e reencodar
-        # Isso corrige quando caracteres utf-8 são lidos como ISO-8859-1 e depois salvos como UTF-8
+        # Isso corrige quando caracteres utf-8 s�o lidos como ISO-8859-1 e depois salvos como UTF-8
         text = content.decode('utf-8')
         fixed_text = text.encode('latin-1').decode('utf-8')
         
@@ -15,7 +15,7 @@ def fix_mojibake(file_path):
             f.write(fixed_text)
         print(f'Fixed {file_path}')
     except Exception as e:
-        pass # Se falhar, nÃ£o era esse tipo de corrupÃ§Ã£o
+        pass # Se falhar, não era esse tipo de corrupção
 
 for root, _, files in os.walk('web_ui'):
     for file in files:

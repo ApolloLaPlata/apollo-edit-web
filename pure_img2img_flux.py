@@ -1,4 +1,4 @@
-﻿import json
+import json
 
 workflow = {
   "9": {

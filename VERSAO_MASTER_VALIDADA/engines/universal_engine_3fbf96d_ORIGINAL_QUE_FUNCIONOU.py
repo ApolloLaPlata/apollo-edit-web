@@ -1,4 +1,4 @@
-ï»¿import modal
+import modal
 import os
 import sys
 
@@ -7,7 +7,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imagem "Gorda" (Omni-Image) com nâ”œâ”‚s populares
+# Imagem "Gorda" (Omni-Image) com n+¦s populares
 universal_comfy_image = (
     modal.Image.debian_slim(python_version="3.10")
     .pip_install("pillow", "requests", "PyYAML", "pytz") \
@@ -135,13 +135,13 @@ class UniversalComfyEngine:
         # Garante que a pasta upscale_models existe no volume
         os.makedirs("/comfyui_models/upscale_models", exist_ok=True)
         
-        # Baixa o 4x-UltraSharp se nâ”œÃºo existir
+        # Baixa o 4x-UltraSharp se n+úo existir
         model_path = "/comfyui_models/upscale_models/4x-UltraSharp.pth"
         if not os.path.exists(model_path):
             print(f"[UniversalComfyEngine] Baixando 4x-UltraSharp para o volume {model_path}...")
             import urllib.request
             urllib.request.urlretrieve("https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth", model_path)
-            print("[UniversalComfyEngine] Download concluâ”œÂ¡do.")
+            print("[UniversalComfyEngine] Download conclu+¡do.")
             
         print("[UniversalComfyEngine] Caching models into RAM for ultra-fast cold starts...")
         cache_files = [
@@ -345,8 +345,8 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                                             final_b64 = current_base_b64
                                             iter_success = True
                                         break
-                                    # outputs existe mas sem imagens ainda Ã”Ã‡Ã¶ continua esperando
-                                # prompt_id nao esta no historico ainda Ã”Ã‡Ã¶ continua esperando
+                                    # outputs existe mas sem imagens ainda ÔÇö continua esperando
+                                # prompt_id nao esta no historico ainda ÔÇö continua esperando
                         except Exception as poll_err:
                             print(f"[Poll] Erro temporario: {poll_err}")
                         time.sleep(3)
@@ -554,7 +554,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                                 elif isinstance(msg, dict) and msg.get("type") == "execution_error":
                                     error_details.append(str(msg))
                             
-                            error_str = " | ".join(error_details) if error_details else "Execuâ”œÂºâ”œÃºo falhou ou nâ”œÃºo retornou outputs."
+                            error_str = " | ".join(error_details) if error_details else "Execu+º+úo falhou ou n+úo retornou outputs."
                             
                             return {"status": "error", "message": error_str}
                     else:
@@ -564,7 +564,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
                         pending = q_data.get("queue_running", []) + q_data.get("queue_pending", [])
                         is_in_queue = any(q[1] == prompt_id for q in pending)
                         if not is_in_queue:
-                            return {"status": "error", "message": "Prompt falhou silenciosamente (desapareceu da fila e nâ”œÃºo estâ”œÃ­ no histâ”œâ”‚rico)."}
+                            return {"status": "error", "message": "Prompt falhou silenciosamente (desapareceu da fila e n+úo est+í no hist+¦rico)."}
                 except Exception as ex:
                     print(f"Polling warning: {ex}")
                 time.sleep(2)

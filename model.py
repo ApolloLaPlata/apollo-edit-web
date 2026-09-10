@@ -1,4 +1,4 @@
-﻿#Original code can be found on: https://github.com/black-forest-labs/flux
+#Original code can be found on: https://github.com/black-forest-labs/flux
 
 from dataclasses import dataclass
 

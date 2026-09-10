@@ -1,24 +1,11 @@
-import sys
+﻿import os
 
-fixes = {
-    'Ã£': 'ã', 'Ãµ': 'õ', 'Ã§': 'ç', 'Ã¡': 'á', 'Ã©': 'é', 
-    'Ã­': 'í', 'Ã³': 'ó', 'Ãº': 'ú', 'Ã¢': 'â', 'Ãª': 'ê', 
-    'Ã´': 'ô', 'Ã ': 'À', 'Ã ': 'à', 'Ã‰': 'É', 'Ã“': 'Ó', 
-    'Ã‡': 'Ç', 'â€”': '—', 'ðŸ”’': '🔒', 'ðŸ‘‘': '👑', 
-    'ðŸ‘¤': '👤', 'ðŸŽ¥': '🎥', 'ðŸ§ ': '🧠', 'ðŸ””': '🔔', 
-    'ðŸ‘ ï¸ ': '👁️', 'ðŸ“¥': '📥', 'âœ–': '✖', 'âž•': '➕', 
-    'âš™ï¸ ': '⚙️', 'ðŸŽ™ï¸ ': '🎙️', 'ðŸŽšï¸ ': '🎛️', 
-    'âˆž': '∞', 'ðŸ”Š': '🔊', 'ðŸ•´ï¸ ': '🕴️', 'âœ¨': '✨', 
-    'âš¡': '⚡', 'ðŸ—£ï¸ ': '🗣️', 'ã€°ï¸': '〰️', 'ðŸŽ§': '🎧',
-    'â¬†ï¸': '⬆️'
-}
+file_path = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\api\routes_subtitles.py'
+with open(file_path, 'rb') as f:
+    raw_content = f.read()
 
-with open(sys.argv[1], 'r', encoding='utf-8') as f:
-    text = f.read()
-
-for k, v in fixes.items():
-    text = text.replace(k, v)
-
-with open(sys.argv[1], 'w', encoding='utf-8') as f:
-    f.write(text)
-print("File fixed exactly with string replace.")
+# Tenta decodificar ignorando erros e salvar como utf-8 limpo
+text_content = raw_content.decode('utf-8', errors='replace')
+with open(file_path, 'w', encoding='utf-8') as f:
+    f.write(text_content)
+print("Fix encoding de routes_subtitles.py")

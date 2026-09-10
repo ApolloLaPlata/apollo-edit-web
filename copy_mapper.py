@@ -1,4 +1,4 @@
-﻿import ast
+import ast
 filepath = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\COPIA BACKUP TUTORIAL DAS COISAS\APOLLO_EDIT_WEB 14\temp_restore\aba_mapeador_automatico.py'
 with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
     content = f.read()

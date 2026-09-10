@@ -1,0 +1,414 @@
+✓ Initialized. View run at 
+https://modal.com/apps/descarganews/main/ap-z1XMoor9tuhdp1E0APWjyC
+Building image im-nRtHMoZVrPXR41l6cQ97RM
+
+=> Step 0: FROM base
+
+=> Step 1: RUN python -m pip install hf-transfer huggingface_hub
+Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+Collecting hf-transfer
+  Downloading http://pypi-mirror.modal.local:5555/simple/hf-transfer/hf_transfer-0.1.9-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.7 kB)
+Collecting huggingface_hub
+  Downloading http://pypi-mirror.modal.local:5555/simple/huggingface-hub/huggingface_hub-1.27.0-py3-none-any.whl.metadata (16 kB)
+Collecting click<9.0.0,>=8.4.2 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/click/click-8.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting filelock>=3.10.0 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/filelock/filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+Collecting fsspec>=2023.5.0 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/fsspec/fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+Collecting hf-xet<2.0.0,>=1.5.2 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/hf-xet/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Collecting httpx<1,>=0.23.0 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/httpx/httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting packaging>=20.9 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/packaging/packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pyyaml>=5.1 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/pyyaml/pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting tqdm>=4.42.1 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/tqdm/tqdm-4.70.0-py3-none-any.whl.metadata (57 kB)
+Collecting typing-extensions>=4.1.0 (from huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/typing-extensions/typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting anyio (from httpx<1,>=0.23.0->huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/anyio/anyio-4.14.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting certifi (from httpx<1,>=0.23.0->huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/certifi/certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting httpcore==1.* (from httpx<1,>=0.23.0->huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/httpcore/httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting idna (from httpx<1,>=0.23.0->huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/idna/idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->huggingface_hub)
+  Downloading http://pypi-mirror.modal.local:5555/simple/h11/h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/hf-transfer/hf_transfer-0.1.9-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 516.1 MB/s  0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/huggingface-hub/huggingface_hub-1.27.0-py3-none-any.whl (784 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 784.9/784.9 kB 671.5 MB/s  0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/click/click-8.4.2-py3-none-any.whl (119 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/hf-xet/hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 500.7 MB/s  0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/httpx/httpx-0.28.1-py3-none-any.whl (73 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/httpcore/httpcore-1.0.9-py3-none-any.whl (78 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/filelock/filelock-3.32.3-py3-none-any.whl (98 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/fsspec/fsspec-2026.7.0-py3-none-any.whl (206 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/h11/h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/packaging/packaging-26.3-py3-none-any.whl (129 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/pyyaml/pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 515.2 MB/s  0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/tqdm/tqdm-4.70.0-py3-none-any.whl (80 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/typing-extensions/typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/anyio/anyio-4.14.2-py3-none-any.whl (125 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/idna/idna-3.18-py3-none-any.whl (65 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/certifi/certifi-2026.7.22-py3-none-any.whl (136 kB)
+Installing collected packages: typing-extensions, tqdm, pyyaml, packaging, idna, hf-xet, hf-transfer, h11, fsspec, filelock, click, certifi, httpcore, anyio, httpx, huggingface_hub
+
+Successfully installed anyio-4.14.2 certifi-2026.7.22 click-8.4.2 filelock-3.32.3 fsspec-2026.7.0 h11-0.16.0 hf-transfer-0.1.9 hf-xet-1.6.0 httpcore-1.0.9 httpx-0.28.1 huggingface_hub-1.27.0 idna-3.18 packaging-26.3 pyyaml-6.0.3 tqdm-4.70.0 typing-extensions-4.16.0
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+Saving image...
+Image saved, took 380.72ms
+
+Built image im-nRtHMoZVrPXR41l6cQ97RM in 3.63s
+
+
+Building image im-jIwyHvaquzyRN1LSXilUYC
+
+=> Step 0: FROM base
+
+=> Step 1: ENV HF_HUB_ENABLE_HF_TRANSFER=1
+Saving image...
+Image saved, took 480.09ms
+
+Built image im-jIwyHvaquzyRN1LSXilUYC in 1.14s
+
+
+✓ Created objects.
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\download_yue_volume.py
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\image_flux2_text_to_image_upscale.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\FLUX 2 DEV\texto_flux2\image_flux2_text_to_image.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\apollo_flux2_klein_upscale.json
+├── 🔨 Created mount E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\Comfyui Workflow 
+│   API\flux_upscale_ultrasharp.json
+├── 🔨 Created mount PythonPackage:backend
+├── 🔨 Created function VLLMEngine.*.
+├── 🔨 Created function F5TTSEngine.*.
+├── 🔨 Created web function apollo_api => 
+│   https://descarganews--apollo-render-router-apollo-api-dev.modal.run
+├── 🔨 Created function UniversalComfyEngine.*.
+├── 🔨 Created web function api_llm_stream => 
+│   https://descarganews--apollo-api-llm-stream-dev.modal.run
+├── 🔨 Created function WhisperTurboSTT.*.
+├── 🔨 Created function BlogUniversalComfyEngine.*.
+├── 🔨 Created web function api_f5_tts => 
+│   https://descarganews--apollo-api-f5-tts-dev.modal.run
+├── 🔨 Created function download_xtts.
+├── 🔨 Created Web Function URL for WhisperTurboSTT.api_transcribe => 
+│   https://descarganews--apollo-api-transcribe-dev.modal.run
+├── 🔨 Created function XttsEngine.*.
+├── 🔨 Created Web Function URL for XttsEngine.api_xtts => 
+│   https://descarganews--apollo-api-xtts-dev.modal.run
+└── 🔨 Created function download_yue.
+Memory snapshots are disabled for ephemeral apps. Deploy your app with `modal deploy` to enable memory snapshots.
+Iniciando rotina de download para o apollo_volume...
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 362, in hydrate_function
+    service = get_function_service(function_def, _client)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_container_entrypoint.py", line 340, in get_function_service
+    service = import_single_function_service(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/user_code_imports.py", line 509, in import_single_function_service
+    module = importlib.import_module(function_def.module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/root/download_yue_volume.py", line 2, in <module>
+    from backend.cloud_tools.modal_app import app, apollo_volume
+ModuleNotFoundError: No module named 'backend'
+Runner failed with exception: ModuleNotFoundError("No module named 'backend'")

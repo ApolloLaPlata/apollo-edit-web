@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 
 source = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\COPIA BACKUP TUTORIAL DAS COISAS\APOLLO_EDIT_WEB 14\temp_restore\ai_director_pipeline.py'

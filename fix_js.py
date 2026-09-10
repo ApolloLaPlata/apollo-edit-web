@@ -1,87 +1,87 @@
-﻿import sys
+﻿import os
 
-filepath = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\frontend\apollo_agents.js'
-with open(filepath, 'r', encoding='utf-8') as f:
+file_path = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\modal_ai_studio.html'
+with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
     content = f.read()
 
-target = '''    } else {
-        // Lógica de Rotação de Chaves'''
-
-if target not in content:
-    print('ALVO NAO ENCONTRADO NO ARQUIVO')
-    sys.exit(1)
-
-# Achar onde fecha o bloco else
-# O bloco do else começa em "    } else {" e tem um "catch (err) {" e termina em "continue; // Erro de rede"
-end_marker = '                continue; // Erro de rede, tenta a próxima chave\n            }\n        }'
-
-start_idx = content.find(target)
-end_idx = content.find(end_marker, start_idx) + len(end_marker)
-
-replacement = '''    } else {
-        try {
-            const openAiHistory = geminiHistory.map(msg => ({
-                role: msg.role === 'model' ? 'assistant' : 'user',
-                content: msg.parts[0].text
-            }));
+js_logic = '''
+        function updateMusicUI() {
+            const model = document.getElementById('musicModel').value;
+            const modelText = document.getElementById('musicModel').options[document.getElementById('musicModel').selectedIndex].text;
+            document.getElementById('musicBadgeModel').textContent = modelText;
             
-            const response = await fetch('/api/lightning_proxy', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: 'nvidia-nemotron-3-ultra-550b-a55b',
-                    system_prompt: finalPrompt,
-                    messages: openAiHistory.length > 0 ? openAiHistory : [{role: 'user', content: 'Olá'}]
-                })
-            });
-
-            const data = await response.json();
-
-            if (response.status === 200 && !data.error) {
-                document.getElementById(typingId).remove();
-                let aiText = data.choices[0].message.content;
-                
-                // TELEPATIA CORPORATIVA
-                const orderRegex = /\[ORDEM PARA O\s+([A-Z]+):\s*(.*?)\]/gi;
-                let match;
-                while ((match = orderRegex.exec(aiText)) !== null) {
-                    const targetAgent = match[1].toUpperCase();
-                    const orderText = match[2];
-                    if (AGENTS[targetAgent] && targetAgent !== 'PRIME') {
-                        let targetCache = memCache[targetAgent];
-                        if(!targetCache) {
-                            const ls = localStorage.getItem('apollo_agent_' + targetAgent);
-                            targetCache = ls ? JSON.parse(ls) : [{role: 'assistant', content: AGENTS[targetAgent].initialMsg}];
-                        }
-                        targetCache.push({ role: 'user', content: [MENSAGEM DO CEO - APOLLO PRIME]:  });
-                        localStorage.setItem('apollo_agent_' + targetAgent, JSON.stringify(targetCache));
-                        if(memCache[targetAgent]) memCache[targetAgent] = targetCache;
-                        
-                        const tWindow = document.getElementById(AGENTS[targetAgent].windowId);
-                        if(tWindow) {
-                            const div = document.createElement('div');
-                            div.className = "bg-blue-900/50 p-2 rounded border border-blue-500 text-left text-white mt-2 text-sm shadow-[0_0_10px_rgba(59,130,246,0.5)]";
-                            div.innerHTML = <span class="text-blue-400 font-bold">⚡ [NOVA ORDEM DO CEO]:</span> ;
-                            tWindow.appendChild(div);
-                        }
-                        aiText += \\n\\n*(📡 Telepatia: Ordem executiva repassada com sucesso para a mente do )*;
-                    }
-                }
-
-                renderBotMessage(chatWindow, agent, aiText);
-                memCache[agentId].push({ role: 'model', parts: [{text: aiText}] });
-                success = true;
+            const lyricsContainer = document.getElementById('lyricsContainer');
+            const refAudioContainer = document.getElementById('refAudioContainer');
+            
+            if (model === 'ace-step') {
+                lyricsContainer.style.display = 'block';
+                refAudioContainer.style.display = 'block';
+            } else if (model === 'minimax') {
+                lyricsContainer.style.display = 'none';
+                refAudioContainer.style.display = 'none';
             } else {
-                lastError = data.error ? data.error.message : HTTP ;
+                lyricsContainer.style.display = 'none';
+                refAudioContainer.style.display = 'block';
             }
-        } catch (err) {
-            lastError = err.message;
-        }'''
+        }
 
-new_content = content[:start_idx] + replacement + content[end_idx:]
+        async function generateMusicTest() {
+            const model = document.getElementById('musicModel').value;
+            const prompt = document.getElementById('musicPrompt').value;
+            const lyrics = document.getElementById('musicLyrics').value;
+            const refFile = document.getElementById('musicRefFile').files[0];
+            
+            if (!prompt.trim()) {
+                alert("Por favor, digite um prompt para gerar o áudio.");
+                return;
+            }
+            if (model === 'ace-step' && !lyrics.trim()) {
+                alert("O modelo ACE-Step exige uma letra (Lyrics).");
+                return;
+            }
 
-with open(filepath, 'w', encoding='utf-8') as f:
-    f.write(new_content)
-print('SUBSTITUIDO COM SUCESSO')
+            document.getElementById('musicResultCard').style.display = 'block';
+            document.getElementById('musicLoading').style.display = 'block';
+            document.getElementById('musicOutput').style.display = 'none';
+            document.getElementById('musicError').style.display = 'none';
+            
+            const formData = new FormData();
+            formData.append('model', model);
+            formData.append('prompt', prompt);
+            if (lyrics) formData.append('lyrics', lyrics);
+            if (refFile) formData.append('ref_audio', refFile);
+
+            try {
+                const response = await fetch('/api/audio/lab_test', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                document.getElementById('musicLoading').style.display = 'none';
+                
+                if (data.success) {
+                    document.getElementById('musicOutput').style.display = 'block';
+                    document.getElementById('musicPlayer').src = data.audio_url;
+                } else {
+                    document.getElementById('musicError').style.display = 'block';
+                    document.getElementById('musicError').textContent = data.error || 'Erro desconhecido na geração.';
+                }
+            } catch (err) {
+                document.getElementById('musicLoading').style.display = 'none';
+                document.getElementById('musicError').style.display = 'block';
+                document.getElementById('musicError').textContent = 'Erro de rede: ' + err.message;
+            }
+        }
+'''
+
+if "updateMusicUI()" not in content:
+    content = content.replace("function showTab(name) {", js_logic + "\n        function showTab(name) {")
+
+# Update tabs array inside showTab
+if "['img','vid','audio','music']" not in content:
+    content = content.replace("['img','vid','audio']", "['img','vid','audio','music']")
+
+with open(file_path, 'w', encoding='utf-8') as f:
+    f.write(content)
+print("JS inserido com sucesso!")

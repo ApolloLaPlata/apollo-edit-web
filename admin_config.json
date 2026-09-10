@@ -8,10 +8,10 @@
   "api_config": {
     "lightning_chat": {
       "api_keys": [
-        "16338b74-3f36-4c89-84db-a8e00b099058",
-        "a26bf6c5-7c2d-4889-8645-5917a33c6ddc",
-        "945b47c8-4552-4491-b2d2-ba91b045ac89",
-        "b0891012-db6f-48e9-aed4-4ebe53b841b6"
+        "sk-lit-8d672728-66a9-467f-9430-8438dbdf2380",
+        "sk-lit-3d061abb-d92d-4d66-a79a-7474664caf81",
+        "sk-lit-de1aaa27-2e2c-489e-9d1d-90b9127eb398",
+        "sk-lit-baf54912-3c66-4e6d-88cf-00b93868c9a0"
       ],
       "base_url": "https://lightning.ai/api/v1/chat/completions"
     },

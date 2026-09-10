@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 
 def restore_force_cpu(gold_file, target_file):
     with open(gold_file, 'r', encoding='utf-8') as f:

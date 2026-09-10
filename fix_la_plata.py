@@ -1,4 +1,4 @@
-ï»¿import sys
+import sys
 
 filepath = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\frontend\la_plata.js'
 with open(filepath, 'r', encoding='utf-8') as f:
@@ -14,7 +14,7 @@ target_img = '''    const response = await fetch(https://generativelanguage.goog
             contents: [{
                 parts: [
                     {
-                        text: "Analise esta imagem e crie uma descriÃ§Ã£o detalhada e profissional que possa ser usada para recriar a imagem com IA. Inclua detalhes sobre: composiÃ§Ã£o, cores, iluminaÃ§Ã£o, estilo, elementos visuais, texturas, atmosfera e qualquer outro aspecto importante. A descriÃ§Ã£o deve ser precisa e tÃ©cnica, adequada para geraÃ§Ã£o de imagens com IA."
+                        text: "Analise esta imagem e crie uma descrição detalhada e profissional que possa ser usada para recriar a imagem com IA. Inclua detalhes sobre: composição, cores, iluminação, estilo, elementos visuais, texturas, atmosfera e qualquer outro aspecto importante. A descrição deve ser precisa e técnica, adequada para geração de imagens com IA."
                     },
                     {
                         inline_data: {
@@ -35,7 +35,7 @@ replacement_img = '''    const response = await fetch('/api/lightning_proxy', {
             messages: [{
                 role: 'user',
                 content: [
-                    { type: 'text', text: "Analise esta imagem e crie uma descriÃ§Ã£o detalhada e profissional que possa ser usada para recriar a imagem com IA. Inclua detalhes sobre: composiÃ§Ã£o, cores, iluminaÃ§Ã£o, estilo, elementos visuais, texturas, atmosfera e qualquer outro aspecto importante. A descriÃ§Ã£o deve ser precisa e tÃ©cnica, adequada para geraÃ§Ã£o de imagens com IA." },
+                    { type: 'text', text: "Analise esta imagem e crie uma descrição detalhada e profissional que possa ser usada para recriar a imagem com IA. Inclua detalhes sobre: composição, cores, iluminação, estilo, elementos visuais, texturas, atmosfera e qualquer outro aspecto importante. A descrição deve ser precisa e técnica, adequada para geração de imagens com IA." },
                     { type: 'image_url', image_url: { url: data:;base64, } }
                 ]
             }]

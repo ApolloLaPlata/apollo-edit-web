@@ -1,0 +1,4 @@
+interface:
+  display_name: "H7D Microconto 50s"
+  short_description: "Roteiros curtos de dark fantasy com dilema moral e pacote de postagem."
+  default_prompt: "Crie um microconto de 50s para o Historias de 7 Dias com gancho, virada e pacote de postagem."
