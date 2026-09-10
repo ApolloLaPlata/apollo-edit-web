@@ -5701,7 +5701,16 @@ async def audio_generate(req: Request):
             resp = await client.post(modal_url, json=payload)
             resp.raise_for_status()
             
-            audio_data = resp.content
+            import base64
+            import json
+            lines = [line for line in resp.text.split('\n') if line.strip()]
+            last_json = json.loads(lines[-1])
+            audio_b64 = last_json.get('audio_base64')
+            
+            if not audio_b64:
+                return {"success": False, "error": "Resposta inválida da nuvem (sem áudio)"}
+                
+            audio_data = base64.b64decode(audio_b64)
             filename = f"gen_music_{uuid.uuid4().hex[:8]}.mp3"
             
             os.makedirs("temp", exist_ok=True)
