@@ -15,6 +15,10 @@
             "destination": "http://163.176.135.59/media/$1"
         },
         {
+            "source": "/temp/(.*)",
+            "destination": "http://163.176.135.59/temp/$1"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "http://163.176.135.59/api/$1"
         },
