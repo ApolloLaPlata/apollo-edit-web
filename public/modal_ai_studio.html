@@ -1571,22 +1571,24 @@ document.addEventListener('DOMContentLoaded', () => {
             musicRunning = true;
             let successCount = 0;
             
-            window.batchGeneratedFiles = [];
+            if (!window.batchGeneratedFiles) window.batchGeneratedFiles = [];
             document.getElementById('previewPlaceholder').style.display = 'none';
             const preview = document.getElementById('previewContainer');
             preview.style.display = 'block';
             
-            preview.innerHTML = `
-                <div style="padding: 20px;">
-                    <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados da Sessão</h2>
-                    <div id="batchDownloadAllContainer" style="text-align:center; margin-bottom: 20px; display:none;">
-                        <button class="btn btn-primary" onclick="downloadAllBatchFiles()" style="font-size: 1.2rem; padding: 15px 30px; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);">
-                            💾 Baixar Todas as Músicas
-                        </button>
+            if (!document.getElementById('batchTracksList')) {
+                preview.innerHTML = `
+                    <div style="padding: 20px;">
+                        <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados da Sessão</h2>
+                        <div id="batchDownloadAllContainer" style="text-align:center; margin-bottom: 20px; display:none;">
+                            <button class="btn btn-primary" onclick="downloadAllBatchFiles()" style="font-size: 1.2rem; padding: 15px 30px; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);">
+                                💾 Baixar Todas as Músicas
+                            </button>
+                        </div>
+                        <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
                     </div>
-                    <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
-                </div>
-              `;
+                  `;
+            }
             
             for (let i = 0; i < prompts.length; i++) {
                 if (!musicRunning) break;
@@ -1614,12 +1616,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 logMusicMaster("[" + (i+1) + "/" + prompts.length + "] Gerando... (" + finalDuration + "s)");
                 if (prompts.length > 1) updateMusicProgress(i, prompts.length);
                 
+                log("🚀 Iniciando requisição para gerar música no motor: " + engine, "info");
+                const waitInterval = setInterval(() => {
+                    log("⏳ Aguardando... Motor está processando a faixa " + (i+1) + ". (O modelo leva em média 1 a 3 minutos)", "warn");
+                }, 15000);
+                
                 try {
                     const response = await fetch("/api/audio/generate", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ prompt: p, engine, duration: finalDuration })
                     });
+                    clearInterval(waitInterval);
                     
                     const result = await response.json();
                     if (result.success) {
@@ -1650,7 +1658,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro: " + result.error);
                     }
                 } catch(e) {
+                    clearInterval(waitInterval);
                     logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro na requisição: " + e);
+                    log("❌ Erro ao comunicar com API de áudio: " + e, "error");
                 }
                 
                 if (prompts.length > 1) updateMusicProgress(i+1, prompts.length);
@@ -1671,6 +1681,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
