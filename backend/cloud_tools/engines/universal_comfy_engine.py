@@ -1,4 +1,4 @@
-﻿import modal
+import modal
 import os
 import urllib.request
 import json
@@ -19,7 +19,7 @@ except Exception:
 from backend.cloud_tools.engines.flux_engine import flux2_comfy_image
 comfy_universal_image = flux2_comfy_image
 
-@app.cls(gpu="h100", timeout=1200,
+@app.cls(gpu="L4", timeout=1200,
  image=comfy_universal_image, scaledown_window=30
 )
 class UniversalComfyEngine:
@@ -31,6 +31,9 @@ class UniversalComfyEngine:
         
         print("[UniversalComfyEngine] Iniciando servidor ComfyUI headless...")
         subprocess.check_call(["pip", "install", "websocket-client"])
+        print("[UniversalComfyEngine] Instalando patch de torch==2.5.1 por causa do comfy-kitchen...")
+        subprocess.check_call(["pip", "install", "torch==2.5.1", "torchvision==0.20.1", "torchaudio==2.5.1", "--index-url", "https://download.pytorch.org/whl/cu121", "--upgrade"])
+        
         self.log_file = open("/tmp/comfy_log.txt", "w")
         self.server_process = subprocess.Popen(
             ["python", "main.py", "--listen", "127.0.0.1", "--port", "8188"],
@@ -39,10 +42,9 @@ class UniversalComfyEngine:
             stderr=subprocess.STDOUT
         )
         
-        for i in range(30):
+        for i in range(90):
             try:
-                urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2
-)
+                urllib.request.urlopen("http://127.0.0.1:8188/system_stats", timeout=2)
                 print("[UniversalComfyEngine] Servidor online!")
                 break
             except:
@@ -150,30 +152,44 @@ class UniversalComfyEngine:
             
         if prompt_id in hist:
             outputs = hist[prompt_id]['outputs']
-            if output_node_id in outputs and 'images' in outputs[output_node_id]:
-                img_info = outputs[output_node_id]['images'][0]
-                filename = img_info['filename']
-                subfolder = img_info.get('subfolder', '')
+            if output_node_id in outputs:
+                node_out = outputs[output_node_id]
+                file_info = None
+                output_type = None
                 
-                img_path = os.path.join("/comfyui/output", subfolder, filename)
-                with open(img_path, "rb") as f:
-                    img_bytes = f.read()
-                b64 = base64.b64encode(img_bytes).decode("utf-8")
-                
-                render_time = time.time() - t0
-                yield {
-                    "type": "result",
-                    "status": "success",
-                    "image_base64": b64,
-                    "render_time_seconds": round(render_time, 2)
-                }
+                if 'images' in node_out:
+                    file_info = node_out['images'][0]
+                    output_type = "image"
+                elif 'gifs' in node_out:
+                    file_info = node_out['gifs'][0]
+                    output_type = "video"
+                    
+                if file_info:
+                    filename = file_info['filename']
+                    subfolder = file_info.get('subfolder', '')
+                    
+                    file_path = os.path.join("/comfyui/output", subfolder, filename)
+                    with open(file_path, "rb") as f:
+                        file_bytes = f.read()
+                    b64 = base64.b64encode(file_bytes).decode("utf-8")
+                    
+                    render_time = time.time() - t0
+                    yield {
+                        "type": "result",
+                        "status": "success",
+                        f"{output_type}_base64": b64,
+                        "filename": filename,
+                        "render_time_seconds": round(render_time, 2)
+                    }
+                else:
+                    yield {"type": "error", "message": f"Output vazio para o no {output_node_id}"}
             else:
-                yield {"type": "error", "message": f"NÃ³ de output {output_node_id} nÃ£o gerou imagens."}
+                yield {"type": "error", "message": f"No de output {output_node_id} nao encontrou dados."}
         else:
             yield {"type": "error", "message": "HistÃ³rico nÃ£o encontrado."}
 
 @app.function(
-    gpu="h100", 
+    gpu="L4", 
     timeout=3600, 
     image=comfy_universal_image, 
     
@@ -183,4 +199,6 @@ class UniversalComfyEngine:
 def serve_gui():
     import subprocess
     print("[ComfyUI GUI] Iniciando servidor publico na Modal...")
+    print("[ComfyUI GUI] Instalando patch de torch==2.5.1 por causa do comfy-kitchen...")
+    subprocess.check_call(["pip", "install", "torch==2.5.1", "torchvision==0.20.1", "torchaudio==2.5.1", "--index-url", "https://download.pytorch.org/whl/cu121", "--upgrade"])
     subprocess.check_call(["python", "main.py", "--listen", "0.0.0.0", "--port", "8188"], cwd="/comfyui")
