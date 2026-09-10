@@ -5727,8 +5727,8 @@ async def audio_generate(req: Request):
                 lyrics_block = parts[1].strip()
                 
                 # Pegar a primeira linha válida da letra como título
-                lyrics_lines = [l.strip() for l in lyrics_block.split('
-') if l.strip() and not l.strip().startswith('[')]
+                lyrics_lines = [l.strip() for l in lyrics_block.split(chr(10)) if l.strip() and not l.strip().startswith('[')]
+
                 if lyrics_lines:
                     title = lyrics_lines[0][:30].title()
                 else:
@@ -5816,75 +5816,6 @@ async def audio_lab_test(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 # Todo o conteÃƒÂºdo de web_ui serÃƒÂ¡ servido estaticamente (Deve ser a ÃƒÅ¡LTIMA rota)
-app.mount("/", StaticFiles(directory=WEB_UI_DIR), name="static")
-
-def start_server(workspace_name, workspace_path, port=8080):
-    """FunÃƒÂ§ÃƒÂ£o chamada pelo apollo_studio.py para rodar o uvicorn."""
-    global CURRENT_WORKSPACE, CURRENT_WORKSPACE_PATH
-    CURRENT_WORKSPACE = workspace_name
-    CURRENT_WORKSPACE_PATH = workspace_path
-    
-    # Iniciar o Cloud Sync Worker (Fase VIII)
-    try:
-        from cloud_sync_worker import CloudSyncWorker
-        worker = CloudSyncWorker()
-        worker.start()
-        print("Cloud Sync Worker (MÃ³dulo C) iniciado com sucesso no background.")
-    except Exception as e:
-        print(f"Erro ao iniciar Cloud Sync Worker: {e}")
-    
-    import uvicorn
-    # log_level = "warning" evita spamar o terminal
-    uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--workspace_name', type=str, default="ADM APOLLO EDIT WEB")
-    parser.add_argument('--workspace_path', type=str, default=os.path.join(BASE_DIR, "Workspaces", "ADM APOLLO EDIT WEB"))
-    args, _ = parser.parse_known_args()
-    
-    start_server(args.workspace_name, args.workspace_path)
-
-# =====================================================================
-# ROTAS INTELIGENTES PARA MÚSICA (LLM)
-# =====================================================================
-
-@app.post("/api/music/auto_tag_lyrics")
-async def music_auto_tag_lyrics(req: Request):
-    try:
-        body = await req.json()
-        raw_lyrics = body.get("lyrics", "")
-        if not raw_lyrics:
-            return {"success": False, "error": "Letra vazia"}
-            
-        import httpx
-        system_prompt = """Você é um especialista em estruturação musical (Suno AI, Stable Audio).
-A tarefa é ler a letra fornecida pelo usuário e adicionar TAGS DE ESTRUTURA, como [Intro], [Verse], [Chorus], [Bridge], [Guitar Solo], [Drop], [Outro].
-Não modifique as palavras originais da letra. Apenas insira as tags (entre colchetes) antes de cada estrofe ou seção.
-Retorne APENAS a letra estruturada."""
-
-        proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
-        async with httpx.AsyncClient(timeout=60) as client:
-            resp = await client.post(proxy_url, json={
-                "model": "meta-llama/Llama-3-70b-chat-hf",
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": raw_lyrics}
-                ]
-            })
-            
-            if resp.status_code == 200:
-                data = resp.json()
-                processed = data.get("choices", [{}])[0].get("message", {}).get("content", raw_lyrics)
-                return {"success": True, "structured_lyrics": processed.strip()}
-            else:
-                return {"success": False, "error": f"Erro do LLM: {resp.status_code}"}
-                
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-
 @app.post("/api/music/generate_batch_ideas")
 async def music_generate_batch_ideas(req: Request):
     try:
@@ -5915,7 +5846,7 @@ NÃO USE crases de formatação Markdown. Retorne puramente o texto JSON.
         proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
         async with httpx.AsyncClient(timeout=120) as client:
             resp = await client.post(proxy_url, json={
-                "model": "meta-llama/Llama-3-70b-chat-hf",
+                "model": "nvidia-nemotron-3-ultra-550b-a55b",
                 "messages": [
                     {"role": "system", "content": system_prompt}
                 ]
@@ -5938,5 +5869,80 @@ NÃO USE crases de formatação Markdown. Retorne puramente o texto JSON.
                 
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+
+
+@app.post("/api/music/auto_tag_lyrics")
+async def music_auto_tag_lyrics(req: Request):
+    try:
+        body = await req.json()
+        raw_lyrics = body.get("lyrics", "")
+        if not raw_lyrics:
+            return {"success": False, "error": "Letra vazia"}
+            
+        import httpx
+        system_prompt = """Você é um especialista em estruturação musical (Suno AI, Stable Audio).
+A tarefa é ler a letra fornecida pelo usuário e adicionar TAGS DE ESTRUTURA, como [Intro], [Verse], [Chorus], [Bridge], [Guitar Solo], [Drop], [Outro].
+Não modifique as palavras originais da letra. Apenas insira as tags (entre colchetes) antes de cada estrofe ou seção.
+Retorne APENAS a letra estruturada."""
+
+        proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
+        async with httpx.AsyncClient(timeout=60) as client:
+            resp = await client.post(proxy_url, json={
+                "model": "nvidia-nemotron-3-ultra-550b-a55b",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": raw_lyrics}
+                ]
+            })
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                processed = data.get("choices", [{}])[0].get("message", {}).get("content", raw_lyrics)
+                return {"success": True, "structured_lyrics": processed.strip()}
+            else:
+                return {"success": False, "error": f"Erro do LLM: {resp.status_code}"}
+                
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+app.mount("/", StaticFiles(directory=WEB_UI_DIR), name="static")
+
+# =====================================================================
+# ROTAS INTELIGENTES PARA MÚSICA (LLM)
+
+def start_server(workspace_name, workspace_path, port=8080):
+    """FunÃƒÂ§ÃƒÂ£o chamada pelo apollo_studio.py para rodar o uvicorn."""
+    global CURRENT_WORKSPACE, CURRENT_WORKSPACE_PATH
+    CURRENT_WORKSPACE = workspace_name
+    CURRENT_WORKSPACE_PATH = workspace_path
+    
+    # Iniciar o Cloud Sync Worker (Fase VIII)
+    try:
+        from cloud_sync_worker import CloudSyncWorker
+        worker = CloudSyncWorker()
+        worker.start()
+        print("Cloud Sync Worker (MÃ³dulo C) iniciado com sucesso no background.")
+    except Exception as e:
+        print(f"Erro ao iniciar Cloud Sync Worker: {e}")
+    
+    import uvicorn
+    # log_level = "warning" evita spamar o terminal
+    uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--workspace_name', type=str, default="ADM APOLLO EDIT WEB")
+    parser.add_argument('--workspace_path', type=str, default=os.path.join(BASE_DIR, "Workspaces", "ADM APOLLO EDIT WEB"))
+    args, _ = parser.parse_known_args()
+    
+    start_server(args.workspace_name, args.workspace_path)
+
+# =====================================================================
+
+
+
+
 
 
