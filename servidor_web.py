@@ -966,9 +966,9 @@ async def lightning_proxy(request: Request):
                     timeout=30
                 )
                 print(f"[Proxy] Recebeu status {response.status_code}")
-                if response.status_code != 402:
+                if response.status_code not in (401, 402, 403, 429, 500, 502, 503):
                     break
-                print("[Proxy] Erro 402 (Saldo Esgotado) detectado. Trocando de chave...")
+                print(f"[Proxy] Erro {response.status_code} detectado. Trocando de chave...")
 
         
         try:
