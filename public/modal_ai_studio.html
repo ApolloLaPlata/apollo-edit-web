@@ -805,44 +805,6 @@ function clearPreview() {
             });
         }
 
-);
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            statusBox.innerText = "✅ Música gerada com sucesso!";
-            log(`✅ Arquivo de áudio gerado: ${result.file_url}`, 'success');
-            
-            // Adicionar ao painel de preview
-            const preview = document.getElementById('previewContainer');
-            preview.innerHTML = `
-                <div style="padding: 20px; text-align: center;">
-                    <h3 style="color: white; margin-bottom: 20px;">🎶 Resultado da Música</h3>
-                    <audio controls autoplay style="width: 100%;">
-                        <source src="${result.file_url}" type="audio/mpeg">
-                        Seu navegador não suporta o elemento de áudio.
-                    </audio>
-                    <br><br>
-                    <a href="${result.file_url}" download class="btn btn-primary">Baixar Arquivo</a>
-                </div>
-            `;
-            
-            if (window.apolloTransferOS) { 
-                window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Gerador de Musica", null, { url: window.location.origin + result.file_url }); 
-            }
-        } else {
-            statusBox.innerText = "❌ Erro: " + result.error;
-            log(`❌ Erro na música: ${result.error}`, 'error');
-        }
-    } catch (err) {
-        console.error(err);
-        statusBox.innerText = "❌ Falha na conexão";
-        log(`❌ Falha: ${err.message}`, 'error');
-    } finally {
-        btn.innerText = "🎧 Gerar Música (Conta 9)";
-        btn.style.pointerEvents = "all";
-    }
-}
 
 function copyLogs() {
     const text = document.getElementById('terminalBody').innerText;
