@@ -598,15 +598,27 @@
                     <option value="minimax">MiniMax Music3</option>
                 </select>
 
-                <div class="field-label">Lista de Prompts (um por linha)</div>
-                <textarea id="batchPrompts" placeholder="Linha 1: Prompt da primeira música&#10;Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:120px; margin-bottom: 15px;"></textarea>
-                
                 <div class="field-label">Estilo / Tipo de Faixa</div>
-                <select id="batchStyle" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="auto">Automático (Usar apenas meu prompt)</option>
-                    <option value="instrumental">🎶 Apenas Instrumental (Recomendado para Stable Audio 3)</option>
-                    <option value="vocal">🎤 Com Vocais/Letra (Recomendado para ACE-Step e MiniMax)</option>
+                <select id="batchStyle" onchange="toggleBatchMode()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="instrumental">🎶 Apenas Instrumental (Modo Simples - 1 por linha)</option>
+                    <option value="vocal">🎤 Com Vocais/Letra (Modo Duplo - Estilo + Letra)</option>
+                    <option value="auto">Automático (Deixar o modelo decidir)</option>
                 </select>
+
+                <!-- CONTEINER DE ESTEIRAS -->
+                <div id="batchInputContainer" style="display:flex; gap:10px; margin-bottom:15px;">
+                    <!-- ESTEIRA 1: ESTILOS -->
+                    <div style="flex:1;">
+                        <div class="field-label">Prompts/Estilos Musicais (Um por linha)</div>
+                        <textarea id="batchPrompts" placeholder="Ex:&#10;Dark Trap, 808 bass&#10;Epic orchestral, choir" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:160px;"></textarea>
+                    </div>
+                    
+                    <!-- ESTEIRA 2: LETRAS (Oculto no modo Instrumental) -->
+                    <div id="batchLyricsContainer" style="flex:1; display:none;">
+                        <div class="field-label">Letras (Separe as músicas com ===)</div>
+                        <textarea id="batchLyrics" placeholder="[Verse 1]&#10;Primeira letra aqui...&#10;===&#10;[Verse 1]&#10;Segunda letra aqui..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:160px;"></textarea>
+                    </div>
+                </div>
 
                 <div class="field-label" style="display:flex; justify-content:space-between; align-items:center;">
                     <span>Duração (Segundos)</span>
@@ -1365,18 +1377,38 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('batchDurationFixedContainer').style.display = isRandom ? 'none' : 'block';
             document.getElementById('batchDurationRandomContainer').style.display = isRandom ? 'flex' : 'none';
         }
+        
+        function toggleBatchMode() {
+            const style = document.getElementById('batchStyle').value;
+            document.getElementById('batchLyricsContainer').style.display = (style === 'vocal') ? 'block' : 'none';
+        }
 
         async function generateBatch() {
-            const raw = document.getElementById('batchPrompts').value.trim();
-            if (!raw) {
-                alert("Insira ao menos um prompt!");
+            const rawPrompts = document.getElementById('batchPrompts').value.trim();
+            if (!rawPrompts) {
+                alert("Insira ao menos um prompt/estilo!");
                 return;
             }
-            const prompts = raw.split('\n').map(p => p.trim()).filter(p => p);
+            
+            const style = document.getElementById('batchStyle').value;
+            const prompts = rawPrompts.split('\n').map(p => p.trim()).filter(p => p);
+            let lyrics = [];
+            
+            if (style === 'vocal') {
+                const rawLyrics = document.getElementById('batchLyrics').value.trim();
+                if (rawLyrics) {
+                    lyrics = rawLyrics.split('===').map(l => l.trim()).filter(l => l);
+                }
+                
+                if (lyrics.length > 0 && lyrics.length !== prompts.length) {
+                    const proceed = confirm(`Atenção: Você forneceu ${prompts.length} estilos, mas ${lyrics.length} blocos de letra. O sistema vai parear até onde der. Deseja continuar?`);
+                    if (!proceed) return;
+                }
+            }
+            
             if (prompts.length === 0) return;
             
             const engine = document.getElementById('batchModel').value;
-            const style = document.getElementById('batchStyle').value;
             const isRandom = document.getElementById('batchRandomDuration').checked;
             
             document.getElementById('btnGenerateBatch').style.display = 'none';
@@ -1393,8 +1425,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 let p = prompts[i];
-                if (style === 'instrumental') p += ", instrumental, no vocals, purely instrumental";
-                else if (style === 'vocal') p += ", vocals, singing, lyrics, singer";
+                if (style === 'instrumental') {
+                    p += ", instrumental, no vocals, purely instrumental";
+                } else if (style === 'vocal') {
+                    p += ", vocals, singing, lyrics, singer";
+                    // Anexa a letra se existir para esse index
+                    if (lyrics[i]) {
+                        p += "\n\nLyrics:\n" + lyrics[i];
+                    }
+                }
                 
                 let finalDuration = parseInt(document.getElementById('batchDuration').value);
                 if (isRandom) {
@@ -1403,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     finalDuration = Math.floor(Math.random() * (max - min + 1)) + min;
                 }
                 
-                logBatch(`[${i+1}/${prompts.length}] Gerando: ${p.substring(0, 30)}... (${finalDuration}s)`);
+                logBatch(`[${i+1}/${prompts.length}] Gerando Música ${i+1}... (${finalDuration}s)`);
                 updateBatchProgress(i, prompts.length);
                 
                 try {
