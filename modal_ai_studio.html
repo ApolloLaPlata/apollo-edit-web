@@ -601,8 +601,34 @@
                 <div class="field-label">Lista de Prompts (um por linha)</div>
                 <textarea id="batchPrompts" placeholder="Linha 1: Prompt da primeira música&#10;Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:120px; margin-bottom: 15px;"></textarea>
                 
-                <div class="field-label">Duração (Segundos)</div>
-                <input type="number" id="batchDuration" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                <div class="field-label">Estilo / Tipo de Faixa</div>
+                <select id="batchStyle" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="auto">Automático (Usar apenas meu prompt)</option>
+                    <option value="instrumental">🎶 Apenas Instrumental (Recomendado para Stable Audio 3)</option>
+                    <option value="vocal">🎤 Com Vocais/Letra (Recomendado para ACE-Step e MiniMax)</option>
+                </select>
+
+                <div class="field-label" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Duração (Segundos)</span>
+                    <label style="font-size:0.8rem; cursor:pointer; color:var(--cyan);">
+                        <input type="checkbox" id="batchRandomDuration" onchange="toggleRandomDuration()"> 🎲 Aleatório
+                    </label>
+                </div>
+                
+                <div id="batchDurationFixedContainer">
+                    <input type="number" id="batchDuration" value="60" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                </div>
+                
+                <div id="batchDurationRandomContainer" style="display:none; gap:10px; margin-bottom: 15px;">
+                    <div style="flex:1;">
+                        <span style="font-size:0.7rem; color:var(--text-dim);">Mínimo</span>
+                        <input type="number" id="batchDurationMin" value="45" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                    </div>
+                    <div style="flex:1;">
+                        <span style="font-size:0.7rem; color:var(--text-dim);">Máximo</span>
+                        <input type="number" id="batchDurationMax" value="120" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                    </div>
+                </div>
                 
                 <button class="btn btn-primary" id="btnGenerateBatch" onclick="generateBatch()" style="width:100%;">
                     🚀 Iniciar Fila de Geração
@@ -1334,6 +1360,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- BATCH GENERATION LOGIC ---
         let batchRunning = false;
         
+        function toggleRandomDuration() {
+            const isRandom = document.getElementById('batchRandomDuration').checked;
+            document.getElementById('batchDurationFixedContainer').style.display = isRandom ? 'none' : 'block';
+            document.getElementById('batchDurationRandomContainer').style.display = isRandom ? 'flex' : 'none';
+        }
+
         async function generateBatch() {
             const raw = document.getElementById('batchPrompts').value.trim();
             if (!raw) {
@@ -1344,7 +1376,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (prompts.length === 0) return;
             
             const engine = document.getElementById('batchModel').value;
-            const duration = document.getElementById('batchDuration').value;
+            const style = document.getElementById('batchStyle').value;
+            const isRandom = document.getElementById('batchRandomDuration').checked;
             
             document.getElementById('btnGenerateBatch').style.display = 'none';
             document.getElementById('btnStopBatch').style.display = 'block';
@@ -1359,15 +1392,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 
-                const p = prompts[i];
-                logBatch(`[${i+1}/${prompts.length}] Gerando: ${p.substring(0, 30)}...`);
+                let p = prompts[i];
+                if (style === 'instrumental') p += ", instrumental, no vocals, purely instrumental";
+                else if (style === 'vocal') p += ", vocals, singing, lyrics, singer";
+                
+                let finalDuration = parseInt(document.getElementById('batchDuration').value);
+                if (isRandom) {
+                    const min = parseInt(document.getElementById('batchDurationMin').value);
+                    const max = parseInt(document.getElementById('batchDurationMax').value);
+                    finalDuration = Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                
+                logBatch(`[${i+1}/${prompts.length}] Gerando: ${p.substring(0, 30)}... (${finalDuration}s)`);
                 updateBatchProgress(i, prompts.length);
                 
                 try {
                     const response = await fetch("/api/audio/generate", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ prompt: p, engine, duration })
+                        body: JSON.stringify({ prompt: p, engine, duration: finalDuration })
                     });
                     
                     const result = await response.json();
