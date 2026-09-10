@@ -5711,12 +5711,60 @@ async def audio_generate(req: Request):
                 return {"success": False, "error": "Resposta inválida da nuvem (sem áudio)"}
                 
             audio_data = base64.b64decode(audio_b64)
-            filename = f"gen_music_{uuid.uuid4().hex[:8]}.mp3"
+            
+            # Smart Naming & Metadata Extraction
+            import re
+            
+            title = "Faixa Gerada"
+            artist = "Apollo AI Studio"
+            lyrics_block = ""
+            
+            # Tentar extrair um título da letra ou do estilo
+            if "Lyrics:" in prompt:
+                # É vocal
+                parts = prompt.split("Lyrics:")
+                style_part = parts[0].strip()
+                lyrics_block = parts[1].strip()
+                
+                # Pegar a primeira linha válida da letra como título
+                lyrics_lines = [l.strip() for l in lyrics_block.split('
+') if l.strip() and not l.strip().startswith('[')]
+                if lyrics_lines:
+                    title = lyrics_lines[0][:30].title()
+                else:
+                    title = style_part[:30].title()
+            else:
+                title = prompt[:30].title()
+            
+            # Limpar caracteres inválidos para nome de arquivo
+            safe_title = re.sub(r'[^a-zA-Z0-9 _-]', '', title).strip().replace(' ', '_')
+            if not safe_title: safe_title = "track"
+            
+            filename = f"{safe_title}_{uuid.uuid4().hex[:4]}.mp3"
             
             os.makedirs("temp", exist_ok=True)
             filepath = os.path.join("temp", filename)
             with open(filepath, "wb") as f:
                 f.write(audio_data)
+                
+            # Injetar Metadados MP3 usando Mutagen
+            try:
+                from mutagen.id3 import ID3, TIT2, TPE1, TALB, USLT, ID3NoHeaderError
+                try:
+                    audio_tags = ID3(filepath)
+                except ID3NoHeaderError:
+                    audio_tags = ID3()
+                
+                audio_tags.add(TIT2(encoding=3, text=title))
+                audio_tags.add(TPE1(encoding=3, text=artist))
+                audio_tags.add(TALB(encoding=3, text="Dark Trap Radio - Lote AI"))
+                if lyrics_block:
+                    audio_tags.add(USLT(encoding=3, lang='por', desc='Letra', text=lyrics_block))
+                    
+                audio_tags.save(filepath)
+                print(f"[Audio Generator] Metadados ID3 injetados com sucesso! Título: {title}")
+            except Exception as meta_err:
+                print(f"[Audio Generator] Aviso: Falha ao injetar metadados ID3: {meta_err}")
                 
             print(f"[Audio Generator] Salvo em {filepath}")
             return {"success": True, "file_url": f"/temp/{filename}"}
@@ -5797,3 +5845,98 @@ if __name__ == "__main__":
     args, _ = parser.parse_known_args()
     
     start_server(args.workspace_name, args.workspace_path)
+
+# =====================================================================
+# ROTAS INTELIGENTES PARA MÚSICA (LLM)
+# =====================================================================
+
+@app.post("/api/music/auto_tag_lyrics")
+async def music_auto_tag_lyrics(req: Request):
+    try:
+        body = await req.json()
+        raw_lyrics = body.get("lyrics", "")
+        if not raw_lyrics:
+            return {"success": False, "error": "Letra vazia"}
+            
+        import httpx
+        system_prompt = """Você é um especialista em estruturação musical (Suno AI, Stable Audio).
+A tarefa é ler a letra fornecida pelo usuário e adicionar TAGS DE ESTRUTURA, como [Intro], [Verse], [Chorus], [Bridge], [Guitar Solo], [Drop], [Outro].
+Não modifique as palavras originais da letra. Apenas insira as tags (entre colchetes) antes de cada estrofe ou seção.
+Retorne APENAS a letra estruturada."""
+
+        proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
+        async with httpx.AsyncClient(timeout=60) as client:
+            resp = await client.post(proxy_url, json={
+                "model": "meta-llama/Llama-3-70b-chat-hf",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": raw_lyrics}
+                ]
+            })
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                processed = data.get("choices", [{}])[0].get("message", {}).get("content", raw_lyrics)
+                return {"success": True, "structured_lyrics": processed.strip()}
+            else:
+                return {"success": False, "error": f"Erro do LLM: {resp.status_code}"}
+                
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/music/generate_batch_ideas")
+async def music_generate_batch_ideas(req: Request):
+    try:
+        body = await req.json()
+        theme = body.get("theme", "músicas épicas")
+        count = body.get("count", 3)
+        
+        import httpx
+        import json
+        
+        system_prompt = f"""Você é um produtor musical criativo especializado em prompts para geradores de áudio AI (Suno, ACE-Step).
+O usuário quer gerar {count} ideias de músicas baseadas neste tema: "{theme}".
+
+Retorne EXATAMENTE UM JSON VÁLIDO contendo um array 'tracks' onde cada item tem:
+- 'style': Um prompt em inglês descrevendo o estilo (ex: 'Epic cyberpunk synthwave, 120bpm, heavy bass'). MÁXIMO 100 caracteres.
+- 'lyrics': A letra completa com tags [Verse], [Chorus]. Em português se o tema pedir, ou inglês se pedir.
+
+O formato deve ser ESTRITAMENTE:
+{{
+  "tracks": [
+    {{"style": "...", "lyrics": "..."}},
+    {{"style": "...", "lyrics": "..."}}
+  ]
+}}
+NÃO USE crases de formatação Markdown. Retorne puramente o texto JSON.
+"""
+
+        proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
+        async with httpx.AsyncClient(timeout=120) as client:
+            resp = await client.post(proxy_url, json={
+                "model": "meta-llama/Llama-3-70b-chat-hf",
+                "messages": [
+                    {"role": "system", "content": system_prompt}
+                ]
+            })
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                raw_content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                
+                # Cleanup markdown formatting if present
+                clean_json = raw_content.replace('`json', '').replace('`', '').strip()
+                
+                try:
+                    parsed = json.loads(clean_json)
+                    return {"success": True, "tracks": parsed.get("tracks", [])}
+                except Exception as json_err:
+                    return {"success": False, "error": f"Falha no parse JSON do LLM: {json_err}", "raw": raw_content}
+            else:
+                return {"success": False, "error": f"Erro do LLM: {resp.status_code}"}
+                
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+

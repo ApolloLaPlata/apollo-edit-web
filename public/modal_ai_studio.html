@@ -1365,6 +1365,94 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         
+        
+        async function autoTagLyrics() {
+            const btn = document.getElementById('btnAutoTag');
+            const el = document.getElementById('musicSingleLyrics');
+            const raw = el.value.trim();
+            
+            if (!raw) return alert("Digite a letra primeiro para a IA estruturar!");
+            
+            btn.innerText = "⏳ Pensando...";
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch("/api/music/auto_tag_lyrics", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ lyrics: raw })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    el.value = result.structured_lyrics;
+                    btn.innerText = "✅ Aplicado!";
+                } else {
+                    alert("Erro da IA: " + result.error);
+                    btn.innerText = "❌ Falha";
+                }
+            } catch (e) {
+                alert("Erro de rede.");
+                btn.innerText = "❌ Erro";
+            }
+            
+            setTimeout(() => {
+                btn.innerText = "🪄 Auto-Tag (IA)";
+                btn.disabled = false;
+            }, 3000);
+        }
+
+        async function generateBatchIdeas() {
+            const btn = document.getElementById('btnAIGenerateBatch');
+            const theme = document.getElementById('aiBatchTheme').value.trim();
+            const count = parseInt(document.getElementById('aiBatchCount').value) || 3;
+            
+            if (!theme) return alert("Digite o tema desejado!");
+            
+            btn.innerText = "⏳ Gerando...";
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch("/api/music/generate_batch_ideas", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ theme, count })
+                });
+                const result = await response.json();
+                
+                if (result.success && result.tracks.length > 0) {
+                    let promptStr = "";
+                    let lyricStr = "";
+                    
+                    result.tracks.forEach((track, i) => {
+                        promptStr += track.style + "\n";
+                        lyricStr += track.lyrics + "\n";
+                        if (i < result.tracks.length - 1) lyricStr += "\n===\n";
+                    });
+                    
+                    document.getElementById('musicBatchPrompts').value = promptStr.trim();
+                    document.getElementById('musicBatchLyrics').value = lyricStr.trim();
+                    
+                    // Force change to Vocal mode since AI generated lyrics
+                    document.getElementById('musicStyle').value = 'vocal';
+                    toggleMusicUI();
+                    
+                    btn.innerText = "✅ Ideias Prontas!";
+                } else {
+                    alert("Erro da IA: " + (result.error || "Formato inválido retornado."));
+                    btn.innerText = "❌ Falha";
+                }
+            } catch (e) {
+                alert("Erro de rede.");
+                btn.innerText = "❌ Erro";
+            }
+            
+            setTimeout(() => {
+                btn.innerText = "✨ Gerar Ideias";
+                btn.disabled = false;
+            }, 3000);
+        }
+
         function insertTag(targetId, tag) {
             const el = document.getElementById(targetId);
             const start = el.selectionStart;
