@@ -134,6 +134,8 @@ class ImageRequest(BaseModel):
     reference_images_base64: Optional[list[str]] = None
     use_upscale: bool = True  # Se False, retorna a imagem base sem upscale
     lora_name: Optional[str] = None
+    lora_url: Optional[str] = None
+    lora_strength: Optional[float] = 1.0
     dynamic_steps: Optional[list] = None
 
 class TTSRequest(BaseModel):
@@ -173,23 +175,51 @@ def api_generate_image(req: ImageRequest):
     import json
     try:
         model = req.model.lower()
-        if model not in ["flux2-universal", "qwen-image"]:
-            return {"status": "error", "message": f"ERRO: Somente Qwen Image e FLUX suportados."}
+        if model not in ["flux-schnell", "flux2-universal", "qwen-image"]:
+            return {"status": "error", "message": f"ERRO: Modelo {model} nÃ£o suportado."}
             
-        from backend.cloud_tools.engines.qwen_image_engine import QwenImageEngine
-        engine = QwenImageEngine()
-        print(f"[Router] Spawning QwenImageEngine -> format: {req.format}, ref_count: {len(req.reference_images_base64) if req.reference_images_base64 else 0}")
-        
         resolved_format = req.format if req.format != "horizontal" else req.aspect_ratio
         
-        job = engine.generate.spawn(
-            prompt=req.prompt,
-            images_b64=req.reference_images_base64,
-            aspect_ratio=resolved_format,
-            use_upscale=req.use_upscale,
-            dynamic_steps=req.dynamic_steps
-        )
-        
+        if model == "qwen-image":
+            from backend.cloud_tools.engines.qwen_image_engine import QwenImageEngine
+            engine = QwenImageEngine()
+            print(f"[Router] Spawning QwenImageEngine -> format: {resolved_format}, ref_count: {len(req.reference_images_base64) if req.reference_images_base64 else 0}")
+            job = engine.generate.spawn(
+                prompt=req.prompt,
+                images_b64=req.reference_images_base64,
+                aspect_ratio=resolved_format,
+                use_upscale=req.use_upscale,
+                dynamic_steps=req.dynamic_steps
+            )
+        elif model == "flux2-universal":
+            from backend.cloud_tools.engines.flux_engine import Flux2ComfyEngine_V2
+            engine = Flux2ComfyEngine_V2()
+            print(f"[Router] Spawning Flux2ComfyEngine_V2 -> format: {resolved_format}")
+            
+            # Pega primeira imagem se houver
+            input_image = None
+            if req.reference_images_base64 and len(req.reference_images_base64) > 0:
+                input_image = req.reference_images_base64[0]
+                
+            job = engine.generate.spawn(
+                prompt=req.prompt,
+                aspect_ratio=resolved_format,
+                seed=req.seed,
+                lora_name=req.lora_name,
+                lora_url=req.lora_url,
+                lora_strength=req.lora_strength,
+                input_image_b64=input_image
+            )
+        elif model == "flux-schnell":
+            from backend.cloud_tools.engines.flux_txt2img_engine import Flux2Txt2ImgEngine
+            engine = Flux2Txt2ImgEngine()
+            print(f"[Router] Spawning Flux2Txt2ImgEngine -> format: {resolved_format}")
+            job = engine.generate.spawn(
+                prompt=req.prompt,
+                aspect_ratio=resolved_format,
+                seed=req.seed
+            )
+            
         return {"status": "processing", "job_id": job.object_id}
     except Exception as e:
         import traceback

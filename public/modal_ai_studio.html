@@ -427,8 +427,10 @@
             <div class="card active">
                 <div class="card-title">🖼️ Gerador de Imagens <span class="badge" id="imgBadgeModel">FLUX.1-schnell L4</span></div>
                 <div class="field-label">Modelo</div>
-                <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState();">
+                <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState(); document.getElementById('loraContainer').style.display = (this.value === 'flux2-universal') ? 'block' : 'none';">
                     <option value="qwen-image">Qwen 2.5 Image Edit (T2I / I2I / Multi-Characters)</option>
+                    <option value="flux2-universal">FLUX.1-dev Universal (Img2Img / LoRA Civitai)</option>
+                    <option value="flux-schnell">FLUX.1-schnell (Rápido T2I)</option>
                 </select>
                 
                 <div class="field-label">Prompt (descreva a imagem em inglês)</div>
@@ -440,6 +442,16 @@
                     <input type="file" id="imgRefFiles" accept="image/*" multiple onchange="updateImgRefNames()">
                     <span class="file-name" id="imgRefFileNames">Nenhuma imagem selecionada</span>
                 </div>
+                <div id="loraContainer" style="display:none; margin-top:15px; border:1px dashed var(--border); padding:10px; border-radius:8px; background:rgba(255,100,255,0.05);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="margin:0; color:#ff66ff;">🎭 Injeção de LoRA (Civitai)</h4>
+                    </div>
+                    <div class="field-label">URL Direta do Safetensors (Civitai)</div>
+                    <input type="text" id="imgLoraUrl" placeholder="https://civitai.com/api/download/models/XXXX" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom:10px;">
+                    <div class="field-label">Força do LoRA: <span id="imgLoraStrengthVal">1.0</span></div>
+                    <input type="range" id="imgLoraStrength" min="0.1" max="2.0" step="0.1" value="1.0" style="width:100%;" oninput="document.getElementById('imgLoraStrengthVal').innerText = this.value">
+                </div>
+
 
                 <div style="display:flex; gap:8px; margin-top: 10px; align-items:center;">
                     <div style="flex:1;">
@@ -947,6 +959,8 @@ async function generateImage() {
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
     const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
+    const lora_url = document.getElementById('imgLoraUrl') ? document.getElementById('imgLoraUrl').value.trim() : null;
+    const lora_strength = document.getElementById('imgLoraStrength') ? parseFloat(document.getElementById('imgLoraStrength').value) : 1.0;
     const url    = "/api/studio/modal/generate_image";
     const status = document.getElementById('imgStatus');
 

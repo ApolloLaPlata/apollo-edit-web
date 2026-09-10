@@ -22,7 +22,7 @@ comfy_universal_image = flux2_comfy_image
 @app.cls(gpu="L4", timeout=1200,
  image=comfy_universal_image, scaledown_window=30
 )
-class UniversalComfyEngine:
+class RadioComfyEngine:
     @modal.enter()
     def start_server(self):
         import subprocess

@@ -129,6 +129,7 @@ class Flux2ComfyEngine_V2:
         import base64
         import os
         import io
+        import shutil
         from PIL import Image as PILImage
         
         self._ensure_comfyui_running()
@@ -164,12 +165,37 @@ class Flux2ComfyEngine_V2:
             if "68:10" in workflow and "vae_name" in workflow["68:10"].get("inputs", {}):
                 workflow["68:10"]["inputs"]["vae_name"] = "ae.safetensors"
                 
-            # Injetar LoRA customizado ou ignorar
+            # --- CIVITAI LORA DOWNLOADER ---
+            lora_url = kwargs.get("lora_url")
             lora_name = kwargs.get("lora_name")
+            lora_strength = float(kwargs.get("lora_strength", 1.0))
+            if lora_url:
+                try:
+                    import urllib.request
+                    import uuid
+                    import ssl
+                    ctx = ssl.create_default_context()
+                    ctx.check_hostname = False
+                    ctx.verify_mode = ssl.CERT_NONE
+                    
+                    filename = f"civitai_{uuid.uuid4().hex[:8]}.safetensors"
+                    dest_path = f"/comfyui_models/loras/{filename}"
+                    print(f"[Flux2ComfyEngine_V2] Baixando LoRA sob demanda: {lora_url}")
+                    
+                    req_lora = urllib.request.Request(lora_url, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req_lora, context=ctx) as response, open(dest_path, 'wb') as out_file:
+                        shutil.copyfileobj(response, out_file)
+                        
+                    lora_name = filename
+                    print(f"[Flux2ComfyEngine_V2] LoRA baixado com sucesso em {dest_path}")
+                except Exception as e:
+                    print(f"[Flux2ComfyEngine_V2] Falha ao baixar LoRA de {lora_url}: {e}")
+
+            # Injetar LoRA customizado ou ignorar
             if lora_name and "68:89" in workflow:
-                print(f"[Flux2ComfyEngine_V2] Injetando LoRA: {lora_name}")
+                print(f"[Flux2ComfyEngine_V2] Injetando LoRA: {lora_name} (Strength: {lora_strength})")
                 workflow["68:89"]["inputs"]["lora_name"] = lora_name
-                workflow["68:89"]["inputs"]["strength_model"] = 1.0
+                workflow["68:89"]["inputs"]["strength_model"] = lora_strength
                 if "68:90" in workflow: # Switch Node do LoRA (se existir)
                     workflow["68:90"]["inputs"]["value"] = True
             else:
