@@ -1625,7 +1625,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (result.success) {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ✅ Sucesso!");
                         successCount++;
-                        const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : `http://163.176.135.59${result.file_url}`;
+                        const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : `${result.file_url}`;
                         window.batchGeneratedFiles.push(fileUrlAbs);
                         
                         const trackList = document.getElementById('batchTracksList');
@@ -1671,5 +1671,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
