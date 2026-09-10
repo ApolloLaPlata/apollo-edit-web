@@ -1364,6 +1364,37 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('batchProgressText').innerText = `${current}/${total}`;
         }
 
+        
+        function insertTag(targetId, tag) {
+            const el = document.getElementById(targetId);
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            const text = el.value;
+            el.value = text.substring(0, start) + tag + "\n" + text.substring(end);
+            el.focus();
+            el.selectionEnd = start + tag.length + 1;
+        }
+
+        function magicStyle(targetId) {
+            const el = document.getElementById(targetId);
+            let val = el.value.trim();
+            if (!val) val = "Trap";
+            
+            // Simple rule-based enhancement
+            if (!val.toLowerCase().includes("quality")) val += ", masterpiece, ultra high quality, crisp audio";
+            if (!val.toLowerCase().includes("bpm") && val.toLowerCase().includes("trap")) val += ", 140 bpm, heavy 808 bass, fast hi-hats";
+            if (val.toLowerCase().includes("rock") && !val.toLowerCase().includes("guitar")) val += ", distorted electric guitars, heavy drums, stadium rock";
+            if (val.toLowerCase().includes("lo-fi") || val.toLowerCase().includes("lofi")) val += ", vinyl crackle, cozy, relaxing, melodic piano";
+            
+            el.value = val;
+            
+            // Visual feedback
+            const btn = event.target;
+            const old = btn.innerText;
+            btn.innerText = "✅ Aplicado!";
+            setTimeout(() => { btn.innerText = old; }, 2000);
+        }
+
         // --- MASTER MUSIC GENERATION LOGIC ---
         let musicRunning = false;
         
