@@ -427,8 +427,10 @@
             <div class="card active">
                 <div class="card-title">🖼️ Gerador de Imagens <span class="badge" id="imgBadgeModel">FLUX.1-schnell L4</span></div>
                 <div class="field-label">Modelo</div>
-                <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState();">
+                <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState(); document.getElementById('loraContainer').style.display = (this.value === 'flux2-universal') ? 'block' : 'none';">
                     <option value="qwen-image">Qwen 2.5 Image Edit (T2I / I2I / Multi-Characters)</option>
+                    <option value="flux2-universal">FLUX.1-dev Universal (Img2Img / LoRA Civitai)</option>
+                    <option value="flux-schnell">FLUX.1-schnell (Rápido T2I)</option>
                 </select>
                 
                 <div class="field-label">Prompt (descreva a imagem em inglês)</div>
@@ -440,6 +442,16 @@
                     <input type="file" id="imgRefFiles" accept="image/*" multiple onchange="updateImgRefNames()">
                     <span class="file-name" id="imgRefFileNames">Nenhuma imagem selecionada</span>
                 </div>
+                <div id="loraContainer" style="display:none; margin-top:15px; border:1px dashed var(--border); padding:10px; border-radius:8px; background:rgba(255,100,255,0.05);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="margin:0; color:#ff66ff;">🎭 Injeção de LoRA (Civitai)</h4>
+                    </div>
+                    <div class="field-label">URL Direta do Safetensors (Civitai)</div>
+                    <input type="text" id="imgLoraUrl" placeholder="https://civitai.com/api/download/models/XXXX" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom:10px;">
+                    <div class="field-label">Força do LoRA: <span id="imgLoraStrengthVal">1.0</span></div>
+                    <input type="range" id="imgLoraStrength" min="0.1" max="2.0" step="0.1" value="1.0" style="width:100%;" oninput="document.getElementById('imgLoraStrengthVal').innerText = this.value">
+                </div>
+
 
                 <div style="display:flex; gap:8px; margin-top: 10px; align-items:center;">
                     <div style="flex:1;">
@@ -561,10 +573,16 @@
             </div>
         </div>
 
-        <!-- TAB: MÚSICA -->
+                <!-- TAB: MÚSICA -->
         <div id="tab-music" style="display:none;">
             <div class="card">
                 <div class="card-title">🎵 Gerador de Música / SFX</div>
+                
+                <div class="field-label">Modo de Execução</div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <label><input type="radio" name="musicExecMode" value="single" checked onclick="toggleMusicUI()"> 🎵 Única</label>
+                    <label><input type="radio" name="musicExecMode" value="batch" onclick="toggleMusicUI()"> 🚀 Em Lote (Várias)</label>
+                </div>
                 
                 <div class="field-label">Motor de Inteligência Artificial</div>
                 <select id="musicModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
@@ -573,88 +591,88 @@
                     <option value="minimax">MiniMax Music3 (Melhor para Vocais e Músicas Completas)</option>
                 </select>
 
-                <div class="field-label">Descreva o som desejado</div>
-                <textarea id="musicPrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom: 15px;"></textarea>
-                
-                <div class="field-label">Duração (Segundos)</div>
-                <input type="number" id="musicDuration" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                
-                <button class="btn btn-primary" id="btnGenerateMusic" onclick="generateMusicStudio()" style="width:100%;">
-                    🎧 Gerar Música (Conta 9)
-                </button>
-                <div class="log-box" id="musicStatus" style="margin-top:10px;">Aguardando comando...</div>
-            </div>
-        </div>
-
-        <!-- TAB: BATCH -->
-        <div id="tab-batch" style="display:none;">
-            <div class="card">
-                <div class="card-title">🚀 Gerador de Música em Lote</div>
-                
-                <div class="field-label">Motor de Inteligência Artificial</div>
-                <select id="batchModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="acestep">ACE-Step 1.5</option>
-                    <option value="sa3">Stable Audio 3</option>
-                    <option value="minimax">MiniMax Music3</option>
-                </select>
-
                 <div class="field-label">Estilo / Tipo de Faixa</div>
-                <select id="batchStyle" onchange="toggleBatchMode()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="instrumental">🎶 Apenas Instrumental (Modo Simples - 1 por linha)</option>
-                    <option value="vocal">🎤 Com Vocais/Letra (Modo Duplo - Estilo + Letra)</option>
-                    <option value="auto">Automático (Deixar o modelo decidir)</option>
+                <select id="musicStyle" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="instrumental">🎶 Apenas Instrumental</option>
+                    <option value="vocal">🎤 Com Vocais/Letra</option>
+                    <option value="auto">🤖 Automático (Deixar o modelo decidir)</option>
                 </select>
-
-                <!-- CONTEINER DE ESTEIRAS -->
-                <div id="batchInputContainer" style="display:flex; gap:10px; margin-bottom:15px;">
-                    <!-- ESTEIRA 1: ESTILOS -->
-                    <div style="flex:1;">
-                        <div class="field-label">Prompts/Estilos Musicais (Um por linha)</div>
-                        <textarea id="batchPrompts" placeholder="Ex:&#10;Dark Trap, 808 bass&#10;Epic orchestral, choir" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:160px;"></textarea>
+                
+                <!-- SINGLE AREA -->
+                <div id="musicSingleArea" style="margin-bottom:15px;">
+                    <div class="field-label">Descreva o som desejado (Prompt de Estilo)</div>
+                    <textarea id="musicSinglePrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:60px;"></textarea>
+                    
+                    <div id="musicSingleLyricsContainer" style="display:none; margin-top:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="field-label" style="margin:0;">Letra da Música</div>
+                            <button class="btn btn-primary" id="btnAutoTag" onclick="autoTagLyrics()" style="font-size:10px; padding:4px 8px;">🪄 Auto-Tag (IA)</button>
+                        </div>
+                        <textarea id="musicSingleLyrics" placeholder="Digite a letra aqui..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:100px; margin-top:5px;"></textarea>
+                    </div>
+                </div>
+                
+                <!-- BATCH AREA -->
+                <div id="musicBatchArea" style="display:none; margin-bottom:15px; border:1px dashed var(--border); padding:10px; border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="margin:0; color:var(--cyan);">🚀 Lote IA</h4>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom:10px;">
+                        <input type="text" id="aiBatchTheme" placeholder="Tema (ex: Cyberpunk, Trap...)" style="flex:1; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <input type="number" id="aiBatchCount" value="3" min="2" max="10" style="width:60px; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <button class="btn btn-primary" id="btnAIGenerateBatch" onclick="generateBatchIdeas()">✨ Gerar Ideias</button>
                     </div>
                     
-                    <!-- ESTEIRA 2: LETRAS (Oculto no modo Instrumental) -->
-                    <div id="batchLyricsContainer" style="flex:1; display:none;">
-                        <div class="field-label">Letras (Separe as músicas com ===)</div>
-                        <textarea id="batchLyrics" placeholder="[Verse 1]&#10;Primeira letra aqui...&#10;===&#10;[Verse 1]&#10;Segunda letra aqui..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:160px;"></textarea>
+                    <div class="field-label">Lista de Prompts de Estilo (Um por linha)</div>
+                    <textarea id="musicBatchPrompts" placeholder="Linha 1: Prompt da primeira música
+Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom:10px;"></textarea>
+                    
+                    <div id="musicBatchLyricsContainer" style="display:none;">
+                        <div class="field-label">Lista de Letras (Separadas por ===)</div>
+                        <textarea id="musicBatchLyrics" placeholder="[Verse 1]
+...
+===
+[Verse 1]
+..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:120px;"></textarea>
                     </div>
                 </div>
-
-                <div class="field-label" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>Duração (Segundos)</span>
-                    <label style="font-size:0.8rem; cursor:pointer; color:var(--cyan);">
-                        <input type="checkbox" id="batchRandomDuration" onchange="toggleRandomDuration()"> 🎲 Aleatório
-                    </label>
+                
+                <div class="field-label">Modo de Duração</div>
+                <select id="musicDurationMode" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="fixed">Fixo (Todos com a mesma duração)</option>
+                    <option value="random">Aleatório (Entre Min e Max)</option>
+                </select>
+                
+                <div id="musicDurationFixedArea" style="margin-bottom:15px;">
+                    <div class="field-label">Duração (Segundos)</div>
+                    <input type="number" id="musicDurationFixed" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                 </div>
                 
-                <div id="batchDurationFixedContainer">
-                    <input type="number" id="batchDuration" value="60" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                </div>
-                
-                <div id="batchDurationRandomContainer" style="display:none; gap:10px; margin-bottom: 15px;">
+                <div id="musicDurationRandomArea" style="display:none; gap:10px; margin-bottom:15px;">
                     <div style="flex:1;">
-                        <span style="font-size:0.7rem; color:var(--text-dim);">Mínimo</span>
-                        <input type="number" id="batchDurationMin" value="45" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <div class="field-label">Min (s)</div>
+                        <input type="number" id="musicDurationMin" value="15" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                     <div style="flex:1;">
-                        <span style="font-size:0.7rem; color:var(--text-dim);">Máximo</span>
-                        <input type="number" id="batchDurationMax" value="120" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <div class="field-label">Max (s)</div>
+                        <input type="number" id="musicDurationMax" value="45" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                 </div>
                 
-                <button class="btn btn-primary" id="btnGenerateBatch" onclick="generateBatch()" style="width:100%;">
-                    🚀 Iniciar Fila de Geração
+                <button class="btn btn-primary" id="btnGenerateMusicMaster" onclick="generateMusicMaster()" style="width:100%;">
+                    🎧 Iniciar Geração (Conta 9)
                 </button>
-                <button class="btn btn-primary" id="btnStopBatch" onclick="stopBatch()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
-                    🛑 Cancelar Fila
+                <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
+                    ⛔ Cancelar Processo
                 </button>
-                <div class="log-box" id="batchStatus" style="margin-top:10px;">Aguardando...</div>
                 
-                <div id="batchProgressContainer" style="display:none; margin-top:10px;">
+                <div class="log-box" id="musicMasterStatus" style="margin-top:10px;">Aguardando...</div>
+                
+                <div id="musicProgressContainer" style="display:none; margin-top:10px;">
                     <div style="width:100%; background:#2a2a35; border-radius:4px; height:10px;">
-                        <div id="batchProgressBar" style="width:0%; background:var(--cyan); height:10px; border-radius:4px; transition:width 0.3s;"></div>
+                        <div id="musicProgressBar" style="width:0%; background:var(--cyan); height:10px; border-radius:4px; transition:width 0.3s;"></div>
                     </div>
-                    <div id="batchProgressText" style="text-align:center; font-size:10px; margin-top:4px; color:var(--text-dim);">0/0</div>
+                    <div id="musicProgressText" style="text-align:center; font-size:10px; margin-top:4px; color:var(--text-dim);">0/0</div>
                 </div>
             </div>
         </div>
@@ -695,6 +713,9 @@
 
             <!-- Resultado: Vídeo -->
             <video id="previewVideo" controls></video>
+
+            <!-- Resultado: Batch / Múltiplos Arquivos -->
+            <div id="previewContainer" style="display:none; width:100%; height:100%; overflow-y:auto;"></div>
         </div>
 
         <!-- Terminal de debug -->
@@ -805,44 +826,6 @@ function clearPreview() {
             });
         }
 
-);
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            statusBox.innerText = "✅ Música gerada com sucesso!";
-            log(`✅ Arquivo de áudio gerado: ${result.file_url}`, 'success');
-            
-            // Adicionar ao painel de preview
-            const preview = document.getElementById('previewContainer');
-            preview.innerHTML = `
-                <div style="padding: 20px; text-align: center;">
-                    <h3 style="color: white; margin-bottom: 20px;">🎶 Resultado da Música</h3>
-                    <audio controls autoplay style="width: 100%;">
-                        <source src="${result.file_url}" type="audio/mpeg">
-                        Seu navegador não suporta o elemento de áudio.
-                    </audio>
-                    <br><br>
-                    <a href="${result.file_url}" download class="btn btn-primary">Baixar Arquivo</a>
-                </div>
-            `;
-            
-            if (window.apolloTransferOS) { 
-                window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Gerador de Musica", null, { url: window.location.origin + result.file_url }); 
-            }
-        } else {
-            statusBox.innerText = "❌ Erro: " + result.error;
-            log(`❌ Erro na música: ${result.error}`, 'error');
-        }
-    } catch (err) {
-        console.error(err);
-        statusBox.innerText = "❌ Falha na conexão";
-        log(`❌ Falha: ${err.message}`, 'error');
-    } finally {
-        btn.innerText = "🎧 Gerar Música (Conta 9)";
-        btn.style.pointerEvents = "all";
-    }
-}
 
 function copyLogs() {
     const text = document.getElementById('terminalBody').innerText;
@@ -979,6 +962,8 @@ async function generateImage() {
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
     const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
+    const lora_url = document.getElementById('imgLoraUrl') ? document.getElementById('imgLoraUrl').value.trim() : null;
+    const lora_strength = document.getElementById('imgLoraStrength') ? parseFloat(document.getElementById('imgLoraStrength').value) : 1.0;
     const url    = "/api/studio/modal/generate_image";
     const status = document.getElementById('imgStatus');
 
@@ -1364,6 +1349,124 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('batchProgressText').innerText = `${current}/${total}`;
         }
 
+        
+        
+        async function autoTagLyrics() {
+            const btn = document.getElementById('btnAutoTag');
+            const el = document.getElementById('musicSingleLyrics');
+            const raw = el.value.trim();
+            
+            if (!raw) return alert("Digite a letra primeiro para a IA estruturar!");
+            
+            btn.innerText = "⏳ Pensando...";
+            btn.disabled = true;
+            try {
+                const response = await fetch("/api/music/auto_tag_lyrics", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ lyrics: raw })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    el.value = result.structured_lyrics;
+                    btn.innerText = "✅ Aplicado!";
+                } else {
+                    alert("Erro da IA: " + result.error);
+                    btn.innerText = "❌ Falha";
+                }
+            } catch (e) {
+                alert("Erro de rede.");
+                btn.innerText = "❌ Erro";
+            }
+            
+            setTimeout(() => {
+                btn.innerText = "🪄 Auto-Tag (IA)";
+                btn.disabled = false;
+            }, 3000);
+        }
+
+        async function generateBatchIdeas() {
+            const btn = document.getElementById('btnAIGenerateBatch');
+            const theme = document.getElementById('aiBatchTheme').value.trim();
+            const count = parseInt(document.getElementById('aiBatchCount').value) || 3;
+            
+            if (!theme) return alert("Digite o tema desejado!");
+            
+            btn.innerText = "⏳ Gerando...";
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch("/api/music/generate_batch_ideas", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ theme, count })
+                });
+                const result = await response.json();
+                
+                if (result.success && result.tracks.length > 0) {
+                    let promptStr = "";
+                    let lyricStr = "";
+                    
+                    result.tracks.forEach((track, i) => {
+                        promptStr += track.style + "\n";
+                        lyricStr += track.lyrics + "\n";
+                        if (i < result.tracks.length - 1) lyricStr += "\n===\n";
+                    });
+                    
+                    document.getElementById('musicBatchPrompts').value = promptStr.trim();
+                    document.getElementById('musicBatchLyrics').value = lyricStr.trim();
+                    
+                    // Force change to Vocal mode since AI generated lyrics
+                    document.getElementById('musicStyle').value = 'vocal';
+                    toggleMusicUI();
+                    
+                    btn.innerText = "✅ Ideias Prontas!";
+                } else {
+                    alert("Erro da IA: " + (result.error || "Formato inválido retornado."));
+                    btn.innerText = "❌ Falha";
+                }
+            } catch (e) {
+                alert("Erro de rede.");
+                btn.innerText = "❌ Erro";
+            }
+            
+            setTimeout(() => {
+                btn.innerText = "✨ Gerar Ideias";
+                btn.disabled = false;
+            }, 3000);
+        }
+
+        function insertTag(targetId, tag) {
+            const el = document.getElementById(targetId);
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            const text = el.value;
+            el.value = text.substring(0, start) + tag + "\n" + text.substring(end);
+            el.focus();
+            el.selectionEnd = start + tag.length + 1;
+        }
+
+        function magicStyle(targetId) {
+            const el = document.getElementById(targetId);
+            let val = el.value.trim();
+            if (!val) val = "Trap";
+            
+            // Simple rule-based enhancement
+            if (!val.toLowerCase().includes("quality")) val += ", masterpiece, ultra high quality, crisp audio";
+            if (!val.toLowerCase().includes("bpm") && val.toLowerCase().includes("trap")) val += ", 140 bpm, heavy 808 bass, fast hi-hats";
+            if (val.toLowerCase().includes("rock") && !val.toLowerCase().includes("guitar")) val += ", distorted electric guitars, heavy drums, stadium rock";
+            if (val.toLowerCase().includes("lo-fi") || val.toLowerCase().includes("lofi")) val += ", vinyl crackle, cozy, relaxing, melodic piano";
+            
+            el.value = val;
+            
+            // Visual feedback
+            const btn = event.target;
+            const old = btn.innerText;
+            btn.innerText = "✅ Aplicado!";
+            setTimeout(() => { btn.innerText = old; }, 2000);
+        }
+
         // --- MASTER MUSIC GENERATION LOGIC ---
         let musicRunning = false;
         
@@ -1403,6 +1506,28 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('musicProgressText').innerText = current + "/" + total;
         }
         
+        
+        function downloadAllBatchFiles() {
+            if (!window.batchGeneratedFiles || window.batchGeneratedFiles.length === 0) {
+                alert("Nenhuma música foi gerada para baixar.");
+                return;
+            }
+            logMusicMaster("Iniciando download em lote...");
+            let delay = 0;
+            window.batchGeneratedFiles.forEach((url, index) => {
+                setTimeout(() => {
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = url.split("/").pop(); // extrai o nome final do arquivo
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    logMusicMaster("Baixando arquivo " + (index + 1) + "...");
+                }, delay);
+                delay += 800; // 800ms delay para não travar o navegador
+            });
+        }
+
         async function generateMusicMaster() {
             const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
             const style = document.getElementById('musicStyle').value;
@@ -1451,7 +1576,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const preview = document.getElementById('previewContainer');
             preview.style.display = 'block';
             
-            preview.innerHTML = 
+            preview.innerHTML = `
                 <div style="padding: 20px;">
                     <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados da Sessão</h2>
                     <div id="batchDownloadAllContainer" style="text-align:center; margin-bottom: 20px; display:none;">
@@ -1461,7 +1586,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
                 </div>
-            ;
+              `;
             
             for (let i = 0; i < prompts.length; i++) {
                 if (!musicRunning) break;
@@ -1500,25 +1625,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (result.success) {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ✅ Sucesso!");
                         successCount++;
-                        window.batchGeneratedFiles.push(result.file_url);
+                        const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : `http://163.176.135.59${result.file_url}`;
+                        window.batchGeneratedFiles.push(fileUrlAbs);
                         
                         const trackList = document.getElementById('batchTracksList');
                         const index = window.batchGeneratedFiles.length;
-                        const trackHtml = 
+                        const trackHtml = `
                             <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
                                 <div style="flex: 1;">
-                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa : ...</h4>
+                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
                                     <audio controls style="width: 100%;">
-                                        <source src="" type="audio/mpeg">
+                                        <source src="${fileUrlAbs}" type="audio/mpeg">
                                     </audio>
                                 </div>
-                                <a href="" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
+                                <a href="${fileUrlAbs}" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
                             </div>
-                        ;
+                        `;
                         trackList.insertAdjacentHTML('beforeend', trackHtml);
 
                         if (window.apolloTransferOS) { 
-                            window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Música: " + p.substring(0,20), null, { url: window.location.origin + result.file_url }); 
+                            window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Música: " + p.substring(0,20), null, { url: fileUrlAbs }); 
                         }
                     } else {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro: " + result.error);
@@ -1545,4 +1671,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
