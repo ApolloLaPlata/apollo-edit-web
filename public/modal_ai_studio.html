@@ -713,6 +713,9 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
 
             <!-- Resultado: Vídeo -->
             <video id="previewVideo" controls></video>
+
+            <!-- Resultado: Batch / Múltiplos Arquivos -->
+            <div id="previewContainer" style="display:none; width:100%; height:100%; overflow-y:auto;"></div>
         </div>
 
         <!-- Terminal de debug -->
@@ -1357,9 +1360,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             btn.innerText = "⏳ Pensando...";
             btn.disabled = true;
-            
             try {
-                const response = await fetch("/api/music/auto_tag_lyrics", {
+                const response = await fetch("http://163.176.135.59/api/music/auto_tag_lyrics", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ lyrics: raw })
@@ -1395,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
             
             try {
-                const response = await fetch("/api/music/generate_batch_ideas", {
+                const response = await fetch("http://163.176.135.59/api/music/generate_batch_ideas", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ theme, count })
@@ -1613,7 +1615,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (prompts.length > 1) updateMusicProgress(i, prompts.length);
                 
                 try {
-                    const response = await fetch("/api/audio/generate", {
+                    const response = await fetch("http://163.176.135.59/api/audio/generate", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ prompt: p, engine, duration: finalDuration })
@@ -1623,25 +1625,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (result.success) {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ✅ Sucesso!");
                         successCount++;
-                        window.batchGeneratedFiles.push(result.file_url);
+                        const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : `http://163.176.135.59${result.file_url}`;
+                        window.batchGeneratedFiles.push(fileUrlAbs);
                         
                         const trackList = document.getElementById('batchTracksList');
                         const index = window.batchGeneratedFiles.length;
                         const trackHtml = `
                             <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
                                 <div style="flex: 1;">
-                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa : ...</h4>
+                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
                                     <audio controls style="width: 100%;">
-                                        <source src="" type="audio/mpeg">
+                                        <source src="${fileUrlAbs}" type="audio/mpeg">
                                     </audio>
                                 </div>
-                                <a href="" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
+                                <a href="${fileUrlAbs}" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
                             </div>
                         `;
                         trackList.insertAdjacentHTML('beforeend', trackHtml);
 
                         if (window.apolloTransferOS) { 
-                            window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Música: " + p.substring(0,20), null, { url: window.location.origin + result.file_url }); 
+                            window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Música: " + p.substring(0,20), null, { url: fileUrlAbs }); 
                         }
                     } else {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro: " + result.error);
