@@ -415,10 +415,11 @@
 
         <!-- TABS -->
         <div class="tab-row">
-            <button class="tab-btn active" onclick="showTab('img')">🖼️ Imagem</button>
+            <button class="tab-btn active" onclick="showTab('img')">📷 Imagem</button>
             <button class="tab-btn" onclick="showTab('vid')">🎬 Vídeo</button>
-            <button class="tab-btn" onclick="showTab('audio')">🎤 Áudio</button>
+            <button class="tab-btn" onclick="showTab('audio')">🎙️ Áudio</button>
             <button class="tab-btn" onclick="showTab('music')">🎵 Música</button>
+            <button class="tab-btn" onclick="showTab('batch')">🚀 Em Lote</button>
         </div>
 
         <!-- TAB: IMAGEM -->
@@ -585,6 +586,41 @@
             </div>
         </div>
 
+        <!-- TAB: BATCH -->
+        <div id="tab-batch" style="display:none;">
+            <div class="card">
+                <div class="card-title">🚀 Gerador de Música em Lote</div>
+                
+                <div class="field-label">Motor de Inteligência Artificial</div>
+                <select id="batchModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="acestep">ACE-Step 1.5</option>
+                    <option value="sa3">Stable Audio 3</option>
+                    <option value="minimax">MiniMax Music3</option>
+                </select>
+
+                <div class="field-label">Lista de Prompts (um por linha)</div>
+                <textarea id="batchPrompts" placeholder="Linha 1: Prompt da primeira música&#10;Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:120px; margin-bottom: 15px;"></textarea>
+                
+                <div class="field-label">Duração (Segundos)</div>
+                <input type="number" id="batchDuration" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                
+                <button class="btn btn-primary" id="btnGenerateBatch" onclick="generateBatch()" style="width:100%;">
+                    🚀 Iniciar Fila de Geração
+                </button>
+                <button class="btn btn-primary" id="btnStopBatch" onclick="stopBatch()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
+                    🛑 Cancelar Fila
+                </button>
+                <div class="log-box" id="batchStatus" style="margin-top:10px;">Aguardando...</div>
+                
+                <div id="batchProgressContainer" style="display:none; margin-top:10px;">
+                    <div style="width:100%; background:#2a2a35; border-radius:4px; height:10px;">
+                        <div id="batchProgressBar" style="width:0%; background:var(--cyan); height:10px; border-radius:4px; transition:width 0.3s;"></div>
+                    </div>
+                    <div id="batchProgressText" style="text-align:center; font-size:10px; margin-top:4px; color:var(--text-dim);">0/0</div>
+                </div>
+            </div>
+        </div>
+
     </aside>
 
     <!-- ═══ PAINEL DE PREVIEW ═══ -->
@@ -718,17 +754,18 @@ function clearPreview() {
     currentVideoData = null;
 }
 
-function showTab(name) {
-    ['img','vid','audio','music'].forEach(t => {
-        const el = document.getElementById('tab-'+t);
-        if (el) el.style.display = (t === name) ? 'block' : 'none';
-        
-        document.querySelectorAll('.tab-btn').forEach((b,i) => {
-            const tabs = ['img','vid','audio','music'];
-            b.classList.toggle('active', tabs[i] === name);
-        });
-    });
-}
+        // --- GESTÃO DE ABAS ---
+        function showTab(name) {
+            ['img', 'vid', 'audio', 'music', 'batch'].forEach(t => {
+                const el = document.getElementById('tab-'+t);
+                if (el) el.style.display = (t === name) ? 'block' : 'none';
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach((b,i) => {
+                const tabs = ['img','vid','audio','music', 'batch'];
+                if (tabs[i]) b.classList.toggle('active', tabs[i] === name);
+            });
+        }
 
 async function generateMusicStudio() {
     const prompt = document.getElementById("musicPrompt").value;
@@ -1294,6 +1331,106 @@ document.addEventListener('DOMContentLoaded', () => {
     applyUpscaleStyleFull(toggleUpscale.checked);
     toggleUpscale.addEventListener('change', () => applyUpscaleStyleFull(toggleUpscale.checked));
 });
+        // --- BATCH GENERATION LOGIC ---
+        let batchRunning = false;
+        
+        async function generateBatch() {
+            const raw = document.getElementById('batchPrompts').value.trim();
+            if (!raw) {
+                alert("Insira ao menos um prompt!");
+                return;
+            }
+            const prompts = raw.split('\n').map(p => p.trim()).filter(p => p);
+            if (prompts.length === 0) return;
+            
+            const engine = document.getElementById('batchModel').value;
+            const duration = document.getElementById('batchDuration').value;
+            
+            document.getElementById('btnGenerateBatch').style.display = 'none';
+            document.getElementById('btnStopBatch').style.display = 'block';
+            document.getElementById('batchProgressContainer').style.display = 'block';
+            
+            batchRunning = true;
+            let successCount = 0;
+            
+            for (let i = 0; i < prompts.length; i++) {
+                if (!batchRunning) {
+                    logBatch(`Processo cancelado na música ${i+1}.`);
+                    break;
+                }
+                
+                const p = prompts[i];
+                logBatch(`[${i+1}/${prompts.length}] Gerando: ${p.substring(0, 30)}...`);
+                updateBatchProgress(i, prompts.length);
+                
+                try {
+                    const response = await fetch("/api/audio/generate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ prompt: p, engine, duration })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        logBatch(`[${i+1}/${prompts.length}] ✅ Sucesso!`);
+                        successCount++;
+                        
+                        // Atualizar preview com a música gerada em lote
+                        const preview = document.getElementById('previewContainer');
+                        const statusBox = document.getElementById('batchStatus');
+                        
+                        preview.innerHTML = `
+                            <div style="padding: 20px; text-align: center;">
+                                <h3 style="color: white; margin-bottom: 20px;">🎵 Resultado Lote: ${p.substring(0,20)}...</h3>
+                                <audio controls autoplay style="width: 100%;">
+                                    <source src="${result.file_url}" type="audio/mpeg">
+                                </audio>
+                                <br><br>
+                                <a href="${result.file_url}" download class="btn btn-primary">Baixar Arquivo</a>
+                            </div>
+                        `;
+                        document.getElementById('previewPlaceholder').style.display = 'none';
+                        preview.style.display = 'block';
+
+                        if (window.apolloTransferOS) { 
+                            window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Lote: " + p.substring(0,20), null, { url: window.location.origin + result.file_url }); 
+                        }
+                    } else {
+                        logBatch(`[${i+1}/${prompts.length}] ❌ Erro: ${result.error}`);
+                    }
+                } catch (e) {
+                    logBatch(`[${i+1}/${prompts.length}] ❌ Erro Rede: ${e.message}`);
+                }
+                
+                updateBatchProgress(i+1, prompts.length);
+            }
+            
+            batchRunning = false;
+            document.getElementById('btnGenerateBatch').style.display = 'block';
+            document.getElementById('btnStopBatch').style.display = 'none';
+            
+            if (successCount === prompts.length) {
+                logBatch(`✅ Lote concluído! ${successCount} músicas geradas.`);
+            } else {
+                logBatch(`⚠️ Lote finalizado. ${successCount}/${prompts.length} com sucesso.`);
+            }
+        }
+        
+        function stopBatch() {
+            batchRunning = false;
+            logBatch("Cancelamento solicitado (aguarde a atual terminar)...");
+        }
+        
+        function logBatch(msg) {
+            const box = document.getElementById('batchStatus');
+            box.innerText = msg;
+        }
+        
+        function updateBatchProgress(current, total) {
+            const perc = (current / total) * 100;
+            document.getElementById('batchProgressBar').style.width = perc + '%';
+            document.getElementById('batchProgressText').innerText = `${current}/${total}`;
+        }
 </script>
 
 </body>
