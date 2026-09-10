@@ -561,10 +561,16 @@
             </div>
         </div>
 
-        <!-- TAB: MÚSICA -->
+                <!-- TAB: MÚSICA -->
         <div id="tab-music" style="display:none;">
             <div class="card">
                 <div class="card-title">🎵 Gerador de Música / SFX</div>
+                
+                <div class="field-label">Modo de Execução</div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <label><input type="radio" name="musicExecMode" value="single" checked onclick="toggleMusicUI()"> 🎵 Única</label>
+                    <label><input type="radio" name="musicExecMode" value="batch" onclick="toggleMusicUI()"> 🚀 Em Lote (Várias)</label>
+                </div>
                 
                 <div class="field-label">Motor de Inteligência Artificial</div>
                 <select id="musicModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
@@ -573,88 +579,88 @@
                     <option value="minimax">MiniMax Music3 (Melhor para Vocais e Músicas Completas)</option>
                 </select>
 
-                <div class="field-label">Descreva o som desejado</div>
-                <textarea id="musicPrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom: 15px;"></textarea>
-                
-                <div class="field-label">Duração (Segundos)</div>
-                <input type="number" id="musicDuration" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                
-                <button class="btn btn-primary" id="btnGenerateMusic" onclick="generateMusicStudio()" style="width:100%;">
-                    🎧 Gerar Música (Conta 9)
-                </button>
-                <div class="log-box" id="musicStatus" style="margin-top:10px;">Aguardando comando...</div>
-            </div>
-        </div>
-
-        <!-- TAB: BATCH -->
-        <div id="tab-batch" style="display:none;">
-            <div class="card">
-                <div class="card-title">🚀 Gerador de Música em Lote</div>
-                
-                <div class="field-label">Motor de Inteligência Artificial</div>
-                <select id="batchModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="acestep">ACE-Step 1.5</option>
-                    <option value="sa3">Stable Audio 3</option>
-                    <option value="minimax">MiniMax Music3</option>
-                </select>
-
                 <div class="field-label">Estilo / Tipo de Faixa</div>
-                <select id="batchStyle" onchange="toggleBatchMode()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="instrumental">🎶 Apenas Instrumental (Modo Simples - 1 por linha)</option>
-                    <option value="vocal">🎤 Com Vocais/Letra (Modo Duplo - Estilo + Letra)</option>
-                    <option value="auto">Automático (Deixar o modelo decidir)</option>
+                <select id="musicStyle" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="instrumental">🎶 Apenas Instrumental</option>
+                    <option value="vocal">🎤 Com Vocais/Letra</option>
+                    <option value="auto">🤖 Automático (Deixar o modelo decidir)</option>
                 </select>
-
-                <!-- CONTEINER DE ESTEIRAS -->
-                <div id="batchInputContainer" style="display:flex; gap:10px; margin-bottom:15px;">
-                    <!-- ESTEIRA 1: ESTILOS -->
-                    <div style="flex:1;">
-                        <div class="field-label">Prompts/Estilos Musicais (Um por linha)</div>
-                        <textarea id="batchPrompts" placeholder="Ex:&#10;Dark Trap, 808 bass&#10;Epic orchestral, choir" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:160px;"></textarea>
+                
+                <!-- SINGLE AREA -->
+                <div id="musicSingleArea" style="margin-bottom:15px;">
+                    <div class="field-label">Descreva o som desejado (Prompt de Estilo)</div>
+                    <textarea id="musicSinglePrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:60px;"></textarea>
+                    
+                    <div id="musicSingleLyricsContainer" style="display:none; margin-top:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="field-label" style="margin:0;">Letra da Música</div>
+                            <button class="btn btn-primary" id="btnAutoTag" onclick="autoTagLyrics()" style="font-size:10px; padding:4px 8px;">🪄 Auto-Tag (IA)</button>
+                        </div>
+                        <textarea id="musicSingleLyrics" placeholder="Digite a letra aqui..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:100px; margin-top:5px;"></textarea>
+                    </div>
+                </div>
+                
+                <!-- BATCH AREA -->
+                <div id="musicBatchArea" style="display:none; margin-bottom:15px; border:1px dashed var(--border); padding:10px; border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="margin:0; color:var(--cyan);">🚀 Lote IA</h4>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom:10px;">
+                        <input type="text" id="aiBatchTheme" placeholder="Tema (ex: Cyberpunk, Trap...)" style="flex:1; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <input type="number" id="aiBatchCount" value="3" min="2" max="10" style="width:60px; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <button class="btn btn-primary" id="btnAIGenerateBatch" onclick="generateBatchIdeas()">✨ Gerar Ideias</button>
                     </div>
                     
-                    <!-- ESTEIRA 2: LETRAS (Oculto no modo Instrumental) -->
-                    <div id="batchLyricsContainer" style="flex:1; display:none;">
-                        <div class="field-label">Letras (Separe as músicas com ===)</div>
-                        <textarea id="batchLyrics" placeholder="[Verse 1]&#10;Primeira letra aqui...&#10;===&#10;[Verse 1]&#10;Segunda letra aqui..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:160px;"></textarea>
+                    <div class="field-label">Lista de Prompts de Estilo (Um por linha)</div>
+                    <textarea id="musicBatchPrompts" placeholder="Linha 1: Prompt da primeira música
+Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom:10px;"></textarea>
+                    
+                    <div id="musicBatchLyricsContainer" style="display:none;">
+                        <div class="field-label">Lista de Letras (Separadas por ===)</div>
+                        <textarea id="musicBatchLyrics" placeholder="[Verse 1]
+...
+===
+[Verse 1]
+..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:120px;"></textarea>
                     </div>
                 </div>
-
-                <div class="field-label" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>Duração (Segundos)</span>
-                    <label style="font-size:0.8rem; cursor:pointer; color:var(--cyan);">
-                        <input type="checkbox" id="batchRandomDuration" onchange="toggleRandomDuration()"> 🎲 Aleatório
-                    </label>
+                
+                <div class="field-label">Modo de Duração</div>
+                <select id="musicDurationMode" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                    <option value="fixed">Fixo (Todos com a mesma duração)</option>
+                    <option value="random">Aleatório (Entre Min e Max)</option>
+                </select>
+                
+                <div id="musicDurationFixedArea" style="margin-bottom:15px;">
+                    <div class="field-label">Duração (Segundos)</div>
+                    <input type="number" id="musicDurationFixed" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                 </div>
                 
-                <div id="batchDurationFixedContainer">
-                    <input type="number" id="batchDuration" value="60" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                </div>
-                
-                <div id="batchDurationRandomContainer" style="display:none; gap:10px; margin-bottom: 15px;">
+                <div id="musicDurationRandomArea" style="display:none; gap:10px; margin-bottom:15px;">
                     <div style="flex:1;">
-                        <span style="font-size:0.7rem; color:var(--text-dim);">Mínimo</span>
-                        <input type="number" id="batchDurationMin" value="45" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <div class="field-label">Min (s)</div>
+                        <input type="number" id="musicDurationMin" value="15" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                     <div style="flex:1;">
-                        <span style="font-size:0.7rem; color:var(--text-dim);">Máximo</span>
-                        <input type="number" id="batchDurationMax" value="120" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <div class="field-label">Max (s)</div>
+                        <input type="number" id="musicDurationMax" value="45" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                 </div>
                 
-                <button class="btn btn-primary" id="btnGenerateBatch" onclick="generateBatch()" style="width:100%;">
-                    🚀 Iniciar Fila de Geração
+                <button class="btn btn-primary" id="btnGenerateMusicMaster" onclick="generateMusicMaster()" style="width:100%;">
+                    🎧 Iniciar Geração (Conta 9)
                 </button>
-                <button class="btn btn-primary" id="btnStopBatch" onclick="stopBatch()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
-                    🛑 Cancelar Fila
+                <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
+                    ⛔ Cancelar Processo
                 </button>
-                <div class="log-box" id="batchStatus" style="margin-top:10px;">Aguardando...</div>
                 
-                <div id="batchProgressContainer" style="display:none; margin-top:10px;">
+                <div class="log-box" id="musicMasterStatus" style="margin-top:10px;">Aguardando...</div>
+                
+                <div id="musicProgressContainer" style="display:none; margin-top:10px;">
                     <div style="width:100%; background:#2a2a35; border-radius:4px; height:10px;">
-                        <div id="batchProgressBar" style="width:0%; background:var(--cyan); height:10px; border-radius:4px; transition:width 0.3s;"></div>
+                        <div id="musicProgressBar" style="width:0%; background:var(--cyan); height:10px; border-radius:4px; transition:width 0.3s;"></div>
                     </div>
-                    <div id="batchProgressText" style="text-align:center; font-size:10px; margin-top:4px; color:var(--text-dim);">0/0</div>
+                    <div id="musicProgressText" style="text-align:center; font-size:10px; margin-top:4px; color:var(--text-dim);">0/0</div>
                 </div>
             </div>
         </div>
