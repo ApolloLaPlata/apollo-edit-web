@@ -11,51 +11,70 @@ class AudioGenRequest(BaseModel):
     prompt: str
     lyrics: str = ""
     duration: int = 15
-    engine: str = "acestep" # "acestep" ou "yue"
+    engine: str = "acestep" # "acestep" ou "yue" ou "sa3" ou "minimax"
 
-@router.post("/generate")
-async def generate_audio(req: AudioGenRequest):
+# Armazenamento simples em memria para os jobs
+# Num sistema real, usar Redis ou DB.
+jobs_db = {}
+
+def process_audio_job(job_id: str, req: AudioGenRequest):
     try:
+        jobs_db[job_id] = {"status": "processing"}
+        print(f"[JOB {job_id}] Iniciando geracao Modal: {req.engine}")
+        
         if req.engine == "acestep":
-            # Usar o Modal Function Lookup para buscar o App deployado
             func = modal.Function.lookup("apollo-render-router", "AceStep15Engine.generate_song")
-            
-            # Executar de forma assíncrona na nuvem
             tags = req.prompt
             lyrics = req.lyrics if req.lyrics else "[Verse]\n" + req.prompt
-            
-            # Modal functions can be awaited using .aio()
-            wav_data = await func.remote.aio(prompt_tags=tags, lyrics=lyrics)
-            
-            filename = f"acestep_{uuid.uuid4().hex[:8]}.wav"
+            wav_data = func.remote(prompt_tags=tags, lyrics=lyrics)
+            filename = f"acestep_{job_id}.wav"
             
         elif req.engine == "sa3":
             func = modal.Function.lookup("apollo-render-router", "StableAudioEngine.generate_audio")
-            wav_data = await func.remote.aio(prompt=req.prompt, duration_s=float(req.duration))
-            filename = f"sa3_{uuid.uuid4().hex[:8]}.wav"
+            wav_data = func.remote(prompt=req.prompt, duration_s=float(req.duration))
+            filename = f"sa3_{job_id}.wav"
             
         elif req.engine == "minimax":
             func = modal.Function.lookup("apollo-render-router", "MinimaxEngine.generate")
-            wav_data = await func.remote.aio(prompt=req.prompt, lyrics=req.lyrics, duration=float(req.duration))
-            filename = f"minimax_{uuid.uuid4().hex[:8]}.wav"
+            wav_data = func.remote(prompt=req.prompt, lyrics=req.lyrics, duration=float(req.duration))
+            filename = f"minimax_{job_id}.wav"
             
         elif req.engine == "yue":
-            # TODO: Add YuE support once deployed
-            return {"status": "pending", "message": "YuE engine not deployed yet."}
+            jobs_db[job_id] = {"status": "error", "error": "YuE engine not deployed yet."}
+            return
             
         else:
-            raise HTTPException(status_code=400, detail="Motor desconhecido")
+            jobs_db[job_id] = {"status": "error", "error": "Motor desconhecido"}
+            return
             
-        # Salvar no diretório público para o frontend tocar
+        # Salvar no diretrio pblico
         out_dir = os.path.join(os.getcwd(), "Midias", "Audios")
         os.makedirs(out_dir, exist_ok=True)
-        
         out_path = os.path.join(out_dir, filename)
+        
         with open(out_path, "wb") as f:
             f.write(wav_data)
             
-        return {"status": "success", "file_url": f"/Midias/Audios/{filename}", "engine": req.engine}
-            
+        jobs_db[job_id] = {
+            "status": "success", 
+            "file_url": f"/Midias/Audios/{filename}",
+            "engine": req.engine
+        }
+        print(f"[JOB {job_id}] Sucesso. Salvo em {filename}")
+        
     except Exception as e:
-        print(f"Erro na geração de áudio: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"[JOB {job_id}] Erro: {e}")
+        jobs_db[job_id] = {"status": "error", "error": str(e)}
+
+@router.post("/generate")
+async def generate_audio(req: AudioGenRequest, background_tasks: BackgroundTasks):
+    job_id = uuid.uuid4().hex[:8]
+    background_tasks.add_task(process_audio_job, job_id, req)
+    return {"status": "queued", "job_id": job_id, "message": "Job initiated. Poll /status/{job_id} for results."}
+
+@router.get("/status/{job_id}")
+async def get_job_status(job_id: str):
+    job = jobs_db.get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job não encontrado")
+    return job

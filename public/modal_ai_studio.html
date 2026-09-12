@@ -415,11 +415,10 @@
 
         <!-- TABS -->
         <div class="tab-row">
-            <button class="tab-btn active" onclick="showTab('img')">📷 Imagem</button>
+            <button class="tab-btn active" onclick="showTab('img')">🖼️ Imagem</button>
             <button class="tab-btn" onclick="showTab('vid')">🎬 Vídeo</button>
-            <button class="tab-btn" onclick="showTab('audio')">🎙️ Áudio</button>
+            <button class="tab-btn" onclick="showTab('audio')">🎤 Áudio</button>
             <button class="tab-btn" onclick="showTab('music')">🎵 Música</button>
-            
         </div>
 
         <!-- TAB: IMAGEM -->
@@ -427,10 +426,8 @@
             <div class="card active">
                 <div class="card-title">🖼️ Gerador de Imagens <span class="badge" id="imgBadgeModel">FLUX.1-schnell L4</span></div>
                 <div class="field-label">Modelo</div>
-                <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState(); document.getElementById('loraContainer').style.display = (this.value === 'flux2-universal') ? 'block' : 'none';">
+                <select id="imgModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;" onchange="document.getElementById('imgBadgeModel').textContent = this.options[this.selectedIndex].text; updateGenButtonState();">
                     <option value="qwen-image">Qwen 2.5 Image Edit (T2I / I2I / Multi-Characters)</option>
-                    <option value="flux2-universal">FLUX.1-dev Universal (Img2Img / LoRA Civitai)</option>
-                    <option value="flux-schnell">FLUX.1-schnell (Rápido T2I)</option>
                 </select>
                 
                 <div class="field-label">Prompt (descreva a imagem em inglês)</div>
@@ -442,16 +439,6 @@
                     <input type="file" id="imgRefFiles" accept="image/*" multiple onchange="updateImgRefNames()">
                     <span class="file-name" id="imgRefFileNames">Nenhuma imagem selecionada</span>
                 </div>
-                <div id="loraContainer" style="display:none; margin-top:15px; border:1px dashed var(--border); padding:10px; border-radius:8px; background:rgba(255,100,255,0.05);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <h4 style="margin:0; color:#ff66ff;">🎭 Injeção de LoRA (Civitai)</h4>
-                    </div>
-                    <div class="field-label">URL Direta do Safetensors (Civitai)</div>
-                    <input type="text" id="imgLoraUrl" placeholder="https://civitai.com/api/download/models/XXXX" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom:10px;">
-                    <div class="field-label">Força do LoRA: <span id="imgLoraStrengthVal">1.0</span></div>
-                    <input type="range" id="imgLoraStrength" min="0.1" max="2.0" step="0.1" value="1.0" style="width:100%;" oninput="document.getElementById('imgLoraStrengthVal').innerText = this.value">
-                </div>
-
 
                 <div style="display:flex; gap:8px; margin-top: 10px; align-items:center;">
                     <div style="flex:1;">
@@ -573,16 +560,10 @@
             </div>
         </div>
 
-                <!-- TAB: MÚSICA -->
+        <!-- TAB: MÚSICA -->
         <div id="tab-music" style="display:none;">
             <div class="card">
                 <div class="card-title">🎵 Gerador de Música / SFX</div>
-                
-                <div class="field-label">Modo de Execução</div>
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <label><input type="radio" name="musicExecMode" value="single" checked onclick="toggleMusicUI()"> 🎵 Única</label>
-                    <label><input type="radio" name="musicExecMode" value="batch" onclick="toggleMusicUI()"> 🚀 Em Lote (Várias)</label>
-                </div>
                 
                 <div class="field-label">Motor de Inteligência Artificial</div>
                 <select id="musicModel" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
@@ -591,89 +572,16 @@
                     <option value="minimax">MiniMax Music3 (Melhor para Vocais e Músicas Completas)</option>
                 </select>
 
-                <div class="field-label">Estilo / Tipo de Faixa</div>
-                <select id="musicStyle" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="instrumental">🎶 Apenas Instrumental</option>
-                    <option value="vocal">🎤 Com Vocais/Letra</option>
-                    <option value="auto">🤖 Automático (Deixar o modelo decidir)</option>
-                </select>
+                <div class="field-label">Descreva o som desejado</div>
+                <textarea id="musicPrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom: 15px;"></textarea>
                 
-                <!-- SINGLE AREA -->
-                <div id="musicSingleArea" style="margin-bottom:15px;">
-                    <div class="field-label">Descreva o som desejado (Prompt de Estilo)</div>
-                    <textarea id="musicSinglePrompt" placeholder="Ex: Uma trilha sonora épica de suspense..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:60px;"></textarea>
-                    
-                    <div id="musicSingleLyricsContainer" style="display:none; margin-top:10px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div class="field-label" style="margin:0;">Letra da Música</div>
-                            <button class="btn btn-primary" id="btnAutoTag" onclick="autoTagLyrics()" style="font-size:10px; padding:4px 8px;">🪄 Auto-Tag (IA)</button>
-                        </div>
-                        <textarea id="musicSingleLyrics" placeholder="Digite a letra aqui..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:100px; margin-top:5px;"></textarea>
-                    </div>
-                </div>
+                <div class="field-label">Duração (Segundos)</div>
+                <input type="number" id="musicDuration" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
                 
-                <!-- BATCH AREA -->
-                <div id="musicBatchArea" style="display:none; margin-bottom:15px; border:1px dashed var(--border); padding:10px; border-radius:8px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <h4 style="margin:0; color:var(--cyan);">🚀 Lote IA</h4>
-                    </div>
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <input type="text" id="aiBatchTheme" placeholder="Tema (ex: Cyberpunk, Trap...)" style="flex:1; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                        <input type="number" id="aiBatchCount" value="3" min="2" max="10" style="width:60px; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                        <button class="btn btn-primary" id="btnAIGenerateBatch" onclick="generateBatchIdeas()">✨ Gerar Ideias</button>
-                    </div>
-                    
-                    <div class="field-label">Lista de Prompts de Estilo (Um por linha)</div>
-                    <textarea id="musicBatchPrompts" placeholder="Linha 1: Prompt da primeira música
-Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:80px; margin-bottom:10px;"></textarea>
-                    
-                    <div id="musicBatchLyricsContainer" style="display:none;">
-                        <div class="field-label">Lista de Letras (Separadas por ===)</div>
-                        <textarea id="musicBatchLyrics" placeholder="[Verse 1]
-...
-===
-[Verse 1]
-..." style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; min-height:120px;"></textarea>
-                    </div>
-                </div>
-                
-                <div class="field-label">Modo de Duração</div>
-                <select id="musicDurationMode" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="fixed">Fixo (Todos com a mesma duração)</option>
-                    <option value="random">Aleatório (Entre Min e Max)</option>
-                </select>
-                
-                <div id="musicDurationFixedArea" style="margin-bottom:15px;">
-                    <div class="field-label">Duração (Segundos)</div>
-                    <input type="number" id="musicDurationFixed" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                </div>
-                
-                <div id="musicDurationRandomArea" style="display:none; gap:10px; margin-bottom:15px;">
-                    <div style="flex:1;">
-                        <div class="field-label">Min (s)</div>
-                        <input type="number" id="musicDurationMin" value="15" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                    </div>
-                    <div style="flex:1;">
-                        <div class="field-label">Max (s)</div>
-                        <input type="number" id="musicDurationMax" value="45" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" id="btnGenerateMusicMaster" onclick="generateMusicMaster()" style="width:100%;">
-                    🎧 Iniciar Geração (Conta 9)
+                <button class="btn btn-primary" id="btnGenerateMusic" onclick="generateMusicStudio()" style="width:100%;">
+                    🎧 Gerar Música (Conta 9)
                 </button>
-                <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
-                    ⛔ Cancelar Processo
-                </button>
-                
-                <div class="log-box" id="musicMasterStatus" style="margin-top:10px;">Aguardando...</div>
-                
-                <div id="musicProgressContainer" style="display:none; margin-top:10px;">
-                    <div style="width:100%; background:#2a2a35; border-radius:4px; height:10px;">
-                        <div id="musicProgressBar" style="width:0%; background:var(--cyan); height:10px; border-radius:4px; transition:width 0.3s;"></div>
-                    </div>
-                    <div id="musicProgressText" style="text-align:center; font-size:10px; margin-top:4px; color:var(--text-dim);">0/0</div>
-                </div>
+                <div class="log-box" id="musicStatus" style="margin-top:10px;">Aguardando comando...</div>
             </div>
         </div>
 
@@ -713,9 +621,6 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
 
             <!-- Resultado: Vídeo -->
             <video id="previewVideo" controls></video>
-
-            <!-- Resultado: Batch / Múltiplos Arquivos -->
-            <div id="previewContainer" style="display:none; width:100%; height:100%; overflow-y:auto;"></div>
         </div>
 
         <!-- Terminal de debug -->
@@ -798,69 +703,165 @@ function hideSpinner() {
 
 function clearPreview() {
     const imgNode = document.getElementById('previewImage');
-    if (imgNode) {
-        imgNode.style.display = 'none';
-        imgNode.src = '';
-    }
+    imgNode.style.display = 'none';
+    imgNode.src = '';
 
     const vidNode = document.getElementById('previewVideo');
-    if (vidNode) {
-        vidNode.style.display = 'none';
-        vidNode.src = '';
-    }
+    vidNode.style.display = 'none';
+    vidNode.src = '';
     
-    // Clear music tracks generated by music master
-    const previewContainer = document.getElementById('previewContainer');
-    if (previewContainer) {
-        const batchList = document.getElementById('batchTracksList');
-        if (batchList) {
-            // Restore original HTML
-            previewContainer.innerHTML = `
-                <div class="preview-placeholder" id="previewPlaceholder">
-                    <span class="placeholder-icon">🎵</span>
-                    <p style="margin-top: 15px; font-size: 1.1rem; color: #828292;">Seu áudio aparecerá aqui...</p>
-                </div>
-                <div class="spinner-wrap" id="spinnerWrap">
-                    <div class="loading-spinner"></div>
-                    <div style="color: var(--cyan); margin-top: 15px; font-weight: bold; letter-spacing: 1px; font-size: 0.9rem;" id="loadingSpinnerText">GERANDO...</div>
-                </div>
-                <img id="previewImage" class="media-result" style="display:none;">
-                <video id="previewVideo" class="media-result" style="display:none;" controls loop></video>
-            `;
-        }
-    }
-    
-    window.batchGeneratedFiles = [];
-    
-    const btnDown = document.getElementById('btnDownloadPreview');
-    if (btnDown) btnDown.style.display = 'none';
-    
-    const spinner = document.getElementById('spinnerWrap');
-    if (spinner) spinner.classList.remove('active');
-    
-    const placeholder = document.getElementById('previewPlaceholder');
-    if (placeholder) placeholder.style.display = 'flex';
-    
-    const badge = document.getElementById('genTimeBadge');
-    if (badge) badge.style.display = 'none';
-    
+    document.getElementById('btnDownloadPreview').style.display = 'none';
+    document.getElementById('spinnerWrap').classList.remove('active');
+    document.getElementById('previewPlaceholder').style.display = 'flex';
+    document.getElementById('genTimeBadge').style.display = 'none';
     currentImageData = null;
     currentVideoData = null;
 }
 
-        // --- GESTÃO DE ABAS ---
-        function showTab(name) {
-            ['img', 'vid', 'audio', 'music', 'batch'].forEach(t => {
-                const el = document.getElementById('tab-'+t);
-                if (el) el.style.display = (t === name) ? 'block' : 'none';
-            });
+function showTab(name) {
+    ['img','vid','audio','music'].forEach(t => {
+        const el = document.getElementById('tab-'+t);
+        if (el) el.style.display = (t === name) ? 'block' : 'none';
+        
+        document.querySelectorAll('.tab-btn').forEach((b,i) => {
+            const tabs = ['img','vid','audio','music'];
+            b.classList.toggle('active', tabs[i] === name);
+        });
+    });
+}
+
+async function generateMusicStudio() {
+    const prompt = document.getElementById("musicPrompt").value;
+    const duration = document.getElementById("musicDuration").value;
+    const engine = document.getElementById("musicModel").value;
+    
+    if (!prompt) {
+        alert("Por favor, digite um prompt para a música.");
+        return;
+    }
+    
+    const btn = document.getElementById("btnGenerateMusic");
+    const statusBox = document.getElementById("musicStatus");
+    
+    btn.innerText = "⏳ Gerando...";
+    btn.style.pointerEvents = "none";
+    statusBox.innerText = "Iniciando motor na Nuvem (Conta 9)...";
+    log(`🎵 Solicitando geração de música: ${engine} (${duration}s)`, 'info');
+    
+    try {
+        const response = await fetch("/api/audio/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                prompt: prompt,
+                duration: duration,
+                engine: engine
+            })
+        });
+        
+        const initResult = await response.json();
+        
+        if (initResult.status !== "queued") {
+            throw new Error(initResult.error || "Falha ao iniciar job na nuvem.");
+        }
+        
+        const jobId = initResult.job_id;
+        log(`⏳ Job iniciado [${jobId}]. Aguardando processamento da Modal... (Aprox. 1-3 minutos)`, 'warn');
+        statusBox.innerText = `⏳ Aguardando... Job: ${jobId}`;
+        
+        let result = null;
+        while (true) {
+            await new Promise(r => setTimeout(r, 5000)); // Poll a cada 5s
             
-            document.querySelectorAll('.tab-btn').forEach((b,i) => {
-                const tabs = ['img','vid','audio','music', 'batch'];
-                if (tabs[i]) b.classList.toggle('active', tabs[i] === name);
-            });
+            const pollRes = await fetch(`/api/audio/status/${jobId}`);
+            if (!pollRes.ok) continue;
+            
+            const pollData = await pollRes.json();
+            if (pollData.status === "success") {
+                result = pollData;
+                break;
+            } else if (pollData.status === "error") {
+                throw new Error(pollData.error || "Erro na geração.");
+            }
+            // else "processing", continua o loop
+            statusBox.innerText = `⏳ Processando na nuvem... [${jobId}]`;
         }
 
+        if (result && result.status === "success") {
+            statusBox.innerText = "✅ Música gerada com sucesso!";
+            log(`✅ Arquivo de áudio gerado: ${result.file_url}`, 'success');
+            
+            // Adicionar ao painel de preview/historico
+            const preview = document.getElementById('previewContainer');
+            
+            // Garantir que a box de histrico existe
+            let historyBox = document.getElementById('audioHistoryList');
+            if (!historyBox) {
+                preview.innerHTML = `
+                    <div style="padding: 20px; text-align: left; width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: white;">🎧 Histórico de Áudios (Bagagem)</h3>
+                            <button class="btn btn-ghost" onclick="downloadSelectedAudios()">⬇️ Baixar Selecionados</button>
+                        </div>
+                        <div id="audioHistoryList" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                    </div>
+                `;
+                historyBox = document.getElementById('audioHistoryList');
+            }
+
+            // Criar novo item no histrico
+            const audioItem = document.createElement('div');
+            audioItem.style.cssText = "background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;";
+            
+            const checkboxId = "chk_" + Date.now();
+            audioItem.innerHTML = `
+                <input type="checkbox" class="audio-checkbox" id="${checkboxId}" value="${result.file_url}" checked style="width: 20px; height: 20px; cursor: pointer;">
+                <div style="flex: 1;">
+                    <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">${engine} | ${duration}s | "${prompt}"</div>
+                    <audio controls style="width: 100%; height: 40px;">
+                        <source src="${result.file_url}" type="audio/mpeg">
+                    </audio>
+                </div>
+                <a href="${result.file_url}" download class="btn btn-ghost">Baixar</a>
+            `;
+            
+            // Adiciona no topo da lista
+            historyBox.prepend(audioItem);
+            
+            if (window.apolloTransferOS) { 
+                window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Gerador de Musica", null, { url: window.location.origin + result.file_url }); 
+            }
+        }
+    } catch (err) {
+        console.error(err);
+        statusBox.innerText = "❌ Falha na conexão";
+        log(`❌ Falha: ${err.message}`, 'error');
+    } finally {
+        btn.innerText = "🎶 Gerar Música (Conta 9)";
+        btn.style.pointerEvents = "auto";
+    }
+}
+
+async function downloadSelectedAudios() {
+    const checkboxes = document.querySelectorAll('.audio-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert("Nenhum áudio selecionado!");
+        return;
+    }
+    
+    log(`⬇️ Iniciando download de ${checkboxes.length} arquivo(s)...`, 'info');
+    
+    checkboxes.forEach((chk, index) => {
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = chk.value;
+            link.download = chk.value.split('/').pop();
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }, index * 500); // Espaçar downloads para não travar o navegador
+    });
+}
 
 function copyLogs() {
     const text = document.getElementById('terminalBody').innerText;
@@ -997,8 +998,6 @@ async function generateImage() {
     const aspect_ratio = document.getElementById('imgAspect') ? document.getElementById('imgAspect').value : 'horizontal';
     const model = document.getElementById('imgModel') ? document.getElementById('imgModel').value : 'flux-schnell';
     const use_upscale = document.getElementById('toggleUpscale') ? document.getElementById('toggleUpscale').checked : true;
-    const lora_url = document.getElementById('imgLoraUrl') ? document.getElementById('imgLoraUrl').value.trim() : null;
-    const lora_strength = document.getElementById('imgLoraStrength') ? parseFloat(document.getElementById('imgLoraStrength').value) : 1.0;
     const url    = "/api/studio/modal/generate_image";
     const status = document.getElementById('imgStatus');
 
@@ -1362,361 +1361,8 @@ document.addEventListener('DOMContentLoaded', () => {
     applyUpscaleStyleFull(toggleUpscale.checked);
     toggleUpscale.addEventListener('change', () => applyUpscaleStyleFull(toggleUpscale.checked));
 });
-        // --- BATCH GENERATION LOGIC ---
-        let batchRunning = false;
-        
-        function toggleRandomDuration() {
-            const isRandom = document.getElementById('batchRandomDuration').checked;
-            document.getElementById('batchDurationFixedContainer').style.display = isRandom ? 'none' : 'block';
-            document.getElementById('batchDurationRandomContainer').style.display = isRandom ? 'flex' : 'none';
-        }
-        
-        
-        
-        function logBatch(msg) {
-            const box = document.getElementById('batchStatus');
-            box.innerText = msg;
-        }
-        
-        function updateBatchProgress(current, total) {
-            const perc = (current / total) * 100;
-            document.getElementById('batchProgressBar').style.width = perc + '%';
-            document.getElementById('batchProgressText').innerText = `${current}/${total}`;
-        }
-
-        
-        
-        async function autoTagLyrics() {
-            const btn = document.getElementById('btnAutoTag');
-            const el = document.getElementById('musicSingleLyrics');
-            const raw = el.value.trim();
-            
-            if (!raw) return alert("Digite a letra primeiro para a IA estruturar!");
-            
-            btn.innerText = "⏳ Pensando...";
-            btn.disabled = true;
-            try {
-                const response = await fetch("/api/music/auto_tag_lyrics", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ lyrics: raw })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    el.value = result.structured_lyrics;
-                    btn.innerText = "✅ Aplicado!";
-                } else {
-                    alert("Erro da IA: " + result.error);
-                    btn.innerText = "❌ Falha";
-                }
-            } catch (e) {
-                alert("Erro de rede.");
-                btn.innerText = "❌ Erro";
-            }
-            
-            setTimeout(() => {
-                btn.innerText = "🪄 Auto-Tag (IA)";
-                btn.disabled = false;
-            }, 3000);
-        }
-
-        async function generateBatchIdeas() {
-            const btn = document.getElementById('btnAIGenerateBatch');
-            const theme = document.getElementById('aiBatchTheme').value.trim();
-            const count = parseInt(document.getElementById('aiBatchCount').value) || 3;
-            
-            if (!theme) return alert("Digite o tema desejado!");
-            
-            btn.innerText = "⏳ Gerando...";
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch("/api/music/generate_batch_ideas", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ theme, count })
-                });
-                const result = await response.json();
-                
-                if (result.success && result.tracks.length > 0) {
-                    let promptStr = "";
-                    let lyricStr = "";
-                    
-                    result.tracks.forEach((track, i) => {
-                        promptStr += track.style + "\n";
-                        lyricStr += track.lyrics + "\n";
-                        if (i < result.tracks.length - 1) lyricStr += "\n===\n";
-                    });
-                    
-                    document.getElementById('musicBatchPrompts').value = promptStr.trim();
-                    document.getElementById('musicBatchLyrics').value = lyricStr.trim();
-                    
-                    // Force change to Vocal mode since AI generated lyrics
-                    document.getElementById('musicStyle').value = 'vocal';
-                    toggleMusicUI();
-                    
-                    btn.innerText = "✅ Ideias Prontas!";
-                } else {
-                    alert("Erro da IA: " + (result.error || "Formato inválido retornado."));
-                    btn.innerText = "❌ Falha";
-                }
-            } catch (e) {
-                alert("Erro de rede.");
-                btn.innerText = "❌ Erro";
-            }
-            
-            setTimeout(() => {
-                btn.innerText = "✨ Gerar Ideias";
-                btn.disabled = false;
-            }, 3000);
-        }
-
-        function insertTag(targetId, tag) {
-            const el = document.getElementById(targetId);
-            const start = el.selectionStart;
-            const end = el.selectionEnd;
-            const text = el.value;
-            el.value = text.substring(0, start) + tag + "\n" + text.substring(end);
-            el.focus();
-            el.selectionEnd = start + tag.length + 1;
-        }
-
-        function magicStyle(targetId) {
-            const el = document.getElementById(targetId);
-            let val = el.value.trim();
-            if (!val) val = "Trap";
-            
-            // Simple rule-based enhancement
-            if (!val.toLowerCase().includes("quality")) val += ", masterpiece, ultra high quality, crisp audio";
-            if (!val.toLowerCase().includes("bpm") && val.toLowerCase().includes("trap")) val += ", 140 bpm, heavy 808 bass, fast hi-hats";
-            if (val.toLowerCase().includes("rock") && !val.toLowerCase().includes("guitar")) val += ", distorted electric guitars, heavy drums, stadium rock";
-            if (val.toLowerCase().includes("lo-fi") || val.toLowerCase().includes("lofi")) val += ", vinyl crackle, cozy, relaxing, melodic piano";
-            
-            el.value = val;
-            
-            // Visual feedback
-            const btn = event.target;
-            const old = btn.innerText;
-            btn.innerText = "✅ Aplicado!";
-            setTimeout(() => { btn.innerText = old; }, 2000);
-        }
-
-        // --- MASTER MUSIC GENERATION LOGIC ---
-        let musicRunning = false;
-        
-        function toggleMusicUI() {
-            const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
-            const style = document.getElementById('musicStyle').value;
-            const durationMode = document.getElementById('musicDurationMode').value;
-            
-            // Single vs Batch Areas
-            if (execMode === 'single') {
-                document.getElementById('musicSingleArea').style.display = 'block';
-                document.getElementById('musicBatchArea').style.display = 'none';
-                document.getElementById('musicSingleLyricsContainer').style.display = (style === 'vocal') ? 'block' : 'none';
-            } else {
-                document.getElementById('musicSingleArea').style.display = 'none';
-                document.getElementById('musicBatchArea').style.display = 'block';
-                document.getElementById('musicBatchLyricsContainer').style.display = (style === 'vocal') ? 'block' : 'none';
-            }
-            
-            // Duration Areas
-            document.getElementById('musicDurationFixedArea').style.display = (durationMode === 'fixed') ? 'block' : 'none';
-            document.getElementById('musicDurationRandomArea').style.display = (durationMode === 'random') ? 'flex' : 'none';
-        }
-        
-        function stopMusicMaster() {
-            musicRunning = false;
-            logMusicMaster("Cancelamento solicitado...");
-        }
-        
-        function logMusicMaster(msg) {
-            document.getElementById('musicMasterStatus').innerText = msg;
-        }
-        
-        function updateMusicProgress(current, total) {
-            const perc = (current / total) * 100;
-            document.getElementById('musicProgressBar').style.width = perc + '%';
-            document.getElementById('musicProgressText').innerText = current + "/" + total;
-        }
-        
-        
-        function downloadAllBatchFiles() {
-            if (!window.batchGeneratedFiles || window.batchGeneratedFiles.length === 0) {
-                alert("Nenhuma música foi gerada para baixar.");
-                return;
-            }
-            logMusicMaster("Iniciando download em lote...");
-            let delay = 0;
-            window.batchGeneratedFiles.forEach((url, index) => {
-                setTimeout(() => {
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = url.split("/").pop(); // extrai o nome final do arquivo
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    logMusicMaster("Baixando arquivo " + (index + 1) + "...");
-                }, delay);
-                delay += 800; // 800ms delay para não travar o navegador
-            });
-        }
-
-        async function generateMusicMaster() {
-            const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
-            const style = document.getElementById('musicStyle').value;
-            const durationMode = document.getElementById('musicDurationMode').value;
-            const engine = document.getElementById('musicModel').value;
-            
-            let prompts = [];
-            let lyrics = [];
-            
-            // Extract prompts based on mode
-            if (execMode === 'single') {
-                const singlePrompt = document.getElementById('musicSinglePrompt').value.trim();
-                if (!singlePrompt) return alert("Insira o prompt do estilo!");
-                prompts.push(singlePrompt);
-                
-                if (style === 'vocal') {
-                    lyrics.push(document.getElementById('musicSingleLyrics').value.trim());
-                }
-            } else {
-                const rawPrompts = document.getElementById('musicBatchPrompts').value.trim();
-                if (!rawPrompts) return alert("Insira ao menos um prompt!");
-                prompts = rawPrompts.split('\n').map(p => p.trim()).filter(p => p);
-                
-                if (style === 'vocal') {
-                    const rawLyrics = document.getElementById('musicBatchLyrics').value.trim();
-                    if (rawLyrics) {
-                        lyrics = rawLyrics.split('===').map(l => l.trim()).filter(l => l);
-                    }
-                    if (lyrics.length > 0 && lyrics.length !== prompts.length) {
-                        if (!confirm("Você forneceu " + prompts.length + " estilos e " + lyrics.length + " letras. Continuar?")) return;
-                    }
-                }
-            }
-            
-            if (prompts.length === 0) return;
-            
-            document.getElementById('btnGenerateMusicMaster').style.display = 'none';
-            document.getElementById('btnStopMusicMaster').style.display = 'block';
-            if (prompts.length > 1) document.getElementById('musicProgressContainer').style.display = 'block';
-            
-            musicRunning = true;
-            let successCount = 0;
-            
-            if (!window.batchGeneratedFiles) window.batchGeneratedFiles = [];
-            document.getElementById('previewPlaceholder').style.display = 'none';
-            const preview = document.getElementById('previewContainer');
-            preview.style.display = 'block';
-            
-            if (!document.getElementById('batchTracksList')) {
-                preview.innerHTML = `
-                    <div style="padding: 20px;">
-                        <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados da Sessão</h2>
-                        <div id="batchDownloadAllContainer" style="text-align:center; margin-bottom: 20px; display:none;">
-                            <button class="btn btn-primary" onclick="downloadAllBatchFiles()" style="font-size: 1.2rem; padding: 15px 30px; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);">
-                                💾 Baixar Todas as Músicas
-                            </button>
-                        </div>
-                        <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
-                    </div>
-                  `;
-            }
-            
-            for (let i = 0; i < prompts.length; i++) {
-                if (!musicRunning) break;
-                
-                let p = prompts[i];
-                if (style === 'instrumental') {
-                    p += ", instrumental, no vocals, purely instrumental";
-                } else if (style === 'vocal') {
-                    p += ", vocals, singing, lyrics, singer";
-                    if (lyrics[i]) {
-                        p += "\n\nLyrics:\n" + lyrics[i];
-                    }
-                }
-                
-                // Duration Calculation
-                let finalDuration = 180; // Suno/Auto Default
-                if (durationMode === 'fixed') {
-                    finalDuration = parseInt(document.getElementById('musicDurationFixed').value) || 60;
-                } else if (durationMode === 'random') {
-                    const min = parseInt(document.getElementById('musicDurationMin').value) || 45;
-                    const max = parseInt(document.getElementById('musicDurationMax').value) || 120;
-                    finalDuration = Math.floor(Math.random() * (max - min + 1)) + min;
-                }
-                
-                logMusicMaster("[" + (i+1) + "/" + prompts.length + "] Gerando... (" + finalDuration + "s)");
-                if (prompts.length > 1) updateMusicProgress(i, prompts.length);
-                
-                log("🚀 Iniciando requisição para gerar música no motor: " + engine, "info");
-                const waitInterval = setInterval(() => {
-                    log("⏳ Aguardando... Motor está processando a faixa " + (i+1) + ". (O modelo leva em média 1 a 3 minutos)", "warn");
-                }, 15000);
-                
-                try {
-                    const response = await fetch("/api/audio/generate", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ prompt: p, engine, duration: finalDuration })
-                    });
-                    clearInterval(waitInterval);
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ✅ Sucesso!");
-                        successCount++;
-                        const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : `${result.file_url}`;
-                        window.batchGeneratedFiles.push(fileUrlAbs);
-                        
-                        const trackList = document.getElementById('batchTracksList');
-                        const index = window.batchGeneratedFiles.length;
-                        const trackHtml = `
-                            <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="flex: 1;">
-                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
-                                    <audio controls style="width: 100%;">
-                                        <source src="${fileUrlAbs}" type="audio/mpeg">
-                                    </audio>
-                                </div>
-                                <a href="${fileUrlAbs}" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
-                            </div>
-                        `;
-                        trackList.insertAdjacentHTML('beforeend', trackHtml);
-
-                        if (window.apolloTransferOS) { 
-                            window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Música: " + p.substring(0,20), null, { url: fileUrlAbs }); 
-                        }
-                    } else {
-                        logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro: " + result.error);
-                    }
-                } catch(e) {
-                    clearInterval(waitInterval);
-                    logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro na requisição: " + e);
-                    log("❌ Erro ao comunicar com API de áudio: " + e, "error");
-                }
-                
-                if (prompts.length > 1) updateMusicProgress(i+1, prompts.length);
-            }
-            
-            musicRunning = false;
-            document.getElementById('btnGenerateMusicMaster').style.display = 'block';
-            document.getElementById('btnStopMusicMaster').style.display = 'none';
-            logMusicMaster("Sessão finalizada! " + successCount + " geradas.");
-            
-            if (window.batchGeneratedFiles && window.batchGeneratedFiles.length > (prompts.length > 1 ? 1 : 0)) {
-                document.getElementById('batchDownloadAllContainer').style.display = 'block';
-            }
-        }
-        window.addEventListener('DOMContentLoaded', () => { if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
-
 </script>
 
 </body>
 </html>
-
-
-
 

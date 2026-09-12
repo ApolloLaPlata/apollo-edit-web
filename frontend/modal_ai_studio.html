@@ -759,41 +759,108 @@ async function generateMusicStudio() {
             })
         });
         
-        const result = await response.json();
+        const initResult = await response.json();
         
-        if (result.success) {
+        if (initResult.status !== "queued") {
+            throw new Error(initResult.error || "Falha ao iniciar job na nuvem.");
+        }
+        
+        const jobId = initResult.job_id;
+        log(`⏳ Job iniciado [${jobId}]. Aguardando processamento da Modal... (Aprox. 1-3 minutos)`, 'warn');
+        statusBox.innerText = `⏳ Aguardando... Job: ${jobId}`;
+        
+        let result = null;
+        while (true) {
+            await new Promise(r => setTimeout(r, 5000)); // Poll a cada 5s
+            
+            const pollRes = await fetch(`/api/audio/status/${jobId}`);
+            if (!pollRes.ok) continue;
+            
+            const pollData = await pollRes.json();
+            if (pollData.status === "success") {
+                result = pollData;
+                break;
+            } else if (pollData.status === "error") {
+                throw new Error(pollData.error || "Erro na geração.");
+            }
+            // else "processing", continua o loop
+            statusBox.innerText = `⏳ Processando na nuvem... [${jobId}]`;
+        }
+
+        if (result && result.status === "success") {
             statusBox.innerText = "✅ Música gerada com sucesso!";
             log(`✅ Arquivo de áudio gerado: ${result.file_url}`, 'success');
             
-            // Adicionar ao painel de preview
+            // Adicionar ao painel de preview/historico
             const preview = document.getElementById('previewContainer');
-            preview.innerHTML = `
-                <div style="padding: 20px; text-align: center;">
-                    <h3 style="color: white; margin-bottom: 20px;">🎶 Resultado da Música</h3>
-                    <audio controls autoplay style="width: 100%;">
+            
+            // Garantir que a box de histrico existe
+            let historyBox = document.getElementById('audioHistoryList');
+            if (!historyBox) {
+                preview.innerHTML = `
+                    <div style="padding: 20px; text-align: left; width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: white;">🎧 Histórico de Áudios (Bagagem)</h3>
+                            <button class="btn btn-ghost" onclick="downloadSelectedAudios()">⬇️ Baixar Selecionados</button>
+                        </div>
+                        <div id="audioHistoryList" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                    </div>
+                `;
+                historyBox = document.getElementById('audioHistoryList');
+            }
+
+            // Criar novo item no histrico
+            const audioItem = document.createElement('div');
+            audioItem.style.cssText = "background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;";
+            
+            const checkboxId = "chk_" + Date.now();
+            audioItem.innerHTML = `
+                <input type="checkbox" class="audio-checkbox" id="${checkboxId}" value="${result.file_url}" checked style="width: 20px; height: 20px; cursor: pointer;">
+                <div style="flex: 1;">
+                    <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px;">${engine} | ${duration}s | "${prompt}"</div>
+                    <audio controls style="width: 100%; height: 40px;">
                         <source src="${result.file_url}" type="audio/mpeg">
-                        Seu navegador não suporta o elemento de áudio.
                     </audio>
-                    <br><br>
-                    <a href="${result.file_url}" download class="btn btn-primary">Baixar Arquivo</a>
                 </div>
+                <a href="${result.file_url}" download class="btn btn-ghost">Baixar</a>
             `;
+            
+            // Adiciona no topo da lista
+            historyBox.prepend(audioItem);
             
             if (window.apolloTransferOS) { 
                 window.apolloTransferOS.addItem("audio", result.file_url.split('/').pop(), "Gerador de Musica", null, { url: window.location.origin + result.file_url }); 
             }
-        } else {
-            statusBox.innerText = "❌ Erro: " + result.error;
-            log(`❌ Erro na música: ${result.error}`, 'error');
         }
     } catch (err) {
         console.error(err);
         statusBox.innerText = "❌ Falha na conexão";
         log(`❌ Falha: ${err.message}`, 'error');
     } finally {
-        btn.innerText = "🎧 Gerar Música (Conta 9)";
-        btn.style.pointerEvents = "all";
+        btn.innerText = "🎶 Gerar Música (Conta 9)";
+        btn.style.pointerEvents = "auto";
     }
+}
+
+async function downloadSelectedAudios() {
+    const checkboxes = document.querySelectorAll('.audio-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert("Nenhum áudio selecionado!");
+        return;
+    }
+    
+    log(`⬇️ Iniciando download de ${checkboxes.length} arquivo(s)...`, 'info');
+    
+    checkboxes.forEach((chk, index) => {
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = chk.value;
+            link.download = chk.value.split('/').pop();
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }, index * 500); // Espaçar downloads para não travar o navegador
+    });
 }
 
 function copyLogs() {
