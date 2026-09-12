@@ -35,9 +35,9 @@ class StableAudioEngine:
         if token:
             login(token)
             
-        print("[INIT] Baixando configs e pesos do Stable Audio 3 Medium (PingPong)...")
-        config_path = hf_hub_download(repo_id="stabilityai/stable-audio-3-medium", filename="model_config.json", cache_dir="/models/huggingface_cache")
-        ckpt_path = hf_hub_download(repo_id="stabilityai/stable-audio-3-medium", filename="model.safetensors", cache_dir="/models/huggingface_cache")
+        print("[INIT] Baixando configs e pesos do Stable Audio Open 1.0...")
+        config_path = hf_hub_download(repo_id="stabilityai/stable-audio-open-1.0", filename="model_config.json", cache_dir="/models/huggingface_cache")
+        ckpt_path = hf_hub_download(repo_id="stabilityai/stable-audio-open-1.0", filename="model.safetensors", cache_dir="/models/huggingface_cache")
         
         with open(config_path) as f:
             model_config = json.load(f)
