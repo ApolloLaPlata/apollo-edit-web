@@ -1049,7 +1049,9 @@ async function generateImage() {
                                   } else if (!jobData) {
                                       jobData = parsed;
                                   }
-                              } catch(e) {}
+                              } catch(e) {
+                    alert('Erro capturado: ' + e.message);
+                    console.error(e);}
                           }
                           if (!jobData) jobData = statusData.content;
                       } else {
@@ -1088,6 +1090,8 @@ async function generateImage() {
         }
 
     } catch(e) {
+                    alert('Erro capturado: ' + e.message);
+                    console.error(e);
         stopTimer();
         hideSpinner();
         status.textContent = `❌ ERRO: ${e.message}`;
@@ -1204,6 +1208,8 @@ async function generateVideo() {
             throw new Error(data.message || data.detail || JSON.stringify(data));
         }
     } catch(e) {
+                    alert('Erro capturado: ' + e.message);
+                    console.error(e);
         const elapsed = stopTimer();
         hideSpinner();
         clearPreview();
@@ -1281,6 +1287,8 @@ async function transcribeAudio() {
             throw new Error(data.message || JSON.stringify(data));
         }
     } catch(e) {
+                    alert('Erro capturado: ' + e.message);
+                    console.error(e);
         const elapsed = stopTimer();
         hideSpinner();
         status.className = 'log-box error';
@@ -1569,6 +1577,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (prompts.length > 1) document.getElementById('musicProgressContainer').style.display = 'block';
             
             musicRunning = true;
+            logMusicMaster('Iniciando script de geração...');
             let successCount = 0;
             
             window.batchGeneratedFiles = window.batchGeneratedFiles || [];
@@ -1613,6 +1622,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     finalDuration = Math.floor(Math.random() * (max - min + 1)) + min;
                 }
                 
+                  logMusicMaster('Preparando fetch...');
                   logMusicMaster("[" + (i+1) + "/" + prompts.length + "] Solicitando geração na nuvem (Conta 9)...");
                   if (prompts.length > 1) updateMusicProgress(i, prompts.length);
                   
@@ -1681,6 +1691,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro: " + result.error);
                     }
                 } catch(e) {
+                    alert('Erro capturado: ' + e.message);
+                    console.error(e);
                     logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ❌ Erro na requisição: " + e);
                 }
                 
