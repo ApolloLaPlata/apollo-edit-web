@@ -1633,11 +1633,33 @@ document.addEventListener('DOMContentLoaded', () => {
                       });
                       
                       let textResponse = await response.text();
-                      let result;
+                      let initResult;
                       try {
-                          result = JSON.parse(textResponse);
+                          initResult = JSON.parse(textResponse);
                       } catch (e) {
                           throw new Error(`Oráculo retornou erro 500: ${textResponse.substring(0, 100)}`);
+                      }
+                      
+                      let result = initResult;
+                      if (initResult.status === "queued") {
+                          const jobId = initResult.job_id;
+                          logMusicMaster("[" + (i+1) + "/" + prompts.length + "] Job iniciado [" + jobId + "]. Aguardando...");
+                          
+                          while (true) {
+                              await new Promise(r => setTimeout(r, 5000)); // Poll a cada 5s
+                              
+                              const pollRes = await fetch("http://163.176.135.59/api/audio/status/" + jobId);
+                              if (!pollRes.ok) continue;
+                              
+                              const pollData = await pollRes.json();
+                              if (pollData.status === "success") {
+                                  result = pollData;
+                                  break;
+                              } else if (pollData.status === "error") {
+                                  throw new Error(pollData.error || "Erro na geração.");
+                              }
+                              logMusicMaster("[" + (i+1) + "/" + prompts.length + "] Processando na nuvem... [" + jobId + "]");
+                          }
                       }
                       
                       if (result.success || result.status === "success") {
