@@ -31,13 +31,11 @@ class StableAudioEngine:
         from huggingface_hub import login, hf_hub_download
         import json
         
-        token = os.environ.get("HF_TOKEN")
-        if token:
-            login(token)
-            
-        print("[INIT] Baixando configs e pesos do Stable Audio Open 1.0...")
-        config_path = hf_hub_download(repo_id="stabilityai/stable-audio-open-1.0", filename="model_config.json", cache_dir="/models/huggingface_cache")
-        ckpt_path = hf_hub_download(repo_id="stabilityai/stable-audio-open-1.0", filename="model.safetensors", cache_dir="/models/huggingface_cache")
+        login("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")
+        
+        print("Baixando configs e pesos do Stable Audio 3 Medium...")
+        config_path = hf_hub_download(repo_id="stabilityai/stable-audio-3-medium", filename="model_config.json", cache_dir="/models/huggingface_cache")
+        ckpt_path = hf_hub_download(repo_id="stabilityai/stable-audio-3-medium", filename="model.safetensors", cache_dir="/models/huggingface_cache")
         
         with open(config_path) as f:
             model_config = json.load(f)
@@ -50,58 +48,47 @@ class StableAudioEngine:
         
         self.model.to("cuda")
         self.model.eval()
-        print("[INIT] Stable Audio 3 Medium carregado com sucesso!")
+        print("Stable Audio 3 Medium carregado com sucesso!")
 
     @modal.method()
-    def generate_audio(self, prompt: str, duration_s: float = 120.0, num_inference_steps: int = 8, seed: int = 0):
+    def generate_audio(self, prompt: str, duration_s: float = 120, steps: int = 100, cfg: float = 7.0):
         import torch
-        from stable_audio_tools.inference.generation import generate_diffusion_cond_inpaint
+        # FIX: USAR A FUNCAO CORRETA DE GERACAO PURA, NAO A DE INPAINT
+        from stable_audio_tools.inference.generation import generate_diffusion_cond
         import torchaudio
         from einops import rearrange
         import io
         import time
 
-        steps = 8 # HARDCODED para destilado
-        cfg = 1.0 # HARDCODED para destilado
-        duration_s = int(duration_s)
-        
-        print(f"[GEN] Gerando {duration_s}s no SA3 Medium | Prompt: {prompt[:50]}... | CFG: {cfg}, Steps: {steps}, Sampler: pingpong")
+        print(f"Gerando {duration_s}s no Stable Audio 3 Medium para: {prompt} (CFG: {cfg}, Steps: {steps})")
         start = time.time()
         
-        master_prompt = prompt + ", high quality, 4k audio, high fidelity, clean, sharp, stereo, masterpiece"
-        conditioning = [{"prompt": master_prompt, "seconds_start": 0, "seconds_total": duration_s}]
+        conditioning = [{"prompt": prompt, "seconds_start": 0, "seconds_total": int(duration_s)}]
         
         with torch.no_grad():
-            output = generate_diffusion_cond_inpaint(
+            output = generate_diffusion_cond(
                 self.model,
                 steps=steps,
                 cfg_scale=cfg,
                 conditioning=conditioning,
                 sample_size=self.sample_size, 
-                sampler_type="pingpong",
+                sigma_min=0.3, # PARAMETRO OBRIGATORIO FALTANTE
+                sigma_max=500, # PARAMETRO OBRIGATORIO FALTANTE
+                sampler_type="dpmpp-3m-sde", # SAMPLER OBRIGATORIO OFICIAL
                 device="cuda"
             )
             
+        # FIX: Rearranjo correto dos tensores baseados na documentacao oficial
         output = rearrange(output, "b d n -> d (b n)")
-        output = output.to(torch.float32)
-        output = output.div(torch.max(torch.abs(output))).clamp(-1, 1).mul(32767).to(torch.int16).cpu()
         
-        print(f"[GEN] Concluido em {time.time()-start:.1f} segundos!")
+        # FIX: Normalizacao nativa usando Torch
+        output = output.to(torch.float32).div(torch.max(torch.abs(output))).clamp(-1, 1)
+        
+        print(f"Gerado em {time.time()-start:.1f} segundos!")
         
         buffer = io.BytesIO()
-        torchaudio.save(buffer, output, self.sample_rate, format="wav")
+        torchaudio.save(buffer, output.cpu(), self.sample_rate, format="wav")
         
-        return buffer.getvalue()
+        import base64
+        return base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-    @modal.fastapi_endpoint(method="POST", label="apollo-api-stable-audio")
-    async def api_stable_audio(self, request: dict):
-        from fastapi.responses import Response, JSONResponse
-        try:
-            data = request
-            prompt = data.get("prompt", "")
-            duration_s = data.get("duration_s", 30.0)
-            if not prompt: return JSONResponse({"error": "No prompt provided"}, status_code=400)
-            wav_bytes = self.generate_audio.local(prompt, duration_s, 8, 0)
-            return Response(content=wav_bytes, media_type="audio/wav")
-        except Exception as e:
-            return JSONResponse({"error": str(e)}, status_code=500)

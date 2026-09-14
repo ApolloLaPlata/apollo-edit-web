@@ -91,7 +91,7 @@ class AceStep15Engine:
         print("[AceStep15Engine] Modelos XL carregados!")
 
     @modal.method()
-    def generate(self, style_tags: str, lyrics: str, length_seconds: int = 60, steps: int = 64, use_erg_lyric: bool = True) -> dict:
+    def generate(self, style_tags: str, lyrics: str, length_seconds: int = 60, steps: int = 50, use_erg_lyric: bool = True) -> dict:
         t0 = time.time()
         print(f"[AceStep15Engine] Gerando audio de {length_seconds}s com {steps} steps (XL MODEL)...")
         
@@ -114,8 +114,8 @@ class AceStep15Engine:
             config = GenerationConfig()
             
             # Parametros avanados para melhorar a coerencia de instrumentais!
-            config.guidance_scale = 7.0
-            config.omega_scale = 7.0
+            config.guidance_scale = 4.5
+            config.omega_scale = 4.5
             config.cfg_type = "true_cfg"
             config.use_erg_tag = True
             config.use_erg_lyric = use_erg_lyric

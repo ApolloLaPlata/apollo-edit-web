@@ -639,7 +639,7 @@ def api_generate_audio_lab(req: AudioLabRequest):
             engine = AceStep15Engine()
             print(f"[Router] Spawning AceStep15Engine")
             # AceStep 1.5 tem parametros fixos melhores q foram testados
-            fc = engine.generate.spawn(style_tags=req.prompt, lyrics=req.lyrics or "", length_seconds=req.duration, steps=64)
+            fc = engine.generate.spawn(style_tags=req.prompt, lyrics=req.lyrics or "", length_seconds=req.duration, steps=50)
             
         else:
             return {"status": "error", "error_type": "invalid_model", "message": f"Modelo {model} nao suportado."}
