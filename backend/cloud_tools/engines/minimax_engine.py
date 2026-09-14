@@ -12,7 +12,7 @@ def download_minimax_weights():
 image = modal.Image.from_registry("nvidia/cuda:12.1.1-devel-ubuntu22.04", add_python="3.11") \
     .apt_install("git", "ffmpeg") \
     .pip_install("torch", "torchaudio", "torchvision", extra_options="--index-url https://download.pytorch.org/whl/cu121") \
-    .pip_install("transformers", "accelerate", "soundfile", "git+https://github.com/huggingface/diffusers@dafe3733fcfdbf3c48915fe77be3aef65b5d6a2d", "sentencepiece", "huggingface_hub", "fastapi", "pydantic", "requests", "googletrans==4.0.0-rc1") \
+    .pip_install("transformers", "accelerate", "soundfile", "git+https://github.com/huggingface/diffusers@dafe3733fcfdbf3c48915fe77be3aef65b5d6a2d", "sentencepiece", "huggingface_hub", "fastapi", "pydantic", "requests", "deep-translator") \
     .run_function(download_minimax_weights)
 
 @app.cls(gpu="a100", timeout=3600, image=image, volumes={"/models": volume})
@@ -36,11 +36,11 @@ class MinimaxEngine:
         import time
 
         
-        from googletrans import Translator
-        translator = Translator()
+        from deep_translator import GoogleTranslator
+        translator = GoogleTranslator(source='auto', target='en')
         try:
             print(f"[MiniMax] Traduzindo prompt de estilo para ingles...")
-            translated_prompt = translator.translate(prompt, dest='en').text
+            translated_prompt = translator.translate(prompt)
             print(f"[MiniMax] Prompt original: {prompt}")
             print(f"[MiniMax] Prompt traduzido: {translated_prompt}")
             prompt = translated_prompt
