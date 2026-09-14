@@ -1565,27 +1565,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         
-        function downloadAllBatchFiles() {
+        function downloadAllBatchFiles(format='wav') {
             if (!window.batchGeneratedFiles || window.batchGeneratedFiles.length === 0) {
-                alert("Nenhuma música foi gerada para baixar.");
+                alert("Nenhuma musica foi gerada para baixar.");
                 return;
             }
-            logMusicMaster("Iniciando download em lote...");
+            logMusicMaster("Iniciando download em lote (" + format.toUpperCase() + ")...");
             let delay = 0;
-            window.batchGeneratedFiles.forEach((url, index) => {
+            window.batchGeneratedFiles.forEach((fileObj, index) => {
+                let url = format === 'mp3' && fileObj.mp3 ? fileObj.mp3 : fileObj.wav;
+                if (!url) {
+                    url = fileObj; // Fallback se for a string antiga
+                }
+                
                 setTimeout(() => {
                     let finalUrl = url;
-                    if (url.includes("apolloedit.com/media")) {
+                    if (typeof url === 'string' && url.includes("apolloedit.com/media")) {
                         finalUrl = "https://www.apolloedit.com/api/download?url=" + encodeURIComponent(url);
+                        // api/download sets Content-Disposition header, so iframe works for this!
+                        const iframe = document.createElement("iframe");
+                        iframe.style.display = "none";
+                        iframe.src = finalUrl;
+                        document.body.appendChild(iframe);
+                        setTimeout(() => document.body.removeChild(iframe), 10000);
+                    } else {
+                        // Use fetch blob to force download
+                        forceDownloadFile(finalUrl, 'musica_' + (index + 1) + '.' + format);
                     }
-                    const iframe = document.createElement("iframe");
-                    iframe.style.display = "none";
-                    iframe.src = finalUrl;
-                    document.body.appendChild(iframe);
-                    setTimeout(() => document.body.removeChild(iframe), 10000);
-                    logMusicMaster("Baixando arquivo " + (index + 1) + "...");
+                    logMusicMaster("Baixando arquivo " + (index + 1) + " (" + format.toUpperCase() + ")...");
                 }, delay);
-                delay += 800; // 800ms delay para não travar o navegador
+                delay += 800;
             });
         }
 
@@ -1656,9 +1665,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="padding: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h3 style="color: white;">🎧 Histórico de Áudios (Bagagem)</h3>
-                            <button id="batchDownloadAllContainer" class="btn btn-primary" onclick="downloadAllBatchFiles()" style="display:none; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);">
-                                ⬇️ Baixar Todas as Músicas
-                            </button>
+                            <div id="batchDownloadAllContainer" style="display:none; gap: 10px;">
+                                <button class="btn btn-primary" onclick="downloadAllBatchFiles('wav')" style="font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);">
+                                    Baixar Todas (WAV)
+                                </button>
+                                <button class="btn btn-ghost" onclick="downloadAllBatchFiles('mp3')" style="font-weight: bold; border: 1px solid #444;">
+                                    Baixar Todas (MP3)
+                                </button>
+                            </div>
                         </div>
                         <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
                     </div>
@@ -1745,7 +1759,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ✅ Sucesso!");
                           successCount++;
                           const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : result.file_url;
-                          window.batchGeneratedFiles.push(fileUrlAbs);
+                          window.batchGeneratedFiles.push({ wav: fileUrlAbs, mp3: result.file_url_mp3 });
                           
                           const trackList = document.getElementById('batchTracksList');
                         const index = window.batchGeneratedFiles.length;
@@ -1786,9 +1800,8 @@ document.addEventListener('DOMContentLoaded', () => {
             logMusicMaster("Sessão finalizada! " + successCount + " geradas.");
             
             if (window.batchGeneratedFiles && window.batchGeneratedFiles.length > 0) {
-                document.getElementById('batchDownloadAllContainer').style.display = 'inline-block';
-                document.getElementById('batchDownloadAllContainer').innerHTML = '⬇️ Baixar Todas (' + window.batchGeneratedFiles.length + ')';
-            }
+                document.getElementById('batchDownloadAllContainer').style.display = 'flex';
+                }
         }
         if (true) {
             const musicModelSelect = document.getElementById('musicModel');
