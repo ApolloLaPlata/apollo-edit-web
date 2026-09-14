@@ -1,12 +1,15 @@
 ﻿import os
 
-file_path = r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\cloud_tools\apollo_modal_engine.py'
-with open(file_path, 'r', encoding='utf-8') as f:
-    content = f.read()
+with open("backend/cloud_tools/engines/ace_step_15_engine.py", "r", encoding="utf-8") as f:
+    text = f.read()
 
-content = content.replace('if isinstance(res, dict) and "audio" in res:', 'if isinstance(res, dict) and "audio_base64" in res:')
-content = content.replace('res["audio"]', 'res["audio_base64"]')
+# Replace config.guidance_scale
+text = text.replace("config.guidance_scale = 7.0", "config.guidance_scale = 4.5")
+text = text.replace("config.omega_scale = 7.0", "config.omega_scale = 4.5")
 
-with open(file_path, 'w', encoding='utf-8') as f:
-    f.write(content)
-print("Corrigido retorno do ACE-Step!")
+# Ensure steps in generate() default to 50
+text = text.replace("steps: int = 64", "steps: int = 50")
+
+with open("backend/cloud_tools/engines/ace_step_15_engine.py", "w", encoding="utf-8") as f:
+    f.write(text)
+print("ACE-STEP PATCHED to 4.5 CFG and 50 STEPS")

@@ -1,8 +1,10 @@
 ﻿import sys
-with open('/home/ubuntu/apollo_edit/servidor_web.py', 'r') as f:
+
+with open("servidor_web.py", "r", encoding="utf-8") as f:
     text = f.read()
 
-text = text.replace('from fastapi import FastAPI, UploadFile, File, Form, Depends, Request', 'from fastapi import FastAPI, UploadFile, File, Form, Depends, Request\nfrom fastapi.responses import PlainTextResponse')
-
-with open('/home/ubuntu/apollo_edit/servidor_web.py', 'w') as f:
-    f.write(text)
+if "from fastapi.responses import PlainTextResponse" not in text:
+    text = text.replace("from fastapi.responses import HTMLResponse, JSONResponse, FileResponse", "from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, PlainTextResponse")
+    with open("servidor_web.py", "w", encoding="utf-8") as f:
+        f.write(text)
+    print("IMPORTED PlainTextResponse")

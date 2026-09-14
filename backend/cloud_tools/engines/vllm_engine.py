@@ -16,7 +16,8 @@ vllm_image = (
     modal.Image.debian_slim(python_version="3.11")
     .pip_install(
         "vllm==0.5.4", # Versão estável
-        "fastapi[standard]"
+        "fastapi[standard]",
+        "pyairports"
     )
 )
 

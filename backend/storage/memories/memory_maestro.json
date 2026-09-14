@@ -610,6 +610,276 @@
                     "user": "client_102",
                     "message": "[Simulação] Resposta gerada com segurança via OpenRouter Fallback."
                 }
+            },
+            {
+                "time": "2026-09-10 17:22:37",
+                "sender": "PricingScraper",
+                "topic": "new_models_found",
+                "payload": {
+                    "count": 18,
+                    "source": "OpenRouter"
+                }
+            },
+            {
+                "time": "2026-09-10 17:22:44",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Parece que o usuário client_102 pode precisar de um pouco de ajuda. Aqui está uma sugestão de mensagem amigável que você pode usar no pop-up:\n\n\"Olá! 😊 Notei que você está na área de geração de scripts há algum tempo. Posso ajudar com algo? Estou aqui para o que precisar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 17:27:46",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, é sempre uma boa ideia oferecer assistência caso o usuário precise de ajuda. Aqui está uma sugestão de mensagem amigável e curta:\n\n\"Olá! 😊 Percebi que você está na área de geração de scripts há algum tempo. Posso ajudar com alguma coisa? Estou aqui para o que precisar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 17:32:48",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, é sempre uma boa ideia oferecer ajuda caso o usuário esteja há algum tempo sem interagir. Aqui está uma mensagem amigável que você pode usar:\n\n\"Olá! 😊 Percebi que você está na página há algum tempo. Posso ajudar com algo ou responder a alguma pergunta? Estou aqui para ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 17:37:50",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma mensagem amigável que você pode usar para oferecer ajuda ao usuário client_102:\n\n\"Olá! 😊 Eu percebi que você está na página há um tempinho. Posso ajudar com alguma coisa? Se precisar de alguma assistência, estou aqui para ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 17:42:52",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, proporcionar uma pequena assistência pode ser muito útil! Aqui está uma sugestão de mensagem para o pop-up:\n\n\"Olá! 😊 Percebi que você está há um tempinho na página. Posso ajudar com algo na geração do script? Estou aqui para o que precisar!\"\n\nEspero que isso ajude! Se você precisar de qualquer outra coisa, estou à disposição."
+                }
+            },
+            {
+                "time": "2026-09-10 17:57:58",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda ao usuário:\n\n\"Olá! 😊 Percebi que você está na página há algum tempo. Posso ajudar com alguma coisa? Se precisar de assistência, estou aqui para ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:08:01",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda ao usuário:\n\n\"Olá! 😊 Tudo bem por aí? Percebemos que você está na página há um tempinho. Posso ajudar com alguma coisa? Sinta-se à vontade para perguntar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:13:03",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer ajuda em um momento como esse pode ser muito útil! Aqui está uma mensagem amigável que você pode usar:\n\n\"Olá! 😊 Vi que você está aqui há algum tempo. Posso ajudar com a geração do script? Se precisar de alguma coisa, é só chamar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:18:05",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer uma ajuda amigável é sempre uma boa ideia! Aqui está uma mensagem que você pode usar no pop-up:\n\n\"Olá! Percebemos que você está aqui há um tempinho. Posso ajudar com alguma coisa? 😊\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:23:07",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda:\n\n---\n\n\"Olá! 😊 Parece que você está na página há algum tempo, e queremos ter certeza de que está tudo correndo bem. Posso ajudá-lo com algo específico? Estou por aqui para ajudar no que precisar!\"\n\n---\n\nEspero que essa mensagem seja útil!"
+                }
+            },
+            {
+                "time": "2026-09-10 18:28:08",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma mensagem amigável que você pode usar no pop-up:\n\n\"Olá! 😊 Percebemos que você está aqui há algum tempo. Posso ajudar com alguma coisa ou esclarecer alguma dúvida sobre a geração de scripts? Estou à disposição para ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:33:11",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda ao usuário:\n\n\"Olá! 😊 Percebi que você está na página há um tempinho. Posso ajudar com alguma coisa? Estou aqui para o que precisar! 🚀\"\n\nEspero que ajude! Se houver mais alguma coisa que eu possa fazer, é só me avisar!"
+                }
+            },
+            {
+                "time": "2026-09-10 18:38:12",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer ajuda ao usuário pode ser muito útil! Aqui está uma sugestão de mensagem amigável para o pop-up:\n\n\"Olá! 😊 Percebemos que você está na página há alguns minutos. Precisa de alguma ajuda para gerar seu script? Estamos aqui para ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:43:15",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer ajuda é sempre uma boa ideia quando um usuário está inativo por um tempo. Aqui está uma sugestão de mensagem amigável para o pop-up:\n\n\"Olá! 😊 Vejo que você está aqui há algum tempo. Posso ajudar com algo na geração do seu script? Estou aqui para o que precisar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:48:16",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, poderia ser útil oferecer assistência ao usuário em potencial. Aqui está uma sugestão de mensagem amigável e curta:\n\n\"Olá! 😊 Percebi que você está na página há algum tempo. Posso te ajudar com alguma coisa por aqui? Sinta-se à vontade para me chamar se precisar! 🛠️\"\n\nSe precisar de mais alguma coisa, estou por aqui!"
+                }
+            },
+            {
+                "time": "2026-09-10 18:53:18",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, aqui está uma mensagem amigável que você pode usar:\n\n\"Olá! 😊 Percebi que você está aqui há um tempinho. Posso ajudar com alguma coisa na geração do seu script? Estou à disposição!\""
+                }
+            },
+            {
+                "time": "2026-09-10 18:58:19",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer ajuda é sempre uma boa ideia! Aqui está uma sugestão de mensagem pop-up amigável:\n\n\"Olá! 😊 Parece que você está na página há algum tempo. Posso ajudar com qualquer dúvida ou problema que você tenha? Estou aqui para ajudar! 🚀\" \n\nEspero que isso torne a experiência do usuário ainda melhor!"
+                }
+            },
+            {
+                "time": "2026-09-10 19:03:21",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer ajuda parece uma ótima ideia! Aqui está uma mensagem para o pop-up:\n\n\"Olá! 😊 Percebi que você está na área de geração de scripts há algum tempo. Posso ajudar com algo? Estou aqui para tornar tudo mais fácil para você! 🚀\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:13:25",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma mensagem amigável que você pode usar:\n\n---\n\n\"Olá! 😄 Vejo que está na página há um tempinho. Precisa de alguma ajuda para gerar seu script? Estamos aqui para ajudar sempre que precisar!\"\n\n---\n\nEspero que isso ajude! Se precisar de mais alguma coisa, é só me chamar!"
+                }
+            },
+            {
+                "time": "2026-09-10 19:18:27",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, vamos garantir que o usuário se sinta bem-acompanhado. Aqui está uma sugestão de mensagem que você pode usar:\n\n\"Olá! 🙂 Percebemos que você está na página há algum tempo. Posso ajudar com algo? Se precisar de suporte ou tiver alguma dúvida, estou aqui para ajudar!\"\n\nEspero que isso ajude! Se houver algo mais que eu possa fazer, por favor, me avise!"
+                }
+            },
+            {
+                "time": "2026-09-10 19:23:29",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, oferecer ajuda ao usuário pode melhorar sua experiência! Aqui está uma sugestão de mensagem amigável para o pop-up:\n\n\"Olá! 😊 Parece que você está pensando em algo importante. Posso ajudar com seu script? Estou aqui para qualquer dúvida!\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:28:31",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, é sempre bom oferecer ajuda ao usuário para garantir que ele não esteja enfrentando dificuldades. Aqui está uma sugestão de mensagem para o pop-up:\n\n\"Oi, tudo bem? 😊 Percebi que você está na página há um tempinho. Posso ajudar em algo? Se tiver alguma dúvida, estou aqui para te ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:33:33",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Certamente, aqui está uma mensagem amigável para oferecer ajuda ao usuário:\n\n\"Olá! 😊 Vejo que você está na página há algum tempo. Posso ajudá-lo com algo? Estou aqui para ajudar se precisar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:38:34",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, seria ótimo oferecer uma ajuda gentil! Aqui está uma sugestão para o pop-up:\n\n\"Olá! 😊 Percebemos que você está na página há algum tempo. Posso ajudar com alguma coisa? Estou aqui para tornar sua experiência mais fácil!\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:43:37",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Oferecer ajuda pode ser muito útil para melhorar a experiência do usuário. Aqui está uma mensagem amigável que você pode usar:\n\n\"Olá! 😊 Vejo que você está na página há algum tempo. Posso ajudar com alguma coisa? Fico à disposição para o que precisar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:48:39",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, seria ótimo oferecer ajuda! Aqui está uma sugestão de mensagem amigável:\n\n\"Olá! 😊 Percebi que você está na página de geração de scripts. Posso ajudar com alguma coisa? Estou aqui para tornar o seu processo mais fácil!\""
+                }
+            },
+            {
+                "time": "2026-09-10 19:58:42",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, ficarei feliz em ajudar! Aqui está uma sugestão de mensagem amigável para oferecer assistência:\n\n\"Olá! 😊 Posso ajudar com a geração do seu script? Se precisar de alguma orientação, estou aqui para ajudar!\""
+                }
+            },
+            {
+                "time": "2026-09-10 20:03:44",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro, acho que seria uma boa ideia oferecer ajuda ao usuário! Aqui está uma sugestão de mensagem amigável e curta:\n\n\"Olá! 😊 Vejo que você está na página há algum tempo. Posso ajudar com algo? Estou aqui para o que precisar! 💬\""
+                }
+            },
+            {
+                "time": "2026-09-10 20:08:45",
+                "sender": "Concierge",
+                "topic": "user_assistance_offered",
+                "payload": {
+                    "user": "client_102",
+                    "message": "Claro! Aqui está uma mensagem amigável que você pode usar para oferecer ajuda:\n\n\"Olá! 😊 Vejo que você está na página de geração de scripts há algum tempo. Posso ajudar com algo? Estou aqui para ajudar se precisar!\""
+                }
             }
         ]
     }

@@ -1,47 +1,13 @@
+import modal
+import base64
+
+# read an image
+with open("C:/Users/v5est/.gemini/antigravity/brain/a22deae7-7753-458c-a40d-92e685f8af3e/.user_uploaded/media_1789084866148.png", "rb") as f:
+    img_data = base64.b64encode(f.read()).decode('utf-8')
+
 import sys
-import os
-import json
-import asyncio
-import httpx
-from unittest.mock import AsyncMock
+sys.path.append('E:\\MEUS PROGRAMAS\\APOLLO_EDIT_WEB')
+from backend.cloud_tools.engines.vision_engine import FlorenceVisionEngine
 
-# Vamos simular um request para routes_studio.py
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from backend.api.routes_studio import proxy_to_modal
-
-class MockRequest:
-    def __init__(self, json_data):
-        self.method = "POST"
-        self._json = json_data
-        self.headers = {
-            "content-type": "application/json",
-            "x-apollo-lock": os.environ.get("APOLLO_SECRET_LOCK", "apollo-beta-key-2026")
-        }
-    
-    async def body(self):
-        return json.dumps(self._json).encode("utf-8")
-
-async def test():
-    print("[TEST] Criando Mock Request...")
-    # 2 imagens pequenas em base64 falso para simular
-    fake_b64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-    
-    req_data = {
-        "model": "qwen-image",
-        "prompt": "Create an awesome cinematic scene with two people",
-        "reference_images_base64": [fake_b64, fake_b64]
-    }
-    
-    request = MockRequest(req_data)
-    
-    print("[TEST] Acionando proxy_to_modal...")
-    try:
-        class MockTasks:
-            def add_task(self, *args, **kwargs): pass
-            
-        await proxy_to_modal("generate_image", request, MockTasks())
-    except Exception as e:
-        print(f"[TEST FINISHED/ABORTED] {e}")
-
-if __name__ == "__main__":
-    asyncio.run(test())
+cls = modal.Cls.from_name("apollo-vision-engine", "FlorenceVisionEngine")
+print(cls().analyze_image.remote(img_data))

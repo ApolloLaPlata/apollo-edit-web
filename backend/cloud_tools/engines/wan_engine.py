@@ -36,7 +36,8 @@ wan_image = (
         "imageio-ffmpeg",
         "av",
         "Pillow",
-        "fastapi[standard]"
+        "fastapi[standard]",
+        "ftfy"
     )
     .env({
         "HF_HUB_ENABLE_HF_TRANSFER": "1",
@@ -81,54 +82,25 @@ PRESETS = {
 
 # Mudamos para A100 porque o modelo 14B de I2V não cabe na L4
 @app.cls(gpu="a100-80gb", timeout=1200, scaledown_window=60,
- image=wan_image, enable_memory_snapshot=True, experimental_options={"enable_gpu_snapshot": True})
+ image=wan_image, enable_memory_snapshot=False)
 class Wan21Engine:
     @modal.enter()
     def load_model(self):
         import torch
-        from diffusers import WanPipeline, WanImageToVideoPipeline, WanTransformer3DModel
-        from transformers import BitsAndBytesConfig, AutoModel
+        from diffusers import WanPipeline, WanImageToVideoPipeline
 
         torch.set_grad_enabled(False)
-        print("[WanEngine] Carregando text_encoder (UMT5) em 8-bit...")
-        quantization_config = BitsAndBytesConfig(load_in_8bit=True)
-        
-        text_encoder = AutoModel.from_pretrained(
-            MODEL_T2V_DIR,
-            subfolder="text_encoder",
-            quantization_config=quantization_config,
-            torch_dtype=torch.bfloat16,
-            local_files_only=True
-        )
 
-        print("[WanEngine] Carregando Wan2.1-T2V-1.3B transformer em 8-bit...")
-        transformer_t2v = WanTransformer3DModel.from_pretrained(
-            MODEL_T2V_DIR,
-            subfolder="transformer",
-            quantization_config=quantization_config,
-            torch_dtype=torch.bfloat16,
-            local_files_only=True
-        )
+        print("[WanEngine] Carregando Wan2.1-T2V-1.3B (bfloat16) na A100...")
         self.pipe_t2v = WanPipeline.from_pretrained(
             MODEL_T2V_DIR,
-            text_encoder=text_encoder,
-            transformer=transformer_t2v,
             torch_dtype=torch.bfloat16,
             local_files_only=True,
         ).to("cuda")
 
-        print("[WanEngine] Carregando Wan2.1-I2V-14B-480P transformer em 8-bit...")
-        transformer_i2v = WanTransformer3DModel.from_pretrained(
-            MODEL_I2V_DIR,
-            subfolder="transformer",
-            quantization_config=quantization_config,
-            torch_dtype=torch.bfloat16,
-            local_files_only=True
-        )
+        print("[WanEngine] Carregando Wan2.1-I2V-14B-480P (bfloat16) na A100...")
         self.pipe_i2v = WanImageToVideoPipeline.from_pretrained(
             MODEL_I2V_DIR,
-            text_encoder=text_encoder,
-            transformer=transformer_i2v,
             torch_dtype=torch.bfloat16,
             local_files_only=True,
         ).to("cuda")

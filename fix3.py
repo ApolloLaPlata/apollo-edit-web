@@ -1,34 +1,25 @@
-import json
+﻿import re
 
-log_path = r'C:\Users\v5est\.gemini\antigravity\brain\503447eb-5141-4dbd-b759-19c00d97be99\.system_generated\logs\transcript.jsonl'
-lines = open(log_path, 'r', encoding='utf-8').readlines()
-lines.reverse()
-
-files_to_recover = {
-    'noticias_core.js': None,
-    'noticias.css': None
-}
-
-for line in lines:
-    try:
-        obj = json.loads(line)
-        calls = obj.get('tool_calls', [])
-        for call in calls:
-            if call.get('name') == 'write_to_file':
-                target = call.get('args', {}).get('TargetFile', '')
-                for f in files_to_recover:
-                    if files_to_recover[f] is None and f in target:
-                        files_to_recover[f] = call['args']['CodeContent']
-    except:
-        pass
+for fpath in ['frontend/modal_ai_studio.html', 'public/modal_ai_studio.html', 'web_ui/modal_ai_studio.html']:
+    with open(fpath, 'r', encoding='utf-8') as f:
+        content = f.read()
     
-    if all(files_to_recover.values()):
-        break
+    # 1) Fix missing opening backtick using regex to handle whitespace
+    pattern1 = re.compile(r'preview\.innerHTML =\s*<div style="padding: 20px;">')
+    content = re.sub(pattern1, 'preview.innerHTML = \n                    <div style="padding: 20px;">', content)
+                              
+    # 2) Fix missing closing backtick
+    pattern2 = re.compile(r'</div>\s*;')
+    content = re.sub(pattern2, '</div>\n                ;', content)
+    
+    # Also there was a stray block right after that in my previous output:
+    # }">
+    #                 <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados da Sessão</h2>
+    pattern3 = re.compile(r'\}">\s*<h2 style="color: white; margin-bottom: 20px; text-align: center;">.*?</div>\s*;', re.DOTALL)
+    content = re.sub(pattern3, '}', content)
+    
+    with open(fpath, 'w', encoding='utf-8') as f:
+        f.write(content)
+        
+    print(f"Patched {fpath}")
 
-for f, content in files_to_recover.items():
-    if content:
-        with open(fr'E:\MEUS PROGRAMAS\APOLLO_STUDIO\web_ui\{f}', 'w', encoding='utf-8') as out:
-            out.write(content)
-        print(f"Restored {f}")
-    else:
-        print(f"Could not find {f}")

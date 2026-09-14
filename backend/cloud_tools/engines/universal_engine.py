@@ -13,10 +13,10 @@ universal_comfy_image = (
     .pip_install("pillow", "requests", "PyYAML", "pytz") \
     .apt_install("git", "libgl1", "libglib2.0-0", "wget")
     .pip_install(
-        "torch==2.4.0",
-        "torchvision==0.19.0",
-        "torchaudio==2.4.0",
-        "xformers==0.0.27.post2",
+        "torch==2.5.1",
+        "torchvision==0.20.1",
+        "torchaudio==2.5.1",
+        "xformers==0.0.28.post3",
         extra_options="--index-url https://download.pytorch.org/whl/cu121"
     )
     .pip_install(
@@ -811,22 +811,7 @@ print("[PATCH] GQA Patch aplicado com sucesso no ComfyUI com repeat_interleave!"
             # If json.loads fails, it might be because of extra text.
             return {"status": "error", "message": str(e), "raw_output": api_json_str if 'api_json_str' in locals() else ""}
 
-from fastapi import FastAPI, Request
-web_app = FastAPI()
 
-@web_app.post("/{endpoint_path:path}")
-async def handle_request(endpoint_path: str, request: Request):
-    data = await request.json()
-    engine = UniversalComfyEngine()
-    script = data.get("script", {})
-    if not script:
-        return {"status": "error", "message": "Nenhum script fornecido"}
-    return engine.multi_pass_generation.remote(script)
-
-@app.function(image=modal.Image.debian_slim(python_version="3.10").pip_install("fastapi"), timeout=1200)
-@modal.asgi_app()
-def apollo_api():
-    return web_app
 
 
 @app.cls(

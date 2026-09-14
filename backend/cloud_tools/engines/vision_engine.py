@@ -6,10 +6,9 @@ import base64
 cache_vol = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
 
 vision_image = (
-    modal.Image.debian_slim()
+    modal.Image.debian_slim(python_version="3.11")
     .pip_install("packaging", "ninja", "torch", "torchvision")
-        .pip_install("transformers==4.40.1", "Pillow", "einops", "accelerate", "timm")
-    
+    .pip_install("transformers>=4.42.0", "Pillow", "einops", "accelerate", "timm")
 )
 
 # App dedicado para a Vision Engine
@@ -35,10 +34,6 @@ class FlorenceVisionEngine:
 
     @modal.method()
     def analyze_image(self, image_b64: str, task_prompt: str = "<MORE_DETAILED_CAPTION>") -> str:
-        """
-        Analisa a imagem e retorna a transcricao textual do que ela contem.
-        task_prompt padrao: <MORE_DETAILED_CAPTION>
-        """
         import torch
         if torch.cuda.is_available() and self.model.device.type != "cuda":
             print("[VisionEngine] Movendo modelo do CPU para CUDA (pos-snapshot)...")
@@ -83,9 +78,3 @@ class FlorenceVisionEngine:
         except Exception as e:
             print(f"[VisionEngine] Erro ao analisar imagem: {e}")
             return f"Erro na analise visual: {str(e)}"
-
-
-
-
-
-

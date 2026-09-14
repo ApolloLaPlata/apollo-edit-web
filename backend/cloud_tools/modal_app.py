@@ -17,3 +17,4 @@ from backend.cloud_tools.engines.ace_step_python_engine import *
 from backend.cloud_tools.engines.wan_engine import *
 from backend.cloud_tools.engines.sadtalker_engine import *
 from backend.cloud_tools.engines.universal_comfy_engine import *
+from backend.cloud_tools.engines.deforum_engine import *

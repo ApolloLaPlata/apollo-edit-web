@@ -1,14 +1,55 @@
 ﻿import re
+import glob
 
-with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\modal_ai_studio.html', 'r', encoding='utf-8') as f:
-    html = f.read()
+bad_block = '''            if (!document.getElementById('batchTracksList')) {
+                preview.innerHTML = 
+                    <div style="padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: white;">🎧 Histórico de Áudios (Bagagem)</h3>
+                            <button id="batchDownloadAllContainer" class="btn btn-primary" onclick="downloadAllBatchFiles()" style="display:none; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);">
+                                ⬇️ Baixar Todas as Músicas
+                            </button>
+                        </div>
+                        <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
+                    </div>
+                ;
+            }">
+                    <h2 style="color: white; margin-bottom: 20px; text-align: center;">🚀 Resultados da Sessão</h2>
+                    <div id="batchDownloadAllContainer" style="text-align:center; margin-bottom: 20px; display:none;">
+                        <button class="btn btn-primary" onclick="downloadAllBatchFiles()" style="font-size: 1.2rem; padding: 15px 30px; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);">
+                            💾 Baixar Todas as Músicas
+                        </button>
+                    </div>
+                    <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
+                </div>
+              ;'''
 
-html = html.replace("throw new Error( + '' + r'HTTP : ' + '' + r);", "throw new Error(`HTTP ${res.status}: ${errText}`);")
-html = html.replace("log( + '' + r'📦 Job enfileirado no backend (ID: ...). Iniciando polling...' + '' + r, 'info');", "log(`📦 Job enfileirado no backend (ID: ${jobId}). Iniciando polling...`, 'info');")
-html = html.replace("log( + '' + r'💓 Consultando status... (s)' + '' + r, 'info');", "log(`💓 Consultando status... (${now}s)`, 'info');")
-html = html.replace("document.getElementById('spinnerLabel').textContent =  + '' + r'Gerando Vídeo... s' + '' + r;", "document.getElementById('spinnerLabel').textContent = `Gerando Vídeo... ${now}s`;")
-html = html.replace("const statusRes = await fetch( + '' + r'/api/studio/modal/status/' + '' + r);", "const statusRes = await fetch(`/api/studio/modal/status/${jobId}`);")
-html = html.replace("throw new Error( + '' + r'Erro ao consultar status: HTTP ' + '' + r);", "throw new Error(`Erro ao consultar status: HTTP ${statusRes.status}`);")
+good_block = '''            if (!document.getElementById('batchTracksList')) {
+                preview.innerHTML = 
+                    <div style="padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: white;">🎧 Histórico de Áudios (Bagagem)</h3>
+                            <button id="batchDownloadAllContainer" class="btn btn-primary" onclick="downloadAllBatchFiles()" style="display:none; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);">
+                                ⬇️ Baixar Todas as Músicas
+                            </button>
+                        </div>
+                        <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
+                    </div>
+                ;
+            }'''
 
-with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\modal_ai_studio.html', 'w', encoding='utf-8') as f:
-    f.write(html)
+for fpath in ['frontend/modal_ai_studio.html', 'public/modal_ai_studio.html', 'web_ui/modal_ai_studio.html']:
+    with open(fpath, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Try replacing using regex because of potential encoding issues with emojis
+    pattern = re.compile(r"if \(!document.getElementById\('batchTracksList'\)\) \{.*?</div>\s*;", re.DOTALL)
+    new_content = re.sub(pattern, good_block.strip(), content)
+    
+    if new_content != content:
+        with open(fpath, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        print(f"Patched {fpath}")
+    else:
+        print(f"Failed to patch {fpath}")
+

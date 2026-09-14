@@ -1,10 +1,18 @@
-path = r'E:\MEUS PROGRAMAS\APOLLO_STUDIO\web_ui\noticias.html'
-with open(path, 'r', encoding='utf-8') as f:
-    c = f.read()
+﻿import re
 
-c = c.lstrip('"')
-c = c.replace('Notcias', 'Notícias').replace('Estratgia', 'Estratégia').replace('Caador', 'Caçador').replace('Concludo', 'Concluído').replace('Padres', 'Padrões').replace('Opes', 'Opções').replace('transcrio', 'transcrição').replace('Atualizao', 'Atualização')
+for fpath in ['frontend/modal_ai_studio.html', 'public/modal_ai_studio.html', 'web_ui/modal_ai_studio.html']:
+    with open(fpath, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # 1) Fix missing opening backtick
+    content = content.replace("preview.innerHTML = \n                    <div style=\"padding: 20px;\">", 
+                              "preview.innerHTML = \n                    <div style=\"padding: 20px;\">")
+                              
+    # 2) Fix missing closing backtick
+    content = content.replace("</div>\n                ;", "</div>\n                ;")
+    
+    with open(fpath, 'w', encoding='utf-8') as f:
+        f.write(content)
+        
+    print(f"Patched {fpath}")
 
-with open(path, 'w', encoding='utf-8') as f:
-    f.write(c)
-print("Done")
