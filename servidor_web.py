@@ -5721,6 +5721,12 @@ async def run_audio_generate_bg(job_id: str, body: dict):
         engine = body.get("engine", "acestep")
         duration = body.get("duration", 30)
         
+        # O usuario solicitou que musicas com letra nao tenham a duracao truncada
+        engine = body.get("engine", "acestep")
+        if engine in ["acestep", "minimax"] and body.get("lyrics"):
+            duration = 180  # Forca um limite alto para a musica terminar naturalmente
+
+        
         # Destino travado na Conta 9 (radiodarktrap) para os Modelos de Música!
         modal_url = "https://radiodarktrap--apollo-render-router-apollo-api.modal.run/generate/audio_lab"
         
