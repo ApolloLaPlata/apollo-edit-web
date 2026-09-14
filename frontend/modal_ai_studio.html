@@ -1733,7 +1733,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('batchDownloadAllContainer').innerHTML = '⬇️ Baixar Todas (' + window.batchGeneratedFiles.length + ')';
             }
         }
-        window.addEventListener('DOMContentLoaded', () => { if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
+        window.addEventListener('DOMContentLoaded', () => {
+            const musicModelSelect = document.getElementById('musicModel');
+            if (musicModelSelect) {
+                musicModelSelect.addEventListener('change', () => {
+                    const styleSelect = document.getElementById('musicStyle');
+                    if (musicModelSelect.value === 'sa3') {
+                        // Bloquear vocais no Stable Audio
+                        styleSelect.value = 'instrumental';
+                        for (let option of styleSelect.options) {
+                            if (option.value === 'vocal') option.disabled = true;
+                        }
+                        toggleMusicUI();
+                    } else {
+                        // Desbloquear
+                        for (let option of styleSelect.options) {
+                            option.disabled = false;
+                        }
+                    }
+                });
+            }
+ if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
 
 </script>
 
