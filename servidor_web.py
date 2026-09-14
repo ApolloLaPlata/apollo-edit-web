@@ -84,6 +84,31 @@ job_notifier = JobNotifier()
 
 app = FastAPI(title="Apollo Studio Web Engine")
 
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/api/download")
+async def api_download(url: str):
+    try:
+        # Extrair o caminho local da URL
+        if "/media/" in url:
+            local_path = url.split("/media/")[1]
+            local_path = os.path.join("media", local_path)
+        elif "/temp/" in url:
+            local_path = url.split("/temp/")[1]
+            local_path = os.path.join("temp", local_path)
+        else:
+            return {"error": "Caminho invalido"}
+            
+        if os.path.exists(local_path):
+            filename = os.path.basename(local_path)
+            return FileResponse(local_path, media_type="application/octet-stream", headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+        return {"error": "Arquivo nao encontrado localmente"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+
 AUDIO_JOBS = {}
 
 from fastapi.middleware.cors import CORSMiddleware
