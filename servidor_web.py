@@ -5718,9 +5718,9 @@ async def audio_generate(req: Request):
                 final_prompt += ", high quality, 4k audio, high fidelity, clean, sharp, stereo, masterpiece"
 
         payload = {
-            "model": model_map.get(engine, engine),
-            "prompt": prompt,
-            "lyrics": lyrics,
+            "model": model_mapped,
+            "prompt": final_prompt,
+            "lyrics": final_lyrics,
             "duration": float(duration)
         }
         
