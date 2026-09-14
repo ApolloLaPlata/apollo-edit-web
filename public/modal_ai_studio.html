@@ -663,12 +663,14 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                     🎧 Iniciar Geração (Conta 9)
                 </button>
                 
-                  <div class="field-label" id="refAudioLabel">Áudio de Referência (Voz/Estilo) - Opcional</div>
-                  <div class="file-input-wrap">
-                      <label for="musicRefAudio" class="file-label">📁 Escolher Áudio</label>
-                      <input type="file" id="musicRefAudio" accept="audio/*" onchange="document.getElementById('musicRefFileName').innerText = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado'">
-                      <span class="file-name" id="musicRefFileName" style="font-size:0.75rem; color:var(--text-dim); margin-left:8px;">Nenhum arquivo selecionado</span>
-                  </div>
+                <div id="musicRefAudioContainer">
+                    <div class="field-label" id="refAudioLabel">Áudio de Referência (Voz/Estilo) - Opcional</div>
+                    <div class="file-input-wrap">
+                        <label for="musicRefAudio" class="file-label">📁 Escolher Áudio</label>
+                        <input type="file" id="musicRefAudio" accept="audio/*" onchange="document.getElementById('musicRefFileName').innerText = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado'">
+                        <span class="file-name" id="musicRefFileName" style="font-size:0.75rem; color:var(--text-dim); margin-left:8px;">Nenhum arquivo selecionado</span>
+                    </div>
+                </div>
 
 <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
                     ⛔ Cancelar Processo
@@ -1793,6 +1795,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (musicModelSelect) {
                 musicModelSelect.addEventListener('change', () => {
                     const styleSelect = document.getElementById('musicStyle');
+                    const refContainer = document.getElementById('musicRefAudioContainer');
+                    
                     if (musicModelSelect.value === 'sa3') {
                         // Bloquear vocais no Stable Audio
                         styleSelect.value = 'instrumental';
@@ -1806,12 +1810,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             option.disabled = false;
                         }
                     }
+                    
+                    if (refContainer) {
+                        if (musicModelSelect.value === 'acestep') {
+                            refContainer.style.display = 'block';
+                        } else {
+                            refContainer.style.display = 'none';
+                        }
+                    }
                 });
+                
+                // Trigger change to set initial state
+                musicModelSelect.dispatchEvent(new Event('change'));
             }
- if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
+        }); if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
 
 </script>
 
 </body>
 </html>
-
