@@ -109,7 +109,8 @@ class AceStep15Engine:
                 caption=style_tags,
                 lyrics=lyrics,
                 duration=float(length_seconds),
-                inference_steps=steps
+                inference_steps=steps,
+                guidance_scale=4.5  # Lower than default 7.0 for smoother, cleaner sound
             )
             if reference_audio_b64:
                 import base64
@@ -123,12 +124,6 @@ class AceStep15Engine:
             config = GenerationConfig()
             
             # Parametros avanados para melhorar a coerencia de instrumentais!
-            config.guidance_scale = 4.5
-            config.omega_scale = 4.5
-            config.cfg_type = "true_cfg"
-            config.use_erg_tag = True
-            config.use_erg_lyric = use_erg_lyric
-            config.use_erg_diffusion = True
             
             result = generate_music(
                 self.dit_handler, 

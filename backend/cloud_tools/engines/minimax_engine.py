@@ -6,13 +6,13 @@ from backend.cloud_tools.modal_app import app
 volume = modal.Volume.from_name("apollo-models", create_if_missing=True)
 
 def download_minimax_weights():
-    from diffusers import ModularPipeline
-    ModularPipeline.from_pretrained("MiniMaxAI/MiniMax-Music3")
+    from huggingface_hub import snapshot_download
+    snapshot_download("MiniMaxAI/MiniMax-Music3")
 
 image = modal.Image.from_registry("nvidia/cuda:12.1.1-devel-ubuntu22.04", add_python="3.11") \
     .apt_install("git", "ffmpeg") \
     .pip_install("torch", "torchaudio", "torchvision", extra_options="--index-url https://download.pytorch.org/whl/cu121") \
-    .pip_install("transformers", "accelerate", "soundfile", "git+https://github.com/huggingface/diffusers@dafe3733fcfdbf3c48915fe77be3aef65b5d6a2d", "sentencepiece", "huggingface_hub", "fastapi", "pydantic", "requests") \
+    .pip_install("transformers", "accelerate", "soundfile", "git+https://github.com/huggingface/diffusers@dafe3733fcfdbf3c48915fe77be3aef65b5d6a2d", "sentencepiece", "huggingface_hub", "fastapi", "pydantic", "requests", "googletrans==4.0.0-rc1") \
     .run_function(download_minimax_weights)
 
 @app.cls(gpu="a100", timeout=3600, image=image, volumes={"/models": volume})
@@ -35,7 +35,20 @@ class MinimaxEngine:
         import io
         import time
 
+        
+        from googletrans import Translator
+        translator = Translator()
+        try:
+            print(f"[MiniMax] Traduzindo prompt de estilo para ingles...")
+            translated_prompt = translator.translate(prompt, dest='en').text
+            print(f"[MiniMax] Prompt original: {prompt}")
+            print(f"[MiniMax] Prompt traduzido: {translated_prompt}")
+            prompt = translated_prompt
+        except Exception as e:
+            print(f"[MiniMax] Erro ao traduzir: {e}")
+            
         print(f"[MiniMax] Duracao alvo: {duration}s | Instrumental: {is_instrumental}")
+
         
         if is_instrumental or not lyrics.strip():
             final_lyrics = "[Instrumental]\n\n[Verse]\n[Instrumental]\n\n[Chorus]\n[Instrumental]\n\n[Bridge]\n[Instrumental]\n\n[Outro]\n[Instrumental]"
