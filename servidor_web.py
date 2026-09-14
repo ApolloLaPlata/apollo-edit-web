@@ -5725,51 +5725,58 @@ async def audio_generate(req: Request):
                         final_prompt = prompt
         final_lyrics = lyrics if lyrics else ""
 
-        # --- PROCESSAMENTO ESTATICO E DIRETO (SEM LLM) ---
-        print(f"[Audio Generator] Formatando inputs estaticamente para {model_mapped}...")
+        # --- PROCESSAMENTO INTELIGENTE LLM (LIGHTNING PROXY) ---
+        print(f"[Audio Generator] Acionando Roteador LLM para o modelo {model_mapped}...")
+        
+        db_rules = {
+            "ace-step": "ACE-Step Rule: Maintain the exact original prompt words but enhance with high-quality tags if missing. DO NOT translate anything. Detect the language of the lyrics and prepend [pt] or [en] to the lyrics. CRITICAL: Keep the lyrics 100% exactly as provided. Do not hallucinate or rewrite the poetry.",
+            "minimax": "MiniMax Rule: DO NOT translate the prompt. Prepend [Language: Portuguese (Brazil)] [Accent: Brazilian] to the prompt if the language is Portuguese, or [Language: English] if English. Add high quality tags. CRITICAL: Prepend [PT-BR] or [EN] to the lyrics, and you MUST append \\n\\n[Outro]\\n[Fade Out] to the very end of the lyrics.",
+            "sa3": "Stable Audio 3 Rule: This model is instrumental only. DO NOT drop or alter any details from the user's prompt. You must strictly PRESERVE all original words. Only APPEND mastering tags like 'high quality, 4k audio, high fidelity, stereo, masterpiece'. Lyrics MUST be returned empty."
+        }
+        
+        llm_system_prompt = f"""You are a master Audio Engineering AI. Your job is to format music generation prompts and lyrics to perfectly match the strict syntax of the {model_mapped} model.
+        
+CRITICAL DIRECTIVES:
+1. DO NOT translate the prompt or lyrics. If they are in Portuguese, keep them in Portuguese.
+2. DO NOT delete, shorten, or summarize the user's prompt. Preserve their original artistic intent (e.g. 'voz feminina doce', 'trilha epica').
+3. Apply the specific rules for {model_mapped}:
+{db_rules.get(model_mapped, '')}
 
-        if model_mapped == "sa3":
-            if "masterpiece" not in final_prompt.lower():
-                final_prompt += ", high quality, 4k audio, high fidelity, clean, sharp, stereo, masterpiece"
+OUTPUT:
+Return ONLY a valid JSON object with keys 'formatted_prompt' and 'formatted_lyrics'. No markdown formatting, no explanations.
+"""
+        
+        user_input = f"USER PROMPT:\n{prompt}\n\nUSER LYRICS:\n{lyrics}"
+        
+        try:
+            import httpx
+            import json
+            import re
+            
+            proxy_url = "http://127.0.0.1:8080/api/lightning_proxy"
+            async with httpx.AsyncClient(timeout=45) as client:
+                resp = await client.post(proxy_url, json={"model": "nvidia-nemotron-3-ultra-550b-a55b", "messages": [{"role": "system", "content": llm_system_prompt}, {"role": "user", "content": user_input}]})
                 
-        elif model_mapped == "ace-step":
-            if final_lyrics:
-                # Remove empty lines at start
-                final_lyrics = final_lyrics.strip()
-                if not final_lyrics.lower().startswith("[pt]") and not final_lyrics.lower().startswith("[en]"):
-                    final_lyrics = "[pt]
-" + final_lyrics
-            if "high quality" not in final_prompt.lower():
-                final_prompt += ", high quality, studio mix, masterpiece"
-                
-        elif model_mapped == "minimax":
-            if "language:" not in final_prompt.lower():
-                final_prompt = "[Language: Portuguese (Brazil)] [Accent: Brazilian] " + final_prompt
-            if final_lyrics:
-                final_lyrics = final_lyrics.strip()
-                if not final_lyrics.lower().startswith("[pt-br]") and not final_lyrics.lower().startswith("[en]"):
-                    final_lyrics = "[PT-BR]
-" + final_lyrics
-                
-                # Forca a finalizacao
-                lower_lyrics = final_lyrics.lower()
-                if "[end]" not in lower_lyrics and "[fade out]" not in lower_lyrics and "[outro]" not in lower_lyrics:
-                    final_lyrics += "
-
-[Outro]
-[Fade Out]"
-            if "studio mix" not in final_prompt.lower():
-                final_prompt += ", high quality studio mix, cinematic"
-                
-        print(f"
---- PROMPT FINAL PARA A NUVEM ---
-{final_prompt}
-----------------------------")
-        print(f"
---- LYRICS FINAL PARA A NUVEM ---
-{final_lyrics}
-----------------------------")
-
+                if resp.status_code == 200:
+                    data = resp.json()
+                    content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                    match = re.search(r'\{.*\}', content, re.DOTALL)
+                    if match:
+                        result = json.loads(match.group(0))
+                        final_prompt = result.get("formatted_prompt", prompt)
+                        final_lyrics = result.get("formatted_lyrics", lyrics if lyrics else "")
+                        print("[Audio Generator] LLM Tratamento concluido (Lightning)!")
+                    else:
+                        print(f"[Audio Generator] Falha ao extrair JSON do LLM: {content}")
+                else:
+                    print(f"[Audio Generator] Lightning proxy returned {resp.status_code}")
+                    
+        except Exception as e:
+            print(f"[Audio Generator] Erro na comunicacao LLM: {e}")
+            
+        print(f"\n--- PROMPT LLM REESCRITO ---\n{final_prompt}\n----------------------------")
+        print(f"\n--- LYRICS LLM REESCRITO ---\n{final_lyrics}\n----------------------------")
+        
         payload = {
             "model": model_mapped,
             "prompt": final_prompt,
