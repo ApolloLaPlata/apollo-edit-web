@@ -84,6 +84,8 @@ job_notifier = JobNotifier()
 
 app = FastAPI(title="Apollo Studio Web Engine")
 
+AUDIO_JOBS = {}
+
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
@@ -5691,6 +5693,7 @@ async def audio_generate(req: Request):
         }
         
         lyrics = body.get("lyrics", "")
+        reference_audio_b64 = body.get("reference_audio_b64", "")
         model_mapped = model_map.get(engine, engine)
         
         # --- INJEÇÃO DE MASTERIZAÇÃO E IDIOMA (O SEGREDO DO "PERFEITO") ---
@@ -5721,7 +5724,8 @@ async def audio_generate(req: Request):
             "model": model_mapped,
             "prompt": final_prompt,
             "lyrics": final_lyrics,
-            "duration": float(duration)
+            "duration": float(duration),
+            "reference_audio_b64": reference_audio_b64
         }
         
         print(f"[Audio Generator] Solicitando {engine} na conta radiodarktrap...")
@@ -5905,6 +5909,7 @@ async def music_auto_tag_lyrics(req: Request):
     try:
         body = await req.json()
         raw_lyrics = body.get("lyrics", "")
+        reference_audio_b64 = body.get("reference_audio_b64", "")
         if not raw_lyrics:
             return {"success": False, "error": "Letra vazia"}
             
@@ -5974,3 +5979,10 @@ if __name__ == "__main__":
 
 
 
+
+@app.get("/api/audio/status/{job_id}")
+async def get_audio_status(job_id: str):
+    job = AUDIO_JOBS.get(job_id)
+    if not job:
+        return {"status": "error", "error": "Job not found"}
+    return job

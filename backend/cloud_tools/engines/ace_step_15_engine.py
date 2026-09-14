@@ -91,7 +91,7 @@ class AceStep15Engine:
         print("[AceStep15Engine] Modelos XL carregados!")
 
     @modal.method()
-    def generate(self, style_tags: str, lyrics: str, length_seconds: int = 60, steps: int = 50, use_erg_lyric: bool = True) -> dict:
+    def generate(self, style_tags: str, lyrics: str, length_seconds: int = 60, steps: int = 50, use_erg_lyric: bool = True, reference_audio_b64: str = None) -> dict:
         t0 = time.time()
         print(f"[AceStep15Engine] Gerando audio de {length_seconds}s com {steps} steps (XL MODEL)...")
         
@@ -111,6 +111,15 @@ class AceStep15Engine:
                 duration=float(length_seconds),
                 inference_steps=steps
             )
+            if reference_audio_b64:
+                import base64
+                import uuid
+                ref_path = f"/tmp/ref_{uuid.uuid4().hex}.mp3"
+                with open(ref_path, "wb") as rf:
+                    rf.write(base64.b64decode(reference_audio_b64))
+                params.reference_audio = ref_path
+                # Para reference audio, cover task_type tambem funciona, mas text2music com reference aceita!
+
             config = GenerationConfig()
             
             # Parametros avanados para melhorar a coerencia de instrumentais!
