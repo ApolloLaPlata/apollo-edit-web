@@ -5700,7 +5700,18 @@ class ChatRequest(BaseModel):
 app.mount("/ext_apps", StaticFiles(directory=os.path.join(BASE_DIR, "Programas externos")), name="programas_externos")
 
 
+
+@app.get("/api/audio/status/{job_id}")
+async def get_audio_status(job_id: str):
+    if "AUDIO_JOBS" not in globals():
+        return {"status": "error", "error": "Job system not initialized"}
+    job = AUDIO_JOBS.get(job_id)
+    if not job:
+        return {"status": "error", "error": "Job not found"}
+    return job
+
 @app.post("/api/audio/generate")
+
 async def audio_generate(req: Request, background_tasks: BackgroundTasks):
     try:
         body = await req.json()
@@ -6059,14 +6070,7 @@ def start_server(workspace_name, workspace_path, port=8080):
     uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
 
 
-@app.get("/api/audio/status/{job_id}")
-async def get_audio_status(job_id: str):
-    if "AUDIO_JOBS" not in globals():
-        return {"status": "error", "error": "Job system not initialized"}
-    job = AUDIO_JOBS.get(job_id)
-    if not job:
-        return {"status": "error", "error": "Job not found"}
-    return job
+
 
 if __name__ == "__main__":
     import argparse
