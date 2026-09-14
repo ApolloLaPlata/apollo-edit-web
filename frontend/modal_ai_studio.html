@@ -645,17 +645,17 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                 
                 <div id="musicDurationFixedArea" style="margin-bottom:15px;">
                     <div class="field-label">Duração (Segundos)</div>
-                    <input type="number" id="musicDurationFixed" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                    <input type="number" id="musicDurationFixed" value="30" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                 </div>
                 
                 <div id="musicDurationRandomArea" style="display:none; gap:10px; margin-bottom:15px;">
                     <div style="flex:1;">
                         <div class="field-label">Min (s)</div>
-                        <input type="number" id="musicDurationMin" value="15" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <input type="number" id="musicDurationMin" value="15" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                     <div style="flex:1;">
                         <div class="field-label">Max (s)</div>
-                        <input type="number" id="musicDurationMax" value="45" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <input type="number" id="musicDurationMax" value="45" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                 </div>
                 
@@ -665,6 +665,14 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                 <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
                     ⛔ Cancelar Processo
                 </button>
+
+                  <div id="musicDurationAutoArea" style="display:none; gap:10px; margin-bottom:15px;">
+                      <div style="flex:1;">
+                          <div class="field-label">Min (s) - A IA calculará o tempo ideal baseado na letra</div>
+                          <input type="number" id="musicDurationAutoMin" value="60" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                      </div>
+                  </div>
+
                 
                 <div class="log-box" id="musicMasterStatus" style="margin-top:10px;">Aguardando...</div>
                 
@@ -1497,6 +1505,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Duration Areas
             document.getElementById('musicDurationFixedArea').style.display = (durationMode === 'fixed') ? 'block' : 'none';
             document.getElementById('musicDurationRandomArea').style.display = (durationMode === 'random') ? 'flex' : 'none';
+              document.getElementById('musicDurationAutoArea').style.display = (durationMode === 'auto') ? 'flex' : 'none';
         }
         
         function stopMusicMaster() {
@@ -1524,12 +1533,15 @@ document.addEventListener('DOMContentLoaded', () => {
             let delay = 0;
             window.batchGeneratedFiles.forEach((url, index) => {
                 setTimeout(() => {
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = url.split("/").pop(); // extrai o nome final do arquivo
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    let finalUrl = url;
+                    if (url.includes("apolloedit.com/media")) {
+                        finalUrl = "https://www.apolloedit.com/api/download?url=" + encodeURIComponent(url);
+                    }
+                    const iframe = document.createElement("iframe");
+                    iframe.style.display = "none";
+                    iframe.src = finalUrl;
+                    document.body.appendChild(iframe);
+                    setTimeout(() => document.body.removeChild(iframe), 10000);
                     logMusicMaster("Baixando arquivo " + (index + 1) + "...");
                 }, delay);
                 delay += 800; // 800ms delay para não travar o navegador
@@ -1620,6 +1632,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const min = parseInt(document.getElementById('musicDurationMin').value) || 45;
                     const max = parseInt(document.getElementById('musicDurationMax').value) || 120;
                     finalDuration = Math.floor(Math.random() * (max - min + 1)) + min;
+                } else if (durationMode === 'auto') {
+                    const min = parseInt(document.getElementById('musicDurationAutoMin').value) || 60;
+                    let computed = min;
+                    if (style === 'vocal' && lyrics[i] && lyrics[i].trim().length > 0) {
+                        // Calcula aprox 1 segundo pra cada 4 letras, no mínimo o valor de min
+                        computed = Math.floor(lyrics[i].length / 4);
+                        if (computed < min) computed = min;
+                        if (computed > 300) computed = 300;
+                    } else {
+                        computed = min > 120 ? min : 120;
+                    }
+                    finalDuration = computed;
                 }
                 
                   logMusicMaster('Preparando fetch...');

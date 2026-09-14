@@ -637,25 +637,25 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                     </div>
                 </div>
                 
-                <div class="field-label">Modo de Duração</div>
+                <div id="musicDurationModeWrapper"><div class="field-label">Modo de Duração</div>
                 <select id="musicDurationMode" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
                     <option value="fixed">Fixo (Todos com a mesma duração)</option>
                     <option value="random">Aleatório (Entre Min e Max)</option>
-                </select>
+                </select></div>
                 
                 <div id="musicDurationFixedArea" style="margin-bottom:15px;">
                     <div class="field-label">Duração (Segundos)</div>
-                    <input type="number" id="musicDurationFixed" value="30" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                    <input type="number" id="musicDurationFixed" value="30" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                 </div>
                 
                 <div id="musicDurationRandomArea" style="display:none; gap:10px; margin-bottom:15px;">
                     <div style="flex:1;">
                         <div class="field-label">Min (s)</div>
-                        <input type="number" id="musicDurationMin" value="15" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <input type="number" id="musicDurationMin" value="15" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                     <div style="flex:1;">
                         <div class="field-label">Max (s)</div>
-                        <input type="number" id="musicDurationMax" value="45" min="5" max="120" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                        <input type="number" id="musicDurationMax" value="45" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
                     </div>
                 </div>
                 
@@ -665,6 +665,14 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                 <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
                     ⛔ Cancelar Processo
                 </button>
+
+                  <div id="musicDurationAutoArea" style="display:none; gap:10px; margin-bottom:15px;">
+                      <div style="flex:1;">
+                          <div class="field-label">Min (s) - A IA calculará o tempo ideal baseado na letra</div>
+                          <input type="number" id="musicDurationAutoMin" value="60" min="5" max="300" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px;">
+                      </div>
+                  </div>
+
                 
                 <div class="log-box" id="musicMasterStatus" style="margin-top:10px;">Aguardando...</div>
                 
@@ -757,7 +765,25 @@ function getBaseUrl() {
     return document.getElementById('modalUrl').value.trim().replace(/\/$/, '');
 }
 
-function b64toBlob(b64, mime) {
+
+function forceDownloadFile(url, filename) {
+    fetch(url)
+    .then(r => r.blob())
+    .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+    }).catch(e => {
+        alert('Erro ao baixar: ' + e.message);
+    });
+}
+
+        function b64toBlob(b64, mime) {
     const bytes = atob(b64);
     const arr = new Uint8Array(bytes.length);
     for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
@@ -1481,7 +1507,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function toggleMusicUI() {
             const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
             const style = document.getElementById('musicStyle').value;
-            const durationMode = document.getElementById('musicDurationMode').value;
+            let durationMode = document.getElementById('musicDurationMode').value;
+            if (style === 'vocal') durationMode = 'auto';
             
             // Single vs Batch Areas
             if (execMode === 'single') {
@@ -1494,12 +1521,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('musicBatchLyricsContainer').style.display = (style === 'vocal') ? 'block' : 'none';
             }
             
-            // Duration Areas
-            document.getElementById('musicDurationFixedArea').style.display = (durationMode === 'fixed') ? 'block' : 'none';
-            document.getElementById('musicDurationRandomArea').style.display = (durationMode === 'random') ? 'flex' : 'none';
+            const durationWrapper = document.getElementById('musicDurationModeWrapper');
+            const fixedArea = document.getElementById('musicDurationFixedArea');
+            const randomArea = document.getElementById('musicDurationRandomArea');
+            const autoArea = document.getElementById('musicDurationAutoArea');
+            
+            if (style === 'vocal') {
+                if (durationWrapper) durationWrapper.style.display = 'none';
+                if (fixedArea) fixedArea.style.display = 'none';
+                if (randomArea) randomArea.style.display = 'none';
+                if (autoArea) autoArea.style.display = 'none';
+            } else {
+                if (durationWrapper) durationWrapper.style.display = 'block';
+                if (fixedArea) fixedArea.style.display = (durationMode === 'fixed') ? 'block' : 'none';
+                if (randomArea) randomArea.style.display = (durationMode === 'random') ? 'flex' : 'none';
+                if (autoArea) autoArea.style.display = (durationMode === 'auto') ? 'flex' : 'none';
+            }
         }
-        
-        function stopMusicMaster() {
+
+          function stopMusicMaster() {
             musicRunning = false;
             logMusicMaster("Cancelamento solicitado...");
         }
@@ -1524,12 +1564,15 @@ document.addEventListener('DOMContentLoaded', () => {
             let delay = 0;
             window.batchGeneratedFiles.forEach((url, index) => {
                 setTimeout(() => {
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = url.split("/").pop(); // extrai o nome final do arquivo
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    let finalUrl = url;
+                    if (url.includes("apolloedit.com/media")) {
+                        finalUrl = "https://www.apolloedit.com/api/download?url=" + encodeURIComponent(url);
+                    }
+                    const iframe = document.createElement("iframe");
+                    iframe.style.display = "none";
+                    iframe.src = finalUrl;
+                    document.body.appendChild(iframe);
+                    setTimeout(() => document.body.removeChild(iframe), 10000);
                     logMusicMaster("Baixando arquivo " + (index + 1) + "...");
                 }, delay);
                 delay += 800; // 800ms delay para não travar o navegador
@@ -1539,7 +1582,8 @@ document.addEventListener('DOMContentLoaded', () => {
         async function generateMusicMaster() {
             const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
             const style = document.getElementById('musicStyle').value;
-            const durationMode = document.getElementById('musicDurationMode').value;
+            let durationMode = document.getElementById('musicDurationMode').value;
+            if (style === 'vocal') durationMode = 'auto';
             const engine = document.getElementById('musicModel').value;
             
             let prompts = [];
@@ -1620,6 +1664,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const min = parseInt(document.getElementById('musicDurationMin').value) || 45;
                     const max = parseInt(document.getElementById('musicDurationMax').value) || 120;
                     finalDuration = Math.floor(Math.random() * (max - min + 1)) + min;
+                } else if (durationMode === 'auto') {
+                    const min = parseInt(document.getElementById('musicDurationAutoMin').value) || 60;
+                    let computed = min;
+                    if (style === 'vocal' && lyrics[i] && lyrics[i].trim().length > 0) {
+                        // Calcula aprox 1 segundo pra cada 4 letras, no mínimo o valor de min
+                        computed = Math.floor(lyrics[i].length / 4);
+                        if (computed < min) computed = min;
+                        if (computed > 300) computed = 300;
+                    } else {
+                        computed = min > 120 ? min : 120;
+                    }
+                    finalDuration = computed;
                 }
                 
                   logMusicMaster('Preparando fetch...');
@@ -1630,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       const response = await fetch("/api/audio/generate", {
                           method: "POST",
                           headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ prompt: p, engine, duration: finalDuration })
+                          body: JSON.stringify({ prompt: p, engine, lyrics: lyrics[i] || "", duration: finalDuration })
                       });
                       
                       let textResponse = await response.text();
@@ -1679,7 +1735,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <source src="${fileUrlAbs}" type="audio/mpeg">
                                     </audio>
                                 </div>
-                                <a href="${fileUrlAbs}" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
+                                <button onclick="forceDownloadFile('${fileUrlAbs}', 'musica_${index}.mp3')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">Baixar</button>
                             </div>
                         `;
                         trackList.insertAdjacentHTML('beforeend', trackHtml);
