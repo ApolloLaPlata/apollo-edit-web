@@ -5721,29 +5721,17 @@ async def audio_generate(req: Request):
         reference_audio_b64 = body.get("reference_audio_b64", "")
         model_mapped = model_map.get(engine, engine)
         
-                        # --- INJECAO DE MASTERIZACAO E INTELIGENCIA LLM ---
-                        final_prompt = prompt
+        # --- INJECAO DE MASTERIZACAO E INTELIGENCIA LLM ---
+        final_prompt = prompt
         final_lyrics = lyrics if lyrics else ""
 
         # --- PROCESSAMENTO INTELIGENTE LLM (LIGHTNING PROXY) ---
         print(f"[Audio Generator] Acionando Roteador LLM para o modelo {model_mapped}...")
         
-                db_rules = {
-            "ace-step": "ACE-STEP 1.5 FORMULA:
-- Prompt MUST be a comma-separated list: [Genre], [Mood], [2-3 Instruments], [Vocal type], [Production style], [BPM] bpm.
-- Do NOT write conversational sentences.
-- Lyrics MUST begin with [pt] (if Portuguese) or [en] (if English), followed by structural tags like [Verse], [Chorus], [Outro].
-- Keep the original lyrical meaning and language completely intact.",
-            "minimax": "MINIMAX-MUSIC3 FORMULA:
-- Prompt MUST be translated to ENGLISH and expanded into a rich 'Structured Caption' describing Musical Style, Vocal Performance, and Arrangement. Preserve the user's core intent.
-- Inject [Language: Portuguese (Brazil)] [Accent: Brazilian] into the prompt if the user's lyrics are in PT.
-- Lyrics MUST NOT be translated. Keep them in the original language. Prepend [PT-BR] or [EN] to the lyrics.
-- CRITICAL: You MUST append \n\n[Outro]\n[Fade Out] to the very end of the lyrics to prevent infinite looping.",
-            "sa3": "STABLE AUDIO 3 FORMULA:
-- Prompt MUST be translated to ENGLISH and formatted as strict tags: TrackType: Music, [Genre], [Instruments], [Moods], [Tempo BPM].
-- Remove any conversational text.
-- Append mastering tags: high quality, 4k audio, high fidelity, stereo, masterpiece.
-- Lyrics MUST be returned as an empty string."
+        db_rules = {
+            "ace-step": "ACE-STEP 1.5 FORMULA:\n- Prompt MUST be a comma-separated list: [Genre], [Mood], [2-3 Instruments], [Vocal type], [Production style], [BPM] bpm.\n- Do NOT write conversational sentences.\n- Lyrics MUST begin with [pt] (if Portuguese) or [en] (if English), followed by structural tags like [Verse], [Chorus], [Outro].\n- Keep the original lyrical meaning and language completely intact.",
+            "minimax": "MINIMAX-MUSIC3 FORMULA:\n- Prompt MUST be translated to ENGLISH and expanded into a rich 'Structured Caption' describing Musical Style, Vocal Performance, and Arrangement. Preserve the user's core intent.\n- Inject [Language: Portuguese (Brazil)] [Accent: Brazilian] into the prompt if the user's lyrics are in PT.\n- Lyrics MUST NOT be translated. Keep them in the original language. Prepend [PT-BR] or [EN] to the lyrics.\n- CRITICAL: You MUST append \\n\\n[Outro]\\n[Fade Out] to the very end of the lyrics to prevent infinite looping.",
+            "sa3": "STABLE AUDIO 3 FORMULA:\n- Prompt MUST be translated to ENGLISH and formatted as strict tags: TrackType: Music, [Genre], [Instruments], [Moods], [Tempo BPM].\n- Remove any conversational text.\n- Append mastering tags: high quality, 4k audio, high fidelity, stereo, masterpiece.\n- Lyrics MUST be returned as an empty string."
         }
         
         llm_system_prompt = f"""You are an Expert Audio Engineering AI. Your task is to act as a prompt translator and formatter to perfectly match the strict syntax of the {model_mapped} AI model.
