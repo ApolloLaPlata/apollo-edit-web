@@ -110,7 +110,7 @@ class AceStep15Engine:
                 lyrics=lyrics,
                 duration=float(length_seconds),
                 inference_steps=steps,
-                guidance_scale=7.0  # Restored perfect formula CFG 7.0
+                guidance_scale=4.5  # Restored perfect formula CFG 7.0
             )
             if reference_audio_b64:
                 import base64

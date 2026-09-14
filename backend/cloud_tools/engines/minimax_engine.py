@@ -36,16 +36,7 @@ class MinimaxEngine:
         import time
 
         
-        from deep_translator import GoogleTranslator
-        translator = GoogleTranslator(source='auto', target='en')
-        try:
-            print(f"[MiniMax] Traduzindo prompt de estilo para ingles...")
-            translated_prompt = translator.translate(prompt)
-            print(f"[MiniMax] Prompt original: {prompt}")
-            print(f"[MiniMax] Prompt traduzido: {translated_prompt}")
-            prompt = translated_prompt
-        except Exception as e:
-            print(f"[MiniMax] Erro ao traduzir: {e}")
+        
             
         print(f"[MiniMax] Duracao alvo: {duration}s | Instrumental: {is_instrumental}")
 
