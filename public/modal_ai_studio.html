@@ -1748,15 +1748,18 @@ document.addEventListener('DOMContentLoaded', () => {
                           const trackList = document.getElementById('batchTracksList');
                         const index = window.batchGeneratedFiles.length;
                         const trackHtml = `
-                            <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="flex: 1;">
-                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
-                                    <audio controls style="width: 100%;">
-                                        <source src="${fileUrlAbs}" type="audio/mpeg">
-                                    </audio>
-                                </div>
-                                <button onclick="forceDownloadFile('${fileUrlAbs}', 'musica_${index}.mp3')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">Baixar</button>
-                            </div>
+                              <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                                  <div style="flex: 1;">
+                                      <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
+                                      <audio controls style="width: 100%;">
+                                          <source src="${fileUrlAbs}" type="audio/wav">
+                                      </audio>
+                                  </div>
+                                  <div style="display: flex; gap: 10px;">
+                                      <button onclick="forceDownloadFile('${fileUrlAbs}', 'musica_${index}.wav')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">Baixar WAV</button>
+                                      ${result.file_url_mp3 ? `<button onclick="forceDownloadFile('${result.file_url_mp3}', 'musica_${index}.mp3')" class="btn btn-ghost" style="white-space: nowrap; height: fit-content;">MP3</button>` : ''}
+                                  </div>
+                              </div>
                         `;
                         trackList.insertAdjacentHTML('beforeend', trackHtml);
 
