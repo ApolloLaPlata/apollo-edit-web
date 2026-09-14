@@ -6058,6 +6058,16 @@ def start_server(workspace_name, workspace_path, port=8080):
     # log_level = "warning" evita spamar o terminal
     uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
 
+
+@app.get("/api/audio/status/{job_id}")
+async def get_audio_status(job_id: str):
+    if "AUDIO_JOBS" not in globals():
+        return {"status": "error", "error": "Job system not initialized"}
+    job = AUDIO_JOBS.get(job_id)
+    if not job:
+        return {"status": "error", "error": "Job not found"}
+    return job
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -6074,12 +6084,3 @@ if __name__ == "__main__":
 
 
 
-
-@app.get("/api/audio/status/{job_id}")
-async def get_audio_status(job_id: str):
-    if "AUDIO_JOBS" not in globals():
-        return {"status": "error", "error": "Job system not initialized"}
-    job = AUDIO_JOBS.get(job_id)
-    if not job:
-        return {"status": "error", "error": "Job not found"}
-    return job
