@@ -5701,9 +5701,22 @@ app.mount("/ext_apps", StaticFiles(directory=os.path.join(BASE_DIR, "Programas e
 
 
 @app.post("/api/audio/generate")
-async def audio_generate(req: Request):
+async def audio_generate(req: Request, background_tasks: BackgroundTasks):
     try:
         body = await req.json()
+        import uuid
+        job_id = str(uuid.uuid4())
+        if "AUDIO_JOBS" not in globals():
+            global AUDIO_JOBS
+            AUDIO_JOBS = {}
+        AUDIO_JOBS[job_id] = {"status": "queued"}
+        background_tasks.add_task(run_audio_generate_bg, job_id, body)
+        return {"status": "queued", "job_id": job_id}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+async def run_audio_generate_bg(job_id: str, body: dict):
+    try:
         prompt = body.get("prompt")
         engine = body.get("engine", "acestep")
         duration = body.get("duration", 30)
@@ -5868,11 +5881,15 @@ The values inside the JSON must strictly be the final prompt and lyrics.
                 print(f"[Audio Generator] Aviso: Falha ao injetar metadados ID3: {meta_err}")
                 
             print(f"[Audio Generator] Salvo em {filepath}")
-            return {"success": True, "file_url": f"/temp/{filename}"}
+            if "AUDIO_JOBS" in globals():
+                AUDIO_JOBS[job_id] = {"status": "success", "success": True, "file_url": f"/temp/{filename}"}
+            return
             
     except Exception as e:
         print(f"[Audio Generator] Erro: {e}")
-        return {"success": False, "error": str(e)}
+        if "AUDIO_JOBS" in globals():
+            AUDIO_JOBS[job_id] = {"status": "error", "success": False, "error": str(e)}
+        return
 
 @app.post("/api/audio/lab_test")
 async def audio_lab_test(
@@ -6051,6 +6068,8 @@ if __name__ == "__main__":
 
 @app.get("/api/audio/status/{job_id}")
 async def get_audio_status(job_id: str):
+    if "AUDIO_JOBS" not in globals():
+        return {"status": "error", "error": "Job system not initialized"}
     job = AUDIO_JOBS.get(job_id)
     if not job:
         return {"status": "error", "error": "Job not found"}
