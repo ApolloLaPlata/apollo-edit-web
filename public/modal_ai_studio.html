@@ -1790,7 +1790,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('batchDownloadAllContainer').innerHTML = '⬇️ Baixar Todas (' + window.batchGeneratedFiles.length + ')';
             }
         }
-        window.addEventListener('DOMContentLoaded', () => {
+        if (true) {
             const musicModelSelect = document.getElementById('musicModel');
             if (musicModelSelect) {
                 musicModelSelect.addEventListener('change', () => {
@@ -1823,7 +1823,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Trigger change to set initial state
                 musicModelSelect.dispatchEvent(new Event('change'));
             }
-        }); if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
+        } if(typeof toggleMusicUI === 'function') toggleMusicUI();
 
 </script>
 
