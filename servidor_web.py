@@ -5735,7 +5735,9 @@ async def run_audio_generate_bg(job_id: str, body: dict):
         # O usuario solicitou que musicas com letra nao tenham a duracao truncada
         engine = body.get("engine", "acestep")
         if engine in ["acestep", "minimax"] and body.get("lyrics"):
-            duration = 180  # Forca um limite alto para a musica terminar naturalmente
+            lyrics = body.get("lyrics", "")
+            linhas = [L for L in lyrics.split('\n') if L.strip() and not L.strip().startswith('[')]
+            duration = max(30, min(len(linhas) * 7 + 10, 180))
 
         
         # Destino travado na Conta 9 (radiodarktrap) para os Modelos de Música!
