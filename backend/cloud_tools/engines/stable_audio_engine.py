@@ -52,7 +52,7 @@ class StableAudioEngine:
 
     @modal.method()
     def generate_audio(self, prompt: str, duration_s: float = 120, steps: int = 100, cfg: float = 6.0):
-        duration_s = min(float(duration_s), 47.0)
+        
         import torch
         # FIX: USAR A FUNCAO CORRETA DE GERACAO PURA, NAO A DE INPAINT
         from stable_audio_tools.inference.generation import generate_diffusion_cond
