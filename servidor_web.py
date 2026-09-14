@@ -88,7 +88,7 @@ async def health_version():
     return {"version": "2026-09-14-1120-fix", "status": "online"}
 
 
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 import os
 
 @app.get("/api/download")
@@ -1951,7 +1951,7 @@ async def preview_image(name: str):
         perfis_dir = os.path.join(BASE_DIR, "perfis_templates")
         preview_path = os.path.join(perfis_dir, f"{name}.png")
         if os.path.exists(preview_path):
-            from fastapi.responses import FileResponse
+            from fastapi.responses import FileResponse, PlainTextResponse
             return FileResponse(preview_path, media_type="image/png")
         from fastapi.responses import Response
         return Response(status_code=404)
