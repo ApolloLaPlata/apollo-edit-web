@@ -5828,7 +5828,10 @@ The values inside the JSON must strictly be the final prompt and lyrics.
             audio_b64 = last_json.get('audio_base64')
             
             if not audio_b64:
-                return {"success": False, "error": "Resposta inválida da nuvem (sem áudio)"}
+                print(f"[Audio Generator] Resposta invalida da nuvem: {last_json}")
+                if "AUDIO_JOBS" in globals():
+                    AUDIO_JOBS[job_id] = {"status": "error", "error": "Resposta inválida da nuvem (sem áudio)"}
+                return
                 
             audio_data = base64.b64decode(audio_b64)
             
