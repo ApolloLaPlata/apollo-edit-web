@@ -5730,7 +5730,7 @@ async def audio_generate(req: Request):
         
         db_rules = {
             "ace-step": "ACE-STEP 1.5 FORMULA:\n- Prompt MUST be a comma-separated list: [Genre], [Mood], [2-3 Instruments], [Vocal type], [Production style], [BPM] bpm.\n- Do NOT write conversational sentences.\n- Lyrics MUST begin with [pt] (if Portuguese) or [en] (if English), followed by structural tags like [Verse], [Chorus], [Outro].\n- Keep the original lyrical meaning and language completely intact.",
-            "minimax": "MINIMAX-MUSIC3 FORMULA:\n- Prompt MUST be translated to ENGLISH and expanded into a rich 'Structured Caption' describing Musical Style, Vocal Performance, and Arrangement. Preserve the user's core intent.\n- Inject [Language: Portuguese (Brazil)] [Accent: Brazilian] into the prompt if the user's lyrics are in PT.\n- Lyrics MUST NOT be translated. Keep them in the original language. Prepend [PT-BR] or [EN] to the lyrics.\n- CRITICAL: You MUST append \\n\\n[Outro]\\n[Fade Out] to the very end of the lyrics to prevent infinite looping.",
+            "minimax": "MINIMAX-MUSIC3 FORMULA:\n- Prompt MUST be translated to ENGLISH and expanded into a rich 'Structured Caption' describing Musical Style, Vocal Performance, and Arrangement. Preserve the user's core intent.\n- Inject [Language: Portuguese (Brazil)] [Accent: Brazilian] into the prompt if the user's lyrics are in PT.\n- Lyrics MUST NOT be translated. Keep them in the original language. Prepend [PT-BR] or [EN] to the lyrics.\n- CRITICAL: You MUST append \n\n[Outro]\n[Fade Out] to the very end of the lyrics to prevent infinite looping.",
             "sa3": "STABLE AUDIO 3 FORMULA:\n- Prompt MUST be translated to ENGLISH and formatted as strict tags: TrackType: Music, [Genre], [Instruments], [Moods], [Tempo BPM].\n- Remove any conversational text.\n- Append mastering tags: high quality, 4k audio, high fidelity, stereo, masterpiece.\n- Lyrics MUST be returned as an empty string."
         }
         
@@ -5742,8 +5742,16 @@ CRITICAL DIRECTIVES:
 3. Apply the exact syntax rules for {model_mapped}:
 {db_rules.get(model_mapped, '')}
 
-OUTPUT:
-Return ONLY a valid JSON object with keys 'formatted_prompt' and 'formatted_lyrics'. Do not include any markdown or extra text.
+OUTPUT FORMAT (JSON ONLY):
+You must return a raw JSON object and absolutely NOTHING ELSE.
+DO NOT include any conversational filler inside or outside the JSON. 
+DO NOT add phrases like 'Here is the prompt', 'entende?', or 'Hope this helps!'.
+The values inside the JSON must strictly be the final prompt and lyrics.
+
+{{
+    "formatted_prompt": "final prompt here...",
+    "formatted_lyrics": "final lyrics here..."
+}}
 """
         
         user_input = f"USER PROMPT:\n{prompt}\n\nUSER LYRICS:\n{lyrics}"
