@@ -110,15 +110,21 @@ class AceStep15Engine:
                 lyrics=lyrics,
                 duration=float(length_seconds),
                 inference_steps=steps,
-                guidance_scale=4.5  # Lower than default 7.0 for smoother, cleaner sound
+                guidance_scale=7.0  # Restored perfect formula CFG 7.0
             )
             if reference_audio_b64:
                 import base64
                 import uuid
-                ref_path = f"/tmp/ref_{uuid.uuid4().hex}.mp3"
-                with open(ref_path, "wb") as rf:
+                import subprocess
+                raw_path = f"/tmp/raw_ref_{uuid.uuid4().hex}.tmp"
+                wav_path = f"/tmp/ref_{uuid.uuid4().hex}.wav"
+                
+                with open(raw_path, "wb") as rf:
                     rf.write(base64.b64decode(reference_audio_b64))
-                params.reference_audio = ref_path
+                
+                print("[AceStep15Engine] Convertendo audio de referencia para WAV...")
+                subprocess.run(["ffmpeg", "-y", "-i", raw_path, "-ac", "1", "-ar", "24000", wav_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                params.reference_audio = wav_path
                 # Para reference audio, cover task_type tambem funciona, mas text2music com reference aceita!
 
             config = GenerationConfig()

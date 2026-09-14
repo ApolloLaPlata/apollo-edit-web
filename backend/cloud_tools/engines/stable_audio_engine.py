@@ -51,7 +51,7 @@ class StableAudioEngine:
         print("Stable Audio 3 Medium carregado com sucesso!")
 
     @modal.method()
-    def generate_audio(self, prompt: str, duration_s: float = 120, steps: int = 250, cfg: float = 6.0):
+    def generate_audio(self, prompt: str, duration_s: float = 120, steps: int = 100, cfg: float = 6.0):
         import torch
         # FIX: USAR A FUNCAO CORRETA DE GERACAO PURA, NAO A DE INPAINT
         from stable_audio_tools.inference.generation import generate_diffusion_cond
