@@ -5728,22 +5728,34 @@ async def audio_generate(req: Request):
         # --- PROCESSAMENTO INTELIGENTE LLM (LIGHTNING PROXY) ---
         print(f"[Audio Generator] Acionando Roteador LLM para o modelo {model_mapped}...")
         
-        db_rules = {
-            "ace-step": "ACE-Step Rule: Maintain the exact original prompt words but enhance with high-quality tags if missing. DO NOT translate anything. Detect the language of the lyrics and prepend [pt] or [en] to the lyrics. CRITICAL: Keep the lyrics 100% exactly as provided. Do not hallucinate or rewrite the poetry.",
-            "minimax": "MiniMax Rule: DO NOT translate the prompt. Prepend [Language: Portuguese (Brazil)] [Accent: Brazilian] to the prompt if the language is Portuguese, or [Language: English] if English. Add high quality tags. CRITICAL: Prepend [PT-BR] or [EN] to the lyrics, and you MUST append \\n\\n[Outro]\\n[Fade Out] to the very end of the lyrics.",
-            "sa3": "Stable Audio 3 Rule: This model is instrumental only. DO NOT drop or alter any details from the user's prompt. You must strictly PRESERVE all original words. Only APPEND mastering tags like 'high quality, 4k audio, high fidelity, stereo, masterpiece'. Lyrics MUST be returned empty."
+                db_rules = {
+            "ace-step": "ACE-STEP 1.5 FORMULA:
+- Prompt MUST be a comma-separated list: [Genre], [Mood], [2-3 Instruments], [Vocal type], [Production style], [BPM] bpm.
+- Do NOT write conversational sentences.
+- Lyrics MUST begin with [pt] (if Portuguese) or [en] (if English), followed by structural tags like [Verse], [Chorus], [Outro].
+- Keep the original lyrical meaning and language completely intact.",
+            "minimax": "MINIMAX-MUSIC3 FORMULA:
+- Prompt MUST be translated to ENGLISH and expanded into a rich 'Structured Caption' describing Musical Style, Vocal Performance, and Arrangement. Preserve the user's core intent.
+- Inject [Language: Portuguese (Brazil)] [Accent: Brazilian] into the prompt if the user's lyrics are in PT.
+- Lyrics MUST NOT be translated. Keep them in the original language. Prepend [PT-BR] or [EN] to the lyrics.
+- CRITICAL: You MUST append \n\n[Outro]\n[Fade Out] to the very end of the lyrics to prevent infinite looping.",
+            "sa3": "STABLE AUDIO 3 FORMULA:
+- Prompt MUST be translated to ENGLISH and formatted as strict tags: TrackType: Music, [Genre], [Instruments], [Moods], [Tempo BPM].
+- Remove any conversational text.
+- Append mastering tags: high quality, 4k audio, high fidelity, stereo, masterpiece.
+- Lyrics MUST be returned as an empty string."
         }
         
-        llm_system_prompt = f"""You are a master Audio Engineering AI. Your job is to format music generation prompts and lyrics to perfectly match the strict syntax of the {model_mapped} model.
+        llm_system_prompt = f"""You are an Expert Audio Engineering AI. Your task is to act as a prompt translator and formatter to perfectly match the strict syntax of the {model_mapped} AI model.
         
 CRITICAL DIRECTIVES:
-1. DO NOT translate the prompt or lyrics. If they are in Portuguese, keep them in Portuguese.
-2. DO NOT delete, shorten, or summarize the user's prompt. Preserve their original artistic intent (e.g. 'voz feminina doce', 'trilha epica').
-3. Apply the specific rules for {model_mapped}:
+1. ONLY translate the PROMPT to English if the model requires it (MiniMax and SA3). DO NOT translate the LYRICS under any circumstances.
+2. DO NOT change the user's core artistic concept (e.g., do not change 'forro' to 'jazz'). Just format, structure, and optimize the keywords.
+3. Apply the exact syntax rules for {model_mapped}:
 {db_rules.get(model_mapped, '')}
 
 OUTPUT:
-Return ONLY a valid JSON object with keys 'formatted_prompt' and 'formatted_lyrics'. No markdown formatting, no explanations.
+Return ONLY a valid JSON object with keys 'formatted_prompt' and 'formatted_lyrics'. Do not include any markdown or extra text.
 """
         
         user_input = f"USER PROMPT:\n{prompt}\n\nUSER LYRICS:\n{lyrics}"
