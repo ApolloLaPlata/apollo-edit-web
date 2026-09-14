@@ -52,6 +52,7 @@ class StableAudioEngine:
 
     @modal.method()
     def generate_audio(self, prompt: str, duration_s: float = 120, steps: int = 100, cfg: float = 6.0):
+        duration_s = min(float(duration_s), 47.0)
         import torch
         # FIX: USAR A FUNCAO CORRETA DE GERACAO PURA, NAO A DE INPAINT
         from stable_audio_tools.inference.generation import generate_diffusion_cond
@@ -72,9 +73,7 @@ class StableAudioEngine:
                 cfg_scale=cfg,
                 conditioning=conditioning,
                 sample_size=self.sample_size, 
-                sigma_min=0.3, # PARAMETRO OBRIGATORIO FALTANTE
-                sigma_max=500, # PARAMETRO OBRIGATORIO FALTANTE
-                sampler_type="dpmpp-3m-sde", # SAMPLER OBRIGATORIO OFICIAL
+                sampler_type="dpmpp-3m-sde",
                 device="cuda"
             )
             
