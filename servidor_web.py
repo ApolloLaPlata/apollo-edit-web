@@ -5691,7 +5691,7 @@ async def audio_generate(req: Request):
         }
         
         lyrics = body.get("lyrics", "")
-                model_mapped = model_map.get(engine, engine)
+        model_mapped = model_map.get(engine, engine)
         
         # --- INJEÇÃO DE MASTERIZAÇÃO E IDIOMA (O SEGREDO DO "PERFEITO") ---
         # Garantir que as tags de linguagem estejam presentes para PT-BR se o usuário não colocou
