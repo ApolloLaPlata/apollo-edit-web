@@ -81,10 +81,11 @@ class JobNotifier:
                     pass
 
 job_notifier = JobNotifier()
-
+app = FastAPI(title="Apollo Studio Web Engine")\n
 @app.get("/api/health/version")
 async def health_version():
     return {"version": "2026-09-14-1120-fix", "status": "online"}
+
 
 from fastapi.responses import FileResponse
 import os
