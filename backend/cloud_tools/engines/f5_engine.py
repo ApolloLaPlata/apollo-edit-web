@@ -6,7 +6,7 @@ Excelente para Zero-Shot em PT-BR.
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 
@@ -69,9 +69,10 @@ class F5TTSEngine:
                 gen_text=text
             )
             
-            # Retorna o WAV puro em memória (0% perda)
+            # Retorna o WAV puro em memória (0% perda) e previne clipagem
             import io
             import soundfile as sf
+            import numpy as np
             
             wav_io = io.BytesIO()
             sf.write(wav_io, wav, samplerate=sr, format='WAV')
@@ -93,6 +94,7 @@ async def api_f5_tts(request: Request):
         data = await request.json()
         text = data.get("text", "")
         ref_b64 = data.get("ref_audio_base64", "")
+        ref_text = data.get("ref_text", "")
         
         if not text:
             return JSONResponse({"error": "No text provided"}, status_code=400)
@@ -100,7 +102,7 @@ async def api_f5_tts(request: Request):
         ref_bytes = base64.b64decode(ref_b64) if ref_b64 else None
             
         tts_service = F5TTSEngine()
-        audio_bytes = tts_service.generate_voice.remote(text, ref_bytes)
+        audio_bytes = tts_service.generate_voice.remote(text, ref_bytes, ref_text)
         
         return Response(content=audio_bytes, media_type="audio/wav")
     except Exception as e:

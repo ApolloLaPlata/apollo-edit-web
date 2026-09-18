@@ -581,49 +581,80 @@
                 <!-- TAB: MÚSICA -->
         
         <!-- =================== ABA VOZ (TTS / CLONAGEM) =================== -->
+        
+        <!-- =================== ABA VOZ (TTS / CLONAGEM) =================== -->
         <div id="tab-voice" style="display:none;">
             <div class="panel">
-                <div class="panel-header">🎙️ SÍNTESE DE VOZ E CLONAGEM</div>
+                <div class="panel-header">🎙️ SÍNTESE DE VOZ E CLONAGEM <span class="badge" style="background:#55f; padding:2px 8px; border-radius:12px; font-size:12px; margin-left:10px;">Conta 9</span></div>
                 
                 <div class="form-group">
                     <div class="field-label">Motor TTS (Engine)</div>
                     <select class="input-dark" id="voiceEngineSelect" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;">
-                        <option value="qwen">Qwen TTS (Instrucional / Melhor Atuação)</option>
-                        <option value="f5-tts" selected>F5-TTS (Zero-Shot Cloning Rápido)</option>
-                        <option value="moss">MOSS-TTS 8B (Clonagem Alta Qualidade)</option>
-                        <option value="xtts">XTTS v2 (Clonagem Rápida Padrão)</option>
-                        <option value="kokoro">Kokoro (Vozes Embutidas English/Multi)</option>
+                        <option value="Qwen-TTS">Qwen-TTS (Instrucional / Melhor Atuação)</option>
+                        <option value="F5-TTS" selected>F5-TTS (Zero-Shot Cloning Rápido)</option>
+                        <option value="Moss-TTS">MOSS-TTS 8B (Clonagem Alta Qualidade)</option>
+                        <option value="XTTS">XTTS v2 (Clonagem Rápida Padrão)</option>
+                        <option value="Fish-Speech">Fish-Speech</option>
+                        <option value="Melo-TTS">Melo-TTS</option>
+                        <option value="ChatTTS">ChatTTS</option>
+                        <option value="CosyVoice">CosyVoice</option>
+                        <option value="OpenVoice">OpenVoice</option>
                     </select>
+                </div>
+                
+                <div class="form-group">
+                    <div class="field-label">Texto / Roteiro (O que o oráculo deverá narrar)</div>
+                    <textarea class="input-dark" id="voiceText" rows="4" placeholder="Digite o texto principal..." style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <div class="field-label">🎭 Instrução de Interpretação / Humor (Instruct)</div>
+                    <textarea class="input-dark" id="voiceInstruct" rows="2" placeholder="Ex: Fale com raiva, tom irônico, chorando... (Suportado por Qwen, etc)" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
                 </div>
                 
                 <div class="form-group">
                     <div class="field-label">Voz Base (Catálogo)</div>
                     <select class="input-dark" id="voiceIdSelect" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;">
-                        <option value="">Carregando vozes...</option>
+                        <option value="narrador_ref">Narrador Padrão (XTTS)</option>
+                        <option value="roxingo_ref">Roxingo (XTTS)</option>
+                        <option value="rafael_descargas">Rafael (Descargas)</option>
+                        <option value="female_clean_ref">Feminina Clean</option>
+                        <option value="custom">-- Use apenas o Áudio de Referência abaixo --</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <div class="field-label">OU Clonar Nova Voz (Áudio de Referência)</div>
+                    <div class="field-label">OU Clonar Nova Voz (Upload de Áudio de Referência)</div>
                     <div class="file-input-wrap">
                         <label for="voiceRefFile" class="file-label">📁 Escolher Áudio</label>
-                        <input type="file" id="voiceRefFile" accept="audio/*,video/*,.mpeg,.mp4,.ogg,.m4a,.webm,.wav,.mp3" onchange="document.getElementById('voiceRefFileName').innerText = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado'">
+                        <input type="file" id="voiceRefFile" accept="audio/*,video/*,.mpeg,.mp4,.ogg,.m4a,.webm,.wav,.mp3" onchange="document.getElementById('voiceRefFileName').innerText = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado'; document.getElementById('voiceIdSelect').value='custom';">
                         <span class="file-name" id="voiceRefFileName">Nenhum arquivo selecionado</span>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <div class="field-label">Texto / Roteiro</div>
-                    <textarea class="input-dark" id="voiceText" rows="6" placeholder="Digite o texto que o oráculo deverá narrar..." style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
+                <div class="form-group" style="margin-top: 15px;">
+                    <div class="field-label">📝 Texto de Referência (Obrigatório para F5-TTS e Qwen)</div>
+                    <textarea class="input-dark" id="voiceRefText" rows="2" placeholder="Digite aqui a transcrição exata do áudio de referência (Voz Clonada)." style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
                 </div>
 
-                <button id="btnGenerateVoice" class="btn btn-primary btn-block" style="width:100%; padding:15px; font-size:16px; border-radius:8px;" onclick="generateVoice()">
+                <div style="display:flex; gap: 15px; margin-top:15px; margin-bottom: 20px;">
+                    <div style="flex:1;">
+                        <div class="field-label">Temperatura</div>
+                        <input type="range" id="voiceTemp" min="0.1" max="1.5" step="0.1" value="0.7" style="width:100%;">
+                    </div>
+                    <div style="flex:1;">
+                        <div class="field-label">Velocidade</div>
+                        <input type="range" id="voiceSpeed" min="0.5" max="2.0" step="0.1" value="1.0" style="width:100%;">
+                    </div>
+                </div>
+
+                <button id="btnGenerateVoice" class="btn btn-primary btn-block" style="width:100%; padding:15px; font-size:16px; border-radius:8px; background: #00bcd4; color: #fff; font-weight: bold;" onclick="generateVoice()">
                     <span class="icon">🎙️</span> Gerar Voz (Conta 9)
                 </button>
             </div>
         </div>
 
-        <div id="tab-music" style="display:none;">
+<div id="tab-music" style="display:none;">
             <div class="card">
                 <div class="card-title">🎵 Gerador de Música / SFX</div>
                 
@@ -1901,73 +1932,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch(e) { console.error("Erro ao carregar vozes:", e); }
         }
-        
         async function generateVoice() {
             const text = document.getElementById('voiceText').value.trim();
             if (!text) return alert("Digite um texto para gerar a voz.");
             
-            const voiceId = document.getElementById('voiceIdSelect').value;
-            const fileInput = document.getElementById('voiceRefFile');
             const engineId = document.getElementById('voiceEngineSelect').value;
-            
-            const formData = new FormData();
-            formData.append("text", text);
-            formData.append("engine", engineId);
-            if (voiceId) formData.append("voice_id", voiceId);
-            if (fileInput && fileInput.files.length > 0) {
-                formData.append("voice_file", fileInput.files[0]);
-            }
+            const instruct = document.getElementById('voiceInstruct').value;
+            const refText = document.getElementById('voiceRefText').value;
+            const voiceSelect = document.getElementById('voiceIdSelect').value;
+            const refFile = document.getElementById('voiceRefFile').files[0];
+            const temp = document.getElementById('voiceTemp').value;
+            const speed = document.getElementById('voiceSpeed').value;
             
             const btn = document.getElementById('btnGenerateVoice');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="icon">⏳</span> Gerando Voz na Nuvem...';
+            btn.innerHTML = '<span class="icon">⏳</span> Gerando Voz na Conta 9...';
             btn.disabled = true;
             
-            logMusicMaster("Iniciando geração de voz (F5-TTS/Kokoro)...");
+            let base64Audio = null;
+            let voiceName = null;
             
             try {
-                const res = await fetch('/api/voice/studio_generate', {
+                if (refFile) {
+                    base64Audio = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(refFile);
+                    });
+                } else if (voiceSelect !== 'custom') {
+                    voiceName = voiceSelect;
+                }
+                
+                const payload = {
+                    model: engineId,
+                    text: text,
+                    instruct: instruct,
+                    ref_text: refText,
+                    temperature: parseFloat(temp),
+                    speed: parseFloat(speed),
+                    voice_name: voiceName,
+                    ref_audio_base64: base64Audio
+                };
+                
+                const response = await fetch('/api/studio/modal/eleven_lab', {
                     method: 'POST',
-                    body: formData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
                 
-                if (res.headers.get('content-type') && res.headers.get('content-type').includes('audio/wav')) {
-                    const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    logMusicMaster("✅ Voz gerada com sucesso!");
-                    
-                    // Adicionar na bagagem
-                    const trackList = document.getElementById('batchTracksList');
-                    const index = document.querySelectorAll('#batchTracksList > div').length + 1;
-                    const trackHtml = `
-                          <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 15px;">
-                              <div style="flex: 1;">
-                                  <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Voz ${index}: ${text.substring(0,30)}...</h4>
-                                  <audio controls style="width: 100%;">
-                                      <source src="${url}" type="audio/wav">
-                                  </audio>
-                              </div>
-                              <div style="display: flex; gap: 10px;">
-                                  <button onclick="forceDownloadFile('${url}', 'voz_${index}.wav')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">Baixar WAV</button>
-                              </div>
-                          </div>
-                    `;
-                    trackList.insertAdjacentHTML('beforeend', trackHtml);
-                    
-                    if (!window.batchGeneratedFiles) window.batchGeneratedFiles = [];
-                    window.batchGeneratedFiles.push({ wav: url });
-                    document.getElementById('batchDownloadAllContainer').style.display = 'flex';
-                } else {
-                    const errorText = await res.text();
-                    let errData;
-                    try { errData = JSON.parse(errorText); } catch(e) {}
-                    const msg = errData && errData.error ? errData.error : errorText;
-                    logMusicMaster("❌ Erro na voz: " + msg);
-                    alert("Erro: " + msg);
+                if (!response.ok) {
+                    const err = await response.text();
+                    throw new Error(`Erro ${response.status}: ${err}`);
                 }
-            } catch (e) {
-                logMusicMaster("❌ Erro fatal: " + e.message);
-                alert("Erro fatal: " + e.message);
+                
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                
+                // Show result in the visualizer
+                const resultBox = document.getElementById('resultVisualizer');
+                if (resultBox) {
+                    resultBox.innerHTML = `
+                        <div style="background:#1a1a24; padding:20px; border-radius:12px; border:1px solid #333; text-align:center;">
+                            <h3 style="color:#00bcd4; margin-bottom:15px;">✅ Áudio Gerado com Sucesso (${engineId})</h3>
+                            <audio controls style="width:100%; outline:none;" src="${url}"></audio>
+                            <a href="${url}" download="voz_gerada.wav" class="btn btn-primary" style="display:inline-block; margin-top:15px;"><span class="icon">💾</span> Baixar Áudio</a>
+                        </div>
+                    `;
+                }
+                
+            } catch (err) {
+                console.error(err);
+                alert('❌ Erro: ' + err.message);
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;

@@ -73,23 +73,22 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
         raise HTTPException(status_code=401, detail="Unauthorized access. Bot protection is active.")
     # --------------------------------------
     
-    acc = get_active_modal_account()
-    if not acc:
-        raise HTTPException(status_code=503, detail="Nenhuma conta Modal ativa configurada na Colmeia.")
-        
-    workspace = acc.get("workspace")
-    if not workspace:
-        raise HTTPException(status_code=500, detail="Workspace modal nao configurado.")
-
+    # Dual-routing system for Modalities
+    workspace = "sitesviniciusmiranda" # fallback
+    
     remote_path = path
     if path == "generate_image":
         remote_path = "generate/image"
+        workspace = "canalobservadoreconomico" # Conta 7
     elif path == "generate_video":
         remote_path = "generate/video"
+        workspace = "canalobservadoreconomico" # Conta 7
     elif path == "generate_universal":
         remote_path = "generate/universal"
+        workspace = "canalobservadoreconomico" # Conta 7
     elif path == "generate_tts":
         remote_path = "generate/tts"
+        workspace = "sitesviniciusmiranda" # Conta 10
         
     modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/{remote_path}"
     print(f"[PROXY DEBUG] Routing to: {modal_url}", flush=True)
@@ -103,113 +102,7 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
             
     body = await request.body()
     
-    # --- INTERCEPT QWEN MULTI-PASS FOR LLM LIGHTNING ---
-    if remote_path == "generate/image":
-        try:
-            req_json = json.loads(body.decode("utf-8"))
-            images_b64 = req_json.get("reference_images_base64", [])
-            if req_json.get("model") == "qwen-image" and images_b64 and len(images_b64) >= 1 and not req_json.get("dynamic_steps"):
-                num_imgs = len(images_b64)
-                print(f"[PROXY DEBUG] Detectado Qwen com {num_imgs} imagens. Acionando LLM estrutural...", flush=True)
-                
-                admin_cfg_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "admin_config.json"))
-                lit_key = ""
-                if os.path.exists(admin_cfg_path):
-                    with open(admin_cfg_path, 'r', encoding='utf-8') as f:
-                        c = json.load(f)
-                        keys = c.get("api_config", {}).get("lightning_chat", {}).get("api_keys", [])
-                        if keys:
-                            import random
-                            random.shuffle(keys)
-                            lit_key = keys[0]
-                
-                if lit_key:
-                    import modal
-                    import asyncio
-                    import hashlib
-                    import json
-                    
-                    vision_descriptions = []
-                    cache_file = os.path.join(os.path.dirname(__file__), "vision_cache.json")
-                    
-                    try:
-                        cache_data = {}
-                        if os.path.exists(cache_file):
-                            with open(cache_file, "r", encoding="utf-8") as cf:
-                                cache_data = json.load(cf)
-                                
-                        for idx, b64 in enumerate(images_b64):
-                            img_hash = hashlib.sha256(b64[:10000].encode('utf-8')).hexdigest()
-                            if img_hash in cache_data:
-                                vision_descriptions.append(f"Image {idx}: {cache_data[img_hash]}")
-                                print(f"[PROXY DEBUG] Imagem {idx} lida do cache.", flush=True)
-                            else:
-                                def call_vision(img_b64=b64):
-                                    engine = modal.Cls.lookup("apollo-vision-engine", "FlorenceVisionEngine")
-                                    return engine().analyze_image.remote(img_b64)
-                                print(f"[PROXY DEBUG] Chamando Vision Engine para Imagem {idx}...", flush=True)
-                                desc = await asyncio.to_thread(call_vision)
-                                cache_data[img_hash] = desc
-                                vision_descriptions.append(f"Image {idx}: {desc}")
-                                
-                        with open(cache_file, "w", encoding="utf-8") as cf:
-                            json.dump(cache_data, cf)
-                            
-                    except Exception as ve:
-                        print(f"[PROXY DEBUG] Erro Vision Engine: {ve}", flush=True)
-                        vision_descriptions.append("Fallback: Error analyzing images.")
-                        
-                    combined_vision = "\\n".join(vision_descriptions)
-                    
-                    llm_prompt = f"""You are an expert AI prompt engineer for Qwen 2.5 Image Edit.
-The user provided {num_imgs} reference images. Raw prompt: "{req_json.get('prompt')}"
-
-Our Vision AI analyzed the images:
-{combined_vision}
-
-Task: Rewrite the user's prompt into a highly detailed, descriptive prompt suitable for Qwen.
-Rules:
-1. Describe the final scene clearly in English. Do NOT copy exact poses if the user requested a NEW scene.
-2. If {num_imgs} == 1: Add "SINGLE CHARACTER ONLY, NO CLONES, DO NOT REPEAT".
-3. If {num_imgs} > 1: It is a Multi-Pass! Group the images into sequential logical steps (max 2 images per pass).
-   - Pass 1 (Base scene): "prompt": "Create a scene... Add the character from Image 0..."
-   - Pass 2+ (Editing): "prompt": "EDIT THIS SCENE. Keep existing elements exactly as they are. Add the character from Image 1..."
-4. Generate an intelligent "negative_prompt" to exclude things the user DOES NOT want.
-5. Output ONLY a valid JSON array of objects. Each object must have: "prompt" (string), "negative_prompt" (string, optional), "image_indices" (array of ints).
-Make sure ALL {num_imgs} indices are used. No markdown blocks."""
-
-                    async with httpx.AsyncClient(timeout=45.0) as lc:
-                        llm_success = False
-                        for k in keys:
-                            try:
-                                llm_res = await lc.post(
-                                    "https://lightning.ai/api/v1/chat/completions",
-                                    headers={"Authorization": f"Bearer {k}", "Content-Type": "application/json"},
-                                    json={
-                                        "model": "openai/gpt-4o",
-                                        "messages": [{"role": "user", "content": llm_prompt}]
-                                    }
-                                )
-                                if llm_res.status_code == 200:
-                                    llm_success = True
-                                    res_content = llm_res.json()["choices"][0]["message"]["content"]
-                                    s_idx = res_content.find('[')
-                                    e_idx = res_content.rfind(']')
-                                    if s_idx != -1 and e_idx != -1:
-                                        dynamic_steps = json.loads(res_content[s_idx:e_idx+1])
-                                        req_json["dynamic_steps"] = dynamic_steps
-                                        if len(dynamic_steps) > 0 and "negative_prompt" in dynamic_steps[0]:
-                                            req_json["negative_prompt"] = dynamic_steps[0]["negative_prompt"]
-                                        
-                                        body = json.dumps(req_json).encode("utf-8")
-                                        print(f"[PROXY DEBUG] LLM Dynamic Steps: {dynamic_steps}", flush=True)
-                                    break
-                            except Exception as ex:
-                                print(f"[PROXY DEBUG] Excecao na chave: {ex}", flush=True)
-                        
-        except Exception as e:
-            print(f"[PROXY DEBUG] Erro ao injetar LLM: {e}", flush=True)
-    # ---------------------------------------------------
+    # --- QWEN MULTI-PASS INTERCEPT REMOVED BY USER REQUEST ---
 
     # Execucao com Streaming para repassar heartbeats e evitar 504 no Nginx
     print(f"[PROXY DEBUG] [RATE LIMIT] Aguardando liberacao na fila da Modal (Max 2 simultaneos)...", flush=True)
@@ -247,6 +140,102 @@ Make sure ALL {num_imgs} indices are used. No markdown blocks."""
 
 
 
+
+
+
+
+
+import base64
+from pydantic import BaseModel
+from typing import Optional
+import httpx
+from fastapi.responses import Response
+
+class ElevenLabRequest(BaseModel):
+    model: str
+    text: str
+    instruct: Optional[str] = None
+    ref_text: Optional[str] = None
+    temperature: float = 0.7
+    speed: float = 1.0
+    voice_name: Optional[str] = None
+    ref_audio_base64: Optional[str] = None
+
+@router.post("/eleven_lab")
+async def generate_eleven_lab(payload: ElevenLabRequest):
+    try:
+        import os
+        workspace = os.getenv("MODAL_WORKSPACE_TTS", "sitesviniciusmiranda")
+        endpoints = {
+            "Qwen-TTS": f"https://{workspace}--apollo-api-qwen-tts.modal.run",
+            "XTTS": f"https://{workspace}--apollo-api-xtts.modal.run",
+            "Moss-TTS": f"https://{workspace}--apollo-api-moss-tts.modal.run",
+            "F5-TTS": f"https://{workspace}--apollo-api-f5-tts.modal.run",
+            "Fish-Speech": f"https://{workspace}--apollo-api-fish-tts.modal.run",
+            "Fish-TTS-Basic": f"https://{workspace}--apollo-api-fish-tts-basic.modal.run",
+            "Kokoro-TTS": f"https://{workspace}--apollo-api-tts.modal.run",
+            "Melo-TTS": f"https://{workspace}--apollo-api-melo.modal.run",
+            "ChatTTS": f"https://{workspace}--apollo-api-chattts.modal.run",
+            "CosyVoice": f"https://{workspace}--apollo-api-cosyvoice.modal.run",
+            "OpenVoice": f"https://{workspace}--apollo-api-openvoice.modal.run"
+        }
+        
+        url = endpoints.get(payload.model)
+        if not url:
+            raise HTTPException(status_code=400, detail=f"Modelo {payload.model} nÃ£o configurado.")
+
+        # Resolver voz local se nao foi enviado base64
+        base64_audio = payload.ref_audio_base64
+        if not base64_audio and payload.voice_name and payload.voice_name != "custom":
+            # Procura nos diretorios padrÃ£o
+            voice_map = {
+                "narrador_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\narrador_ref.wav",
+                "roxingo_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\roxingo_ref.wav",
+                "rafael_descargas": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS\testes_tts\rafael_descargas.wav",
+                "female_clean_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS\testes_tts\female_clean_ref.wav"
+            }
+            file_path = voice_map.get(payload.voice_name)
+            if file_path and os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    base64_audio = base64.b64encode(f.read()).decode("utf-8")
+        
+        req_payload = {
+            "text": payload.text,
+            "temperature": payload.temperature,
+            "speed": payload.speed,
+            "language": "pt",
+            "return_raw_wav": True
+        }
+        
+        # O Qwen TTS e possivelmente outros usam "instruct" para emocao/prompt de interpretacao
+        if payload.instruct:
+            req_payload["instruct"] = payload.instruct
+            req_payload["prompt"] = payload.instruct  # Compatibilidade com outros que esperam prompt
+            
+        if payload.ref_text:
+            req_payload["ref_text"] = payload.ref_text
+            req_payload["reference_text"] = payload.ref_text
+        
+        if base64_audio:
+            req_payload["ref_audio_base64"] = base64_audio
+            req_payload["reference_audio_base64"] = base64_audio
+
+        print(f"[ElevenLab Backend] Chamando Modal Webhook: {url}")
+        
+        async with httpx.AsyncClient(timeout=300.0, follow_redirects=True) as client:
+            res = await client.post(url, json=req_payload)
+            
+            if res.status_code != 200:
+                print(f"[ElevenLab Backend] Erro no Webhook: {res.text}")
+                raise HTTPException(status_code=res.status_code, detail=res.text)
+                
+            media_type = res.headers.get("content-type", "audio/wav")
+            return Response(content=res.content, media_type=media_type)
+            
+    except Exception as e:
+        import traceback
+        print(f"[ElevenLab Backend] Exception: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 

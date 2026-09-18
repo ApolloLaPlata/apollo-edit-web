@@ -26,7 +26,7 @@ qwen_image = (
 )
 
 apollo_volume = modal.Volume.from_name("apollo-qwen-volume", create_if_missing=True)
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 
 @app.cls(image=qwen_image, gpu="A10G", timeout=600, volumes={"/apollo_volume": apollo_volume}, enable_memory_snapshot=True)
 class QwenTtsEngine:

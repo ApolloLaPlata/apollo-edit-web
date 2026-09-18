@@ -417,7 +417,8 @@
         <div class="tab-row">
             <button class="tab-btn active" onclick="showTab('img')">📷 Imagem</button>
             <button class="tab-btn" onclick="showTab('vid')">🎬 Vídeo</button>
-            <button class="tab-btn" onclick="showTab('audio')" style="display: none;">🎙️ Áudio</button>
+            <button class="tab-btn" onclick="showTab('audio')" style="display: none;">📝 Transcrição</button>
+            <button class="tab-btn" onclick="showTab('voice')">🎙️ Voz (TTS)</button>
             <button class="tab-btn" onclick="showTab('music')">🎵 Música</button>
             
         </div>
@@ -431,6 +432,10 @@
                     <option value="qwen-image">Qwen 2.5 Image Edit (T2I / I2I / Multi-Characters)</option>
                     <option value="flux2-universal">FLUX.1-dev Universal (Img2Img / LoRA Civitai)</option>
                     <option value="flux-schnell">FLUX.1-schnell (Rápido T2I)</option>
+                      <option value="z-image">Z-Image (Tongyi-MAI / Foundation)</option>
+                      <option value="hunyuan">Hunyuan Image 3.0 (Tencent)</option>
+                      <option value="omnigen">OmniGen</option>
+
                 </select>
                 
                 <div class="field-label">Prompt (descreva a imagem em inglês)</div>
@@ -574,7 +579,82 @@
         </div>
 
                 <!-- TAB: MÚSICA -->
-        <div id="tab-music" style="display:none;">
+        
+        <!-- =================== ABA VOZ (TTS / CLONAGEM) =================== -->
+        
+        <!-- =================== ABA VOZ (TTS / CLONAGEM) =================== -->
+        <div id="tab-voice" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">🎙️ SÍNTESE DE VOZ E CLONAGEM <span class="badge" style="background:#55f; padding:2px 8px; border-radius:12px; font-size:12px; margin-left:10px;">Conta 9</span></div>
+                
+                <div class="form-group">
+                    <div class="field-label">Motor TTS (Engine)</div>
+                    <select class="input-dark" id="voiceEngineSelect" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;">
+                        <option value="Qwen-TTS">Qwen-TTS (Instrucional / Melhor Atuação)</option>
+                        <option value="F5-TTS" selected>F5-TTS (Zero-Shot Cloning Rápido)</option>
+                        <option value="Moss-TTS">MOSS-TTS 8B (Clonagem Alta Qualidade)</option>
+                        <option value="XTTS">XTTS v2 (Clonagem Rápida Padrão)</option>
+                        <option value="Fish-Speech">Fish-Speech</option>
+                        <option value="Melo-TTS">Melo-TTS</option>
+                        <option value="ChatTTS">ChatTTS</option>
+                        <option value="CosyVoice">CosyVoice</option>
+                        <option value="OpenVoice">OpenVoice</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <div class="field-label">Texto / Roteiro (O que o oráculo deverá narrar)</div>
+                    <textarea class="input-dark" id="voiceText" rows="4" placeholder="Digite o texto principal..." style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <div class="field-label">🎭 Instrução de Interpretação / Humor (Instruct)</div>
+                    <textarea class="input-dark" id="voiceInstruct" rows="2" placeholder="Ex: Fale com raiva, tom irônico, chorando... (Suportado por Qwen, etc)" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <div class="field-label">Voz Base (Catálogo)</div>
+                    <select class="input-dark" id="voiceIdSelect" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;">
+                        <option value="narrador_ref">Narrador Padrão (XTTS)</option>
+                        <option value="roxingo_ref">Roxingo (XTTS)</option>
+                        <option value="rafael_descargas">Rafael (Descargas)</option>
+                        <option value="female_clean_ref">Feminina Clean</option>
+                        <option value="custom">-- Use apenas o Áudio de Referência abaixo --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <div class="field-label">OU Clonar Nova Voz (Upload de Áudio de Referência)</div>
+                    <div class="file-input-wrap">
+                        <label for="voiceRefFile" class="file-label">📁 Escolher Áudio</label>
+                        <input type="file" id="voiceRefFile" accept="audio/*,video/*,.mpeg,.mp4,.ogg,.m4a,.webm,.wav,.mp3" onchange="document.getElementById('voiceRefFileName').innerText = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado'; document.getElementById('voiceIdSelect').value='custom';">
+                        <span class="file-name" id="voiceRefFileName">Nenhum arquivo selecionado</span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <div class="field-label">📝 Texto de Referência (Obrigatório para F5-TTS e Qwen)</div>
+                    <textarea class="input-dark" id="voiceRefText" rows="2" placeholder="Digite aqui a transcrição exata do áudio de referência (Voz Clonada)." style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;"></textarea>
+                </div>
+
+                <div style="display:flex; gap: 15px; margin-top:15px; margin-bottom: 20px;">
+                    <div style="flex:1;">
+                        <div class="field-label">Temperatura</div>
+                        <input type="range" id="voiceTemp" min="0.1" max="1.5" step="0.1" value="0.7" style="width:100%;">
+                    </div>
+                    <div style="flex:1;">
+                        <div class="field-label">Velocidade</div>
+                        <input type="range" id="voiceSpeed" min="0.5" max="2.0" step="0.1" value="1.0" style="width:100%;">
+                    </div>
+                </div>
+
+                <button id="btnGenerateVoice" class="btn btn-primary btn-block" style="width:100%; padding:15px; font-size:16px; border-radius:8px; background: #00bcd4; color: #fff; font-weight: bold;" onclick="generateVoice()">
+                    <span class="icon">🎙️</span> Gerar Voz (Conta 9)
+                </button>
+            </div>
+        </div>
+
+<div id="tab-music" style="display:none;">
             <div class="card">
                 <div class="card-title">🎵 Gerador de Música / SFX</div>
                 
@@ -593,9 +673,8 @@
 
                 <div class="field-label">Estilo / Tipo de Faixa</div>
                 <select id="musicStyle" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
-                    <option value="instrumental">🎶 Apenas Instrumental</option>
-                    <option value="vocal">🎤 Com Vocais/Letra</option>
-                    <option value="auto">🤖 Automático (Deixar o modelo decidir)</option>
+                    <option value="vocal">?? Com Vocais/Letra</option>
+                    <option value="instrumental">?? Apenas Instrumental</option>
                 </select>
                 
                 <!-- SINGLE AREA -->
@@ -637,11 +716,11 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                     </div>
                 </div>
                 
-                <div class="field-label">Modo de Duração</div>
+                <div id="musicDurationModeWrapper"><div class="field-label">Modo de Duração</div>
                 <select id="musicDurationMode" onchange="toggleMusicUI()" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
                     <option value="fixed">Fixo (Todos com a mesma duração)</option>
                     <option value="random">Aleatório (Entre Min e Max)</option>
-                </select>
+                </select></div>
                 
                 <div id="musicDurationFixedArea" style="margin-bottom:15px;">
                     <div class="field-label">Duração (Segundos)</div>
@@ -663,8 +742,14 @@ Linha 2: Prompt da segunda música..." style="width:100%; background:#0d0d15; bo
                     🎧 Iniciar Geração (Conta 9)
                 </button>
                 
-                <div class="field-label" id="refAudioLabel">Ã udio de ReferÃªncia (Voz/Estilo) - Opcional</div>
-                <input type="file" id="musicRefAudio" accept="audio/*" style="width:100%; background:#0d0d15; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; margin-bottom: 15px;">
+                <div id="musicRefAudioContainer">
+                    <div class="field-label" id="refAudioLabel">Áudio de Referência (Voz/Estilo) - Opcional</div>
+                    <div class="file-input-wrap">
+                        <label for="musicRefAudio" class="file-label">📁 Escolher Áudio</label>
+                        <input type="file" id="musicRefAudio" accept="audio/*,video/*,.mpeg,.mp4,.ogg,.m4a,.webm,.wav,.mp3" onchange="document.getElementById('musicRefFileName').innerText = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado'">
+                        <span class="file-name" id="musicRefFileName" style="font-size:0.75rem; color:var(--text-dim); margin-left:8px;">Nenhum arquivo selecionado</span>
+                    </div>
+                </div>
 
 <button class="btn btn-primary" id="btnStopMusicMaster" onclick="stopMusicMaster()" style="width:100%; display:none; background:#ff4444; border-color:#ff4444; margin-top:8px;">
                     ⛔ Cancelar Processo
@@ -769,7 +854,25 @@ function getBaseUrl() {
     return document.getElementById('modalUrl').value.trim().replace(/\/$/, '');
 }
 
-function b64toBlob(b64, mime) {
+
+function forceDownloadFile(url, filename) {
+    fetch(url)
+    .then(r => r.blob())
+    .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+    }).catch(e => {
+        alert('Erro ao baixar: ' + e.message);
+    });
+}
+
+        function b64toBlob(b64, mime) {
     const bytes = atob(b64);
     const arr = new Uint8Array(bytes.length);
     for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
@@ -827,13 +930,13 @@ function clearPreview() {
 
         // --- GESTÃO DE ABAS ---
         function showTab(name) {
-            ['img', 'vid', 'audio', 'music', 'batch'].forEach(t => {
+            ['img', 'vid', 'audio', 'voice', 'music', 'batch'].forEach(t => {
                 const el = document.getElementById('tab-'+t);
                 if (el) el.style.display = (t === name) ? 'block' : 'none';
             });
             
             document.querySelectorAll('.tab-btn').forEach((b,i) => {
-                const tabs = ['img','vid','audio','music', 'batch'];
+                const tabs = ['img','vid','audio','voice','music', 'batch'];
                 if (tabs[i]) b.classList.toggle('active', tabs[i] === name);
             });
         }
@@ -992,7 +1095,10 @@ async function generateImage() {
         'flux-dev':     'Aquecendo A10G • Carregando FLUX.1-dev...',
         'flux-pulid':   'Aquecendo A10G • Carregando FLUX PuLID...',
         'flux-translated': 'Aquecendo A10G • Preparando Workflow Img2Img...',
-        'qwen-image': 'Aquecendo GPU (H100) ⚡ Carregando Qwen Image Edit Plus...'
+        'qwen-image': 'Aquecendo GPU (H100) ⚡ Carregando Qwen Image Edit Plus...',
+        'z-image': 'Aquecendo GPU (A100) ⚡ Carregando Z-Image...',
+        'hunyuan': 'Aquecendo GPU (A100) ⚡ Carregando Hunyuan 3.0...',
+        'omnigen': 'Aquecendo GPU (A100) ⚡ Carregando OmniGen...'
     };
     showSpinner(modelLabels[model] || 'Aquecendo GPU...');
 
@@ -1493,7 +1599,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function toggleMusicUI() {
             const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
             const style = document.getElementById('musicStyle').value;
-            const durationMode = document.getElementById('musicDurationMode').value;
+            let durationMode = document.getElementById('musicDurationMode').value;
+            if (style === 'vocal') durationMode = 'auto';
             
             // Single vs Batch Areas
             if (execMode === 'single') {
@@ -1506,13 +1613,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('musicBatchLyricsContainer').style.display = (style === 'vocal') ? 'block' : 'none';
             }
             
-            // Duration Areas
-            document.getElementById('musicDurationFixedArea').style.display = (durationMode === 'fixed') ? 'block' : 'none';
-            document.getElementById('musicDurationRandomArea').style.display = (durationMode === 'random') ? 'flex' : 'none';
-              document.getElementById('musicDurationAutoArea').style.display = (durationMode === 'auto') ? 'flex' : 'none';
+            const durationWrapper = document.getElementById('musicDurationModeWrapper');
+            const fixedArea = document.getElementById('musicDurationFixedArea');
+            const randomArea = document.getElementById('musicDurationRandomArea');
+            const autoArea = document.getElementById('musicDurationAutoArea');
+            
+            if (style === 'vocal') {
+                if (durationWrapper) durationWrapper.style.display = 'none';
+                if (fixedArea) fixedArea.style.display = 'none';
+                if (randomArea) randomArea.style.display = 'none';
+                if (autoArea) autoArea.style.display = 'none';
+            } else {
+                if (durationWrapper) durationWrapper.style.display = 'block';
+                if (fixedArea) fixedArea.style.display = (durationMode === 'fixed') ? 'block' : 'none';
+                if (randomArea) randomArea.style.display = (durationMode === 'random') ? 'flex' : 'none';
+                if (autoArea) autoArea.style.display = (durationMode === 'auto') ? 'flex' : 'none';
+            }
         }
-        
-        function stopMusicMaster() {
+
+          function stopMusicMaster() {
             musicRunning = false;
             logMusicMaster("Cancelamento solicitado...");
         }
@@ -1528,34 +1647,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         
-        function downloadAllBatchFiles() {
+        function downloadAllBatchFiles(format='wav') {
             if (!window.batchGeneratedFiles || window.batchGeneratedFiles.length === 0) {
-                alert("Nenhuma música foi gerada para baixar.");
+                alert("Nenhuma musica foi gerada para baixar.");
                 return;
             }
-            logMusicMaster("Iniciando download em lote...");
+            logMusicMaster("Iniciando download em lote (" + format.toUpperCase() + ")...");
             let delay = 0;
-            window.batchGeneratedFiles.forEach((url, index) => {
+            window.batchGeneratedFiles.forEach((fileObj, index) => {
+                let url = format === 'mp3' && fileObj.mp3 ? fileObj.mp3 : fileObj.wav;
+                if (!url) {
+                    url = fileObj; // Fallback se for a string antiga
+                }
+                
                 setTimeout(() => {
                     let finalUrl = url;
-                    if (url.includes("apolloedit.com/media")) {
+                    if (typeof url === 'string' && url.includes("apolloedit.com/media")) {
                         finalUrl = "https://www.apolloedit.com/api/download?url=" + encodeURIComponent(url);
+                        // api/download sets Content-Disposition header, so iframe works for this!
+                        const iframe = document.createElement("iframe");
+                        iframe.style.display = "none";
+                        iframe.src = finalUrl;
+                        document.body.appendChild(iframe);
+                        setTimeout(() => document.body.removeChild(iframe), 10000);
+                    } else {
+                        // Use fetch blob to force download
+                        forceDownloadFile(finalUrl, 'musica_' + (index + 1) + '.' + format);
                     }
-                    const iframe = document.createElement("iframe");
-                    iframe.style.display = "none";
-                    iframe.src = finalUrl;
-                    document.body.appendChild(iframe);
-                    setTimeout(() => document.body.removeChild(iframe), 10000);
-                    logMusicMaster("Baixando arquivo " + (index + 1) + "...");
+                    logMusicMaster("Baixando arquivo " + (index + 1) + " (" + format.toUpperCase() + ")...");
                 }, delay);
-                delay += 800; // 800ms delay para não travar o navegador
+                delay += 800;
             });
         }
 
         async function generateMusicMaster() {
             const execMode = document.querySelector('input[name="musicExecMode"]:checked').value;
             const style = document.getElementById('musicStyle').value;
-            const durationMode = document.getElementById('musicDurationMode').value;
+            let durationMode = document.getElementById('musicDurationMode').value;
+            if (style === 'vocal') durationMode = 'auto';
             const engine = document.getElementById('musicModel').value;
             
             // Ler arquivo de referÃªncia se existir
@@ -1618,9 +1747,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="padding: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                             <h3 style="color: white;">🎧 Histórico de Áudios (Bagagem)</h3>
-                            <button id="batchDownloadAllContainer" class="btn btn-primary" onclick="downloadAllBatchFiles()" style="display:none; font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);">
-                                ⬇️ Baixar Todas as Músicas
-                            </button>
+                            <div id="batchDownloadAllContainer" style="display:none; gap: 10px;">
+                                <button class="btn btn-primary" onclick="downloadAllBatchFiles('wav')" style="font-weight: bold; background: #00d2ff; color: black; border: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);">
+                                    Baixar Todas (WAV)
+                                </button>
+                                <button class="btn btn-ghost" onclick="downloadAllBatchFiles('mp3')" style="font-weight: bold; border: 1px solid #444;">
+                                    Baixar Todas (MP3)
+                                </button>
+                            </div>
                         </div>
                         <div id="batchTracksList" style="display:flex; flex-direction:column; gap:15px;"></div>
                     </div>
@@ -1670,7 +1804,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       const response = await fetch("/api/audio/generate", {
                           method: "POST",
                           headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ prompt: p, engine, duration: finalDuration })
+                          body: JSON.stringify({ prompt: p, engine, lyrics: lyrics[i] || "", duration: finalDuration, reference_audio_b64: refAudioB64 })
                       });
                       
                       let textResponse = await response.text();
@@ -1707,20 +1841,23 @@ document.addEventListener('DOMContentLoaded', () => {
                           logMusicMaster("[" + (i+1) + "/" + prompts.length + "] ✅ Sucesso!");
                           successCount++;
                           const fileUrlAbs = result.file_url.startsWith('http') ? result.file_url : result.file_url;
-                          window.batchGeneratedFiles.push(fileUrlAbs);
+                          window.batchGeneratedFiles.push({ wav: fileUrlAbs, mp3: result.file_url_mp3 });
                           
                           const trackList = document.getElementById('batchTracksList');
                         const index = window.batchGeneratedFiles.length;
                         const trackHtml = `
-                            <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="flex: 1;">
-                                    <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
-                                    <audio controls style="width: 100%;">
-                                        <source src="${fileUrlAbs}" type="audio/mpeg">
-                                    </audio>
-                                </div>
-                                <a href="${fileUrlAbs}" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>
-                            </div>
+                              <div style="background: #1e1e28; padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                                  <div style="flex: 1;">
+                                      <h4 style="color: var(--cyan); margin-top:0; margin-bottom: 10px;">Faixa ${index}: ${p.substring(0,30)}...</h4>
+                                      <audio controls style="width: 100%;">
+                                          <source src="${fileUrlAbs}" type="audio/wav">
+                                      </audio>
+                                  </div>
+                                  <div style="display: flex; gap: 10px;">
+                                      <button onclick="forceDownloadFile('${fileUrlAbs}', 'musica_${index}.wav')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">Baixar WAV</button>
+                                      ${result.file_url_mp3 ? `<button onclick="forceDownloadFile('${result.file_url_mp3}', 'musica_${index}.mp3')" class="btn btn-ghost" style="white-space: nowrap; height: fit-content;">MP3</button>` : ''}
+                                  </div>
+                              </div>
                         `;
                         trackList.insertAdjacentHTML('beforeend', trackHtml);
 
@@ -1745,15 +1882,16 @@ document.addEventListener('DOMContentLoaded', () => {
             logMusicMaster("Sessão finalizada! " + successCount + " geradas.");
             
             if (window.batchGeneratedFiles && window.batchGeneratedFiles.length > 0) {
-                document.getElementById('batchDownloadAllContainer').style.display = 'inline-block';
-                document.getElementById('batchDownloadAllContainer').innerHTML = '⬇️ Baixar Todas (' + window.batchGeneratedFiles.length + ')';
-            }
+                document.getElementById('batchDownloadAllContainer').style.display = 'flex';
+                }
         }
-        window.addEventListener('DOMContentLoaded', () => {
+        if (true) {
             const musicModelSelect = document.getElementById('musicModel');
             if (musicModelSelect) {
                 musicModelSelect.addEventListener('change', () => {
                     const styleSelect = document.getElementById('musicStyle');
+                    const refContainer = document.getElementById('musicRefAudioContainer');
+                    
                     if (musicModelSelect.value === 'sa3') {
                         // Bloquear vocais no Stable Audio
                         styleSelect.value = 'instrumental';
@@ -1767,13 +1905,123 @@ document.addEventListener('DOMContentLoaded', () => {
                             option.disabled = false;
                         }
                     }
+                    
+                    if (refContainer) {
+                        if (musicModelSelect.value === 'acestep') {
+                            refContainer.style.display = 'block';
+                        } else {
+                            refContainer.style.display = 'none';
+                        }
+                    }
                 });
+                
+                
+        // --- LOGIC FOR VOICE TTS ---
+        async function loadVoiceCatalog() {
+            try {
+                const res = await fetch('/api/voice/catalog');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.catalog) {
+                        const sel = document.getElementById('voiceIdSelect');
+                        sel.innerHTML = '<option value="">-- Use apenas o Áudio de Referência abaixo --</option>';
+                        data.catalog.forEach(v => {
+                            sel.innerHTML += `<option value="${v.id}">${v.name}</option>`;
+                        });
+                    }
+                }
+            } catch(e) { console.error("Erro ao carregar vozes:", e); }
+        }
+        async function generateVoice() {
+            const text = document.getElementById('voiceText').value.trim();
+            if (!text) return alert("Digite um texto para gerar a voz.");
+            
+            const engineId = document.getElementById('voiceEngineSelect').value;
+            const instruct = document.getElementById('voiceInstruct').value;
+            const refText = document.getElementById('voiceRefText').value;
+            const voiceSelect = document.getElementById('voiceIdSelect').value;
+            const refFile = document.getElementById('voiceRefFile').files[0];
+            const temp = document.getElementById('voiceTemp').value;
+            const speed = document.getElementById('voiceSpeed').value;
+            
+            const btn = document.getElementById('btnGenerateVoice');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="icon">⏳</span> Gerando Voz na Conta 9...';
+            btn.disabled = true;
+            
+            let base64Audio = null;
+            let voiceName = null;
+            
+            try {
+                if (refFile) {
+                    base64Audio = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(refFile);
+                    });
+                } else if (voiceSelect !== 'custom') {
+                    voiceName = voiceSelect;
+                }
+                
+                const payload = {
+                    model: engineId,
+                    text: text,
+                    instruct: instruct,
+                    ref_text: refText,
+                    temperature: parseFloat(temp),
+                    speed: parseFloat(speed),
+                    voice_name: voiceName,
+                    ref_audio_base64: base64Audio
+                };
+                
+                const response = await fetch('/api/studio/modal/eleven_lab', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    const err = await response.text();
+                    throw new Error(`Erro ${response.status}: ${err}`);
+                }
+                
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                
+                // Show result in the visualizer
+                const resultBox = document.getElementById('resultVisualizer');
+                if (resultBox) {
+                    resultBox.innerHTML = `
+                        <div style="background:#1a1a24; padding:20px; border-radius:12px; border:1px solid #333; text-align:center;">
+                            <h3 style="color:#00bcd4; margin-bottom:15px;">✅ Áudio Gerado com Sucesso (${engineId})</h3>
+                            <audio controls style="width:100%; outline:none;" src="${url}"></audio>
+                            <a href="${url}" download="voz_gerada.wav" class="btn btn-primary" style="display:inline-block; margin-top:15px;"><span class="icon">💾</span> Baixar Áudio</a>
+                        </div>
+                    `;
+                }
+                
+            } catch (err) {
+                console.error(err);
+                alert('❌ Erro: ' + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
- if(typeof toggleMusicUI === 'function') toggleMusicUI(); });
+        }
+        
+        // Load catalog on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            loadVoiceCatalog();
+        });
+
+                // Trigger change to set initial state
+                musicModelSelect.dispatchEvent(new Event('change'));
+            }
+        } if(typeof toggleMusicUI === 'function') toggleMusicUI();
 
 </script>
 
 </body>
 </html>
-
 
