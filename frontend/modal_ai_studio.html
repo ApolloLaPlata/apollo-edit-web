@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -1888,7 +1888,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- LOGIC FOR VOICE TTS ---
         async function loadVoiceCatalog() {
             try {
-                const res = await fetch('/api/voice/catalog');
+                const engineId = document.getElementById('voiceEngineSelect').value;
+                const res = await fetch(`/api/voice/catalog?engine=${engineId}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.success && data.catalog) {
@@ -1901,6 +1902,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch(e) { console.error("Erro ao carregar vozes:", e); }
         }
+
+        document.getElementById('voiceEngineSelect').addEventListener('change', loadVoiceCatalog);
         
         async function generateVoice() {
             const text = document.getElementById('voiceText').value.trim();

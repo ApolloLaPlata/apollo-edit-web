@@ -28,10 +28,10 @@ from backend.financial_agent.coin_ledger import OPERATION_COSTS
 from backend.financial_agent.subscription_manager import get_all_plans_comparison
 from backend.cloud_tools.account_pool import account_pool
 
-# Carregar variÃ¡veis de ambiente
+# Carregar variÃƒÂ¡veis de ambiente
 load_dotenv()
 
-# ConfiguraÃƒÂ§ÃƒÂ£o de Logs
+# ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ApolloServer")
 
@@ -40,7 +40,7 @@ gateway = WaterfallRouter()
 watchdog = WatchdogAgent(router_instance=gateway)
 cerbero = CerberoAgent()
 
-# O Maestro agora ÃƒÂ© instanciado aqui com acesso ao Gateway para poder "pensar"
+# O Maestro agora ÃƒÆ’Ã‚Â© instanciado aqui com acesso ao Gateway para poder "pensar"
 from backend.agents.maestro_agent import MaestroAgent
 from backend.agents.user_concierge import UserConciergeAgent
 
@@ -49,26 +49,26 @@ concierge = UserConciergeAgent(router_instance=gateway)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Ã¢â€ â‚¬Ã¢â€ â‚¬ STARTUP Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬
-    logger.info("Ã°Å¸Å¡â‚¬ Iniciando Motor Central Apollo...")
+    # ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ STARTUP ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬
+    logger.info("ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ Iniciando Motor Central Apollo...")
     # from backend.services.render_queue import render_queue
     # render_queue.start()
 
     # 1. Colmeia de Agentes Administrativos
     asyncio.create_task(watchdog.start_patrol())
     asyncio.create_task(cerbero.start_patrol())
-    # O Zelador (EspaÃƒÂ§o e Lixo)
+    # O Zelador (EspaÃƒÆ’Ã‚Â§o e Lixo)
     zelador = ZeladorAgent()
     asyncio.create_task(zelador.start_patrol())
     
-    # Os Economistas (Analista Financeiro e Scraper de PreÃƒÂ§os)
+    # Os Economistas (Analista Financeiro e Scraper de PreÃƒÆ’Ã‚Â§os)
     analyst = MarketAnalystAgent()
     asyncio.create_task(analyst.start_patrol())
     
     scraper = PricingScraperAgent()
     asyncio.create_task(scraper.start_patrol())
     
-    # Marketing e TendÃƒÂªncias (Gestor de TrÃƒÂ¡fego e Olheiro)
+    # Marketing e TendÃƒÆ’Ã‚Âªncias (Gestor de TrÃƒÆ’Ã‚Â¡fego e Olheiro)
     traffic_mgr = TrafficManagerAgent()
     asyncio.create_task(traffic_mgr.start_patrol())
     
@@ -78,7 +78,7 @@ async def lifespan(app: FastAPI):
     asyncio.create_task(concierge.start_patrol())
     logger.info("\U0001f6e1\ufe0f Colmeia Multi-Agente ativada (Watchdog, C\xe9rbero, Zelador, Maestro, Concierge).")
     
-    # Injetando a referÃƒÂªncia do Maestro nas rotas de WhatsApp
+    # Injetando a referÃƒÆ’Ã‚Âªncia do Maestro nas rotas de WhatsApp
     routes_whatsapp.set_maestro(maestro)
 
     # 2. Inscreve o Maestro no HiveBus para receber todos os eventos
@@ -112,8 +112,8 @@ async def lifespan(app: FastAPI):
 
     logger.info("\u2705 Apollo Motor Central ONLINE.")
     yield
-    # Ã¢â€ â‚¬Ã¢â€ â‚¬ SHUTDOWN Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬Ã¢â€ â‚¬
-    logger.info("Ã°Å¸â€ºâ€˜ Encerrando Apollo Motor Central...")
+    # ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ SHUTDOWN ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬
+    logger.info("ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂºÃ¢â‚¬Ëœ Encerrando Apollo Motor Central...")
     # from backend.services.render_queue import render_queue
     # render_queue.stop()
 
@@ -137,7 +137,7 @@ app.add_middleware(
 app.add_middleware(RateLimitMiddleware)
 
 from backend.api import routes_audio_lab
-from backend.api import routes_video, routes_admin, routes_whatsapp, routes_phantom, worker_routes, routes_economy, routes_ui_ws, routes_render, routes_auth, routes_payments, routes_webhooks, routes_subtitles, routes_podcast, routes_tts, routes_dubbing, routes_editor, routes_ai_director, routes_clip_factory, routes_auto_mapper, routes_dark_facil, routes_settings, routes_queue, routes_copilot, routes_youtube, routes_studio, routes_storage_gateway
+from backend.api import routes_video, routes_admin, routes_whatsapp, routes_phantom, worker_routes, routes_economy, routes_ui_ws, routes_render, routes_auth, routes_payments, routes_webhooks, routes_subtitles, routes_podcast, routes_tts, routes_dubbing, routes_editor, routes_ai_director, routes_clip_factory, routes_auto_mapper, routes_dark_facil, routes_settings, routes_queue, routes_copilot, routes_youtube, routes_studio, routes_storage_gateway, routes_radio, routes_voice
 
 @app.get("/api/mobile/pending_approvals")
 def get_pending_approvals():
@@ -145,14 +145,14 @@ def get_pending_approvals():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Erro Global nÃ£o tratado na rota {request.url.path}: {exc}")
+    logger.error(f"Erro Global nÃƒÂ£o tratado na rota {request.url.path}: {exc}")
     logger.error(traceback.format_exc())
     return JSONResponse(
         status_code=500,
         content={"message": "Ocorreu um erro interno no servidor. Os logs foram capturados pelo zelador."}
     )
 
-# Registrando as Rotas de VÃ­deo (Site), Admin (Painel), WhatsApp, Workers, Phantom Fleet, Economia e UI WebSocket
+# Registrando as Rotas de VÃƒÂ­deo (Site), Admin (Painel), WhatsApp, Workers, Phantom Fleet, Economia e UI WebSocket
 app.include_router(routes_audio_lab.router)
 app.include_router(routes_video.router)
 app.include_router(routes_subtitles.router)
@@ -166,6 +166,8 @@ app.include_router(routes_queue.router)
 app.include_router(routes_copilot.router)
 app.include_router(routes_podcast.router)
 app.include_router(routes_tts.router)
+from backend.api import routes_tts_v2
+app.include_router(routes_tts_v2.router)
 app.include_router(routes_dubbing.router)
 app.include_router(routes_admin.router)
 app.include_router(routes_whatsapp.router)
@@ -180,6 +182,8 @@ app.include_router(routes_webhooks.router)
 app.include_router(routes_youtube.router)
 app.include_router(routes_studio.router)
 app.include_router(routes_storage_gateway.router)
+app.include_router(routes_radio.router)
+app.include_router(routes_voice.router)
 
 # Rotas de Modelos Musicais (YuE / ACE-Step)
 from backend.api import routes_audio
@@ -191,7 +195,7 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    """Endpoint para o Painel Administrativo monitorar a saÃƒÂºde da Nuvem"""
+    """Endpoint para o Painel Administrativo monitorar a saÃƒÆ’Ã‚Âºde da Nuvem"""
     
     active_lightning_keys = sum(1 for acc in CLOUD_ACCOUNTS.get("lightning", []) if acc["status"] == "active")
     total_lightning_keys = len(CLOUD_ACCOUNTS.get("lightning", []))
@@ -209,6 +213,7 @@ if __name__ == "__main__":
     import uvicorn
     # Rodando o servidor local na porta 8000
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True, reload_excludes=["logs/*", "*.log", "Workspaces/*", ".agents/*", "scratch/*", "backend/storage/*", "backend/storage/memories/*", "*.json"])
+
 
 
 

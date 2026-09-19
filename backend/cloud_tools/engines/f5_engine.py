@@ -100,6 +100,14 @@ async def api_f5_tts(request: Request):
             return JSONResponse({"error": "No text provided"}, status_code=400)
             
         ref_bytes = base64.b64decode(ref_b64) if ref_b64 else None
+        
+        if ref_bytes and (not ref_text or not ref_text.strip()):
+            print("[F5 AUTO-STT] Texto de referência vazio, acionando transcrição Whisper...")
+            from backend.cloud_tools.engines.stt_engine import WhisperTurboSTT
+            stt = WhisperTurboSTT()
+            transcription = stt.transcribe.remote(ref_bytes, "pt")
+            ref_text = transcription.get("text", "")
+            print(f"[F5 AUTO-STT] Transcrição gerada com sucesso: {ref_text}")
             
         tts_service = F5TTSEngine()
         audio_bytes = tts_service.generate_voice.remote(text, ref_bytes, ref_text)

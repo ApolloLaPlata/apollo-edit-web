@@ -187,7 +187,7 @@ async def generate_eleven_lab(payload: ElevenLabRequest):
         # Resolver voz local se nao foi enviado base64
         base64_audio = payload.ref_audio_base64
         if not base64_audio and payload.voice_name and payload.voice_name != "custom":
-            # Procura nos diretorios padrÃ£o
+            # Procura nos diretorios padrão
             voice_map = {
                 "narrador_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\narrador_ref.wav",
                 "roxingo_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\roxingo_ref.wav",
@@ -206,6 +206,11 @@ async def generate_eleven_lab(payload: ElevenLabRequest):
             "language": "pt",
             "return_raw_wav": True
         }
+        
+        # Enviar ID da voz nativa (ex: pf_dora) para os motores TTS
+        if payload.voice_name and payload.voice_name != "custom":
+            req_payload["voice"] = payload.voice_name
+            req_payload["voice_name"] = payload.voice_name
         
         # O Qwen TTS e possivelmente outros usam "instruct" para emocao/prompt de interpretacao
         if payload.instruct:

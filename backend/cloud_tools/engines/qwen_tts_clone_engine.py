@@ -3,7 +3,9 @@ import base64
 import time
 import io
 import os
-from backend.cloud_tools.modal_app import app, apollo_volume
+from backend.cloud_tools.engines.universal_engine import apollo_volume
+
+from backend.cloud_tools.tts_app import app
 
 qwen_image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -85,3 +87,48 @@ class QwenTtsCloneEngine:
         except Exception as e:
             err = traceback.format_exc()
             return {"status": "error", "message": str(e), "traceback": err}
+
+from fastapi import Request
+@app.function(image=qwen_image)
+@modal.fastapi_endpoint(method='POST', label='apollo-api-qwen-tts')
+async def api_qwen_tts(request: Request):
+    try:
+        from fastapi.responses import Response, JSONResponse
+        import base64
+        data = await request.json()
+        text = data.get('text', '')
+        ref_b64 = data.get('reference_audio_base64', '')
+        ref_text = data.get('reference_text', ' ')
+        instruct = data.get('instruct', '')
+        temperature = data.get('temperature', 1.8)
+        language = data.get('language', 'Portuguese')
+        
+        if not text:
+            return JSONResponse({'error': 'No text provided'}, status_code=400)
+            
+        if ref_b64 and not ref_text.strip():
+            print("[QWEN AUTO-STT] Texto de referência vazio, acionando transcrição Whisper...")
+            from backend.cloud_tools.engines.stt_engine import WhisperTurboSTT
+            stt = WhisperTurboSTT()
+            transcription = stt.transcribe.remote(base64.b64decode(ref_b64), "pt")
+            ref_text = transcription.get("text", " ")
+            print(f"[QWEN AUTO-STT] Transcrição gerada com sucesso: {ref_text}")
+
+        tts_service = QwenTtsCloneEngine()
+        result = tts_service.clone.remote(
+            text=text, 
+            ref_audio_b64=ref_b64, 
+            ref_text=ref_text,
+            language=language,
+            instruct=instruct,
+            temperature=temperature
+        )
+        
+        if result['status'] == 'success':
+            audio_bytes = base64.b64decode(result['audio_base64'])
+            return Response(content=audio_bytes, media_type='audio/wav')
+        else:
+            return JSONResponse({'error': result['message']}, status_code=500)
+    except Exception as e:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({'error': str(e)}, status_code=500)
