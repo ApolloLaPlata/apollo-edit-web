@@ -1,0 +1,33 @@
+2026/07/06-21:40:05.512 5a28 Reusing MANIFEST E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\whatsapp_bridge\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/07/06-21:40:05.513 5a28 Recovering log #72
+2026/07/06-21:40:05.513 5a28 Reusing old log E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\whatsapp_bridge\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000072.log 
+2026/07/06-21:40:05.514 5a28 Delete type=2 #68
+2026/07/06-21:40:05.514 5a28 Delete type=2 #70
+2026/07/06-21:40:06.686 280c Compacting 1@1 + 1@2 files
+2026/07/06-21:40:06.688 280c Generated table #75@1: 40 keys, 924 bytes
+2026/07/06-21:40:06.689 280c Compacted 1@1 + 1@2 files => 924 bytes
+2026/07/06-21:40:06.689 280c compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/07/06-21:40:06.690 5a28 Level-0 table #77: started
+2026/07/06-21:40:06.692 5a28 Level-0 table #77: 10405 bytes OK
+2026/07/06-21:40:06.693 5a28 Delete type=0 #72
+2026/07/06-21:40:06.693 5a28 Manual compaction at level-0 from '\x00!\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00"\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/07/06-21:40:06.954 280c Compacting 1@1 + 1@2 files
+2026/07/06-21:40:06.956 280c Generated table #78@1: 40 keys, 924 bytes
+2026/07/06-21:40:06.957 280c Compacted 1@1 + 1@2 files => 924 bytes
+2026/07/06-21:40:06.957 280c compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/07/06-21:40:06.958 280c Delete type=2 #71
+2026/07/06-21:40:06.958 280c Delete type=2 #73
+2026/07/06-21:40:06.958 280c Delete type=2 #75
+2026/07/06-21:40:06.958 280c Delete type=2 #77
+2026/07/06-21:40:07.172 560 Level-0 table #80: started
+2026/07/06-21:40:07.175 560 Level-0 table #80: 9184 bytes OK
+2026/07/06-21:40:07.177 560 Delete type=0 #76
+2026/07/06-21:40:07.177 560 Manual compaction at level-0 from '\x00"\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00#\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/07/06-21:40:07.915 280c Compacting 1@1 + 1@2 files
+2026/07/06-21:40:07.920 280c Generated table #81@1: 40 keys, 924 bytes
+2026/07/06-21:40:07.921 280c Compacted 1@1 + 1@2 files => 924 bytes
+2026/07/06-21:40:07.922 280c compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/07/06-21:40:07.922 280c Level-0 table #83: started
+2026/07/06-21:40:07.924 280c Level-0 table #83: 9195 bytes OK
+2026/07/06-21:40:07.925 280c Delete type=0 #79
+2026/07/06-21:40:07.926 5a28 Manual compaction at level-0 from '\x00#\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00$\x00\x00\x00' @ 0 : 0; will stop at (end)
