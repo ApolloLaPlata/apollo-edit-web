@@ -28070,3 +28070,12 @@ Espero que isso ajude! Se houver algo mais que eu possa fazer, por favor, me avi
 2026-09-21 12:48:08,756 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
 2026-09-21 12:48:08,757 - [INFO] - MaestroAgent - _reflect_and_act:168 - 🧠 [Maestro] Sistema estável. Nenhuma ação necessária.
 2026-09-21 12:48:12,069 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: GET http://127.0.0.1:7862/info "HTTP/1.1 500 Internal Server Error"
+2026-09-21 13:09:26,111 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-21 13:09:26,950 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-21 13:09:26,951 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-21 13:09:26,952 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-21 13:09:26,952 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-21 13:09:26,953 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-21 13:09:27,278 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-21 13:09:27,420 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-21 13:09:30,981 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.

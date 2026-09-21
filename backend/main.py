@@ -49,19 +49,38 @@ concierge = UserConciergeAgent(router_instance=gateway)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ STARTUP ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬
-    logger.info("ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ Iniciando Motor Central Apollo...")
+    # STARTUP
+    logger.info("🚀 Iniciando Motor Central Apollo...")
     # from backend.services.render_queue import render_queue
     # render_queue.start()
+
+    # 0. INICIAR AUTOBLOG (O CAVALO DE TROIA NEXT.JS)
+    import subprocess
+    import os
+    autoblog_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "autoblog")
+    if os.path.exists(autoblog_path):
+        logger.info("🐎 Iniciando Autoblog Next.js em background (Porta 3000)...")
+        # Roda npm install e depois npm run dev/start. Usando bash para encadear.
+        # Em Hugging Face Spaces, sh/bash está disponível. No windows usamos shell=True
+        cmd = "npm install && npm run build && npm run start"
+        app.state.autoblog_process = subprocess.Popen(
+            cmd,
+            cwd=autoblog_path,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    else:
+        logger.warning("⚠️ Pasta autoblog não encontrada. Ignorando boot do CMS.")
 
     # 1. Colmeia de Agentes Administrativos
     asyncio.create_task(watchdog.start_patrol())
     asyncio.create_task(cerbero.start_patrol())
-    # O Zelador (EspaÃƒÆ’Ã‚Â§o e Lixo)
+    # O Zelador (Espaço e Lixo)
     zelador = ZeladorAgent()
     asyncio.create_task(zelador.start_patrol())
     
-    # Os Economistas (Analista Financeiro e Scraper de PreÃƒÆ’Ã‚Â§os)
+    # Os Economistas (Analista Financeiro e Scraper de Preços)
     analyst = MarketAnalystAgent()
     asyncio.create_task(analyst.start_patrol())
     
@@ -226,7 +245,50 @@ def health_check():
         }
     }
 
+import httpx
+from fastapi.responses import StreamingResponse
+from starlette.requests import Request
+
+@app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
+async def catch_all_proxy(request: Request, path_name: str):
+    """
+    Cavalo de Troia Reverse Proxy:
+    Redireciona todo o tráfego que não é da API para o Next.js rodando localmente na porta 3000.
+    Isso permite servir o Autoblog SSR no Hugging Face pela mesma porta 7860.
+    """
+    url = f"http://127.0.0.1:3000/{path_name}"
+    
+    # Repassa os parâmetros da query string
+    if request.url.query:
+        url += f"?{request.url.query}"
+        
+    client = httpx.AsyncClient(timeout=httpx.Timeout(60.0))
+    
+    try:
+        # Prepara a requisição para o Next.js
+        req = client.build_request(
+            request.method,
+            url,
+            headers={k: v for k, v in request.headers.items() if k.lower() not in ("host", "content-length")},
+            content=await request.body()
+        )
+        
+        # Envia a requisição
+        resp = await client.send(req, stream=True)
+        
+        # Devolve a resposta (StreamingResponse permite carregar arquivos pesados sem engasgar)
+        return StreamingResponse(
+            resp.aiter_raw(),
+            status_code=resp.status_code,
+            headers={k: v for k, v in resp.headers.items() if k.lower() not in ("content-encoding", "content-length")},
+            background=client.aclose
+        )
+    except httpx.RequestError as e:
+        await client.aclose()
+        return {"error": "Autoblog SSR Proxy Failed", "details": str(e)}
+
 if __name__ == "__main__":
+
     import uvicorn
     # Rodando o servidor local na porta 8000
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True, reload_excludes=["logs/*", "*.log", "Workspaces/*", ".agents/*", "scratch/*", "backend/storage/*", "backend/storage/memories/*", "*.json"])

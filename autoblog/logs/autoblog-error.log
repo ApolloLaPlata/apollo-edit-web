@@ -1,0 +1,205 @@
+2026-07-06 21:33:25: C:\PROGRAM FILES\NODEJS\NPM.CMD:1
+2026-07-06 21:33:25: :: Created by npm, please don't edit manually.
+2026-07-06 21:33:25: ^
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: SyntaxError: Unexpected token ':'
+2026-07-06 21:33:25:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:33:25:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:33:25:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-07-06 21:33:25:     at node:internal/main/run_main_module:33:47
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: Node.js v24.13.0
+2026-07-06 21:33:25: C:\PROGRAM FILES\NODEJS\NPM.CMD:1
+2026-07-06 21:33:25: :: Created by npm, please don't edit manually.
+2026-07-06 21:33:25: ^
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: SyntaxError: Unexpected token ':'
+2026-07-06 21:33:25:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:33:25:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:33:25:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-07-06 21:33:25:     at node:internal/main/run_main_module:33:47
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: Node.js v24.13.0
+2026-07-06 21:33:25: C:\PROGRAM FILES\NODEJS\NPM.CMD:1
+2026-07-06 21:33:25: :: Created by npm, please don't edit manually.
+2026-07-06 21:33:25: ^
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: SyntaxError: Unexpected token ':'
+2026-07-06 21:33:25:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:33:25:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:33:25:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-07-06 21:33:25:     at node:internal/main/run_main_module:33:47
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: Node.js v24.13.0
+2026-07-06 21:33:25: C:\PROGRAM FILES\NODEJS\NPM.CMD:1
+2026-07-06 21:33:25: :: Created by npm, please don't edit manually.
+2026-07-06 21:33:25: ^
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: SyntaxError: Unexpected token ':'
+2026-07-06 21:33:25:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:33:25:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:33:25:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-07-06 21:33:25:     at node:internal/main/run_main_module:33:47
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: Node.js v24.13.0
+2026-07-06 21:33:25: C:\PROGRAM FILES\NODEJS\NPM.CMD:1
+2026-07-06 21:33:25: :: Created by npm, please don't edit manually.
+2026-07-06 21:33:25: ^
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: SyntaxError: Unexpected token ':'
+2026-07-06 21:33:25:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:33:25:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:33:25:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+2026-07-06 21:33:25:     at node:internal/main/run_main_module:33:47
+2026-07-06 21:33:25: 
+2026-07-06 21:33:25: Node.js v24.13.0
+2026-07-06 21:35:27: E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\node_modules\.bin\next:2
+2026-07-06 21:35:27: basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+2026-07-06 21:35:27:           ^^^^^^^
+2026-07-06 21:35:27: 
+2026-07-06 21:35:27: SyntaxError: missing ) after argument list
+2026-07-06 21:35:27:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:35:27:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:35:27:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:27:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:27:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:27:     at Object.<anonymous> (C:\Users\v5est\AppData\Roaming\npm\node_modules\pm2\lib\ProcessContainerFork.js:32:23)
+2026-07-06 21:35:27:     at Module._compile (node:internal/modules/cjs/loader:1761:14)
+2026-07-06 21:35:27:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:27:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:27:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28: E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\node_modules\.bin\next:2
+2026-07-06 21:35:28: basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+2026-07-06 21:35:28:           ^^^^^^^
+2026-07-06 21:35:28: 
+2026-07-06 21:35:28: SyntaxError: missing ) after argument list
+2026-07-06 21:35:28:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28:     at Object.<anonymous> (C:\Users\v5est\AppData\Roaming\npm\node_modules\pm2\lib\ProcessContainerFork.js:32:23)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28: E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\node_modules\.bin\next:2
+2026-07-06 21:35:28: basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+2026-07-06 21:35:28:           ^^^^^^^
+2026-07-06 21:35:28: 
+2026-07-06 21:35:28: SyntaxError: missing ) after argument list
+2026-07-06 21:35:28:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28:     at Object.<anonymous> (C:\Users\v5est\AppData\Roaming\npm\node_modules\pm2\lib\ProcessContainerFork.js:32:23)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28: E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\node_modules\.bin\next:2
+2026-07-06 21:35:28: basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+2026-07-06 21:35:28:           ^^^^^^^
+2026-07-06 21:35:28: 
+2026-07-06 21:35:28: SyntaxError: missing ) after argument list
+2026-07-06 21:35:28:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28:     at Object.<anonymous> (C:\Users\v5est\AppData\Roaming\npm\node_modules\pm2\lib\ProcessContainerFork.js:32:23)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28: E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\node_modules\.bin\next:2
+2026-07-06 21:35:28: basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+2026-07-06 21:35:28:           ^^^^^^^
+2026-07-06 21:35:28: 
+2026-07-06 21:35:28: SyntaxError: missing ) after argument list
+2026-07-06 21:35:28:     at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1735:20)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:35:28:     at Object.<anonymous> (C:\Users\v5est\AppData\Roaming\npm\node_modules\pm2\lib\ProcessContainerFork.js:32:23)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14)
+2026-07-06 21:35:28:     at Object..js (node:internal/modules/cjs/loader:1893:10)
+2026-07-06 21:35:28:     at Module.load (node:internal/modules/cjs/loader:1481:32)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1300:12)
+2026-07-06 21:36:14: ⨯ Failed to start server
+2026-07-06 21:36:14: Error: listen EADDRINUSE: address already in use :::3000
+2026-07-06 21:36:14:     at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+2026-07-06 21:36:14:     at new Promise (<anonymous>) {
+2026-07-06 21:36:14:   code: 'EADDRINUSE',
+2026-07-06 21:36:14:   errno: -4091,
+2026-07-06 21:36:14:   syscall: 'listen',
+2026-07-06 21:36:14:   address: '::',
+2026-07-06 21:36:14:   port: 3000
+2026-07-06 21:36:14: }
+2026-07-06 21:36:15: ⨯ Failed to start server
+2026-07-06 21:36:15: Error: listen EADDRINUSE: address already in use :::3000
+2026-07-06 21:36:15:     at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+2026-07-06 21:36:15:     at new Promise (<anonymous>) {
+2026-07-06 21:36:15:   code: 'EADDRINUSE',
+2026-07-06 21:36:15:   errno: -4091,
+2026-07-06 21:36:15:   syscall: 'listen',
+2026-07-06 21:36:15:   address: '::',
+2026-07-06 21:36:15:   port: 3000
+2026-07-06 21:36:15: }
+2026-07-06 21:36:16: ⨯ Failed to start server
+2026-07-06 21:36:16: Error: listen EADDRINUSE: address already in use :::3000
+2026-07-06 21:36:16:     at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+2026-07-06 21:36:16:     at new Promise (<anonymous>) {
+2026-07-06 21:36:16:   code: 'EADDRINUSE',
+2026-07-06 21:36:16:   errno: -4091,
+2026-07-06 21:36:16:   syscall: 'listen',
+2026-07-06 21:36:16:   address: '::',
+2026-07-06 21:36:16:   port: 3000
+2026-07-06 21:36:16: }
+2026-07-06 21:36:17: ⨯ Failed to start server
+2026-07-06 21:36:17: Error: listen EADDRINUSE: address already in use :::3000
+2026-07-06 21:36:17:     at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+2026-07-06 21:36:17:     at new Promise (<anonymous>) {
+2026-07-06 21:36:17:   code: 'EADDRINUSE',
+2026-07-06 21:36:17:   errno: -4091,
+2026-07-06 21:36:17:   syscall: 'listen',
+2026-07-06 21:36:17:   address: '::',
+2026-07-06 21:36:17:   port: 3000
+2026-07-06 21:36:17: }
+2026-07-06 21:36:18: ⨯ Failed to start server
+2026-07-06 21:36:18: Error: listen EADDRINUSE: address already in use :::3000
+2026-07-06 21:36:18:     at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+2026-07-06 21:36:18:     at new Promise (<anonymous>) {
+2026-07-06 21:36:18:   code: 'EADDRINUSE',
+2026-07-06 21:36:18:   errno: -4091,
+2026-07-06 21:36:18:   syscall: 'listen',
+2026-07-06 21:36:18:   address: '::',
+2026-07-06 21:36:18:   port: 3000
+2026-07-06 21:36:18: }

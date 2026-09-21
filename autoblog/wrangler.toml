@@ -1,0 +1,23 @@
+name = "auto-blog-v3-enterprise"
+compatibility_date = "2026-07-08"
+pages_build_output_dir = ".vercel/output/static"
+
+# ==========================================
+# DESACOPLAMENTO DO SQLITE PARA EDGE DB (D1)
+# ==========================================
+# Isso pega o seu banco local de desenvolvimento (dev.db) e joga para
+# os milhares de servidores da Cloudflare ao redor do mundo de uma vez só!
+
+[[d1_databases]]
+binding = "DB" # Como você chamará isso no código (ex: env.DB)
+database_name = "auto-blog-db-prod"
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # Seu ID real da Cloudflare
+migrations_dir = "migrations"
+
+# KV Namespaces (Acelerador de Cache em Memória RAM - Sem Bater no Banco)
+[[kv_namespaces]]
+binding = "AI_CACHE"
+id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+[env.production]
+name = "auto-blog-v3-enterprise-prod"
