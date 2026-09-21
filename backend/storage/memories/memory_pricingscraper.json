@@ -1,12 +1,12 @@
 {
     "agent_id": "PricingScraper",
     "status": "scraping_prices",
-    "last_action": "2026-09-21 12:47:24",
+    "last_action": "2026-09-21 12:48:05",
     "alerts": [],
     "data": {
         "scraper_stats": {
-            "new_models": 5,
-            "updated_models": 25,
+            "new_models": 0,
+            "updated_models": 0,
             "total_models": 494
         }
     }

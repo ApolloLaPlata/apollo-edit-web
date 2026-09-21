@@ -28032,3 +28032,41 @@ Espero que isso ajude! Se houver algo mais que eu possa fazer, por favor, me avi
 2026-09-21 12:47:53,769 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
 2026-09-21 12:47:53,905 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
 2026-09-21 12:47:57,790 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-21 12:48:05,015 - [INFO] - ApolloServer - lifespan:53 - ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ Iniciando Motor Central Apollo...
+2026-09-21 12:48:05,017 - [INFO] - ApolloServer - lifespan:79 - 🛡️ Colmeia Multi-Agente ativada (Watchdog, Cérbero, Zelador, Maestro, Concierge).
+2026-09-21 12:48:05,018 - [INFO] - WhatsAppRoutes - set_maestro:31 - [WA Routes] Maestro injetado com sucesso nas rotas WhatsApp.
+2026-09-21 12:48:05,019 - [INFO] - ApolloServer - lifespan:96 - 📻 HiveBus conectado. Maestro escutando todos os tópicos.
+2026-09-21 12:48:05,019 - [INFO] - ApolloServer - lifespan:111 - 🩺 Pool Monitor iniciado (ciclo de 30min).
+2026-09-21 12:48:05,019 - [INFO] - ApolloServer - lifespan:113 - ✅ Apollo Motor Central ONLINE.
+2026-09-21 12:48:05,021 - [INFO] - WatchdogAgent - start_patrol:25 - [WATCHDOG] Cão de Guarda acordou. Iniciando patrulha 24h...
+2026-09-21 12:48:05,047 - [INFO] - CerberoAgent - start_patrol:23 - 🐕 [Cérbero] Iniciando patrulha de segurança...
+2026-09-21 12:48:05,048 - [INFO] - ZeladorAgent - start_patrol:27 - 🧹 [Zelador] Iniciando rotina de limpeza...
+2026-09-21 12:48:05,052 - [INFO] - MarketAnalyst - start_patrol:32 - 📈 [MarketAnalyst] Analista de Mercado acordou. Analisando o fluxo de moedas...
+2026-09-21 12:48:05,056 - [INFO] - MarketAnalyst - _analyze_economy:65 - 📈 [MarketAnalyst] Circulação: 3450 Coins | 190 Chips | 40 GPU Tokens
+2026-09-21 12:48:05,057 - [INFO] - PricingScraper - start_patrol:33 - 🕵️‍♂️ [PricingScraper] Scraper de Preços acordou. Iniciando vigilância no OpenRouter...
+2026-09-21 12:48:05,083 - [INFO] - TrafficManager - start_patrol:23 - 🚥 [TrafficManager] Gestor de Tráfego ativado. Monitorando CTR...
+2026-09-21 12:48:05,085 - [INFO] - TrendResearcher - start_patrol:26 - 🔭 [TrendResearcher] Olheiro ativado. Procurando tendências de IA...
+2026-09-21 12:48:05,088 - [INFO] - MaestroAgent - start_patrol:116 - 🧠 [Maestro] Loop de Consciência ativado. Maestro operando com vida própria.
+2026-09-21 12:48:05,093 - [INFO] - MaestroAgent - _reflect_and_act:133 - 🧠 [Maestro] Refletindo sobre o estado da colmeia...
+2026-09-21 12:48:05,094 - [INFO] - backend.router.waterfall_router - request_ai_generation:70 - [GATEWAY CENTRAL] Requisição recebida. Modelo preferido do usuário: None
+2026-09-21 12:48:05,094 - [INFO] - AccountPool - pick:177 - [Pool] 🎯 Conta selecionada: [conta_1] Apollo_La_Plata (jobs_hoje=0)
+2026-09-21 12:48:05,094 - [INFO] - backend.router.waterfall_router - request_ai_generation:90 - [GATEWAY CENTRAL] Tentando Lightning AI (Conta: conta_1) - Tentativa 1/4
+2026-09-21 12:48:05,114 - [INFO] - UserConcierge - start_patrol:26 - 🛎️ [Concierge] No balcão. Observando a navegação dos usuários...
+2026-09-21 12:48:05,116 - [INFO] - UserConcierge - _observe_and_assist:53 - 🛎️ [Concierge] Usuário client_102 parece perdido. Avaliando abordagem...
+2026-09-21 12:48:05,116 - [INFO] - backend.router.waterfall_router - request_ai_generation:70 - [GATEWAY CENTRAL] Requisição recebida. Modelo preferido do usuário: None
+2026-09-21 12:48:05,117 - [INFO] - AccountPool - pick:177 - [Pool] 🎯 Conta selecionada: [conta_1] Apollo_La_Plata (jobs_hoje=0)
+2026-09-21 12:48:05,117 - [INFO] - backend.router.waterfall_router - request_ai_generation:90 - [GATEWAY CENTRAL] Tentando Lightning AI (Conta: conta_1) - Tentativa 1/4
+2026-09-21 12:48:05,458 - [INFO] - httpx - _send_single_request:1740 - HTTP Request: GET https://openrouter.ai/api/v1/models "HTTP/1.1 200 OK"
+2026-09-21 12:48:05,645 - [INFO] - PricingScraper - _scrape_prices:139 - 🕵️‍♂️ [PricingScraper] Scan Concluído. 0 novos, 0 atualizados.
+2026-09-21 12:48:05,771 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-09-21 12:48:07,937 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: POST https://lightning.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:48:07,951 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
+2026-09-21 12:48:07,952 - [WARNING] - UserConcierge - _observe_and_assist:66 - 🛎️ [Concierge] Disparando Pop-up Proativo para o usuário: 'Claro, oferecer uma ajuda simpática pode ser muito útil! Aqui está uma sugestão de mensagem para o pop-up:
+
+"Olá! 😊 Parece que você está por aqui há um tempinho. Precisa de alguma ajuda para gerar seu script? Estou à disposição para ajudar!"'
+2026-09-21 12:48:07,952 - [INFO] - HiveBus - publish:26 - 📻 [HiveBus] Concierge publicou em 'user_assistance_offered'
+2026-09-21 12:48:07,953 - [INFO] - MaestroAgent - _on_bus_message:37 - 🧠 [Maestro ouviu] Concierge falando sobre 'user_assistance_offered': {'user': 'client_102', 'message': 'Claro, oferecer uma ajuda simpática pode ser muito útil! Aqui está uma sugestão de mensagem para o pop-up:\n\n"Olá! 😊 Parece que você está por aqui há um tempinho. Precisa de alguma ajuda para gerar seu script? Estou à disposição para ajudar!"'}
+2026-09-21 12:48:08,751 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: POST https://lightning.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:48:08,756 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
+2026-09-21 12:48:08,757 - [INFO] - MaestroAgent - _reflect_and_act:168 - 🧠 [Maestro] Sistema estável. Nenhuma ação necessária.
+2026-09-21 12:48:12,069 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: GET http://127.0.0.1:7862/info "HTTP/1.1 500 Internal Server Error"
