@@ -6,7 +6,7 @@ com o sampler 'pingpong' (ideal para o modelo destilado Medium).
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 import os
 import time
 
@@ -31,7 +31,7 @@ class StableAudioEngine:
         from huggingface_hub import login, hf_hub_download
         import json
         
-        login("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")
+        login(os.environ.get("HF_TOKEN"))
         
         print("Baixando configs e pesos do Stable Audio 3 Medium...")
         config_path = hf_hub_download(repo_id="stabilityai/stable-audio-3-medium", filename="model_config.json", cache_dir="/models/huggingface_cache")
@@ -51,43 +51,43 @@ class StableAudioEngine:
         print("Stable Audio 3 Medium carregado com sucesso!")
 
     @modal.method()
-    def generate_audio(self, prompt: str, duration_s: float = 120, steps: int = 100, cfg: float = 6.0):
-        
+    def generate_audio(self, prompt: str, duration_s: float = 120.0, num_inference_steps: int = 8, seed: int = 0):
         import torch
-        # FIX: USAR A FUNCAO CORRETA DE GERACAO PURA, NAO A DE INPAINT
-        from stable_audio_tools.inference.generation import generate_diffusion_cond
+        from stable_audio_tools.inference.generation import generate_diffusion_cond_inpaint
         import torchaudio
         from einops import rearrange
         import io
         import time
 
-        print(f"Gerando {duration_s}s no Stable Audio 3 Medium para: {prompt} (CFG: {cfg}, Steps: {steps})")
+        steps = 8 # HARDCODED para destilado
+        cfg = 1.0 # HARDCODED para destilado
+        duration_s = int(duration_s)
+        
+        print(f"[GEN] Gerando {duration_s}s no SA3 Medium | Prompt: {prompt[:50]}... | CFG: {cfg}, Steps: {steps}, Sampler: pingpong")
         start = time.time()
         
-        conditioning = [{"prompt": prompt, "seconds_start": 0, "seconds_total": int(duration_s)}]
+        master_prompt = prompt + ", high quality, 4k audio, high fidelity, clean, sharp, stereo, masterpiece"
+        conditioning = [{"prompt": master_prompt, "seconds_start": 0, "seconds_total": duration_s}]
         
         with torch.no_grad():
-            output = generate_diffusion_cond(
+            output = generate_diffusion_cond_inpaint(
                 self.model,
                 steps=steps,
                 cfg_scale=cfg,
                 conditioning=conditioning,
                 sample_size=self.sample_size, 
-                sampler_type="dpmpp-3m-sde",
+                sampler_type="pingpong",
                 device="cuda"
             )
             
-        # FIX: Rearranjo correto dos tensores baseados na documentacao oficial
         output = rearrange(output, "b d n -> d (b n)")
+        output = output.to(torch.float32)
+        output = output.div(torch.max(torch.abs(output))).clamp(-1, 1).mul(32767).to(torch.int16).cpu()
         
-        # FIX: Normalizacao nativa usando Torch
-        output = output.to(torch.float32).div(torch.max(torch.abs(output))).clamp(-1, 1)
-        
-        print(f"Gerado em {time.time()-start:.1f} segundos!")
+        print(f"[GEN] Concluido em {time.time()-start:.1f} segundos!")
         
         buffer = io.BytesIO()
-        torchaudio.save(buffer, output.cpu(), self.sample_rate, format="wav")
+        torchaudio.save(buffer, output, self.sample_rate, format="wav")
         
-        import base64
-        return base64.b64encode(buffer.getvalue()).decode('utf-8')
+        return buffer.getvalue()
 

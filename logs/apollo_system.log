@@ -27798,3 +27798,237 @@ Espero que isso ajude! Se houver algo mais que eu possa fazer, por favor, me avi
 2026-09-10 20:11:53,277 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
 2026-09-10 20:11:53,445 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
 2026-09-10 20:11:57,542 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-17 02:43:58,859 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-17 02:44:02,395 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-17 02:44:02,396 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-17 02:44:02,396 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-17 02:44:02,396 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-17 02:44:02,396 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-17 02:44:03,486 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-17 02:44:04,304 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-17 02:44:12,216 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-17 02:44:15,856 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-17 02:44:16,826 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-17 02:44:16,826 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-17 02:44:16,827 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-17 02:44:16,827 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-17 02:44:16,827 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-17 02:44:16,885 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:17,227 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-17 02:44:17,250 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:17,382 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-17 02:44:17,613 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:17,967 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:18,327 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:18,680 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:19,038 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:19,397 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:19,755 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:20,116 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:20,474 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:20,851 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:21,210 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:21,565 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:21,922 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:22,275 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-17 02:44:22,282 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:22,646 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:23,006 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:23,364 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:23,722 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:23,760 - [INFO] - ApolloServer - lifespan:53 - Ã°Å¸Å¡â‚¬ Iniciando Motor Central Apollo...
+2026-09-17 02:44:23,783 - [INFO] - ApolloServer - lifespan:79 - 🛡️ Colmeia Multi-Agente ativada (Watchdog, Cérbero, Zelador, Maestro, Concierge).
+2026-09-17 02:44:23,783 - [INFO] - WhatsAppRoutes - set_maestro:31 - [WA Routes] Maestro injetado com sucesso nas rotas WhatsApp.
+2026-09-17 02:44:23,783 - [INFO] - ApolloServer - lifespan:96 - 📻 HiveBus conectado. Maestro escutando todos os tópicos.
+2026-09-17 02:44:23,783 - [INFO] - ApolloServer - lifespan:111 - 🩺 Pool Monitor iniciado (ciclo de 30min).
+2026-09-17 02:44:23,784 - [INFO] - ApolloServer - lifespan:113 - ✅ Apollo Motor Central ONLINE.
+2026-09-17 02:44:23,785 - [INFO] - WatchdogAgent - start_patrol:25 - [WATCHDOG] Cão de Guarda acordou. Iniciando patrulha 24h...
+2026-09-17 02:44:23,786 - [INFO] - CerberoAgent - start_patrol:23 - 🐕 [Cérbero] Iniciando patrulha de segurança...
+2026-09-17 02:44:23,786 - [INFO] - ZeladorAgent - start_patrol:27 - 🧹 [Zelador] Iniciando rotina de limpeza...
+2026-09-17 02:44:23,787 - [INFO] - MarketAnalyst - start_patrol:32 - 📈 [MarketAnalyst] Analista de Mercado acordou. Analisando o fluxo de moedas...
+2026-09-17 02:44:23,788 - [INFO] - MarketAnalyst - _analyze_economy:65 - 📈 [MarketAnalyst] Circulação: 3450 Coins | 190 Chips | 40 GPU Tokens
+2026-09-17 02:44:23,789 - [INFO] - PricingScraper - start_patrol:33 - 🕵️‍♂️ [PricingScraper] Scraper de Preços acordou. Iniciando vigilância no OpenRouter...
+2026-09-17 02:44:23,826 - [INFO] - TrafficManager - start_patrol:23 - 🚥 [TrafficManager] Gestor de Tráfego ativado. Monitorando CTR...
+2026-09-17 02:44:23,837 - [INFO] - TrendResearcher - start_patrol:26 - 🔭 [TrendResearcher] Olheiro ativado. Procurando tendências de IA...
+2026-09-17 02:44:23,839 - [INFO] - MaestroAgent - start_patrol:116 - 🧠 [Maestro] Loop de Consciência ativado. Maestro operando com vida própria.
+2026-09-17 02:44:23,844 - [INFO] - MaestroAgent - _reflect_and_act:133 - 🧠 [Maestro] Refletindo sobre o estado da colmeia...
+2026-09-17 02:44:23,845 - [INFO] - backend.router.waterfall_router - request_ai_generation:70 - [GATEWAY CENTRAL] Requisição recebida. Modelo preferido do usuário: None
+2026-09-17 02:44:23,846 - [INFO] - AccountPool - pick:177 - [Pool] 🎯 Conta selecionada: [conta_1] Apollo_La_Plata (jobs_hoje=0)
+2026-09-17 02:44:23,846 - [INFO] - backend.router.waterfall_router - request_ai_generation:90 - [GATEWAY CENTRAL] Tentando Lightning AI (Conta: conta_1) - Tentativa 1/4
+2026-09-17 02:44:23,866 - [INFO] - UserConcierge - start_patrol:26 - 🛎️ [Concierge] No balcão. Observando a navegação dos usuários...
+2026-09-17 02:44:23,868 - [INFO] - UserConcierge - _observe_and_assist:53 - 🛎️ [Concierge] Usuário client_102 parece perdido. Avaliando abordagem...
+2026-09-17 02:44:23,868 - [INFO] - backend.router.waterfall_router - request_ai_generation:70 - [GATEWAY CENTRAL] Requisição recebida. Modelo preferido do usuário: None
+2026-09-17 02:44:23,869 - [INFO] - AccountPool - pick:177 - [Pool] 🎯 Conta selecionada: [conta_1] Apollo_La_Plata (jobs_hoje=0)
+2026-09-17 02:44:23,869 - [INFO] - backend.router.waterfall_router - request_ai_generation:90 - [GATEWAY CENTRAL] Tentando Lightning AI (Conta: conta_1) - Tentativa 1/4
+2026-09-17 02:44:24,075 - [INFO] - watchfiles.main - _log_changes:309 - 11 changes detected
+2026-09-17 02:44:24,339 - [INFO] - httpx - _send_single_request:1740 - HTTP Request: GET https://openrouter.ai/api/v1/models "HTTP/1.1 200 OK"
+2026-09-17 02:44:24,439 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:24,470 - [INFO] - PricingScraper - _scrape_prices:139 - 🕵️‍♂️ [PricingScraper] Scan Concluído. 12 novos, 28 atualizados.
+2026-09-17 02:44:24,471 - [INFO] - HiveBus - publish:26 - 📻 [HiveBus] PricingScraper publicou em 'new_models_found'
+2026-09-17 02:44:24,474 - [INFO] - MaestroAgent - _on_bus_message:37 - 🧠 [Maestro ouviu] PricingScraper falando sobre 'new_models_found': {'count': 12, 'source': 'OpenRouter'}
+2026-09-17 02:44:24,480 - [INFO] - MaestroAgent - _on_bus_message:37 - 🧠 [Maestro ouviu] PricingScraper falando sobre 'new_models_found': {'count': 12, 'source': 'OpenRouter'}
+2026-09-17 02:44:24,796 - [INFO] - watchfiles.main - _log_changes:309 - 6 changes detected
+2026-09-17 02:44:25,155 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:25,517 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:25,874 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:26,232 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:26,590 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:26,947 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:27,302 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:27,657 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:28,011 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:28,365 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:28,718 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:29,079 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:29,256 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: POST https://lightning.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-17 02:44:29,284 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
+2026-09-17 02:44:29,285 - [INFO] - MaestroAgent - _reflect_and_act:168 - 🧠 [Maestro] Sistema estável. Nenhuma ação necessária.
+2026-09-17 02:44:29,435 - [INFO] - watchfiles.main - _log_changes:309 - 2 changes detected
+2026-09-17 02:44:29,790 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:30,147 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:30,289 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: POST https://lightning.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-17 02:44:30,291 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
+2026-09-17 02:44:30,292 - [WARNING] - UserConcierge - _observe_and_assist:66 - 🛎️ [Concierge] Disparando Pop-up Proativo para o usuário: 'Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda:
+
+"Olá! 😊 Parece que você está aqui há um tempinho. Precisa de alguma ajuda para gerar seu script? Estamos aqui para ajudar!"'
+2026-09-17 02:44:30,292 - [INFO] - HiveBus - publish:26 - 📻 [HiveBus] Concierge publicou em 'user_assistance_offered'
+2026-09-17 02:44:30,293 - [INFO] - MaestroAgent - _on_bus_message:37 - 🧠 [Maestro ouviu] Concierge falando sobre 'user_assistance_offered': {'user': 'client_102', 'message': 'Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda:\n\n"Olá! 😊 Parece que você está aqui há um tempinho. Precisa de alguma ajuda para gerar seu script? Estamos aqui para ajudar!"'}
+2026-09-17 02:44:30,299 - [INFO] - MaestroAgent - _on_bus_message:37 - 🧠 [Maestro ouviu] Concierge falando sobre 'user_assistance_offered': {'user': 'client_102', 'message': 'Claro! Aqui está uma sugestão de mensagem amigável para oferecer ajuda:\n\n"Olá! 😊 Parece que você está aqui há um tempinho. Precisa de alguma ajuda para gerar seu script? Estamos aqui para ajudar!"'}
+2026-09-17 02:44:30,506 - [INFO] - watchfiles.main - _log_changes:309 - 3 changes detected
+2026-09-17 02:44:30,864 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:31,224 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:31,580 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:31,934 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:32,293 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:32,652 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:33,009 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:33,364 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:33,720 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:34,072 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:34,432 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:34,792 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:35,148 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:35,503 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:35,860 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:36,221 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:36,580 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:36,937 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:37,297 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:37,657 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:38,013 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:38,371 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:38,734 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:39,090 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:39,450 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:39,808 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:40,169 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:40,527 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:40,888 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:41,249 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:41,607 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:41,967 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:42,328 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:42,687 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:43,043 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:43,402 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:43,759 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:44,116 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:44,475 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:44,833 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:45,193 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:45,552 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:45,911 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:46,271 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:46,628 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:46,986 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:47,347 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:47,708 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:48,066 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:48,422 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:48,780 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:49,138 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:49,500 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:49,860 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:50,221 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:50,581 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:50,942 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:51,298 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:51,658 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:52,015 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:52,373 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:52,733 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:53,091 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:53,451 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 02:44:53,809 - [INFO] - watchfiles.main - _log_changes:309 - 1 change detected
+2026-09-17 06:15:48,854 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-17 06:15:54,211 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-17 06:15:54,212 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-17 06:15:54,212 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-17 06:15:54,213 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-17 06:15:54,213 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-17 06:15:54,829 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-17 06:15:55,754 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-17 06:16:13,176 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-17 22:28:37,094 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-17 22:28:40,228 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-17 22:28:40,228 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-17 22:28:40,229 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-17 22:28:40,229 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-17 22:28:40,230 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-17 22:28:41,197 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-17 22:28:41,944 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-17 22:28:55,114 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-21 12:47:10,043 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-21 12:47:11,512 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-21 12:47:11,513 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-21 12:47:11,514 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-21 12:47:11,514 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-21 12:47:11,515 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-21 12:47:11,886 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-21 12:47:12,097 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-21 12:47:16,981 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.
+2026-09-21 12:47:24,164 - [INFO] - ApolloServer - lifespan:53 - ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ Iniciando Motor Central Apollo...
+2026-09-21 12:47:24,170 - [INFO] - ApolloServer - lifespan:79 - 🛡️ Colmeia Multi-Agente ativada (Watchdog, Cérbero, Zelador, Maestro, Concierge).
+2026-09-21 12:47:24,170 - [INFO] - WhatsAppRoutes - set_maestro:31 - [WA Routes] Maestro injetado com sucesso nas rotas WhatsApp.
+2026-09-21 12:47:24,170 - [INFO] - ApolloServer - lifespan:96 - 📻 HiveBus conectado. Maestro escutando todos os tópicos.
+2026-09-21 12:47:24,171 - [INFO] - ApolloServer - lifespan:111 - 🩺 Pool Monitor iniciado (ciclo de 30min).
+2026-09-21 12:47:24,171 - [INFO] - ApolloServer - lifespan:113 - ✅ Apollo Motor Central ONLINE.
+2026-09-21 12:47:24,172 - [INFO] - WatchdogAgent - start_patrol:25 - [WATCHDOG] Cão de Guarda acordou. Iniciando patrulha 24h...
+2026-09-21 12:47:24,173 - [INFO] - CerberoAgent - start_patrol:23 - 🐕 [Cérbero] Iniciando patrulha de segurança...
+2026-09-21 12:47:24,173 - [INFO] - ZeladorAgent - start_patrol:27 - 🧹 [Zelador] Iniciando rotina de limpeza...
+2026-09-21 12:47:24,174 - [INFO] - MarketAnalyst - start_patrol:32 - 📈 [MarketAnalyst] Analista de Mercado acordou. Analisando o fluxo de moedas...
+2026-09-21 12:47:24,177 - [INFO] - MarketAnalyst - _analyze_economy:65 - 📈 [MarketAnalyst] Circulação: 3450 Coins | 190 Chips | 40 GPU Tokens
+2026-09-21 12:47:24,177 - [INFO] - PricingScraper - start_patrol:33 - 🕵️‍♂️ [PricingScraper] Scraper de Preços acordou. Iniciando vigilância no OpenRouter...
+2026-09-21 12:47:24,201 - [INFO] - TrafficManager - start_patrol:23 - 🚥 [TrafficManager] Gestor de Tráfego ativado. Monitorando CTR...
+2026-09-21 12:47:24,205 - [INFO] - TrendResearcher - start_patrol:26 - 🔭 [TrendResearcher] Olheiro ativado. Procurando tendências de IA...
+2026-09-21 12:47:24,208 - [INFO] - MaestroAgent - start_patrol:116 - 🧠 [Maestro] Loop de Consciência ativado. Maestro operando com vida própria.
+2026-09-21 12:47:24,213 - [INFO] - MaestroAgent - _reflect_and_act:133 - 🧠 [Maestro] Refletindo sobre o estado da colmeia...
+2026-09-21 12:47:24,214 - [INFO] - backend.router.waterfall_router - request_ai_generation:70 - [GATEWAY CENTRAL] Requisição recebida. Modelo preferido do usuário: None
+2026-09-21 12:47:24,214 - [INFO] - AccountPool - pick:177 - [Pool] 🎯 Conta selecionada: [conta_1] Apollo_La_Plata (jobs_hoje=0)
+2026-09-21 12:47:24,214 - [INFO] - backend.router.waterfall_router - request_ai_generation:90 - [GATEWAY CENTRAL] Tentando Lightning AI (Conta: conta_1) - Tentativa 1/4
+2026-09-21 12:47:24,233 - [INFO] - UserConcierge - start_patrol:26 - 🛎️ [Concierge] No balcão. Observando a navegação dos usuários...
+2026-09-21 12:47:24,234 - [INFO] - UserConcierge - _observe_and_assist:53 - 🛎️ [Concierge] Usuário client_102 parece perdido. Avaliando abordagem...
+2026-09-21 12:47:24,235 - [INFO] - backend.router.waterfall_router - request_ai_generation:70 - [GATEWAY CENTRAL] Requisição recebida. Modelo preferido do usuário: None
+2026-09-21 12:47:24,235 - [INFO] - AccountPool - pick:177 - [Pool] 🎯 Conta selecionada: [conta_1] Apollo_La_Plata (jobs_hoje=0)
+2026-09-21 12:47:24,235 - [INFO] - backend.router.waterfall_router - request_ai_generation:90 - [GATEWAY CENTRAL] Tentando Lightning AI (Conta: conta_1) - Tentativa 1/4
+2026-09-21 12:47:24,642 - [INFO] - httpx - _send_single_request:1740 - HTTP Request: GET https://openrouter.ai/api/v1/models "HTTP/1.1 200 OK"
+2026-09-21 12:47:24,756 - [INFO] - PricingScraper - _scrape_prices:139 - 🕵️‍♂️ [PricingScraper] Scan Concluído. 5 novos, 25 atualizados.
+2026-09-21 12:47:24,763 - [INFO] - HiveBus - publish:26 - 📻 [HiveBus] PricingScraper publicou em 'new_models_found'
+2026-09-21 12:47:24,766 - [INFO] - MaestroAgent - _on_bus_message:37 - 🧠 [Maestro ouviu] PricingScraper falando sobre 'new_models_found': {'count': 5, 'source': 'OpenRouter'}
+2026-09-21 12:47:25,183 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-09-21 12:47:26,176 - [INFO] - httpx - _send_single_request:1740 - HTTP Request: GET http://127.0.0.1:7860/gradio_api/info "HTTP/1.1 200 OK"
+2026-09-21 12:47:26,178 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: GET http://127.0.0.1:7860/info "HTTP/1.1 200 OK"
+2026-09-21 12:47:26,931 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: POST https://lightning.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:47:26,978 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
+2026-09-21 12:47:26,978 - [INFO] - MaestroAgent - _reflect_and_act:168 - 🧠 [Maestro] Sistema estável. Nenhuma ação necessária.
+2026-09-21 12:47:27,818 - [INFO] - httpx - _send_single_request:1025 - HTTP Request: POST https://lightning.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:47:27,822 - [INFO] - backend.router.waterfall_router - request_ai_generation:104 - [GATEWAY CENTRAL] Sucesso via Lightning (conta_1)!
+2026-09-21 12:47:52,508 - [INFO] - root - setup_system_logger:55 - [SystemLogger] Logging inicializado. Gravando no apollo_system.log
+2026-09-21 12:47:53,397 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_1] Apollo_La_Plata (general)
+2026-09-21 12:47:53,398 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_2] Historias_de_7_Dias (general)
+2026-09-21 12:47:53,399 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_3] Descarga_News (general)
+2026-09-21 12:47:53,399 - [INFO] - AccountPool - load_accounts_from_env:92 - [Pool] ✅ Conta carregada: [conta_4] Tutorial_das_Coisas (general)
+2026-09-21 12:47:53,400 - [INFO] - AccountPool - __init__:138 - [Pool] 🚀 Pool inicializado com 4 conta(s). Estratégia: least_used
+2026-09-21 12:47:53,769 - [INFO] - CoinLedger - init_ledger:581 - [Ledger] Ã¢ÂÂ Banco de ledger inicializado.
+2026-09-21 12:47:53,905 - [INFO] - i18n - load_locales:25 - [i18n] Idiomas carregados: ['en_US', 'pt_BR']
+2026-09-21 12:47:57,790 - [INFO] - SubscriptionManager - init_subscription_tables:77 - [SubManager] ✅ Tabelas de assinatura inicializadas.

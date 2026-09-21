@@ -1,4 +1,4 @@
-﻿import time
+import time
 from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
@@ -17,7 +17,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if client_ip:
             client_ip = client_ip.split(",")[0].strip()
         else:
-            client_ip = request.client.host
+            client_ip = request.client.host if request.client else "127.0.0.1"
             
         if request.url.path.startswith("/api/ws") or request.url.path.startswith("/api/studio/modal/"):
             # Ignora rate limit para WebSockets e rotas do proxy do Modal (que j so seguras via x-apollo-lock)

@@ -1,4 +1,4 @@
-import modal
+﻿import modal
 
 chat_tts_image = (
     modal.Image.debian_slim(python_version="3.10")
@@ -9,7 +9,7 @@ chat_tts_image = (
 )
 
 try:
-    from backend.cloud_tools.modal_app import app
+    from backend.cloud_tools.tts_app import app
 except ImportError:
     app = modal.App("apollo-api-chattts", image=chat_tts_image)
 
@@ -32,12 +32,9 @@ class ChatTTSEngine:
         import tempfile
         import os
         
-        print(f"Gerando áudio para o texto: {text} | Temp: {temperature} | Prompt: {refine_prompt}")
+        print(f"Gerando Ã¡udio para o texto: {text} | Temp: {temperature} | Prompt: {refine_prompt}")
         
-        params_refine_text = {'prompt': refine_prompt} if refine_prompt else {}
-        params_infer_code = {'temperature': temperature}
-        
-        wavs = self.chat.infer([text], use_decoder=True, params_refine_text=params_refine_text, params_infer_code=params_infer_code)
+        wavs = self.chat.infer([text], use_decoder=True)
         audio_tensor = torch.from_numpy(wavs[0])
         
         temp_wav = tempfile.mktemp(suffix=".wav")
@@ -49,3 +46,26 @@ class ChatTTSEngine:
             
         os.remove(temp_wav)
         return audio_bytes
+
+
+from fastapi import Request
+
+@app.function(image=chat_tts_image)
+@modal.fastapi_endpoint(method="POST", label="apollo-api-chattts")
+async def api_chattts(request: Request):
+    from fastapi.responses import Response, JSONResponse
+    try:
+        data = await request.json()
+        text = data.get("text", "")
+        temperature = data.get("temperature", 0.3)
+        refine_prompt = data.get("refine_prompt", "")
+        if not text:
+            return JSONResponse({"error": "No text provided"}, status_code=400)
+            
+        tts = ChatTTSEngine()
+        audio_bytes = tts.generate_audio.remote(text, temperature, refine_prompt)
+        return Response(content=audio_bytes, media_type="audio/wav")
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+

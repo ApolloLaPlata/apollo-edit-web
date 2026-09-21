@@ -50,7 +50,7 @@ class MarketAnalystAgent(BaseAgent):
         logger.debug("[MarketAnalyst] Coletando métricas do banco SQLite (economy.db)...")
         
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(DB_PATH, timeout=0.1)
             c = conn.cursor()
             
             # Conta o total de moedas no sistema (dinheiro em circulação)

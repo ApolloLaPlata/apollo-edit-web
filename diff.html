@@ -1,4 +1,4 @@
---- 
+﻿--- 
 +++ 
 @@ -1,4 +1,4 @@
 -<!DOCTYPE html>
@@ -160,8 +160,8 @@
 -            <button class="tab-btn active" onclick="showTab('img')">📷 Imagem</button>
 +            <button class="tab-btn active" onclick="showTab('img')">ðŸ“· Imagem</button>
              <button class="tab-btn" onclick="showTab('vid')">🎬 Vídeo</button>
--            <button class="tab-btn" onclick="showTab('audio')">🎙️ Áudio</button>
-+            <button class="tab-btn" onclick="showTab('audio')">ðŸŽ™ï¸ Áudio</button>
+-            <button class="tab-btn" onclick="showTab('audio')" style="display: none;">🎙️ Áudio</button>
++            <button class="tab-btn" onclick="showTab('audio')" style="display: none;">ðŸŽ™ï¸ Áudio</button>
              <button class="tab-btn" onclick="showTab('music')">🎵 Música</button>
              
          </div>
@@ -916,3 +916,4 @@
  </html>
  
 +<script>function forceDownloadFile(url, filename) { fetch(url).then(r => r.blob()).then(blob => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.style.display = 'none'; document.body.appendChild(a); a.click(); document.body.removeChild(a); }).catch(e => { alert('Erro ao baixar: ' + e.message); }); }</script>
+

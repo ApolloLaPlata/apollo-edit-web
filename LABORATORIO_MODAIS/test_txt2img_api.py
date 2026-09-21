@@ -1,8 +1,8 @@
-import requests
+﻿import requests
 import json
 import time
 
-url = "https://filosofiadocodigo--apollo-render-router-apollo-api.modal.run/generate/image"
+url = "https://canalobservadoreconomico--apollo-render-router-apollo-api.modal.run/generate/image"
 
 payload = {
     "prompt": "An epic cinematic shot of a futuristic cyberpunk city with neon lights, highly detailed, 8k resolution, photorealistic",
@@ -18,6 +18,7 @@ response = requests.post(url, json=payload, stream=True)
 if response.status_code == 200:
     for line in response.iter_lines():
         if line:
+            print("RECEBIDO:", line)
             data = line.decode('utf-8').strip()
             if not data:
                 continue
@@ -38,3 +39,5 @@ if response.status_code == 200:
                 print(f"Heartbeat (mantendo conexao viva...) - {time.time()-t0:.1f}s decorridos")
 else:
     print(f"Erro na conexao: {response.status_code} - {response.text}")
+
+

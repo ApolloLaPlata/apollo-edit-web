@@ -66,7 +66,7 @@ class TrendResearcherAgent(BaseAgent):
         ]
         
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(DB_PATH, timeout=0.1)
             cursor = conn.cursor()
             
             cursor.execute("""

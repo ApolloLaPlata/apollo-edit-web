@@ -6,7 +6,7 @@
         "workspace": "roxingo",
         "token_id": "ak-6pDTu1xBPp1jPG08LXK1K8",
         "token_secret": "as-f8CE8vvKRJdL8BODP1FSkj",
-        "is_active": true,
+        "is_active": false,
         "last_balance": 30.0,
         "last_spend": 43.10025604999999
     },
@@ -105,5 +105,42 @@
         "last_spend": 0.0,
         "proxy_key": "wk-KW9Ril1w4LWhZ6ZwKLOvbw",
         "proxy_secret": "ws-uGcGHDdtF1WGYBCgDh7h9i"
+    },
+    {
+        "id": "13f99347",
+        "provider": "modal",
+        "name": "Conta 10 sitesviniciusmiranda v5 estudio",
+        "workspace": "sitesviniciusmiranda",
+        "token_id": "ak-9WTn97574onaDwqoO4mhkG",
+        "token_secret": "as-eDbWTOrmHFN3076DtB4eOK",
+        "is_active": true,
+        "last_balance": 30.0,
+        "last_spend": 0.0
+    },
+    {
+        "id": "033a5423",
+        "provider": "modal",
+        "name": "Conta 7 Observador Economico",
+        "workspace": "canalobservadoreconomico",
+        "token_id": "ak-ZB8vSnNwsvymmvrXkYk8Oi",
+        "token_secret": "as-96UI6GxvBK5ZQJIBFd0eeO",
+        "is_active": true,
+        "last_balance": 30.0,
+        "last_spend": 0.0,
+        "proxy_key": "wk-Xbw29wHibIU8SYKFP1A03S",
+        "proxy_secret": "ws-lI1UNf2pVyABNI23LcCnmH"
+    },
+    {
+        "id": "c11_neuza",
+        "provider": "modal",
+        "name": "Conta 11 Neuzamfarias",
+        "workspace": "neuzamfarias",
+        "token_id": "ak-omItjdzppX7zSolDXI8bBl",
+        "token_secret": "as-RPTU1AJ08QcmlaiLRGLYXC",
+        "is_active": true,
+        "last_balance": 30.0,
+        "last_spend": 0.0,
+        "proxy_key": "wk-8HDpGk8u3L77lI9nUvSKu6",
+        "proxy_secret": "ws-XniswicSRj3lqRKCF5wGdc"
     }
 ]

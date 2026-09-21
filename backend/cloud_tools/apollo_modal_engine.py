@@ -1,11 +1,11 @@
 """
 Apollo Modal Router
 ===================
-Este Ã¢â€Å“Ã‚Â® o Roteador Central (Gateway).
-Ele recebe requisiÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂes JSON da sua API/Backend Node/PHP/etc.,
-identifica qual modelo (LTX 13B ou Wan) o usuÃ¢â€Å“ÃƒÂ­rio escolheu
-baseado no preset, e dispara o comando de forma assÃ¢â€Å“Ã‚Â¡ncrona (ou aguarda)
-direto para as GPUs especÃ¢â€Å“Ã‚Â¡ficas (L4 ou A100).
+Este ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚Â® o Roteador Central (Gateway).
+Ele recebe requisiÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚ÂºÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Âes JSON da sua API/Backend Node/PHP/etc.,
+identifica qual modelo (LTX 13B ou Wan) o usuÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Â­rio escolheu
+baseado no preset, e dispara o comando de forma assÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚Â¡ncrona (ou aguarda)
+direto para as GPUs especÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚Â¡ficas (L4 ou A100).
 # Modificado para forcar deploy
 """
 
@@ -25,7 +25,7 @@ sys.path.append("/root")
 sys.path.append("/pkg")
 sys.path.append("/")
 
-# Imports top-level para garantir que o Modal faÃ¢â€Å“Ã‚Âºa o trace e os publique junto com o app
+# Imports top-level para garantir que o Modal faÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚Âºa o trace e os publique junto com o app
 import backend.cloud_tools.engines.wan_engine
 import backend.cloud_tools.engines.ltx_engine
 import backend.cloud_tools.engines.flux_engine
@@ -45,8 +45,12 @@ import backend.cloud_tools.engines.minimax_engine
 import backend.cloud_tools.engines.ace_step_15_engine
 import backend.cloud_tools.engines.openvoice_engine
 import backend.cloud_tools.engines.qwen_image_engine
+import backend.cloud_tools.engines.deforum_lcm_engine
+import backend.cloud_tools.engines.deforum_engine
+import backend.cloud_tools.engines.f5_engine
+import backend.cloud_tools.engines.vllm_engine
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 # FORCE_REBUILD = 5
 
@@ -59,7 +63,7 @@ router_image = (
 
 web_app = FastAPI(title="Apollo Render API")
 
-# ConfiguraÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂºo de CORS para permitir requisiÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂes do Frontend React (localhost ou Vercel/Netlify)
+# ConfiguraÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚ÂºÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Âºo de CORS para permitir requisiÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚ÂºÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Âes do Frontend React (localhost ou Vercel/Netlify)
 web_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -173,11 +177,12 @@ def api_generate_image_legacy(req: ImageRequest):
 
 @web_app.post("/generate/image")
 def api_generate_image(req: ImageRequest):
+    from fastapi.responses import StreamingResponse
     import json
     try:
         model = req.model.lower()
-        if model not in ["flux-schnell", "flux2-universal", "qwen-image"]:
-            return {"status": "error", "message": f"ERRO: Modelo {model} nÃ£o suportado."}
+        if model not in ["flux-schnell", "flux2-universal", "qwen-image", "z-image", "hunyuan", "omnigen"]:
+            return {"status": "error", "message": f"ERRO: Modelo {model} nÃƒÂ£o suportado."}
             
         resolved_format = req.format if req.format != "horizontal" else req.aspect_ratio
         
@@ -211,6 +216,28 @@ def api_generate_image(req: ImageRequest):
                 lora_strength=req.lora_strength,
                 input_image_b64=input_image
             )
+        elif model == "z-image":
+            from backend.cloud_tools.engines.zimage_engine import ZImageEngine
+            engine = ZImageEngine()
+            print(f"[Router] Spawning ZImageEngine (ComfyUI Headless)")
+            # Nota: usamos .generate_sync pq ele ja chama .remote por baixo dos panos na ArenaComfyEngine
+            result = engine.generate_sync(prompt=req.prompt)
+            return {"status": "success", "image_base64": result}
+            
+        elif model == "hunyuan":
+            from backend.cloud_tools.engines.hunyuan_engine import HunyuanEngine
+            engine = HunyuanEngine()
+            print(f"[Router] Spawning HunyuanEngine (Diffusers)")
+            job = engine.generate.spawn(prompt=req.prompt, aspect_ratio=resolved_format, use_upscale=req.use_upscale)
+            result = job.get()
+            return {"status": "success", "image_base64": result}
+            
+        elif model == "omnigen":
+            from backend.cloud_tools.engines.omnigen_engine import OmniGenEngine
+            engine = OmniGenEngine()
+            print(f"[Router] Spawning OmniGenEngine (ComfyUI Headless)")
+            result = engine.generate_sync(prompt=req.prompt)
+            return {"status": "success", "image_base64": result}
         elif model == "flux-schnell":
             from backend.cloud_tools.engines.flux_txt2img_engine import Flux2Txt2ImgEngine
             engine = Flux2Txt2ImgEngine()
@@ -221,7 +248,41 @@ def api_generate_image(req: ImageRequest):
                 seed=req.seed
             )
             
-        return {"status": "processing", "job_id": job.object_id}
+        async def stream_result():
+            try:
+                from modal.functions import FunctionCall
+                import asyncio
+                import base64
+                
+                fc = FunctionCall.from_id(job.object_id)
+                task = asyncio.create_task(fc.get.aio(timeout=1200))
+                
+                while not task.done():
+                    yield json.dumps({"status": "processing", "message": "Gerando imagem..."}) + "\n"
+                    done, pending = await asyncio.wait([task], timeout=5.0)
+                    if done:
+                        break
+                        
+                res = task.result()
+                
+                if isinstance(res, dict):
+                    if "status" not in res:
+                        res["status"] = "success"
+                    yield json.dumps(res) + "\n"
+                elif isinstance(res, str):
+                    # Se retornar a string base64 direto
+                    yield json.dumps({"status": "success", "image_base64": res}) + "\n"
+                elif isinstance(res, bytes):
+                    b64 = base64.b64encode(res).decode('utf-8')
+                    yield json.dumps({"status": "success", "image_base64": b64}) + "\n"
+                else:
+                    yield json.dumps({"status": "error", "message": f"Formato desconhecido: {type(res)}"}) + "\n"
+            except Exception as e:
+                import traceback
+                error_trace = traceback.format_exc()
+                yield json.dumps({"status": "error", "message": f"Erro interno Image Stream: {str(e)}", "trace": error_trace}) + "\n"
+                
+        return StreamingResponse(stream_result(), media_type="application/x-ndjson")
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -235,13 +296,13 @@ def api_generate_video(req: VideoRequest):
         model = req.model.lower()
         preset = req.preset.lower()
         
-        # Limite agressivo sugerido para I2V no LTX (PrevenÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂºo de VRAM OOM)
+        # Limite agressivo sugerido para I2V no LTX (PrevenÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚ÂºÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Âºo de VRAM OOM)
         if model == "ltx" and preset == "fast" and req.image_base64:
             if req.duration > 2:
                 return {
                     "status": "error", 
                     "error_type": "invalid_duration",
-                    "message": f"Modo FAST I2V suporta no mÃ¢â€Å“ÃƒÂ­ximo 2s. Use modo PRO para duraÃ¢â€Å“Ã‚ÂºÃ¢â€Å“ÃƒÂes maiores."
+                    "message": f"Modo FAST I2V suporta no mÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Â­ximo 2s. Use modo PRO para duraÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒâ€šÃ‚ÂºÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÆ’Ã‚Âes maiores."
                 }
         
         if model == "ltx":
@@ -259,7 +320,7 @@ def api_generate_video(req: VideoRequest):
         else:
             return {"status": "error", "message": f"Modelo desconhecido: {model}. Use 'ltx' ou 'wan'."}
             
-        # Spawn assíncrono para evitar o limite de 150s do Modal HTTP Gateway
+        # Spawn assÃ­ncrono para evitar o limite de 150s do Modal HTTP Gateway
         job = engine.generate.spawn(
             prompt=req.prompt,
             image_base64=req.image_base64,
@@ -272,7 +333,7 @@ def api_generate_video(req: VideoRequest):
         return {
             "status": "processing",
             "job_id": job.object_id,
-            "message": "Geração de vídeo iniciada na nuvem."
+            "message": "GeraÃ§Ã£o de vÃ­deo iniciada na nuvem."
         }
 
     except Exception as e:
@@ -657,7 +718,7 @@ def api_generate_audio_lab(req: AudioLabRequest):
                 task = asyncio.create_task(call_fc.get.aio(timeout=1200))
                 
                 while not task.done():
-                    yield json.dumps({"status": "processing", "message": f"Processando áudio na nuvem... ({model})"}) + "\n"
+                    yield json.dumps({"status": "processing", "message": f"Processando Ã¡udio na nuvem... ({model})"}) + "\n"
                     done, pending = await asyncio.wait([task], timeout=5.0)
                     if done:
                         break
@@ -736,9 +797,10 @@ def api_transcribe(req: TranscribeRequest):
         out = res.get()
         if isinstance(out, dict) and out.get("status") == "success":
             return {"status": "success", "text": out.get("text", "")}
-        return {"status": "error", "message": "Falha na transcriÃ§Ã£o (stt engine)"}
+        return {"status": "error", "message": "Falha na transcriÃƒÂ§ÃƒÂ£o (stt engine)"}
     except Exception as e:
         import traceback
         return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
+
 
 

@@ -478,14 +478,26 @@ class TTSManager:
                     with open(specific_ref_path, "rb") as f:
                         ref_bytes = f.read()
                         
-                    out_bytes = engine.generate_voice.remote(
-                        text=txt, 
-                        reference_audio_bytes=ref_bytes, 
-                        temperature=params["temperature"], 
-                        speed=params["speed"],
-                        language="pt",
-                        repetition_penalty=params["repetition_penalty"]
-                    )
+                    import requests
+                    import base64
+                    
+                    payload = {
+                        "text": txt,
+                        "ref_audio_base64": base64.b64encode(ref_bytes).decode('utf-8'),
+                        "temperature": params["temperature"],
+                        "speed": params["speed"],
+                        "language": "pt",
+                        "repetition_penalty": params["repetition_penalty"],
+                        "return_raw_wav": True
+                    }
+                    
+                    webhook_url = "https://apollolaplata--apollo-api-xtts.modal.run/"
+                    response = requests.post(webhook_url, json=payload, timeout=600)
+                    
+                    if response.status_code != 200:
+                        raise Exception(f"Erro no webhook XTTS: {response.text}")
+                        
+                    out_bytes = response.content
                     
                     data, sr = sf.read(io.BytesIO(out_bytes))
                     audio_blocks.append(data)
@@ -591,14 +603,27 @@ class TTSManager:
                 
             try:
                 print(f"☁️ Enviando texto para Modal XTTS (Emotion: {emocao_mapped}, Temp: {params['temperature']:.2f}, Speed: {params['speed']:.2f})...")
-                out_bytes = engine.generate_voice.remote(
-                    text=text, 
-                    reference_audio_bytes=ref_bytes,
-                    temperature=params["temperature"],
-                    speed=params["speed"],
-                    language="pt",
-                    repetition_penalty=params["repetition_penalty"]
-                )
+                import requests
+                import base64
+                
+                payload = {
+                    "text": text,
+                    "ref_audio_base64": base64.b64encode(ref_bytes).decode('utf-8'),
+                    "temperature": params["temperature"],
+                    "speed": params["speed"],
+                    "language": "pt",
+                    "repetition_penalty": params["repetition_penalty"],
+                    "return_raw_wav": True
+                }
+                
+                webhook_url = "https://apollolaplata--apollo-api-xtts.modal.run/"
+                response = requests.post(webhook_url, json=payload, timeout=600)
+                
+                if response.status_code != 200:
+                    raise Exception(f"Erro no webhook XTTS (Puro): {response.text}")
+                    
+                out_bytes = response.content
+                
                 
                 # Salva como arquivo .wav temporario
                 with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav_file:

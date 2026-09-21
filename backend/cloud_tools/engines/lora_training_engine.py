@@ -22,7 +22,7 @@ lora_trainer_image = (
     .env({"HF_HUB_ENABLE_HF_TRANSFER": "1"})
 )
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 @app.function(
     image=lora_trainer_image,

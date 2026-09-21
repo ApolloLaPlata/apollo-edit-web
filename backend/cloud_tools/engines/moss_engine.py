@@ -9,7 +9,7 @@ Exige GPU de alto desempenho (H100 ou A100) devido ao tamanho do modelo (25GB).
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 
@@ -41,15 +41,11 @@ moss_image = (
         "accelerate>=0.26.0",
         "torchcodec"
     )
-    .run_commands(
-        [
-            "python -c \"from huggingface_hub import snapshot_download; print('[BUILD] Baixando Pesos do MOSS-TTS (25GB)...'); snapshot_download(repo_id='OpenMOSS-Team/MOSS-TTS', local_dir_use_symlinks=False)\""
-        ]
-    )
 )
 
-@app.cls(image=moss_image, gpu="H100", timeout=600, scaledown_window=30,
- min_containers=0)
+moss_cache = modal.Volume.from_name("moss-tts-cache", create_if_missing=True)
+
+@app.cls(image=moss_image, gpu="H100", timeout=600, scaledown_window=30, min_containers=0, volumes={"/root/.cache/huggingface": moss_cache})
 class MossTTSEngine:
     @modal.enter()
     def load_model(self):

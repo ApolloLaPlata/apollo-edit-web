@@ -5,7 +5,7 @@ from backend.cloud_tools.engines.universal_engine import universal_comfy_image a
 
 comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=True)
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 FORMATS = {
     "horizontal": {"width": 1280, "height": 720},

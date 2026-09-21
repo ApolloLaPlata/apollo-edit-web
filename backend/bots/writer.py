@@ -36,7 +36,7 @@ def escrever_artigo(pauta, persona_prompt):
     Isso vai bloquear o resto do conteúdo para não-assinantes. Todo o texto depois dessa tag será borrado no site.
     
     No final da resposta, adicione uma linha EXATA separada por "|||" no seguinte formato:
-    [ARTIGO MARKDOWN]|||[PROMPT DE IMAGEM CURTO, EM INGLÊS, CINEMÁTICO]
+    [ARTIGO MARKDOWN]|||[PROMPT DE IMAGEM CURTO, EM INGLÊS, CINEMÁTICO]|||[TEXTO LIMPO PARA O NARRADOR LER (RESUMO PARA RÁDIO/PODCAST)]
     
     Exemplo:
     # Título
@@ -47,6 +47,8 @@ def escrever_artigo(pauta, persona_prompt):
     Resto do texto muito aprofundado...
     |||
     A detailed cinematic photograph of a bear on wall street, 8k, photorealistic
+    |||
+    Olá, seja bem-vindo. Hoje vamos falar sobre como os ursos invadiram Wall Street!
     """
 
     try:
@@ -66,20 +68,24 @@ def escrever_artigo(pauta, persona_prompt):
             parts = content.split("|||")
             markdown = parts[0].strip()
             image_prompt = parts[1].strip()
+            audio_script = parts[2].strip() if len(parts) > 2 else "Resumo não gerado."
         else:
             markdown = content.strip()
             image_prompt = "A generic placeholder image for a blog post, 4k"
+            audio_script = "Resumo da notícia."
             
         print("[WRITER] [ OK ] Texto gerado com sucesso via OpenAI SDK Compatível!")
         return {
             "markdown": markdown,
-            "image_prompt": image_prompt
+            "image_prompt": image_prompt,
+            "audio_script": audio_script
         }
     except Exception as e:
         print(f"[WRITER] [ERRO] Falha ao gerar texto: {e}")
         return {
             "markdown": f"# {pauta['title']}\nErro na API do LLM.",
-            "image_prompt": "Error"
+            "image_prompt": "Error",
+            "audio_script": "Error"
         }
 
 def gerar_comentarios_fantasmas(titulo, quantidade=5):

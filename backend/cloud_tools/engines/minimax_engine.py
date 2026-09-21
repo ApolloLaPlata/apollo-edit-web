@@ -2,7 +2,7 @@ import modal
 import os
 import time
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 volume = modal.Volume.from_name("apollo-models", create_if_missing=True)
 
 def download_minimax_weights():

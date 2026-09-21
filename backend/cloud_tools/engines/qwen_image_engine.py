@@ -5,7 +5,7 @@ import uuid
 import time
 import os
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 from backend.cloud_tools.engines.apollo_arena_comfy_engine import ArenaComfyEngine
 
 orchestrator_image = (

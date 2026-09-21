@@ -1903,7 +1903,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch(e) { console.error("Erro ao carregar vozes:", e); }
         }
 
-        document.getElementById('voiceEngineSelect').addEventListener('change', loadVoiceCatalog);
+                document.getElementById('voiceEngineSelect').addEventListener('change', function(e) {
+            loadVoiceCatalog();
+            if(e.target.value === 'qwen') {
+                document.getElementById('qwenInstructGroup').style.display = 'block';
+            } else {
+                document.getElementById('qwenInstructGroup').style.display = 'none';
+            }
+        });
         
         async function generateVoice() {
             const text = document.getElementById('voiceText').value.trim();
@@ -1913,12 +1920,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('voiceRefFile');
             const engineId = document.getElementById('voiceEngineSelect').value;
             
-            const formData = new FormData();
+                        const formData = new FormData();
             formData.append("text", text);
             formData.append("engine", engineId);
             if (voiceId) formData.append("voice_id", voiceId);
             if (fileInput && fileInput.files.length > 0) {
                 formData.append("voice_file", fileInput.files[0]);
+            }
+            if (engineId === 'qwen') {
+                const qwenInstruct = document.getElementById('qwenInstruct');
+                if (qwenInstruct && qwenInstruct.value.trim()) {
+                    formData.append("instruct", qwenInstruct.value.trim());
+                }
             }
             
             const btn = document.getElementById('btnGenerateVoice');
@@ -1991,4 +2004,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 

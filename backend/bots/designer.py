@@ -23,18 +23,18 @@ def gerar_imagem(prompt, image_format="Horizontal", upscale=False):
         
     try:
         import random
-        # Envia os parmetros exatos esperados pelo ImageRequest (apollo_modal_engine.py)
+        # Agora usando a engine definitiva: Qwen Image, renderizado via ComfyUI no Modal GPU
         payload = {
             "prompt": prompt,
-            "model": "flux2-universal",
+            "model": "qwen-image",
             "format": image_format,
             "seed": random.randint(1, 99999999),
             "use_upscale": upscale
         }
         
-        headers = {'Content-Type': 'application/json'}
+        headers = {'Content-Type': 'application/json', 'x-apollo-lock': 'apollo-beta-key-2026'}
         
-        # Timeout longo pois Upscale leva ~36s e Cold Start pode levar mais de 60s
+        # Timeout longo pois o ComfyUI com Qwen pode levar uns 40s
         response = requests.post(APOLLO_MODAL_URL, json=payload, headers=headers, timeout=120)
         response.raise_for_status()
         

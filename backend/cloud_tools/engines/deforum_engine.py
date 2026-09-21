@@ -3,7 +3,7 @@ import os
 import io
 import time
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 # Imagem com o diffusers
 deforum_image = (

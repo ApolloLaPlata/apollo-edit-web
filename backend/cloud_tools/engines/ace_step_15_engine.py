@@ -2,7 +2,7 @@ import modal
 import os
 import base64
 import time
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 image = (
     modal.Image.debian_slim(python_version="3.10")

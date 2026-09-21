@@ -5,7 +5,7 @@ Utiliza Kokoro TTS (Ultra-rápido, ~50ms latência)
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 

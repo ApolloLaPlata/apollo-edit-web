@@ -1,4 +1,4 @@
-import modal
+﻿import modal
 import os
 import subprocess
 import base64
@@ -30,7 +30,7 @@ openvoice_image = (
     )
 )
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 vol = modal.Volume.from_name("openvoice-weights", create_if_missing=True)
 
 @app.cls(
@@ -51,7 +51,7 @@ class OpenVoiceEngine:
             os.makedirs("/openvoice/weights", exist_ok=True)
             # The download is now handled by the persistent volume script.
             # If it's missing, it will raise an error rather than hanging.
-            raise Exception("Pesos do OpenVoice não encontrados no volume! Rode o script de download do HuggingFace.")
+            raise Exception("Pesos do OpenVoice nÃ£o encontrados no volume! Rode o script de download do HuggingFace.")
             
         import torch
         from openvoice import se_extractor
@@ -99,3 +99,25 @@ class OpenVoiceEngine:
         os.remove(out_path)
         
         return result_b64
+
+
+from fastapi import Request
+
+@app.function(image=openvoice_image)
+@modal.fastapi_endpoint(method="POST", label="apollo-api-openvoice")
+async def api_openvoice(request: Request):
+    from fastapi.responses import Response, JSONResponse
+    import base64
+    try:
+        data = await request.json()
+        source_b64 = data.get("source_audio_base64", "")
+        ref_b64 = data.get("reference_audio_base64", "")
+        
+        if not source_b64 or not ref_b64:
+            return JSONResponse({"error": "Source and Reference audio required"}, status_code=400)
+            
+        tts = OpenVoiceEngine()
+        res_b64 = tts.clone_voice.remote(source_b64, ref_b64)
+        return Response(content=base64.b64decode(res_b64), media_type="audio/wav")
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)

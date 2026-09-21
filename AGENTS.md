@@ -32,3 +32,10 @@ Na sua PRIMEIRA interacao em qualquer novo chat DO APOLLO EDIT, verifique se o a
 
 ### 4. SISTEMA DE AGENTE CRITICO (REFLECTION LOOP)
 Para tarefas complexas de codigo, ANTES de entregar a versao final, voce TEM A OPCAO de invocar um Sub-Agente Revisor (Reflection/Critic) usando invoke_subagent.
+
+### 5. O PROTOCOLO DE TESTE AUTONOMO (TDD MANDATORIO)
+O usuario NAO e seu testador de software. E PROIBIDO pedir para o usuario 'fazer um teste' a menos que voce JA TENHA PROVADO que funciona rodando o teste voce mesmo.
+- **Para Backend/APIs:** Antes de finalizar uma alteracao (como gerar audio, musica, texto), voce DEVE usar suas ferramentas de terminal ou subagentes para rodar a requisicao real no servidor, aguardar o tempo necessario (mesmo que leve 20 minutos) e validar a resposta/arquivo final.
+- **Para Frontend/UI:** Voce DEVE usar o **Playwright MCP** para navegar na pagina ('browser_navigate'), preencher formularios ('browser_fill_form') e clicar ('browser_click') para testar o fluxo visualmente.
+- O modelo de voz e imagem oficial do projeto e **Qwen**. Nunca confunda com Coqui ou outros modelos. Use Qwen TTS e Qwen Image.
+

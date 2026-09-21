@@ -1,50 +1,46 @@
-﻿import re
+import re
 
-with open('frontend/modal_ai_studio.html', 'r', encoding='utf-8') as f:
+with open('public/modal_ai_studio.html', 'r', encoding='utf-8') as f:
     html = f.read()
 
-# Add the forceDownloadAudio function
-if 'function forceDownloadAudio' not in html:
-    func_code = '''
-async function forceDownloadAudio(url, filename) {
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = filename || url.split('/').pop();
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-    } catch (e) {
-        window.open(url, '_blank');
-    }
-}
-'''
-    html = html.replace('function downloadImage() {', func_code + '\nfunction downloadImage() {')
+# Add the engine dropdown
+new_html = '''<div class="panel-header">🎙️ SÍNTESE DE VOZ E CLONAGEM</div>
+                
+                <div class="form-group">
+                    <div class="field-label">Motor TTS (Engine)</div>
+                    <select class="input-dark" id="voiceEngineSelect" style="width:100%; padding:10px; border-radius:8px; background:#0d0d15; color:var(--text); border:1px solid var(--border); margin-bottom:15px;">
+                        <option value="qwen">Qwen TTS (Instrucional / Melhor Atuação)</option>
+                        <option value="f5-tts" selected>F5-TTS (Zero-Shot Cloning Rápido)</option>
+                        <option value="moss">MOSS-TTS 8B (Clonagem Alta Qualidade)</option>
+                        <option value="xtts">XTTS v2 (Clonagem Rápida Padrão)</option>
+                        <option value="kokoro">Kokoro (Vozes Embutidas English/Multi)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">'''
 
-# Fix batch download all
-batch_old = '''const a = document.createElement("a");
-                    a.href = url;
-                    a.download = url.split("/").pop(); // extrai o nome final do arquivo
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);'''
-batch_new = '''forceDownloadAudio(url);'''
-html = html.replace(batch_old, batch_new)
+html = html.replace('<div class="panel-header">🎙️ SÍNTESE DE VOZ E CLONAGEM</div>\n                \n                <div class="form-group">', new_html)
 
-# Fix individual download button
-btn_old = '''<a href="" download class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</a>'''
-btn_new = '''<button onclick="forceDownloadAudio('')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</button>'''
-html = html.replace(btn_old, btn_new)
+# Add engine to FormData
+js_old = '''const voiceId = document.getElementById('voiceIdSelect').value;
+            const fileInput = document.getElementById('voiceRefFile');
+            
+            const formData = new FormData();
+            formData.append("text", text);
+            if (voiceId) formData.append("voice_id", voiceId);'''
 
-# fallback if there are weird encoding issues in my exact string match:
-import re
-html = re.sub(r'<a href="\$\{fileUrlAbs\}" download class="btn btn-primary"[^>]*>.*?Baixar.*?</a>', 
-              r'<button onclick="forceDownloadAudio(\'\')" class="btn btn-primary" style="white-space: nowrap; height: fit-content;">⬇️ Baixar</button>', 
-              html, flags=re.DOTALL)
+js_new = '''const voiceId = document.getElementById('voiceIdSelect').value;
+            const fileInput = document.getElementById('voiceRefFile');
+            const engineId = document.getElementById('voiceEngineSelect').value;
+            
+            const formData = new FormData();
+            formData.append("text", text);
+            formData.append("engine", engineId);
+            if (voiceId) formData.append("voice_id", voiceId);'''
 
-with open('frontend/modal_ai_studio.html', 'w', encoding='utf-8') as f:
+html = html.replace(js_old, js_new)
+
+with open('public/modal_ai_studio.html', 'w', encoding='utf-8') as f:
     f.write(html)
+    
+print("Frontend patched!")

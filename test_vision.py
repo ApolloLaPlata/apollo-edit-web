@@ -1,13 +1,15 @@
-import modal
+﻿import modal
 import base64
+import asyncio
 
-# read an image
-with open("C:/Users/v5est/.gemini/antigravity/brain/a22deae7-7753-458c-a40d-92e685f8af3e/.user_uploaded/media_1789084866148.png", "rb") as f:
-    img_data = base64.b64encode(f.read()).decode('utf-8')
+async def test():
+    engine = modal.Cls.lookup("apollo-vision-engine", "FlorenceVisionEngine")
+    
+    # fake 1x1 image
+    fake_img = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    
+    res = await engine().analyze_image.remote.aio(fake_img.decode("utf-8"))
+    print("Result:", res)
 
-import sys
-sys.path.append('E:\\MEUS PROGRAMAS\\APOLLO_EDIT_WEB')
-from backend.cloud_tools.engines.vision_engine import FlorenceVisionEngine
-
-cls = modal.Cls.from_name("apollo-vision-engine", "FlorenceVisionEngine")
-print(cls().analyze_image.remote(img_data))
+if __name__ == "__main__":
+    asyncio.run(test())

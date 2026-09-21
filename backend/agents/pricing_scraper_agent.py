@@ -61,7 +61,7 @@ class PricingScraperAgent(BaseAgent):
             return
 
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(DB_PATH, timeout=0.1)
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             

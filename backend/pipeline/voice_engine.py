@@ -1,29 +1,42 @@
 import base64
-from backend.cloud_tools.engines.qwen_tts_clone_engine import QwenTtsCloneEngine
+import requests
+import time
 
 class VoiceEngine:
     def __init__(self):
-        self.engine = QwenTtsCloneEngine()
+        # A URL do Webhook do Qwen TTS na Conta 10 (apollolaplata)
+        self.webhook_url = "https://apollolaplata--apollo-api-qwen-tts.modal.run/"
         
     def generate_audio(self, text: str, ref_audio_b64: str, ref_text: str, instruct: str, out_path: str = None, temperature: float = 1.8) -> str:
         """
-        Gera o áudio usando o Qwen3-TTS via RPC na Modal.
+        Gera o ǭudio usando o Qwen3-TTS via Webhook na Conta 10 (Modal).
         Se out_path for fornecido, salva o arquivo e retorna o caminho.
-        Caso contrário, retorna o áudio em base64.
+        Caso contrǭrio, retorna o ǭudio em base64.
         """
-        res = self.engine.clone.remote(
-            text=text,
-            ref_audio_b64=ref_audio_b64,
-            ref_text=ref_text,
-            language="Portuguese",
-            instruct=instruct,
-            temperature=temperature
-        )
-        audio_b64 = res.get("audio_base64")
+        payload = {
+            "text": text,
+            "reference_audio_base64": ref_audio_b64,
+            "reference_text": ref_text,
+            "language": "Portuguese",
+            "instruct": instruct,
+            "temperature": temperature
+        }
         
-        if out_path and audio_b64:
+        print(f"[VoiceEngine] Solicitando TTS (Conta 10): {self.webhook_url} ...")
+        t0 = time.time()
+        
+        response = requests.post(self.webhook_url, json=payload, timeout=600)
+        
+        if response.status_code != 200:
+            raise Exception(f"Erro no webhook Qwen TTS (Status {response.status_code}): {response.text}")
+            
+        # O Webhook retorna o áudio cru (audio/wav)
+        audio_bytes = response.content
+        
+        if out_path:
             with open(out_path, "wb") as f:
-                f.write(base64.b64decode(audio_b64))
+                f.write(audio_bytes)
+            print(f"[VoiceEngine] Audio salvo com sucesso em {time.time() - t0:.2f}s: {out_path}")
             return out_path
             
-        return audio_b64
+        return base64.b64encode(audio_bytes).decode("utf-8")

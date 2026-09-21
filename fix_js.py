@@ -1,17 +1,20 @@
-﻿import re
-paths = ['public/modal_ai_studio.html', 'web_ui/modal_ai_studio.html']
-for path in paths:
-    with open(path, 'r', encoding='utf-8') as f:
-        html = f.read()
+﻿import sys
 
-    # The bad pattern has backticks inside the onclick
-    # We want to replace it with single quotes
-    bad = r'<button onclick="forceDownloadFile\(\$\{fileUrlAbs\},\s*musica_\$\{index\}\.mp3\)"'
-    good = r"<button onclick=\"forceDownloadFile('', 'musica_.mp3')\""
-    
-    html = re.sub(bad, good, html)
+with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\frontend\tts.html', 'r', encoding='utf-8') as f:
+    content = f.read()
 
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(html)
+content = content.replace("const filename =  pollo_tts_nuvem.wav;", "const filename = 'apollo_tts_nuvem.wav';")
+content = content.replace("setStatus(? udio gerado na nuvem!, 'success');", "setStatus('✅ Áudio gerado na nuvem!', 'success');")
+content = content.replace("setStatus(â\x9c\x85 udio gerado na nuvem!, 'success');", "setStatus('✅ Áudio gerado na nuvem!', 'success');")
+content = content.replace("setStatus(? Áudio gerado na nuvem!, 'success');", "setStatus('✅ Áudio gerado na nuvem!', 'success');")
 
-print("Replaced!")
+# Also fix the catch block if it's broken
+content = content.replace("setStatus(? Erro Nuvem: , 'error');", "setStatus(❌ Erro Nuvem: , 'error');")
+content = content.replace("setStatus(? Erro de conexǜo com a Nuvem: , 'error');", "setStatus(❌ Erro de conexão com a Nuvem: , 'error');")
+content = content.replace("alert(?Erro: ?);", "alert(Erro: );")
+content = content.replace("alert(Erro: );", "alert(Erro: );")
+content = content.replace("setStatus(❌ Erro Nuvem: , 'error');", "setStatus(❌ Erro Nuvem: , 'error');")
+content = content.replace("setStatus(❌ Erro de conexão com a Nuvem: , 'error');", "setStatus(❌ Erro de conexão com a Nuvem: , 'error');")
+
+with open(r'E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\frontend\tts.html', 'w', encoding='utf-8') as f:
+    f.write(content)

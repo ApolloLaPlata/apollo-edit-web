@@ -40,11 +40,12 @@ CATALOG = {
 }
 
 # Local Reference Map
+base_dir = os.environ.get("APOLLO_ROOT", "/home/ubuntu/APOLLO_EDIT_WEB" if os.name != "nt" else r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB")
 LOCAL_VOICE_MAP = {
-    "narrador_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\narrador_ref.wav",
-    "roxingo_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\roxingo_ref.wav",
-    "rafael_descargas": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS\testes_tts\rafael_descargas.wav",
-    "female_clean_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS\testes_tts\female_clean_ref.wav"
+    "narrador_ref": os.path.join(base_dir, "backend", "voices", "xtts", "narrador_ref.wav").replace("\\", "/"),
+    "roxingo_ref": os.path.join(base_dir, "backend", "voices", "xtts", "roxingo_ref.wav").replace("\\", "/"),
+    "rafael_descargas": os.path.join(base_dir, "LABORATORIO_MODAIS", "testes_tts", "rafael_descargas.wav").replace("\\", "/"),
+    "female_clean_ref": os.path.join(base_dir, "LABORATORIO_MODAIS", "testes_tts", "female_clean_ref.wav").replace("\\", "/")
 }
 
 # Modal Endpoints Mapping
@@ -66,7 +67,8 @@ async def studio_generate(
     text: str = Form(...),
     engine: str = Form(...),
     voice_id: Optional[str] = Form(None),
-    voice_file: Optional[UploadFile] = File(None)
+    voice_file: Optional[UploadFile] = File(None),
+    instruct: Optional[str] = Form(None)
 ):
     url = ENDPOINTS.get(engine)
     if not url:
@@ -86,12 +88,15 @@ async def studio_generate(
             with open(file_path, "rb") as f:
                 base64_audio = base64.b64encode(f.read()).decode("utf-8")
 
+        # Ajuste de idioma dependendo da engine
+    lang = "portuguese" if engine == "qwen" else "pt"
+
     # Build payload
     req_payload = {
         "text": text,
         "temperature": 0.7,
         "speed": 1.0,
-        "language": "pt",
+        "language": lang,
         "return_raw_wav": True
     }
 
@@ -100,10 +105,14 @@ async def studio_generate(
         req_payload["voice"] = voice_id
         req_payload["voice_name"] = voice_id
 
-    # If cloning is needed but not provided
+        # If cloning is needed but not provided
     if base64_audio:
         req_payload["ref_audio_base64"] = base64_audio
         req_payload["reference_audio_base64"] = base64_audio
+
+    # Add instruct if provided (mainly used by Qwen TTS)
+    if instruct:
+        req_payload["instruct_text"] = instruct
 
     try:
         async with httpx.AsyncClient(timeout=300.0, follow_redirects=True) as client:
@@ -114,3 +123,6 @@ async def studio_generate(
             return Response(content=res.content, media_type="audio/wav")
     except Exception as e:
         return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+
+
+

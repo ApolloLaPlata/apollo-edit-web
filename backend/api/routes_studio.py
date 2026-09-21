@@ -89,6 +89,9 @@ async def proxy_to_modal(path: str, request: Request, background_tasks: Backgrou
     elif path == "generate_tts":
         remote_path = "generate/tts"
         workspace = "sitesviniciusmiranda" # Conta 10
+    elif path == "generate_audio_lab":
+        remote_path = "generate/audio_lab"
+        workspace = "radiodarktrap" # Conta 9
         
     modal_url = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/{remote_path}"
     print(f"[PROXY DEBUG] Routing to: {modal_url}", flush=True)
@@ -188,11 +191,12 @@ async def generate_eleven_lab(payload: ElevenLabRequest):
         base64_audio = payload.ref_audio_base64
         if not base64_audio and payload.voice_name and payload.voice_name != "custom":
             # Procura nos diretorios padrão
+            base_dir = os.environ.get("APOLLO_ROOT", "/home/ubuntu/APOLLO_EDIT_WEB" if os.name != "nt" else r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB")
             voice_map = {
-                "narrador_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\narrador_ref.wav",
-                "roxingo_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\backend\voices\xtts\roxingo_ref.wav",
-                "rafael_descargas": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS\testes_tts\rafael_descargas.wav",
-                "female_clean_ref": r"E:\MEUS PROGRAMAS\APOLLO_EDIT_WEB\LABORATORIO_MODAIS\testes_tts\female_clean_ref.wav"
+                "narrador_ref": os.path.join(base_dir, "backend", "voices", "xtts", "narrador_ref.wav").replace("\\", "/"),
+                "roxingo_ref": os.path.join(base_dir, "backend", "voices", "xtts", "roxingo_ref.wav").replace("\\", "/"),
+                "rafael_descargas": os.path.join(base_dir, "LABORATORIO_MODAIS", "testes_tts", "rafael_descargas.wav").replace("\\", "/"),
+                "female_clean_ref": os.path.join(base_dir, "LABORATORIO_MODAIS", "testes_tts", "female_clean_ref.wav").replace("\\", "/")
             }
             file_path = voice_map.get(payload.voice_name)
             if file_path and os.path.exists(file_path):

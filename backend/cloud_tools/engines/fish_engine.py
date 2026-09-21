@@ -5,7 +5,7 @@ Modelo excelente para clonagem Zero-Shot e alta fidelidade em PT-BR.
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 
@@ -124,6 +124,7 @@ async def api_fish_tts(request: Request):
         data = await request.json()
         text = data.get("text", "")
         ref_audio_base64 = data.get("ref_audio_base64", None)
+        ref_text = data.get("ref_text", "")
         
         if not text:
             return JSONResponse({"error": "No text provided"}, status_code=400)
@@ -134,7 +135,7 @@ async def api_fish_tts(request: Request):
             reference_audio_bytes = base64.b64decode(ref_audio_base64)
             
         tts_service = FishTTSEngine()
-        audio_bytes = tts_service.generate_voice.remote(text, reference_audio_bytes=reference_audio_bytes)
+        audio_bytes = tts_service.generate_voice.remote(text, reference_audio_bytes=reference_audio_bytes, reference_text=ref_text)
         
         return Response(content=audio_bytes, media_type="audio/wav")
     except Exception as e:

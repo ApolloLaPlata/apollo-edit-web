@@ -2170,33 +2170,84 @@ async def voice_generate(request: Request):
 
 from fastapi import File, UploadFile, Form
 
+class TranscribeRequest(BaseModel):
+    audio_base64: str
+
+@app.post("/api/studio/modal/transcribe")
+async def api_studio_modal_transcribe(req: TranscribeRequest):
+    import base64
+    import requests
+    import tempfile
+    import os
+    from fastapi.responses import JSONResponse
+    
+    # CONTA 10 - DEDICADA EXCLUSIVAMENTE PARA TTS E TRANSCRICAO (TEXTO)
+    MODAL_USER = "sitesviniciusmiranda"
+    url = f"https://{MODAL_USER}--apollo-api-transcribe.modal.run/"
+    
+    try:
+        audio_bytes = base64.b64decode(req.audio_base64)
+        files = {"file": ("audio.webm", audio_bytes, "audio/webm")}
+        
+        res = requests.post(url, files=files, timeout=600)
+        
+        if res.status_code == 200:
+            return res.json()
+        else:
+            return JSONResponse({"error": res.text}, status_code=res.status_code)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 @app.post("/api/voice/studio_generate")
-async def studio_voice_generate(text: str = Form(...), voice_id: str = Form(None), voice_file: UploadFile = File(None)):
+async def studio_voice_generate(text: str = Form(...), engine: str = Form("f5-tts"), voice_id: str = Form(None), voice_file: UploadFile = File(None)):
     import base64
     import urllib.request
     import json
     import os
     
-    MODAL_USER = "apollolaplata"
-    url = f"https://{MODAL_USER}--apollo-api-f5-tts.modal.run/"
+    # CONTA 10 - DEDICADA EXCLUSIVAMENTE PARA TTS
+    MODAL_USER = "sitesviniciusmiranda"
     
+    if engine == "qwen":
+        url = f"https://{MODAL_USER}--apollo-api-qwen-tts.modal.run/"
+    elif engine == "moss":
+        url = f"https://{MODAL_USER}--apollo-api-moss-tts.modal.run/"
+    elif engine == "xtts":
+        url = f"https://{MODAL_USER}--apollo-api-xtts.modal.run/"
+    elif engine == "kokoro":
+        url = f"https://{MODAL_USER}--apollo-api-tts.modal.run/"
+    else:
+        url = f"https://{MODAL_USER}--apollo-api-f5-tts.modal.run/"
+    
+    ref_bytes = b""
     if voice_file:
         ref_bytes = await voice_file.read()
-    else:
-        # Pega a voz escolhida, limpa o prefixo f5_ se existir e adiciona .wav
-        v_name = voice_id.replace("f5_", "") if voice_id else "narrador_ref"
+    elif voice_id:
+        v_name = voice_id.replace("f5_", "").replace("kokoro_", "")
         if not v_name.endswith(".wav"): v_name += ".wav"
-        
         default_path = os.path.join(BASE_DIR, "backend", "voices", "xtts", v_name)
         if os.path.exists(default_path):
             with open(default_path, "rb") as f:
                 ref_bytes = f.read()
-        else:
-            from fastapi.responses import JSONResponse
-            return JSONResponse({"error": "Voz padrão não encontrada e nenhum arquivo foi enviado."}, status_code=400)
-            
-    ref_b64 = base64.b64encode(ref_bytes).decode('utf-8')
-    payload = json.dumps({"text": text, "reference_audio": ref_b64}).encode('utf-8')
+                
+    ref_b64 = base64.b64encode(ref_bytes).decode('utf-8') if ref_bytes else ""
+    
+    # Formatação de payload específica por engine (Modal APIs)
+    payload_dict = {"text": text}
+    
+    if engine == "f5-tts":
+        payload_dict["ref_audio_base64"] = ref_b64
+    elif engine == "moss":
+        payload_dict["reference_audio_base64"] = ref_b64
+    elif engine == "qwen":
+        payload_dict["reference_audio_base64"] = ref_b64
+        payload_dict["reference_text"] = " " # Qwen precisa de ref_text
+    elif engine == "xtts":
+        payload_dict["reference_audio"] = ref_b64
+    elif engine == "kokoro":
+        payload_dict["voice"] = voice_id.replace("kokoro_", "") if voice_id else "af_heart"
+        
+    payload = json.dumps(payload_dict).encode('utf-8')
     
     req = urllib.request.Request(url, method="POST")
     req.add_header("Content-Type", "application/json")
@@ -2207,10 +2258,7 @@ async def studio_voice_generate(text: str = Form(...), voice_id: str = Form(None
             return Response(content=audio_bytes, media_type="audio/wav")
     except Exception as e:
         from fastapi.responses import JSONResponse
-        return JSONResponse({"error": f"Erro F5-TTS Modal Studio: {str(e)}"}, status_code=500)
-
-    from fastapi.responses import JSONResponse
-    return JSONResponse({"error": "Engine desconhecida"}, status_code=400)
+        return JSONResponse({"error": f"Erro {engine} Modal Studio: {str(e)}"}, status_code=500)
 
 # ===== ROTAS PARA O NARRADOR (GERADOR DE VÃƒÂDEO) =====
 @app.post("/api/narrador/gerar")
@@ -4950,6 +4998,11 @@ async def modal_proxy(endpoint_name: str, request: Request):
     random.shuffle(valid_modal_accounts)
     acc = valid_modal_accounts[0]
     workspace = acc.get('workspace')
+    
+    # CONTA 7 - DEDICADA PARA IMAGEM
+    if endpoint_name == "generate_image":
+        workspace = "canalobservadoreconomico"
+
 
     # Roteamento centralizado da aplicaÃ§Ã£o ASGI Modal
     endpoint_path = endpoint_name.replace('_', '/')
@@ -5605,6 +5658,10 @@ def worker_studio_generate(job_id: str, payload: dict):
     for acc in valid_modal_accounts:
         workspace = acc.get('workspace')
         
+        # CONTA 7 - DEDICADA EXCLUSIVAMENTE PARA IMAGEM (Qwen, Flux, etc)
+        if payload.get("type") == "image":
+            workspace = "canalobservadoreconomico"
+            
         if payload.get("type") == "image":
             url_modal = f"https://{workspace}--apollo-render-router-apollo-api.modal.run/generate/image"
         else:

@@ -134,6 +134,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+import httpx
+from fastapi.responses import JSONResponse
+
+@app.get("/info")
+async def gradio_info_proxy():
+    # ZeroGPU proxy needs a 200 OK JSON response for /info, but gr.mount_gradio_app
+    # moves it to /gradio_api/info. We proxy it internally.
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get("http://127.0.0.1:7860/gradio_api/info", timeout=5.0)
+            return JSONResponse(content=resp.json(), status_code=resp.status_code)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
 app.add_middleware(RateLimitMiddleware)
 
 from backend.api import routes_audio_lab
@@ -185,13 +199,16 @@ app.include_router(routes_storage_gateway.router)
 app.include_router(routes_radio.router)
 app.include_router(routes_voice.router)
 
+from backend.api import routes_autoblog
+app.include_router(routes_autoblog.router)
+
 # Rotas de Modelos Musicais (YuE / ACE-Step)
 from backend.api import routes_audio
 app.include_router(routes_audio.router)
 
-@app.get("/")
-def read_root():
-    return {"status": "online", "message": "Apollo Motor Central Operacional"}
+# @app.get("/")
+# def read_root():
+#     return {"status": "online", "message": "Apollo Motor Central Operacional"}
 
 @app.get("/health")
 def health_check():

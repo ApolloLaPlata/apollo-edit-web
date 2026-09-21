@@ -13,7 +13,7 @@ import io
 from pathlib import Path
 import modal
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 hf_secret = modal.Secret.from_name("huggingface-secret")
 
 MODEL_DIR = "/models/ltx2_distilled"

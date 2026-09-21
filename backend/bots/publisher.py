@@ -2,101 +2,65 @@ import sqlite3
 import uuid
 import datetime
 import re
-
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "..", "frontend", "dev.db")
+# Banco temporário para a aprovação biométrica do Pocket Director
+APPROVAL_DB_PATH = os.path.join(BASE_DIR, "approval_queue.db")
+# Banco final do Next.js (que o Pocket Director usará após aprovar)
+NEXT_DB_PATH = os.path.join(BASE_DIR, "..", "frontend", "dev.db")
+
+def init_approval_db():
+    conn = sqlite3.connect(APPROVAL_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS approval_queue (
+            id TEXT PRIMARY KEY,
+            titulo TEXT,
+            markdown TEXT,
+            image_url TEXT,
+            audio_path TEXT,
+            duracao_segundos REAL,
+            status TEXT DEFAULT 'pending',
+            created_at TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Inicializa o banco de aprovação assim que o módulo é importado
+init_approval_db()
 
 def slugify(text):
     text = text.lower()
     text = re.sub(r'[^a-z0-9]+', '-', text)
     return text.strip('-')
 
-def publicar_artigo(titulo, markdown, image_url, blog_name="Observador Econômico"):
+def publicar_artigo(titulo, markdown, image_url, blog_name="Observador Econômico", audio_path=None, duracao_segundos=0):
     """
-    Recebe os dados orquestrados e salva diretamente no banco de dados
-    do Next.js (SQLite) para que o frontend exiba em tempo real.
+    Recebe os dados orquestrados e SALVA NA FILA DE APROVAÇÃO BIOMÉTRICA (approval_queue.db).
+    O post só irá para o Next.js (dev.db) após o usuário aprovar pelo celular (Pocket Director).
     """
-    print(f"[PUBLISHER] Injetando artigo '{titulo}' no banco de dados do CMS...")
+    print(f"[PUBLISHER] Redirecionando artigo '{titulo}' para a Fila de Aprovação Biométrica...")
     
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # 1. Pega o ID do blog
-    cursor.execute("SELECT id FROM Blog WHERE name = ?", (blog_name,))
-    blog = cursor.fetchone()
-    if not blog:
-        print("[ERRO] Blog não encontrado no banco de dados!")
-        return
-    blog_id = blog[0]
-    
-    # 2. Gera os dados para a tabela Post
-    post_id = "cl" + str(uuid.uuid4()).replace("-", "")[:23]
-    slug = slugify(titulo) + "-" + str(uuid.uuid4())[:6]
-    
-    # Conversão super básica de Markdown para HTML apenas para fallback
-    html_content = f"<div><h1>{titulo}</h1><p>{markdown}</p></div>"
-    
-    now = datetime.datetime.utcnow().isoformat() + "Z"
-    
-    # 3. Insere no banco (tabela Post gerada pelo Prisma)
     try:
-        cursor.execute('''
-            INSERT INTO Post (id, title, slug, contentMd, contentHtml, coverImage, author, isPublished, publishedAt, createdAt, updatedAt, blogId)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            post_id,
-            titulo,
-            slug,
-            markdown,
-            html_content,
-            image_url,
-            "Redação IA",
-            1, # isPublished = True
-            now,
-            now,
-            now,
-            blog_id
-        ))
-        conn.commit()
-        print(f"[PUBLISHER] [ OK ] Sucesso! Artigo '{titulo}' publicado no Next.js (Post ID: {post_id})")
+        conn = sqlite3.connect(APPROVAL_DB_PATH)
+        cursor = conn.cursor()
         
-        # 4. Geração de Comentários Fantasmas (Astroturfing)
-        try:
-            from writer import gerar_comentarios_fantasmas
-            import random
-            
-            # Decide randomicamente gerar entre 3 e 8 comentários para parecer orgânico
-            qtd = random.randint(3, 8)
-            comentarios = gerar_comentarios_fantasmas(titulo, qtd)
-            
-            if comentarios:
-                for c in comentarios:
-                    c_id = "cl" + str(uuid.uuid4()).replace("-", "")[:23]
-                    # Gera um avatar aleatório consistente pro nome
-                    avatar = f"https://api.dicebear.com/7.x/avataaars/svg?seed={c['authorName'].replace(' ', '')}"
-                    # Simula comentários feitos nas últimas 2 horas
-                    minutos_atras = random.randint(1, 120)
-                    c_time = (datetime.datetime.utcnow() - datetime.timedelta(minutes=minutos_atras)).isoformat() + "Z"
-                    
-                    cursor.execute('''
-                        INSERT INTO Comment (id, authorName, authorAvatar, content, createdAt, postId)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                    ''', (
-                        c_id,
-                        c['authorName'],
-                        avatar,
-                        c['content'],
-                        c_time,
-                        post_id
-                    ))
-                conn.commit()
-                print(f"[PUBLISHER] [ OK ] Injetados {len(comentarios)} comentários fantasmas!")
-        except Exception as ec:
-            print(f"[PUBLISHER] [AVISO] Falha ao injetar comentários fantasmas: {ec}")
+        post_id = "draft_" + str(uuid.uuid4()).replace("-", "")[:16]
+        now = datetime.datetime.utcnow().isoformat() + "Z"
+        
+        cursor.execute('''
+            INSERT INTO approval_queue (id, titulo, markdown, image_url, audio_path, duracao_segundos, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)
+        ''', (post_id, titulo, markdown, image_url, audio_path, duracao_segundos, now))
+        
+        conn.commit()
+        print(f"[PUBLISHER] [ OK ] Rascunho enfileirado com sucesso! (Draft ID: {post_id})")
+        if duracao_segundos > 0:
+            print(f"[PUBLISHER] [ OK ] Metadados de Áudio anexados: {duracao_segundos:.2f}s | {audio_path}")
             
     except Exception as e:
-        print(f"[PUBLISHER] [ERRO] Falha ao publicar: {e}")
-        
-    conn.close()
+        print(f"[PUBLISHER] [ERRO] Falha ao enfileirar no approval_queue.db: {e}")
+    finally:
+        conn.close()

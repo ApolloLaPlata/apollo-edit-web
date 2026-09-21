@@ -105,3 +105,45 @@ def padronizar_vertical(video_path, output_path):
     if result.returncode != 0:
         raise Exception(f'Erro no FFmpeg: {result.stderr}')
     return output_path
+
+def extrair_ultimo_frame(video_path, output_path):
+    # Extrai o ultimo frame exato usando -sseof -3
+    cmd = ['ffmpeg', '-y', '-sseof', '-3', '-i', video_path, '-update', '1', '-q:v', '1', output_path]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise Exception(f'Erro no FFmpeg: {result.stderr}')
+    return output_path
+
+def liquidificador_mixar(concat_list_path, audio_path, voice_path, output_path):
+    # Usa stream_loop infinito pro audio e adiciona o locutor por cima se existir
+    if audio_path and voice_path:
+        cmd = [
+            'ffmpeg', '-y', 
+            '-f', 'concat', '-safe', '0', '-i', concat_list_path,
+            '-stream_loop', '-1', '-i', audio_path,
+            '-i', voice_path,
+            '-filter_complex', '[1:a]volume=0.3[bg];[2:a]volume=1.5,adelay=1000|1000[voice];[bg][voice]amix=inputs=2:duration=first[aout]',
+            '-map', '0:v', '-map', '[aout]',
+            '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k',
+            '-shortest', output_path
+        ]
+    elif audio_path:
+        cmd = [
+            'ffmpeg', '-y',
+            '-f', 'concat', '-safe', '0', '-i', concat_list_path,
+            '-stream_loop', '-1', '-i', audio_path,
+            '-map', '0:v', '-map', '1:a',
+            '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k',
+            '-shortest', output_path
+        ]
+    else:
+        cmd = [
+            'ffmpeg', '-y',
+            '-f', 'concat', '-safe', '0', '-i', concat_list_path,
+            '-c', 'copy', output_path
+        ]
+        
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise Exception(f'Erro no FFmpeg Liquidificador: {result.stderr}')
+    return output_path

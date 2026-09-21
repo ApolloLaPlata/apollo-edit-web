@@ -50,7 +50,7 @@ sadtalker_image = (
 )
 
 try:
-    from backend.cloud_tools.modal_app import app
+    from backend.cloud_tools.core_app import app
 except ImportError:
     app = modal.App("dummy")
 

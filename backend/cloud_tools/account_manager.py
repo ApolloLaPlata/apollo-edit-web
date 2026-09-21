@@ -135,7 +135,7 @@ def get_active_account(needs_lightning=False):
     provider_req = "lightning" if needs_lightning else "modal"
     
     # Try to find an active account with balance
-    valid = [a for a in accounts if a.get("provider") == provider_req and a.get("last_balance", 0.0) > 0.0]
+    valid = [a for a in accounts if a.get("provider") == provider_req and a.get("last_balance", 0.0) > 0.0 and a.get("is_active", False)]
     if valid:
         import random
         acc = random.choice(valid)

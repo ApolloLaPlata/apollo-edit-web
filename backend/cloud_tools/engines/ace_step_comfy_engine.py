@@ -72,7 +72,7 @@ audio_comfy_image = (
 
 apollo_volume = modal.Volume.from_name("apollo-comfy-volume", create_if_missing=True)
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 import time
 import subprocess
 import urllib.request

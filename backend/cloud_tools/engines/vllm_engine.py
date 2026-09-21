@@ -6,7 +6,7 @@ Gera texto em streaming (Server-Sent Events) para alimentar o TTS.
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 from fastapi import Request
 from fastapi.responses import StreamingResponse
 import json

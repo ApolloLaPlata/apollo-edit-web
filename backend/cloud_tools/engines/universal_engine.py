@@ -47,7 +47,8 @@ universal_comfy_image = (
             "git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git /comfyui/custom_nodes/ComfyUI_UltimateSDUpscale",
             "git clone https://github.com/Goldlionren/ComfyUI_JR_MiniMaxH3Node.git /comfyui/custom_nodes/ComfyUI_JR_MiniMaxH3Node && cd /comfyui/custom_nodes/ComfyUI_JR_MiniMaxH3Node && pip install -r requirements.txt",
             "pip install --upgrade diffusers==0.31.0",
-            "comfy --workspace /comfyui node install https://github.com/WASasquatch/was-node-suite-comfyui"
+            "comfy --workspace /comfyui node install https://github.com/WASasquatch/was-node-suite-comfyui",
+            "python -c \"import os; import shutil; shutil.rmtree('/usr/local/lib/python3.10/site-packages/comfy_kitchen', ignore_errors=True); os.makedirs('/usr/local/lib/python3.10/site-packages/comfy_kitchen', exist_ok=True); open('/usr/local/lib/python3.10/site-packages/comfy_kitchen/__init__.py', 'w').write('def int8_attention_is_available(): return False\\ndef prequantize_int8_attention(*args, **kwargs): pass\\ndef int8_attention_from_prequantized(*args, **kwargs): pass\\ndef int8_attention(*args, **kwargs): pass\\ndef apply_rope(xq, xk, freqs_cis):\\n    import comfy.ldm.flux.math as m\\n    return m._apply_rope(xq, xk, freqs_cis)\\ndef apply_rope1(x, freqs_cis):\\n    import comfy.ldm.flux.math as m\\n    return m._apply_rope1(x, freqs_cis)\\n')\""
         ]
     )
     .run_commands([
@@ -68,7 +69,7 @@ universal_comfy_image = (
 comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=True)
 apollo_volume = modal.Volume.from_name("apollo-comfy-volume", create_if_missing=True)
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 from contextlib import contextmanager
 import time
 
@@ -837,3 +838,6 @@ class UniversalComfyEngine(BaseUniversalComfyEngine):
 )
 class BlogUniversalComfyEngine(BaseUniversalComfyEngine):
     pass
+
+
+

@@ -7,7 +7,7 @@ import base64
 import uuid
 
 import backend.cloud_tools.modal_app as app_module
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 # Lemos um arquivo local para quebrar o cache do Docker (Update System)
 try:
@@ -195,10 +195,8 @@ class RadioComfyEngine:
     
     
 )
-@modal.web_server(8188, startup_timeout=120)
+@modal.web_server(8188, startup_timeout=900)
 def serve_gui():
     import subprocess
     print("[ComfyUI GUI] Iniciando servidor publico na Modal...")
-    print("[ComfyUI GUI] Instalando patch de torch==2.5.1 por causa do comfy-kitchen...")
-    subprocess.check_call(["pip", "install", "torch==2.5.1", "torchvision==0.20.1", "torchaudio==2.5.1", "--index-url", "https://download.pytorch.org/whl/cu121", "--upgrade"])
     subprocess.check_call(["python", "main.py", "--listen", "0.0.0.0", "--port", "8188"], cwd="/comfyui")

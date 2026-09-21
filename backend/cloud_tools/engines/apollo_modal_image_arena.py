@@ -25,7 +25,7 @@ class GenerationRequest(BaseModel):
     volumes={"/comfyui_models": comfy_volume},
     gpu="h100", # Requisitando GPU H100 na Modal
     timeout=600,
-    keep_warm=1
+    min_containers=1
 )
 @modal.asgi_app()
 def fastapi_app():
@@ -49,3 +49,4 @@ async def generate_qwen(req: GenerationRequest):
     # Logica de injecao no ComfyUI Headless para Qwen Image VL
     print("Iniciando Qwen VL na H100...")
     return {"status": "success", "model": "Qwen", "image_b64": "..."}
+

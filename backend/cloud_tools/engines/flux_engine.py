@@ -5,7 +5,7 @@ from backend.cloud_tools.engines.universal_engine import universal_comfy_image a
 
 comfy_volume = modal.Volume.from_name("comfyui-models-vol", create_if_missing=True)
 
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.core_app import app
 
 from contextlib import contextmanager
 
@@ -157,13 +157,15 @@ class Flux2ComfyEngine_V2:
                 workflow = json.load(f)
             print(f"[Flux2ComfyEngine_V2] Workflow carregado: {len(workflow)} nos")
 
-            # --- FIX: OVERRIDE MODEL NAMES TO MATCH WHAT IS ON MODAL VOLUME ---
-            if "68:12" in workflow and "unet_name" in workflow["68:12"].get("inputs", {}):
-                workflow["68:12"]["inputs"]["unet_name"] = "flux1-dev.safetensors"
-            if "68:38" in workflow and "clip_name" in workflow["68:38"].get("inputs", {}):
-                workflow["68:38"]["inputs"]["clip_name"] = "t5xxl_fp16.safetensors"
-            if "68:10" in workflow and "vae_name" in workflow["68:10"].get("inputs", {}):
-                workflow["68:10"]["inputs"]["vae_name"] = "ae.safetensors"
+            # --- FIX: OVERRIDE MODEL NAMES DYNAMICALLY ---
+            for node_id, node_data in workflow.items():
+                ct = node_data.get("class_type", "")
+                if ct == "UNETLoader" and "unet_name" in node_data.get("inputs", {}):
+                    node_data["inputs"]["unet_name"] = "flux1-dev.safetensors"
+                elif ct in ["DualCLIPLoader", "CLIPLoader"] and "clip_name" in node_data.get("inputs", {}):
+                    node_data["inputs"]["clip_name"] = "t5xxl_fp16.safetensors"
+                elif ct == "VAELoader" and "vae_name" in node_data.get("inputs", {}):
+                    node_data["inputs"]["vae_name"] = "ae.safetensors"
                 
             # --- CIVITAI LORA DOWNLOADER ---
             lora_url = kwargs.get("lora_url")
@@ -191,28 +193,46 @@ class Flux2ComfyEngine_V2:
                 except Exception as e:
                     print(f"[Flux2ComfyEngine_V2] Falha ao baixar LoRA de {lora_url}: {e}")
 
+            nodes_updated = []
+            
+            # Encontrar IDs dinamicamente
+            lora_node_id = None
+            unet_node_id = None
+            clip_node_id = None
+            for nid, ndata in workflow.items():
+                ct = ndata.get("class_type", "")
+                if ct in ["LoraLoader", "LoraLoaderModelOnly"]:
+                    lora_node_id = nid
+                elif ct == "UNETLoader":
+                    unet_node_id = nid
+                elif ct in ["DualCLIPLoader", "CLIPLoader"]:
+                    clip_node_id = nid
+
             # Injetar LoRA customizado ou ignorar
-            if lora_name and "68:89" in workflow:
+            if lora_name and lora_node_id in workflow:
                 print(f"[Flux2ComfyEngine_V2] Injetando LoRA: {lora_name} (Strength: {lora_strength})")
-                workflow["68:89"]["inputs"]["lora_name"] = lora_name
-                workflow["68:89"]["inputs"]["strength_model"] = lora_strength
-                if "68:90" in workflow: # Switch Node do LoRA (se existir)
-                    workflow["68:90"]["inputs"]["value"] = True
+                workflow[lora_node_id]["inputs"]["lora_name"] = lora_name
+                workflow[lora_node_id]["inputs"]["strength_model"] = lora_strength
+                # Encontrar o switch do Lora dinamicamente tambem se possivel (nao estritamente necessario)
             else:
-                if "68:89" in workflow:
-                    del workflow["68:89"]
+                if lora_node_id in workflow:
+                    del workflow[lora_node_id]
                 for node_id, node_data in workflow.items():
                     inputs = node_data.get("inputs", {})
-                    for k, v in inputs.items():
-                        if isinstance(v, list) and len(v) > 0 and v[0] == "68:89":
-                            inputs[k] = ["68:12", v[1]]
+                    for k, v in list(inputs.items()):
+                        if isinstance(v, list) and len(v) > 0 and v[0] == lora_node_id:
+                            if v[1] == 0 and unet_node_id:
+                                inputs[k] = [unet_node_id, 0] # MODEL
+                            elif v[1] == 1 and clip_node_id:
+                                inputs[k] = [clip_node_id, 0] # CLIP
+
+            for node_id, node_data in workflow.items():
                 ct = node_data.get("class_type", "")
-                node = node_data
-                if ct == "CLIPTextEncode" and "text" in node["inputs"]:
-                    node["inputs"]["text"] = prompt
+                if ct == "CLIPTextEncode" and "text" in node_data["inputs"]:
+                    node_data["inputs"]["text"] = prompt
                     nodes_updated.append(f"CLIPTextEncode({node_id})")
                 elif ct == "RandomNoise":
-                    node["inputs"]["noise_seed"] = seed % 1_000_000_000_000_000
+                    node_data["inputs"]["noise_seed"] = seed % 1_000_000_000_000_000
                     nodes_updated.append(f"RandomNoise({node_id})=seed:{seed}")
             
             if style:
@@ -266,6 +286,12 @@ class Flux2ComfyEngine_V2:
                     pass
                 time.sleep(2)
 
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode("utf-8", errors="ignore")
+            err = traceback.format_exc()
+            print(f"[Flux2ComfyEngine_V2] HTTP ERROR: {he.code} {he.reason} - Body: {err_body}")
+            print(f"Traceback: {err}")
+            return {"status": "error", "message": f"HTTP Error {he.code}: {he.reason} - Body: {err_body}", "traceback": err}
         except Exception as e:
             err = traceback.format_exc()
             print(f"[Flux2ComfyEngine_V2] ERROR: {err}")

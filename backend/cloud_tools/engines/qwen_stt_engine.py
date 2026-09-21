@@ -5,7 +5,7 @@ Modelo ASR SOTA em benchmarks de transcrição, superando o Whisper em precisão
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import tempfile
 from fastapi import Request
@@ -34,7 +34,7 @@ qwen_image = (
     timeout=300,
     min_containers=0,
     enable_memory_snapshot=True,
-    volumes={"/data": modal.Volume.from_name("apollo-voice-models")},
+    volumes={"/data": modal.Volume.from_name("apollo-voice-models", create_if_missing=True)},
 )
 class QwenSTT:
     def __init__(self):

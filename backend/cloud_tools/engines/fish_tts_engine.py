@@ -5,7 +5,7 @@ Utiliza o modelo Fish Speech para extrema naturalidade e suporte a clonagem de v
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 from fastapi import Request
@@ -18,6 +18,9 @@ fish_image = (
         "torch>=2.0.0",
         "torchaudio",
         "transformers",
+        "sentencepiece",
+        "tiktoken",
+        "fastapi[standard]",
         "soundfile",
         "fastapi",
         "tiktoken",
@@ -34,7 +37,7 @@ MODEL_ID = "fishaudio/fish-speech-1.5" # ou equivalente SOTA
     timeout=300,
     min_containers=0,
     enable_memory_snapshot=True,
-    volumes={"/data": modal.Volume.from_name("apollo-voice-models")},
+    volumes={"/data": modal.Volume.from_name("apollo-voice-models", create_if_missing=True)},
 )
 class FishTTS:
     @modal.enter()
@@ -94,8 +97,8 @@ class FishTTS:
         return buffer.read()
 
 @app.function(image=fish_image)
-@modal.fastapi_endpoint(method="POST", label="apollo-api-fish-tts")
-async def api_fish_tts(request: Request):
+@modal.fastapi_endpoint(method="POST", label="apollo-api-fish-tts-basic")
+async def api_fish_tts_basic(request: Request):
     try:
         from fastapi.responses import Response, JSONResponse
         data = await request.json()

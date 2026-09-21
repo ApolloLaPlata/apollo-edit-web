@@ -5,32 +5,42 @@ import base64
 
 cache_vol = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
 
+def download_florence_model():
+    from transformers import AutoProcessor, AutoModelForCausalLM
+    model_id = "microsoft/Florence-2-large"
+    AutoModelForCausalLM.from_pretrained(model_id, trust_remote_code=True)
+    AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+
 vision_image = (
     modal.Image.debian_slim(python_version="3.11")
     .pip_install("packaging", "ninja", "torch", "torchvision")
-    .pip_install("transformers>=4.42.0", "Pillow", "einops", "accelerate", "timm")
+    .pip_install("transformers==4.41.2", "Pillow", "einops", "accelerate", "timm")
+    .run_commands("mkdir -p /usr/local/lib/python3.11/site-packages/flash_attn && touch /usr/local/lib/python3.11/site-packages/flash_attn/__init__.py")
+    .run_function(download_florence_model)
 )
 
 # App dedicado para a Vision Engine
 app = modal.App("apollo-vision-engine")
 
-@app.cls(image=vision_image, gpu="T4", timeout=300, volumes={"/root/.cache/huggingface": cache_vol}, enable_memory_snapshot=True)
+@app.cls(image=vision_image, gpu="T4", timeout=300, enable_memory_snapshot=False)
 class FlorenceVisionEngine:
-    @modal.enter(snap=True)
+    @modal.enter()
     def setup(self):
         import torch
         from transformers import AutoProcessor, AutoModelForCausalLM 
         print("[VisionEngine] Inicializando Florence-2-large...")
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         
-        # Florence-2 e o estado da arte open source para compreensao de imagem / OCR
+        # IMPORTANTE: Durante o snap=True, o modelo PRECISA ficar na CPU.
+        # Inicializar contexto CUDA antes do snapshot causa crash-looping.
+        self.device = "cpu" 
+        self.torch_dtype = torch.float16 # CUDA initialization removed
+        
         self.model_id = "microsoft/Florence-2-large"
         self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_id, torch_dtype=self.torch_dtype, trust_remote_code=True
-        ).to(self.device)
+            self.model_id, trust_remote_code=True
+        )
         self.processor = AutoProcessor.from_pretrained(self.model_id, trust_remote_code=True)
-        print("[VisionEngine] Florence-2 pronto para analisar imagens.")
+        print("[VisionEngine] Florence-2 pronto no CPU (Snapshotting...).")
 
     @modal.method()
     def analyze_image(self, image_b64: str, task_prompt: str = "<MORE_DETAILED_CAPTION>") -> str:
@@ -38,6 +48,7 @@ class FlorenceVisionEngine:
         if torch.cuda.is_available() and self.model.device.type != "cuda":
             print("[VisionEngine] Movendo modelo do CPU para CUDA (pos-snapshot)...")
             self.model = self.model.to("cuda")
+            self.device = "cuda"
             
         from PIL import Image
         import torch

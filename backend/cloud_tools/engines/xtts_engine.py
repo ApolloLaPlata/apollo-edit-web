@@ -6,7 +6,7 @@ Pesa apenas 1.8GB. Suporta clonagem Zero-Shot.
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 
@@ -113,19 +113,18 @@ class XttsEngine:
                 if generated_files:
                     with open(generated_files[0], "rb") as f_up:
                         final_bytes = f_up.read()
+                    shutil.rmtree(out_dir, ignore_errors=True)
+                    os.remove(in_wav)
+                    return final_bytes
                 else:
                     print("[AudioSR] Falhou ao encontrar o arquivo upsampled. Retornando 24kHz original.")
-                    final_bytes = open(in_wav, "rb").read()
                 
                 shutil.rmtree(out_dir, ignore_errors=True)
                 os.remove(in_wav)
-                return final_bytes
 
-            else:
-                # Retorno padrão 24kHz
-                out_io = io.BytesIO()
-                sf.write(out_io, wav, samplerate=24000, format='WAV')
-                return out_io.getvalue()
+            out_io = io.BytesIO()
+            sf.write(out_io, wav, samplerate=24000, format='WAV')
+            return out_io.getvalue()
         finally:
             if ref_file_path and os.path.exists(ref_file_path):
                 os.remove(ref_file_path)
@@ -151,6 +150,7 @@ class XttsEngine:
             repetition_penalty = data.get("repetition_penalty", 3.0)
             top_p = data.get("top_p", 0.85)
             top_k = data.get("top_k", 50)
+            return_raw_wav = data.get("return_raw_wav", False)
             
             if not text:
                 return JSONResponse({"error": "No text provided"}, status_code=400)
@@ -159,6 +159,9 @@ class XttsEngine:
             
             # Chama a geração WAV original com todos os novos parâmetros
             wav_bytes = self.generate_voice.local(text, ref_bytes, temperature, speed, language, repetition_penalty, top_p, top_k)
+            
+            if return_raw_wav:
+                return Response(content=wav_bytes, media_type="audio/wav")
             
             # Converter WAV para Opus in-memory via FFmpeg
             process = subprocess.Popen(

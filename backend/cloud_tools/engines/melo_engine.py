@@ -6,7 +6,7 @@ Não faz clonagem Zero-Shot, usa vozes embutidas.
 """
 
 import modal
-from backend.cloud_tools.modal_app import app
+from backend.cloud_tools.tts_app import app
 import os
 import io
 

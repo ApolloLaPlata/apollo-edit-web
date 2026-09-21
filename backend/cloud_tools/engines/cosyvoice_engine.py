@@ -1,4 +1,4 @@
-import os
+﻿import os
 import modal
 
 def download_models():
@@ -19,7 +19,7 @@ cosy_image = (
 )
 
 try:
-    from backend.cloud_tools.modal_app import app
+    from backend.cloud_tools.tts_app import app
 except ImportError:
     app = modal.App("apollo-api-cosyvoice", image=cosy_image)
 
@@ -81,3 +81,29 @@ class CosyVoiceEngine:
         
         os.remove(tmp_path)
         return out_buf.getvalue()
+
+
+from fastapi import Request
+
+@app.function(image=cosy_image)
+@modal.fastapi_endpoint(method="POST", label="apollo-api-cosyvoice")
+async def api_cosyvoice(request: Request):
+    from fastapi.responses import Response, JSONResponse
+    import base64
+    try:
+        data = await request.json()
+        text = data.get("text", "")
+        instruct_text = data.get("instruct_text", "")
+        prompt_text = data.get("prompt_text", "")
+        ref_b64 = data.get("reference_audio_base64", "")
+        if not text:
+            return JSONResponse({"error": "No text provided"}, status_code=400)
+        if not ref_b64:
+            return JSONResponse({"error": "Reference audio required"}, status_code=400)
+            
+        ref_bytes = base64.b64decode(ref_b64)
+        tts = CosyVoiceEngine()
+        audio_bytes = tts.generate_voice.remote(text, instruct_text, prompt_text, ref_bytes)
+        return Response(content=audio_bytes, media_type="audio/wav")
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
