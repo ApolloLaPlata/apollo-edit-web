@@ -225,6 +225,9 @@ app.include_router(routes_autoblog.router)
 from backend.api import routes_audio
 app.include_router(routes_audio.router)
 
+from backend.routes import broadcaster
+app.include_router(broadcaster.router, prefix="/api/broadcaster", tags=["Broadcaster"])
+
 # @app.get("/")
 # def read_root():
 #     return {"status": "online", "message": "Apollo Motor Central Operacional"}
