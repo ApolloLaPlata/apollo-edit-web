@@ -1,4 +1,4 @@
-﻿import os
+import os
 import asyncio
 import logging
 import httpx
@@ -28,10 +28,10 @@ from backend.financial_agent.coin_ledger import OPERATION_COSTS
 from backend.financial_agent.subscription_manager import get_all_plans_comparison
 from backend.cloud_tools.account_pool import account_pool
 
-# Carregar variÃƒÆ’Ã‚Â¡veis de ambiente
+# Carregar variÃƒÂ¡veis de ambiente
 load_dotenv()
 
-# ConfiguraÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o de Logs
+# ConfiguraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ApolloServer")
 
@@ -40,7 +40,7 @@ gateway = WaterfallRouter()
 watchdog = WatchdogAgent(router_instance=gateway)
 cerbero = CerberoAgent()
 
-# O Maestro agora ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© instanciado aqui com acesso ao Gateway para poder "pensar"
+# O Maestro agora ÃƒÆ’Ã‚Â© instanciado aqui com acesso ao Gateway para poder "pensar"
 from backend.agents.maestro_agent import MaestroAgent
 from backend.agents.user_concierge import UserConciergeAgent
 
@@ -50,44 +50,25 @@ concierge = UserConciergeAgent(router_instance=gateway)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # STARTUP
-    logger.info("ðŸš€ Iniciando Motor Central Apollo...")
+    logger.info("🚀 Iniciando Motor Central Apollo...")
     # from backend.services.render_queue import render_queue
     # render_queue.start()
-
-    # 0. INICIAR AUTOBLOG (O CAVALO DE TROIA NEXT.JS)
-    import subprocess
-    import os
-    autoblog_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "autoblog")
-    if os.path.exists(autoblog_path):
-        logger.info("ðŸŽ Iniciando Autoblog Next.js em background (Porta 3000)...")
-        # Roda npm install e depois npm run dev/start. Usando bash para encadear.
-        # Em Hugging Face Spaces, sh/bash estÃ¡ disponÃ­vel. No windows usamos shell=True
-        cmd = "npm install && npm run build && npm run start"
-        app.state.autoblog_process = subprocess.Popen(
-            cmd,
-            cwd=autoblog_path,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    else:
-        logger.warning("âš ï¸ Pasta autoblog nÃ£o encontrada. Ignorando boot do CMS.")
 
     # 1. Colmeia de Agentes Administrativos
     asyncio.create_task(watchdog.start_patrol())
     asyncio.create_task(cerbero.start_patrol())
-    # O Zelador (EspaÃ§o e Lixo)
+    # O Zelador (Espaço e Lixo)
     zelador = ZeladorAgent()
     asyncio.create_task(zelador.start_patrol())
     
-    # Os Economistas (Analista Financeiro e Scraper de PreÃ§os)
+    # Os Economistas (Analista Financeiro e Scraper de Preços)
     analyst = MarketAnalystAgent()
     asyncio.create_task(analyst.start_patrol())
     
     scraper = PricingScraperAgent()
     asyncio.create_task(scraper.start_patrol())
     
-    # Marketing e TendÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âªncias (Gestor de TrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡fego e Olheiro)
+    # Marketing e TendÃƒÆ’Ã‚Âªncias (Gestor de TrÃƒÆ’Ã‚Â¡fego e Olheiro)
     traffic_mgr = TrafficManagerAgent()
     asyncio.create_task(traffic_mgr.start_patrol())
     
@@ -97,7 +78,7 @@ async def lifespan(app: FastAPI):
     asyncio.create_task(concierge.start_patrol())
     logger.info("\U0001f6e1\ufe0f Colmeia Multi-Agente ativada (Watchdog, C\xe9rbero, Zelador, Maestro, Concierge).")
     
-    # Injetando a referÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âªncia do Maestro nas rotas de WhatsApp
+    # Injetando a referÃƒÆ’Ã‚Âªncia do Maestro nas rotas de WhatsApp
     routes_whatsapp.set_maestro(maestro)
 
     # 2. Inscreve o Maestro no HiveBus para receber todos os eventos
@@ -131,8 +112,8 @@ async def lifespan(app: FastAPI):
 
     logger.info("\u2705 Apollo Motor Central ONLINE.")
     yield
-    # ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ SHUTDOWN ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
-    logger.info("ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂºÃƒÂ¢Ã¢â€šÂ¬Ã‹Å“ Encerrando Apollo Motor Central...")
+    # ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ SHUTDOWN ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ Ã¢â€šÂ¬
+    logger.info("ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂºÃ¢â‚¬Ëœ Encerrando Apollo Motor Central...")
     # from backend.services.render_queue import render_queue
     # render_queue.stop()
 
@@ -178,14 +159,14 @@ def get_pending_approvals():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Erro Global nÃƒÆ’Ã‚Â£o tratado na rota {request.url.path}: {exc}")
+    logger.error(f"Erro Global nÃƒÂ£o tratado na rota {request.url.path}: {exc}")
     logger.error(traceback.format_exc())
     return JSONResponse(
         status_code=500,
         content={"message": "Ocorreu um erro interno no servidor. Os logs foram capturados pelo zelador."}
     )
 
-# Registrando as Rotas de VÃƒÆ’Ã‚Â­deo (Site), Admin (Painel), WhatsApp, Workers, Phantom Fleet, Economia e UI WebSocket
+# Registrando as Rotas de VÃƒÂ­deo (Site), Admin (Painel), WhatsApp, Workers, Phantom Fleet, Economia e UI WebSocket
 app.include_router(routes_audio_lab.router)
 app.include_router(routes_video.router)
 app.include_router(routes_subtitles.router)
@@ -243,7 +224,7 @@ async def serve_painel():
 
 @app.get("/health")
 def health_check():
-    """Endpoint para o Painel Administrativo monitorar a saÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºde da Nuvem"""
+    """Endpoint para o Painel Administrativo monitorar a saÃƒÆ’Ã‚Âºde da Nuvem"""
     
     active_lightning_keys = sum(1 for acc in CLOUD_ACCOUNTS.get("lightning", []) if acc["status"] == "active")
     total_lightning_keys = len(CLOUD_ACCOUNTS.get("lightning", []))
@@ -265,19 +246,19 @@ from starlette.requests import Request
 async def catch_all_proxy(request: Request, path_name: str):
     """
     Cavalo de Troia Reverse Proxy:
-    Redireciona todo o trÃ¡fego que nÃ£o Ã© da API para o Next.js rodando localmente na porta 3000.
+    Redireciona todo o tráfego que não é da API para o Next.js rodando localmente na porta 3000.
     Isso permite servir o Autoblog SSR no Hugging Face pela mesma porta 7860.
     """
     url = f"http://127.0.0.1:3000/{path_name}"
     
-    # Repassa os parÃ¢metros da query string
+    # Repassa os parâmetros da query string
     if request.url.query:
         url += f"?{request.url.query}"
         
     client = httpx.AsyncClient(timeout=httpx.Timeout(60.0))
     
     try:
-        # Prepara a requisiÃ§Ã£o para o Next.js
+        # Prepara a requisição para o Next.js
         req = client.build_request(
             request.method,
             url,
@@ -285,7 +266,7 @@ async def catch_all_proxy(request: Request, path_name: str):
             content=await request.body()
         )
         
-        # Envia a requisiÃ§Ã£o
+        # Envia a requisição
         resp = await client.send(req, stream=True)
         
         # Devolve a resposta (StreamingResponse permite carregar arquivos pesados sem engasgar)
@@ -304,6 +285,7 @@ if __name__ == "__main__":
     import uvicorn
     # Rodando o servidor local na porta 8000
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True, reload_excludes=["logs/*", "*.log", "Workspaces/*", ".agents/*", "scratch/*", "backend/storage/*", "backend/storage/memories/*", "*.json"])
+
 
 
 
