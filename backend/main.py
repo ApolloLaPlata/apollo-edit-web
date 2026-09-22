@@ -228,8 +228,14 @@ app.include_router(routes_audio.router)
 from backend.routes import broadcaster
 app.include_router(broadcaster.router, prefix="/api/broadcaster", tags=["Broadcaster"])
 
+from fastapi.responses import HTMLResponse
 from backend.routes import broadcaster_admin
 app.include_router(broadcaster_admin.router, prefix="/api/broadcaster/admin", tags=["Broadcaster Admin"])
+
+@app.get("/painel", response_class=HTMLResponse, tags=["Broadcaster Admin"])
+async def serve_painel():
+    with open("painel_index.html", "r", encoding="utf-8") as f:
+        return f.read()
 
 # @app.get("/")
 # def read_root():
@@ -298,6 +304,7 @@ if __name__ == "__main__":
     import uvicorn
     # Rodando o servidor local na porta 8000
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True, reload_excludes=["logs/*", "*.log", "Workspaces/*", ".agents/*", "scratch/*", "backend/storage/*", "backend/storage/memories/*", "*.json"])
+
 
 
 
