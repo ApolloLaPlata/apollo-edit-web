@@ -72,7 +72,7 @@ class WaterfallRouter:
         # Se o usuário exigiu um modelo proprietário pesado (GPT-4/Gemini), bypassa a Lightning e vai direto pro OpenRouter (Terciário)
         if user_preferred_model and ("gpt" in user_preferred_model.lower() or "gemini" in user_preferred_model.lower()):
             logger.info("[GATEWAY CENTRAL] Usuário escolheu modelo proprietário. Roteando direto para OpenRouter.")
-            return await self._execute_openrouter(prompt, system_prompt, user_preferred_model)
+            raise Exception("As 4 contas da Lightning AI esgotaram e o OpenRouter esta BLOQUEADO pela regra de ouro. O Agente deve hibernar.")
 
         # O MODELO PADRÃO DA NOSSA INFRAESTRUTURA: Rápido e gratuito na Lightning
         target_model = user_preferred_model if user_preferred_model else "openai/gpt-4o"
@@ -118,7 +118,7 @@ class WaterfallRouter:
                 
         # TENTATIVA FINAL: FALLBACK PARA OPENROUTER (O Pneu de Estepe)
         logger.warning("[GATEWAY CENTRAL] Todas as 4 contas Lightning falharam ou estouraram limite. Acionando Camada Terciária (OpenRouter).")
-        return await self._execute_openrouter(prompt, system_prompt, target_model)
+        raise Exception("As 4 contas da Lightning AI esgotaram e o OpenRouter esta BLOQUEADO pela regra de ouro. O Agente deve hibernar.")
 
     async def _execute_openrouter(self, prompt: str, system_prompt: Optional[str], model: str) -> Dict[str, Any]:
         """Executa a chamada na camada terciária (OpenRouter)"""

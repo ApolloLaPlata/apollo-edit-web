@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Iniciando requisição para motor local (Remove Silence):", payload);
 
         try {
-            const response = await fetch('http://127.0.0.1:42000/api/audio/remove-silence', {
+            const response = await fetch('https://roxingo-apollo-edit-web.hf.space/api/audio/remove-silence', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Iniciando requisição para motor local (Mastering):", payload);
 
         try {
-            const response = await fetch('http://127.0.0.1:42000/api/audio/mastering', {
+            const response = await fetch('https://roxingo-apollo-edit-web.hf.space/api/audio/mastering', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Iniciando requisição para motor local (MusicGen):", payload);
 
         try {
-            const response = await fetch('http://127.0.0.1:42000/api/audio/generate-music', {
+            const response = await fetch('https://roxingo-apollo-edit-web.hf.space/api/audio/generate-music', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
