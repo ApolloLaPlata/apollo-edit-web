@@ -1,14 +1,6 @@
 {
     "framework": null,
     "buildCommand": null,
-    "outputDirectory": "public",
-    "redirects": [
-        {
-            "source": "/web_ui/(.*)",
-            "destination": "/$1",
-            "permanent": false
-        }
-    ],
     "rewrites": [
         {
             "source": "/media/(.*)",
