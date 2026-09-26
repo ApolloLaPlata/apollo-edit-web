@@ -1,48 +1,87 @@
+﻿/* Apollo Edit Web - V5 APOLLO (Spacecraft Cockpit) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+    /* Cores Deep Space */
+    --bg-base: #05070A;
+    --bg-gradient: radial-gradient(circle at top, #0A111F 0%, #030406 100%);
+    
+    /* Superfícies (Glassmorphism) */
+    --bg-surface: rgba(15, 20, 35, 0.6);
+    --bg-surface-elevated: rgba(25, 35, 55, 0.7);
+    --bg-surface-hover: rgba(35, 50, 80, 0.8);
+    
+    /* Contornos High-Tech */
+    --border-dark: rgba(255, 255, 255, 0.1);
+    --border-thick: 1px solid rgba(0, 229, 255, 0.3);
+    --border-light: 1px solid rgba(0, 229, 255, 0.6);
+    
+    /* Botões Cinematic (Navegação/Ignição) */
+    --btn-yellow: #FFD700;
+    --btn-yellow-shadow: rgba(255, 215, 0, 0.5);
+    
+    --btn-green: #00E5FF; /* Cyan Neon / Hud */
+    --btn-green-shadow: rgba(0, 229, 255, 0.5);
+    
+    --btn-purple: #7B2CBF;
+    --btn-purple-shadow: rgba(123, 44, 191, 0.5);
+    
+    --btn-red: #FF4500; /* Ignição */
+    --btn-red-shadow: rgba(255, 69, 0, 0.5);
+    
+    --text-primary: #FFFFFF;
+    --text-secondary: #8B9BB4;
+}
+
+body {
+    background: var(--bg-base);
+    background-image: var(--bg-gradient);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+    background: var(--bg-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: var(--border-dark) solid 1px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.rpg-item {
+    background: var(--bg-surface) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(0, 229, 255, 0.2) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+    border-radius: 16px !important;
+    transition: all 0.3s ease !important;
+}
+.rpg-item:hover {
+    transform: translateY(-5px) scale(1.02) !important;
+    border-color: rgba(0, 229, 255, 0.8) !important;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4) !important;
+}
+
+.btn {
+    border-radius: 8px !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3);
+}
+
 /* Apollo Edit Web - CAPCUT GAMER PRO */
 @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@600;700;800;900&display=swap');
 
-:root {
-    /* Cores Escuras / Arcanas */
-    --bg-base: #130a2a;
-    --bg-gradient: linear-gradient(180deg, #130a2a 0%, #2e1065 50%, #4c1d95 100%);
-    
-    /* Superfícies */
-    --bg-surface: #2e1065;
-    --bg-surface-elevated: #3b0764;
-    --bg-surface-hover: #581c87;
-    
-    /* Contornos */
-    --border-dark: #000000;
-    --border-thick: 4px solid var(--border-dark);
-    --border-light: 4px solid #facc15;
-    
-    /* Botões Gamer (3D) */
-    --btn-yellow: #facc15;
-    --btn-yellow-shadow: #ca8a04;
-    
-    --btn-green: #4ade80;
-    --btn-green-shadow: #16a34a;
-    
-    --btn-purple: #a855f7;
-    --btn-purple-shadow: #7e22ce;
-    
-    --btn-red: #f87171;
-    --btn-red-shadow: #dc2626;
 
-    --btn-blue: #3b82f6;
-    --btn-blue-shadow: #1d4ed8;
-
-    /* Primária (Geral) */
-    --primary: #facc15;
-    
-    /* Texto */
-    --text-main: #f8fafc;
-    --text-muted: #cbd5e1;
-    --text-dark: #000000;
-    
-    /* Sombras 3D Cartum */
-    --shadow-3d: 0 8px 0 rgba(0, 0, 0, 0.8);
-}
 
 * {
     box-sizing: border-box;
@@ -51,17 +90,9 @@
     font-family: 'Nunito', -apple-system, sans-serif;
 }
 
-body {
-    background: var(--bg-gradient);
-    background-attachment: fixed;
-    color: var(--text-main);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
 
-/* Tipografia Bangers (Títulos) */
+
+/* Tipografia Bangers (TÃ­tulos) */
 .font-bangers {
     font-family: 'Bangers', cursive;
     letter-spacing: 2px;
@@ -126,7 +157,7 @@ header h1 {
     margin-left: 15px;
 }
 
-/* Botões 3D Gamer */
+/* BotÃµes 3D Gamer */
 .btn {
     background: var(--btn-blue);
     border: var(--border-thick);
@@ -171,7 +202,7 @@ header h1 {
     box-shadow: 0 0px 0 var(--btn-yellow-shadow), 0 2px 0 var(--border-dark);
 }
 
-/* Container de Edição */
+/* Container de EdiÃ§Ã£o */
 .editor-layout {
     display: flex;
     flex: 1;
@@ -190,7 +221,7 @@ header h1 {
     padding-top: 10px;
 }
 
-/* Área Central */
+/* Ãrea Central */
 .main-stage {
     flex: 1;
     display: flex;
@@ -198,7 +229,7 @@ header h1 {
     position: relative;
     overflow-y: auto;
     padding-bottom: 40px;
-    /* Decoração Pixel Art Gamificada usando borda tracejada e box-shadow */
+    /* DecoraÃ§Ã£o Pixel Art Gamificada usando borda tracejada e box-shadow */
     border: 8px solid transparent;
     border-image: repeating-linear-gradient(
         45deg,
@@ -210,7 +241,7 @@ header h1 {
 }
 
 .main-stage::after {
-    content: '👾'; /* Elemento Pixel Art Nativo */
+    content: 'ðŸ‘¾'; /* Elemento Pixel Art Nativo */
     position: fixed;
     bottom: 20px;
     right: 30px;
@@ -227,7 +258,7 @@ header h1 {
     100% { transform: translateY(0); }
 }
 
-/* 🤖 Super Banner de IA Diretor Animado */
+/* ðŸ¤– Super Banner de IA Diretor Animado */
 .ai-super-banner {
     background: var(--bg-surface-elevated);
     border: var(--border-thick);
@@ -257,7 +288,7 @@ header h1 {
     0%, 25% { transform: translateX(0); } /* Slide 1: 0 a 3.75s */
     33%, 58% { transform: translateX(-33.333%); } /* Slide 2: 5s a 8.75s */
     66%, 91% { transform: translateX(-66.666%); } /* Slide 3: 10s a 13.6s */
-    100% { transform: translateX(0); } /* Volta rápido ao 1 */
+    100% { transform: translateX(0); } /* Volta rÃ¡pido ao 1 */
 }
 
 .ai-super-banner::before {
@@ -324,7 +355,7 @@ header h1 {
     border-color: var(--btn-yellow);
 }
 
-/* Cartões de Ferramentas Modulares (Com Fundo de Imagem) */
+/* CartÃµes de Ferramentas Modulares (Com Fundo de Imagem) */
 .tool-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -337,7 +368,7 @@ header h1 {
     border: var(--border-thick);
     border-radius: 20px;
     height: 200px; /* Fixo para acomodar a imagem de fundo */
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animação Wiggle */
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* AnimaÃ§Ã£o Wiggle */
     cursor: pointer;
     position: relative;
     text-decoration: none;
@@ -371,7 +402,7 @@ header h1 {
     justify-content: flex-end;
 }
 
-/* Animações Hover Incríveis */
+/* AnimaÃ§Ãµes Hover IncrÃ­veis */
 .tool-card:hover {
     transform: scale(1.05) rotate(-1deg);
     border-color: var(--btn-yellow);
@@ -760,7 +791,7 @@ header h1 {
     text-transform: uppercase;
 }
 
-/* Área da Garagem */
+/* Ãrea da Garagem */
 .garage-banner {
     background: rgba(0,0,0,0.3);
     border: var(--border-thick);
@@ -787,7 +818,7 @@ header h1 {
     text-shadow: 1px 1px 0 var(--border-dark);
 }
 
-/* Header das seções (Títulos das "Fases") */
+/* Header das seÃ§Ãµes (TÃ­tulos das "Fases") */
 .section-title {
     font-family: 'Bangers', cursive;
     font-size: 2rem;
@@ -801,7 +832,7 @@ header h1 {
 }
 
 .section-title::before {
-    content: '★';
+    content: 'â˜…';
     color: var(--btn-yellow);
     text-shadow: 2px 2px 0 var(--border-dark);
 }
@@ -815,7 +846,7 @@ header h1 {
     display: none;
 }
 
-/* 📺 Banner de Promoções (Carousel) */
+/* ðŸ“º Banner de PromoÃ§Ãµes (Carousel) */
 .promo-carousel {
     margin: 20px 20px 0 20px;
     background: var(--bg-surface-elevated);
@@ -871,10 +902,10 @@ header h1 {
 }
 
 /* ==================================================
-   FASE 14: META-GAME E MONETIZAÇÃO
+   FASE 14: META-GAME E MONETIZAÃ‡ÃƒO
    ================================================== */
 
-/* 🛡️ Itens de RPG (Equipamentos/Ferramentas) */
+/* ðŸ›¡ï¸ Itens de RPG (Equipamentos/Ferramentas) */
 .rpg-item-grid {
     display: flex;
     flex-wrap: wrap;
@@ -944,7 +975,7 @@ header h1 {
     letter-spacing: 1px;
 }
 
-/* ⛽ Ícone de Gasolina */
+/* â›½ Ãcone de Gasolina */
 .gas-icon {
     width: 28px;
     height: 28px;
@@ -955,7 +986,7 @@ header h1 {
     filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
 }
 
-/* 📺 Ad Slots (Espaços Publicitários) */
+/* ðŸ“º Ad Slots (EspaÃ§os PublicitÃ¡rios) */
 .ad-slot {
     width: 100%;
     background: rgba(0,0,0,0.3);
@@ -978,7 +1009,7 @@ header h1 {
     color: #cbd5e1;
 }
 
-/* 🚀 Logo Principal (CSS PURO 3D NEON) */
+/* ðŸš€ Logo Principal (CSS PURO 3D NEON) */
 .main-logo {
     font-family: 'Bangers', cursive;
     font-size: 2rem;
@@ -1005,7 +1036,7 @@ header h1 {
 }
 
 .main-logo::before {
-    content: '🎬'; /* Ícone Universal no lugar de Imagem Quebrada */
+    content: 'ðŸŽ¬'; /* Ãcone Universal no lugar de Imagem Quebrada */
     font-size: 2.2rem;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
 }
@@ -1061,7 +1092,7 @@ header h1 {
 }
 
 /* =========================================
-   Fase 26: Área de Transferência (HUD Flutuante)
+   Fase 26: Ãrea de TransferÃªncia (HUD Flutuante)
    ========================================= */
 
 .transfer-hud {
@@ -1131,13 +1162,7 @@ header h1 {
     font-size: 1.2rem;
 }
 
-.hud-body {
-    padding: 15px;
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    min-height: 100px;
-}
+.hud-
 
 .hud-item {
     background: #1e1b4b;
@@ -1214,7 +1239,7 @@ header h1 {
 }
 
 /* =========================================
-   Mecânica de Ressonância Visual (Glow Target)
+   MecÃ¢nica de RessonÃ¢ncia Visual (Glow Target)
    ========================================= */
 
 .glow-green-target {
@@ -1243,7 +1268,7 @@ header h1 {
     100% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
 }
 
-/* Mobile HUD Adaptações */
+/* Mobile HUD AdaptaÃ§Ãµes */
 @media (max-width: 768px) {
     .transfer-hud {
         width: 100%;
@@ -1252,9 +1277,7 @@ header h1 {
     .hud-title {
         font-size: 1.2rem;
     }
-    .hud-body {
-        padding: 10px;
-    }
+    .hud-
 }
 
 /* La Plata Theme */
@@ -1329,7 +1352,7 @@ header h1 {
 }
 
 /* ==================================================
-   MISSÃO ATUAL - RENDER FARM E MÚLTIPLAS MISSÕES
+   MISSÃƒO ATUAL - RENDER FARM E MÃšLTIPLAS MISSÃ•ES
    ================================================== */
 #active-missions-container {
     display: flex;
@@ -1495,7 +1518,7 @@ header h1 {
 }
 
 /* ==================================================
-   CONTROLES DA MISSÃO (PAUSAR / ABORTAR)
+   CONTROLES DA MISSÃƒO (PAUSAR / ABORTAR)
    ================================================== */
 .mission-controls {
     display: flex;
@@ -1541,7 +1564,7 @@ header h1 {
 }
 
 /* ==================================================
-   QUADRADINHOS (ÍCONES EXPANSÍVEIS DO INVENTÁRIO)
+   QUADRADINHOS (ÃCONES EXPANSÃVEIS DO INVENTÃRIO)
    ================================================== */
 .quadradinho-item {
     width: 50px;
@@ -1617,7 +1640,7 @@ header h1 {
 }
 
 /* ==================================================
-   QUADRADINHOS DE IA E MÍDIA
+   QUADRADINHOS DE IA E MÃDIA
    ================================================== */
 .quadradinho-item.ai-credit {
     border-color: #38bdf8;
@@ -1660,7 +1683,7 @@ header h1 {
 }
 
 /* ==================================================
-   CONSTRUTOR DE PIPELINE (SLOTS DE CONFIG) E NOTIFICAÇÕES
+   CONSTRUTOR DE PIPELINE (SLOTS DE CONFIG) E NOTIFICAÃ‡Ã•ES
    ================================================== */
 .notification-bell {
     position: relative;
@@ -1757,9 +1780,7 @@ header h1 {
    HYBRID RPG AESTHETIC (INJECTED)
    ========================================================================= */
 
-body {
-    background-color: #0b0510 !important;
-}
+
 
 #global-3d-bg {
     background-image: 
@@ -1770,7 +1791,7 @@ body {
     opacity: 0.8;
 }
 
-/* Painel de Missão (Stepper) */
+/* Painel de MissÃ£o (Stepper) */
 .mission-tracker-panel {
     background: rgba(20, 15, 30, 0.6);
     border: 1px solid #4a2b6e;
@@ -1836,7 +1857,7 @@ body {
     height: 4px;
     background: #333;
     margin: 0 -20px;
-    margin-top: -25px; /* Alinhar com o centro do círculo */
+    margin-top: -25px; /* Alinhar com o centro do cÃ­rculo */
     border-radius: 2px;
     z-index: 1;
 }
@@ -1883,7 +1904,7 @@ body {
 
 .npc-actions { display: flex; gap: 15px; }
 
-/* Botões gigantes estilo imagem */
+/* BotÃµes gigantes estilo imagem */
 .btn-gpt-green {
     background: linear-gradient(180deg, #34d399, #059669);
     border: 3px solid #6ee7b7;
@@ -1950,7 +1971,7 @@ body {
 .mini-progress-bar { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; margin-top: 5px;}
 .mini-progress-bar .fill { height: 100%; background: linear-gradient(90deg, #a855f7, #d8b4fe); }
 
-/* Separador Visual para o Conteúdo Antigo */
+/* Separador Visual para o ConteÃºdo Antigo */
 .legacy-tools-header {
     margin-top: 40px;
     margin-bottom: 20px;
@@ -1967,3 +1988,4 @@ body {
     font-size: 2rem;
     letter-spacing: 1px;
 }
+

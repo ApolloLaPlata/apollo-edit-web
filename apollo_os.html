@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -216,34 +216,34 @@
 
     <!-- OS TOPBAR -->
     <header class="os-topbar">
-        <div class="os-logo" style="cursor: pointer;" onclick="openAppTab('hub.html', '🏠 Hub Central', false)" title="Voltar ao Hub">
-            <span>🚀</span> APOLLO OS
+        <div class="os-logo" style="cursor: pointer;" onclick="openAppTab('hub.html', 'ðŸ  Hub Central', false)" title="Voltar ao Hub">
+            <span>ðŸš€</span> APOLLO OS
         </div>
         
         <div class="os-topbar-right" style="display: flex; gap: 15px; align-items: center;">
-            <a href="#" onclick="openAppTab('/mobile', '📱 Studio Mobile', true); return false;" style="background: linear-gradient(135deg, #00e5ff, #0077ff); color: #000; padding: 8px 16px; border-radius: 8px; font-weight: 900; text-decoration: none; font-size: 13px; box-shadow: 0 4px 10px rgba(0,229,255,0.3); transition: transform 0.2s;">⚡ STUDIO MOBILE</a>
+            <a href="#" onclick="openAppTab('/mobile', 'ðŸ“± Studio Mobile', true); return false;" style="background: rgba(0, 229, 255, 0.2); color: #000; padding: 8px 16px; border-radius: 8px; font-weight: 900; text-decoration: none; font-size: 13px; box-shadow: 0 4px 10px rgba(0,229,255,0.3); transition: transform 0.2s;">âš¡ STUDIO MOBILE</a>
             <select id="lang-selector" onchange="setLanguage && setLanguage(this.value)" style="background: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; height: 35px;">
-                <option value="pt">🇧🇷 PT</option>
-                <option value="en">🇺🇸 EN</option>
-                <option value="es">🇪🇸 ES</option>
+                <option value="pt">ðŸ‡§ðŸ‡· PT</option>
+                <option value="en">ðŸ‡ºðŸ‡¸ EN</option>
+                <option value="es">ðŸ‡ªðŸ‡¸ ES</option>
             </select>
             
             <div class="credits-badge" style="display: flex; align-items: center; gap: 8px; border-color: #9B59B6;">
-                <span class="gas-icon" style="font-size: 1.2rem;">💎</span>
+                <span class="gas-icon" style="font-size: 1.2rem;">ðŸ’Ž</span>
                 <span><strong id="user-cristais" style="color: #e0b0ff;">0</strong> Cristais</span>
             </div>
 
             <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
-                <span class="gas-icon" style="font-size: 1.2rem;">⛽</span>
-                <span><strong id="user-credits" style="color: #ec4899;">...</strong> Gasolina</span>
+                <span class="gas-icon" style="font-size: 1.2rem;">â›½</span>
+                <span><strong id="user-credits" style="color: #ec4899;">...</strong> Energia</span>
             </div>
             
-            <a href="#" onclick="openAppTab('perfil.html', '👨‍🚀 Meu Perfil', true); return false;" style="text-decoration: none; color: inherit;">
+            <a href="#" onclick="openAppTab('perfil.html', 'ðŸ‘¨â€ðŸš€ Meu Perfil', true); return false;" style="text-decoration: none; color: inherit;">
                 <div class="avatar-container" style="display:flex; align-items:center; gap:10px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     <div class="avatar" style="width:40px; height:40px; border-radius:50%; background:#333; border:2px solid #FFD32A;"></div>
                     <span class="user-name" id="user-name" style="display:flex; flex-direction:column;">
-                        <strong style="font-size:14px;">Jogador #1</strong>
-                        <span style="color: #FFD32A; font-size:11px;">Piloto de Elite</span>
+                        <strong style="font-size:14px;">Explorador</strong>
+                        <span style="color: #FFD32A; font-size:11px;">Comandante</span>
                     </span>
                 </div>
             </a>
@@ -260,7 +260,7 @@
         <!-- Iframes injected by JS -->
     </main>
 
-    <!-- INJEÇÃO DO MOTOR DO OS -->
+    <!-- INJEÃ‡ÃƒO DO MOTOR DO OS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script src="apollo_os_desktop.js?v=2"></script>
@@ -272,3 +272,5 @@
     <script src="apollo_assistant.js"></script>
 </body>
 </html>
+
+
