@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://apolloedit.com.br/sitemap.xml
