@@ -1,4 +1,4 @@
-﻿import os
+import os
 import asyncio
 import logging
 import traceback
@@ -47,6 +47,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Importando apenas as rotas relevantes para Edição e UI (Zero-Trust/Desacopladas)
 from backend.api import (
+    routes_export,
     routes_video, 
     routes_subtitles, 
     routes_editor, 
@@ -60,13 +61,15 @@ from backend.api import (
     routes_payments, 
     routes_webhooks, 
     routes_ui_ws, 
-    routes_storage_gateway
+    routes_storage_gateway,
+    routes_nanobanana
 )
 
 # Registrando rotas focadas em Edição Visual e Frontend
 app.include_router(routes_video.router)
 app.include_router(routes_subtitles.router)
 app.include_router(routes_editor.router)
+app.include_router(routes_export.router)
 app.include_router(routes_ai_director.router)
 app.include_router(routes_clip_factory.router)
 app.include_router(routes_auto_mapper.router)
@@ -78,3 +81,5 @@ app.include_router(routes_payments.router)
 app.include_router(routes_webhooks.router)
 app.include_router(routes_ui_ws.router)
 app.include_router(routes_storage_gateway.router)
+app.include_router(routes_nanobanana.router)
+

@@ -317,6 +317,70 @@
                         <div class="part-icon">ðŸŽ¨</div>
                         <div class="part-name">Pintura Desgastada</div>
                     </div>
+        <div class="part-category">
+            <h4>4. FERRAMENTAS (Removedor de Fundo)</h4>
+            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                <p style="color: #aaa; text-align: center;">Faça o upload de uma imagem e a IA removerá o fundo automaticamente via API Central.</p>
+                <input type="file" id="rmbg-input" accept="image/*" style="display: none;" />
+                <button class="apollo-btn-primary" onclick="document.getElementById('rmbg-input').click()" style="background: var(--btn-blue);">Selecionar Imagem</button>
+                <img id="rmbg-preview" style="max-width: 100%; max-height: 300px; display: none; border-radius: 12px; border: 2px dashed #333; margin-top: 15px;" />
+                <button id="rmbg-action" class="apollo-btn-primary" style="background: var(--btn-green); display: none; margin-top: 10px;">?? Remover Fundo (IA)</button>
+                <a id="rmbg-download" class="apollo-btn-primary" style="background: var(--btn-yellow); display: none; margin-top: 10px;" download="asset_sem_fundo.png">?? Baixar Asset PNG</a>
+            </div>
+            <script>
+                document.getElementById('rmbg-input').addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('rmbg-preview').src = event.target.result;
+                            document.getElementById('rmbg-preview').style.display = 'block';
+                            document.getElementById('rmbg-action').style.display = 'block';
+                            document.getElementById('rmbg-download').style.display = 'none';
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                document.getElementById('rmbg-action').addEventListener('click', async function() {
+                    const fileInput = document.getElementById('rmbg-input');
+                    if (!fileInput.files[0]) return;
+                    
+                    this.innerText = '? Processando na API...';
+                    this.disabled = true;
+
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+
+                    try {
+                        // Conectando na API Central mapeada pelo CTO
+                        const res = await fetch('https://api.v5apollo.com/hf/rmbg', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (!res.ok) throw new Error('Erro na API Central');
+                        
+                        const blob = await res.blob();
+                        const url = URL.createObjectURL(blob);
+                        
+                        document.getElementById('rmbg-preview').src = url;
+                        document.getElementById('rmbg-preview').style.border = '2px solid var(--btn-green)';
+                        
+                        const downloadBtn = document.getElementById('rmbg-download');
+                        downloadBtn.href = url;
+                        downloadBtn.style.display = 'block';
+                        
+                        this.innerText = '? Fundo Removido';
+                    } catch (error) {
+                        console.error(error);
+                        alert('Falha ao remover fundo. A API Central pode estar offline.');
+                        this.innerText = '?? Remover Fundo (IA)';
+                        this.disabled = false;
+                    }
+                });
+            </script>
+        </div>
                     <div class="part-card" onclick="selectPart('pintura', 'neon')">
                         <div class="part-icon">âœ¨</div>
                         <div class="part-name">Neon Cyberpunk</div>
@@ -601,5 +665,6 @@
     <script src="apollo_assistant.js"></script>
 </body>
 </html>
+
 
 

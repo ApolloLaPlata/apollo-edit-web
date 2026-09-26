@@ -1368,7 +1368,7 @@ function sendToPython(draftMode = false, config = null) {
         exportData.export_quality = config.quality;
     }
 
-    fetch('https://api.apolloedit.com/api/export_timeline', {
+    fetch(window.location.origin + '/api/v1/editor/export_timeline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(exportData)
@@ -2760,3 +2760,4 @@ setInterval(() => {
         })
         .catch(err => console.error("Erro ao checar inbox:", err));
 }, 3000);
+
