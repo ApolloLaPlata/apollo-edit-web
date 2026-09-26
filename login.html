@@ -1,181 +1,222 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo Edit Pro — Login</title>
+    <title>V5 APOLLO - Acesso Restrito</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    <link rel="stylesheet" href="global_style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        .login-container {
-            flex: 1;
+        :root {
+            --bg-color: #030406;
+            --text-main: #FFFFFF;
+            --text-muted: #8B9BB4;
+            --accent-cyan: #00E5FF;
+            --accent-orange: #FF4500;
+            --glass-bg: rgba(15, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.1), transparent 60%);
+            height: 100vh;
+            overflow: hidden;
         }
-        
+
+        /* Ambient Glow */
+        .ambient-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.05) 0%, rgba(3, 4, 6, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
         .login-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            padding: 40px;
-            border-radius: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 3rem;
             width: 100%;
-            max-width: 420px;
-            box-shadow: var(--shadow-pro);
+            max-width: 400px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             text-align: center;
         }
 
-        .login-card h2 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            color: var(--text-main);
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
         }
+        .logo span { color: var(--accent-cyan); }
 
-        .login-card p {
+        .subtitle {
             color: var(--text-muted);
             font-size: 0.9rem;
-            margin-bottom: 24px;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .form-group {
-            margin-bottom: 16px;
+        .input-group {
+            margin-bottom: 1.5rem;
             text-align: left;
         }
 
-        .form-group label {
+        .input-group label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.8rem;
             color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .form-group input {
+        .input-group input, .input-group select {
             width: 100%;
-            background: var(--bg-base);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus {
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Inter', sans-serif;
             outline: none;
-            border-color: var(--primary);
+            transition: all 0.3s ease;
         }
 
-        .btn-full {
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .btn-primary {
             width: 100%;
             padding: 12px;
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
             font-size: 1rem;
-            margin-top: 10px;
-            justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
 
         .toggle-link {
             display: block;
-            margin-top: 20px;
+            margin-top: 1.5rem;
+            color: var(--accent-cyan);
             font-size: 0.85rem;
-            color: var(--primary);
             cursor: pointer;
             text-decoration: none;
+            transition: color 0.2s;
         }
-
-        .toggle-link:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
+        
+        .toggle-link:hover { color: #fff; }
 
         #auth-error {
-            color: var(--danger);
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+            padding: 10px;
+            border-radius: 8px;
             font-size: 0.85rem;
-            margin-top: 10px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        #profile-selection {
             display: none;
         }
     </style>
-<script src="laplata_ai.js"></script>
-
-<!-- APOLLO OS IFRAME CSS CLEANUP -->
-<script>
-    if (window.self !== window.top) {
-        document.write('<style> body > header, .apollo-header, .topbar { display: none !important; } </style>');
-    }
-</script>
-
 </head>
 <body>
+    <div class="ambient-glow"></div>
+    
+    <div class="login-card">
+        <div class="logo">V5 <span>APOLLO</span></div>
+        <div class="subtitle" id="form-subtitle">Autenticação do Comandante</div>
 
-    <header style="justify-content: center;">
-        <h1><span style="color: var(--primary);">APOLLO</span> EDIT</h1>
-    </header>
+        <div id="auth-error">Erro ao autenticar.</div>
 
-    <div class="login-container">
-        <div class="login-card">
-            <h2 id="form-title" data-i18n="login.title">Acessar Estúdio</h2>
-            <p id="form-subtitle" data-i18n="login.subtitle">Faça login para continuar</p>
-            
-            <div id="auth-error">Email ou senha incorretos.</div>
-
-            <div class="form-group">
-                <label data-i18n="login.email">E-mail</label>
-                <input type="email" id="email" placeholder="seu@email.com">
-            </div>
-
-            <div class="form-group">
-                <label data-i18n="login.password">Senha</label>
-                <input type="password" id="password" placeholder="••••••••">
-            </div>
-
-            <div class="form-group" id="profile-selection" style="display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px dashed var(--primary);">
-                <label style="color: var(--primary);">Escolha seu Perfil de Uso:</label>
-                <select id="user-profile-mode" style="width: 100%; background: var(--bg-base); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 6px;">
-                    <option value="cloud">Modo Automático / Nuvem (Mais Fácil)</option>
-                    <option value="local">Modo Pro / Hacker (Conectar Pinokio Local)</option>
-                </select>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 0;">* Você pode alterar isso depois na Oficina.</p>
-            </div>
-
-            <button class="btn primary btn-full" id="btn-submit" onclick="handleAuth()" data-i18n="login.enter">Entrar</button>
-            
-            <a class="toggle-link" id="toggle-mode" onclick="toggleMode()" data-i18n="login.create_account">Criar uma conta nova</a>
+        <div class="input-group">
+            <label>Identificação (Email)</label>
+            <input type="email" id="email" placeholder="comandante@v5apollo.com">
         </div>
+
+        <div class="input-group">
+            <label>Código de Acesso (Senha)</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <div class="input-group" id="profile-selection">
+            <label>Modo de Operação</label>
+            <select id="user-profile-mode">
+                <option value="cloud">Nuvem (V5 Apollo API)</option>
+                <option value="local">Local (Processamento Isolado)</option>
+            </select>
+        </div>
+
+        <button class="btn-primary" id="btn-submit" onclick="handleAuth()">Iniciar Ignição</button>
+        
+        <a class="toggle-link" id="toggle-mode" onclick="toggleMode()">Solicitar novo acesso (Criar Conta)</a>
     </div>
 
-    <!-- I18N Loader -->
-    <script src="i18n_loader.js"></script>
-
-    <!-- Supabase SDK -->
+    <!-- Scripts do Sistema -->
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
         let isLoginMode = true;
 
         function toggleMode() {
             isLoginMode = !isLoginMode;
             
-            const titleEl = document.getElementById('form-title');
             const subEl = document.getElementById('form-subtitle');
             const btnEl = document.getElementById('btn-submit');
             const toggleEl = document.getElementById('toggle-mode');
             const profileSelEl = document.getElementById('profile-selection');
-
+            
             if (isLoginMode) {
-                titleEl.setAttribute('data-i18n', 'login.title');
-                subEl.setAttribute('data-i18n', 'login.subtitle');
-                btnEl.setAttribute('data-i18n', 'login.enter');
-                toggleEl.setAttribute('data-i18n', 'login.create_account');
+                subEl.innerText = "Autenticação do Comandante";
+                btnEl.innerText = "Iniciar Ignição";
+                toggleEl.innerText = "Solicitar novo acesso (Criar Conta)";
                 profileSelEl.style.display = 'none';
             } else {
-                titleEl.setAttribute('data-i18n', 'login.signup_title');
-                subEl.setAttribute('data-i18n', 'login.signup_subtitle');
-                btnEl.setAttribute('data-i18n', 'login.signup_btn');
-                toggleEl.setAttribute('data-i18n', 'login.have_account');
+                subEl.innerText = "Registro de Novo Explorador";
+                btnEl.innerText = "Registrar Credenciais";
+                toggleEl.innerText = "Já possui acesso? Retornar";
                 profileSelEl.style.display = 'block';
             }
             
             document.getElementById('auth-error').style.display = 'none';
-            if (typeof applyTranslations === 'function') applyTranslations();
         }
 
         async function handleAuth() {
@@ -185,13 +226,26 @@
             errorDiv.style.display = 'none';
 
             if (!email || !password) {
-                errorDiv.innerText = "Preencha todos os campos.";
+                errorDiv.innerText = "Preencha todas as credenciais.";
                 errorDiv.style.display = 'block';
                 return;
             }
 
+            // Fallback de Autenticacao Direta para Mock se supabase nǜo estiver configurado
+            if (typeof supabase === 'undefined' || !supabase.auth) {
+                errorDiv.innerText = "[Modo Offline] Logando mock na interface.";
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = '#00E5FF';
+                errorDiv.style.borderColor = '#00E5FF';
+                errorDiv.style.background = 'rgba(0,229,255,0.1)';
+                
+                setTimeout(() => {
+                    window.location.href = 'apollo_os.html';
+                }, 1000);
+                return;
+            }
+
             if (isLoginMode) {
-                // If the user already has a saved preference, use it. Otherwise default to cloud.
                 if(!localStorage.getItem('apollo_user_mode')) {
                     localStorage.setItem('apollo_user_mode', 'cloud');
                 }
@@ -201,7 +255,7 @@
                     errorDiv.innerText = error.message;
                     errorDiv.style.display = 'block';
                 } else {
-                    window.location.href = 'hub.html';
+                    window.location.href = 'apollo_os.html';
                 }
             } else {
                 const modeSelect = document.getElementById('user-profile-mode').value;
@@ -212,30 +266,11 @@
                     errorDiv.innerText = error.message;
                     errorDiv.style.display = 'block';
                 } else {
-                    alert('Conta criada com sucesso! Modo ' + (modeSelect === 'cloud' ? 'Nuvem' : 'Local') + ' selecionado.');
-                    toggleMode();
+                    alert('Credenciais registradas! Modo ' + (modeSelect === 'cloud' ? 'Nuvem' : 'Local') + ' ativado.');
+                    window.location.href = 'apollo_os.html';
                 }
             }
         }
     </script>
-    <script src="apollo_quests.js"></script>
-    <script src="apollo_tour.js"></script>
-<script src="laplata_inventory.js"></script>
-<script src="copilot_knowledge_base.js"></script>
-<script src="apollo_copilot.js"></script>
-<script src="apollo_quests.js"></script>
-
-    <!-- APOLLO OS CORE (Auto-Injected) -->
-    <script src="laplata_db.js"></script>
-    <script src="laplata_settings.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="apollo_sfx.js"></script>
-    <script src="apollo_notifications.js"></script>
-    <script src="transfer_hud.js?v=11"></script>
-    <script src="copilot_hud.js"></script>
-    <script src="apollo_assistant.js"></script>
 </body>
 </html>
-
-
