@@ -62,7 +62,7 @@ from backend.api import (
     routes_webhooks, 
     routes_ui_ws, 
     routes_storage_gateway,
-    routes_nanobanana
+    routes_nanobanana, routes_copilot, routes_tts_proxy
 )
 
 # Registrando rotas focadas em Edição Visual e Frontend
@@ -81,5 +81,11 @@ app.include_router(routes_payments.router)
 app.include_router(routes_webhooks.router)
 app.include_router(routes_ui_ws.router)
 app.include_router(routes_storage_gateway.router)
-app.include_router(routes_nanobanana.router)
+app.include_router(routes_nanobanana, routes_copilot, routes_tts_proxy.router)
+
+
+app.include_router(routes_copilot, routes_tts_proxy.router)
+
+
+app.include_router(routes_tts_proxy.router)
 
