@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding-bottom: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+    <h2 style="color: var(--accent); display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 24px;">🎤</span> Gerador de Voz (TTS) - VoiceMaker API
+    </h2>
+</div>
+
+<div class="split-layout">
+    
+    <!-- LEFT PANEL: Configurações -->
+    <div class="left-panel" style="flex: 1;">
+        <div class="group-box">
+            <div class="group-title">⚙️ Configurações</div>
+            
+            <div class="row" style="margin-top: 10px;">
+                <label style="width: 100px;">👤 Personagem:</label>
+                <select class="flex-1" id="tts_personagem">
+                    <option>Rafael Descargas</option>
+                    <option>Mona Cansada</option>
+                </select>
+            </div>
+
+            <h3 style="color: #fff; margin-top: 20px; margin-bottom: 10px; font-size: 14px;">🎵 Configurações de Voz:</h3>
+            
+            <div class="row">
+                <label style="width: 100px;">Engine:</label>
+                <div style="display: flex; gap: 15px;">
+                    <label><input type="radio" name="tts_engine" value="proplus" checked> Pro+</label>
+                    <label><input type="radio" name="tts_engine" value="neural"> Neural</label>
+                    <label><input type="radio" name="tts_engine" value="standard"> Standard</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <label style="width: 100px;">🌍 Idioma:</label>
+                <select class="flex-1" id="tts_idioma">
+                    <option>pt-BR</option>
+                    <option>en-US</option>
+                    <option>es-ES</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <label style="width: 100px;">🎭 Efeito:</label>
+                <select class="flex-1" id="tts_efeito">
+                    <option>news</option>
+                    <option>conversational</option>
+                    <option>default</option>
+                </select>
+            </div>
+
+            <h3 style="color: #fff; margin-top: 20px; margin-bottom: 10px; font-size: 14px;">🎛️ Controles de Áudio:</h3>
+
+            <div class="row">
+                <label style="width: 150px;">🔊 Volume (-20 a 20):</label>
+                <input type="range" id="tts_volume" min="-20" max="20" value="0" style="flex: 1;" oninput="document.getElementById('vol_val').innerText = this.value">
+                <span id="vol_val" style="width: 30px; text-align: right;">0</span>
+            </div>
+
+            <div class="row">
+                <label style="width: 150px;">⚡ Vel. (-100 a 100):</label>
+                <input type="range" id="tts_velocidade" min="-100" max="100" value="0" style="flex: 1;" oninput="document.getElementById('vel_val').innerText = this.value">
+                <span id="vel_val" style="width: 30px; text-align: right;">0</span>
+            </div>
+
+            <div class="row">
+                <label style="width: 150px;">🎵 Pitch (-100 a 100):</label>
+                <input type="range" id="tts_pitch" min="-100" max="100" value="0" style="flex: 1;" oninput="document.getElementById('pitch_val').innerText = this.value">
+                <span id="pitch_val" style="width: 30px; text-align: right;">0</span>
+            </div>
+
+            <div class="row" style="margin-top: 15px;">
+                <label style="width: 100px;">📊 Sample Rate:</label>
+                <select class="flex-1" id="tts_samplerate">
+                    <option>48000</option>
+                    <option>44100</option>
+                    <option>24000</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Roteiro e Botões -->
+    <div class="right-panel" style="flex: 2;">
+        <label style="font-weight: bold; margin-bottom: 5px; display: block;">📝 Cole o roteiro aqui:</label>
+        <textarea id="tts_roteiro" style="flex: 1; min-height: 200px; font-size: 14px; margin-bottom: 15px;" placeholder="Digite o texto que será falado..."></textarea>
+
+        <label style="font-weight: bold; color: #0af; margin-bottom: 5px; display: block;">🧠 Emoção / Instrução Adicional (Apenas Google Gemini / OpenAI):</label>
+        <textarea id="tts_emocao" style="height: 60px; margin-bottom: 5px; background-color: #112;" placeholder="Exemplo: Fale sussurrando com medo, ou Fale dando gargalhadas."></textarea>
+        <div style="color: #888; font-style: italic; font-size: 11px; margin-bottom: 20px;">Exemplo: Fale sussurrando com medo, ou Fale dando gargalhadas.</div>
+
+        <div class="row" style="gap: 10px;">
+            <button class="primary" style="padding: 10px 15px; font-size: 14px;">🎤 Gerar Áudio TTS</button>
+            <button style="padding: 10px 15px; background: #FFD700; color: #000; font-weight: bold; border-color: #FFD700;">🔊 Testar Voz (Padrão)</button>
+            <button style="padding: 10px 15px; background: #FFD700; color: #000; font-weight: bold; border-color: #FFD700;">🤖 Testar Voz do Google TTS</button>
+            <button style="padding: 10px 15px;">🧹 Limpar</button>
+        </div>
+
+        <div style="margin-top: 15px; color: #0f0; font-weight: bold;" id="tts_status">
+            ✅ Pronto para gerar áudio TTS
+        </div>
+    </div>
+
+</div>
+{% endblock %}

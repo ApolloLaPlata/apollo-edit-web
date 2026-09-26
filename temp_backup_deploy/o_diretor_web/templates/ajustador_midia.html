@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="padding-bottom:10px; border-bottom:1px solid var(--border-color); margin-bottom:15px;">
+    <h2 style="color:var(--accent);">🎬 Ajustador de Mídia</h2>
+    <p style="color:#888; font-size:13px; margin-top:5px;">Padroniza imagens e vídeos para 720p/1080p com fundo blur • Saída: cena_1.mp4, cena_2.mp4...</p>
+</div>
+
+<!-- Configurações -->
+<div class="group-box" style="margin-bottom:15px;">
+    <div class="group-title">⚙️ Configurações</div>
+    <div class="row" style="flex-wrap:wrap; gap:20px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>Preset:</label>
+            <select id="adj_preset" style="width:80px;">
+                <option value="720p">720p</option>
+                <option value="1080p">1080p</option>
+            </select>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>Blur fundo:</label>
+            <input type="number" id="adj_blur" value="20" style="width:60px;" min="0" max="80">
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>Bitrate:</label>
+            <input type="text" id="adj_bitrate" value="4M" style="width:60px;">
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>FPS:</label>
+            <input type="number" id="adj_fps" value="30" style="width:60px;" min="15" max="60">
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>Mín. duração (s):</label>
+            <input type="number" id="adj_min_dur" value="5" style="width:60px;" min="1" max="30">
+        </div>
+    </div>
+</div>
+
+<div style="display:flex; gap:15px;">
+    <!-- LEFT: Lista de arquivos -->
+    <div class="group-box" style="flex:2; display:flex; flex-direction:column;">
+        <div class="group-title">📁 Arquivos de Entrada</div>
+        <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+            <button class="btn primary" onclick="adicionarArquivos()">➕ Adicionar Arquivos</button>
+            <button class="btn" style="background:#5a1a1a; border-color:#c0392b;" onclick="limparLista()">🗑️ Limpar Lista</button>
+            <button class="btn outline" onclick="moverCima()">⬆ Mover Cima</button>
+            <button class="btn outline" onclick="moverBaixo()">⬇ Mover Baixo</button>
+            <span id="adj-count" style="margin-left:auto; color:#888; font-size:12px; align-self:center;">0 arquivos selecionados</span>
+        </div>
+
+        <div id="adj-file-list" style="flex:1; overflow-y:auto; background:#111; border:1px solid #333; border-radius:4px; padding:8px; min-height:200px;">
+            <div style="color:#555; text-align:center; margin-top:40px;">
+                <div style="font-size:28px; margin-bottom:8px;">🎬</div>
+                Nenhum arquivo adicionado.
+            </div>
+        </div>
+
+        <!-- Saída -->
+        <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <button class="btn primary" onclick="selecionarSaida()">📂 Pasta de Saída</button>
+            <button class="btn outline" onclick="selecionarBgVideo()">🎞️ Vídeo de Fundo (Opcional)</button>
+            <span id="adj-saida-label" style="color:#888; font-size:11px; flex:1;">Nenhuma pasta selecionada</span>
+        </div>
+        <input type="hidden" id="adj_saida_path">
+    </div>
+
+    <!-- RIGHT: Progresso + Log -->
+    <div class="group-box" style="flex:1; display:flex; flex-direction:column; gap:12px;">
+        <div class="group-title">📋 Log & Progresso</div>
+
+        <div>
+            <label style="font-size:12px; color:#aaa;">Progresso:</label>
+            <div style="margin-top:5px; background:#111; border:1px solid #333; border-radius:20px; overflow:hidden; height:18px;">
+                <div id="adj-progress" style="background: linear-gradient(90deg, #0af, #00f5a0); height:100%; width:0%; transition: width 0.3s;"></div>
+            </div>
+            <div id="adj-status" style="color:#888; font-size:11px; margin-top:4px; text-align:center;">Aguardando...</div>
+        </div>
+
+        <textarea id="adj-log" style="flex:1; min-height:300px; color:#94a3b8; font-size:11px; font-family:Consolas,monospace; resize:none;" readonly
+            placeholder="Log de execução aparecerá aqui..."></textarea>
+
+        <button class="btn primary" style="padding:12px; font-size:16px;" onclick="processarMidia()">
+            ▶ PROCESSAR MÍDIA
+        </button>
+    </div>
+</div>
+
+<script>
+    let files = []; let selectedIdx = -1;
+
+    async function adicionarArquivos() {
+        const r = await fetch('/api/browse_file?type=media');
+        const d = await r.json();
+        if (d.path) { files.push(d.path); renderList(); log(`✅ Adicionado: ${d.path.split('\\').pop()}`); }
+    }
+    async function selecionarSaida() {
+        const r = await fetch('/api/browse_dir');
+        const d = await r.json();
+        if (d.path) {
+            document.getElementById('adj_saida_path').value = d.path;
+            document.getElementById('adj-saida-label').textContent = d.path;
+            document.getElementById('adj-saida-label').style.color = '#60a5fa';
+            log(`📂 Pasta de saída: ${d.path}`);
+        }
+    }
+    async function selecionarBgVideo() {
+        const r = await fetch('/api/browse_file?type=video');
+        const d = await r.json();
+        if (d.path) log(`🎞️ Vídeo de fundo: ${d.path.split('\\').pop()}`);
+    }
+    function limparLista() { files=[]; selectedIdx=-1; renderList(); log('🗑️ Lista limpa.'); }
+    function moverCima() { if(selectedIdx>0){[files[selectedIdx],files[selectedIdx-1]]=[files[selectedIdx-1],files[selectedIdx]]; selectedIdx--; renderList();} }
+    function moverBaixo() { if(selectedIdx>=0&&selectedIdx<files.length-1){[files[selectedIdx],files[selectedIdx+1]]=[files[selectedIdx+1],files[selectedIdx]]; selectedIdx++; renderList();} }
+    function renderList() {
+        const el = document.getElementById('adj-file-list');
+        document.getElementById('adj-count').textContent = files.length + ' arquivo(s) selecionado(s)';
+        if (!files.length) { el.innerHTML='<div style="color:#555;text-align:center;margin-top:40px;"><div style="font-size:28px;margin-bottom:8px;">🎬</div>Nenhum arquivo adicionado.</div>'; return; }
+        el.innerHTML = files.map((p,i)=>`<div onclick="sel(${i})" style="padding:7px 10px;border:1px solid ${i===selectedIdx?'#0af':'#333'};border-radius:3px;margin-bottom:4px;background:${i===selectedIdx?'#0a1a2a':'#1a1a1a'};cursor:pointer;display:flex;align-items:center;gap:8px;">
+            <span style="color:#888;font-size:11px;min-width:30px;">${String(i+1).padStart(2,'0')}.</span>
+            <span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.split('\\').pop()}</span>
+        </div>`).join('');
+    }
+    function sel(i) { selectedIdx=i; renderList(); }
+    function log(msg) { const t = document.getElementById('adj-log'); t.value += msg + '\n'; t.scrollTop = t.scrollHeight; }
+    function processarMidia() {
+        if (!files.length) { alert('⚠️ Adicione arquivos!'); return; }
+        if (!document.getElementById('adj_saida_path').value) { alert('⚠️ Selecione a pasta de saída!'); return; }
+        document.getElementById('adj-status').textContent = 'Processando...';
+        document.getElementById('adj-status').style.color = '#f59e0b';
+        log('\n▶ Iniciando processamento...');
+        // TODO: POST /api/processar_midia
+    }
+</script>
+{% endblock %}

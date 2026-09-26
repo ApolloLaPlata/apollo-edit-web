@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo OS</title>
+    <!-- Dynamic Favicon Container -->
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <script src="laplata_db.js"></script>
+    <script src="laplata_settings.js"></script>
+    
+    <script>
+        // Init Channel Context Early
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlChannelId = urlParams.get('channel_id');
+            
+            if (urlChannelId) {
+                sessionStorage.setItem('apollo_active_channel_id', urlChannelId);
+                window.history.replaceState({}, document.title, "apollo_os.html"); // Hide param
+            }
+
+            const activeId = sessionStorage.getItem('apollo_active_channel_id') || localStorage.getItem('apollo_active_channel_id');
+            if (activeId) {
+                sessionStorage.setItem('apollo_active_channel_id', activeId);
+                const channels = JSON.parse(localStorage.getItem('apollo_channels') || '[]');
+                const channel = channels.find(c => c.id === activeId);
+                if (channel) {
+                    document.title = `Apollo OS - ${channel.name}`;
+                    
+                    // Generate Favicon from Channel Name (or use logo if it exists)
+                    window.addEventListener('DOMContentLoaded', () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 64; canvas.height = 64;
+                        const ctx = canvas.getContext('2d');
+                        
+                        if (channel.logo) {
+                            const img = new Image();
+                            img.onload = () => {
+                                ctx.drawImage(img, 0, 0, 64, 64);
+                                document.getElementById('dynamic-favicon').href = canvas.toDataURL();
+                            };
+                            img.src = channel.logo;
+                        } else {
+                            // Fallback to initial letter with channel color
+                            ctx.fillStyle = channel.color || '#8b5cf6';
+                            ctx.beginPath();
+                            ctx.arc(32, 32, 32, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 36px Inter';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(channel.name.charAt(0).toUpperCase(), 32, 36);
+                            document.getElementById('dynamic-favicon').href = canvas.toDataURL();
+                        }
+                        
+                        // Update Topbar UI
+                        const osLogo = document.querySelector('.os-logo');
+                        if (osLogo) {
+                            osLogo.innerHTML = `<span style="display:inline-block; width:24px; height:24px; border-radius:4px; background:${channel.color || '#8b5cf6'}; margin-right:8px; line-height:24px; text-align:center; color:white; font-size:14px;">${channel.name.charAt(0)}</span> ${channel.name}`;
+                        }
+                    });
+                }
+            }
+        })();
+    </script>
+    
+    <style>
+        :root {
+            --bg-os: #020617;
+            --bg-topbar: rgba(15, 23, 42, 0.95);
+            --bg-tab-bar: #0f172a;
+            --brand-primary: #8b5cf6;
+            --brand-secondary: #c084fc;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --tab-active-bg: #1e293b;
+            --tab-inactive-bg: #0b1120;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100vh;
+            background: var(--bg-os);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* OS should not scroll */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPBAR DO OS */
+        .os-topbar {
+            height: 50px;
+            background: var(--bg-topbar);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        
+        .os-logo {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CREDITS BADGE NA TOPBAR */
+        .credits-badge {
+            display: flex; align-items: center; background: rgba(0,0,0,0.5); 
+            padding: 5px 15px; border-radius: 12px; border: 1px solid #331f4e;
+        }
+        
+        /* TABS BAR */
+        .os-tabs-bar {
+            height: 40px;
+            background: var(--bg-tab-bar);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-end;
+            padding: 0 10px;
+            gap: 5px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+        }
+        .os-tabs-bar::-webkit-scrollbar { display: none; }
+
+        .os-tab {
+            height: 32px;
+            min-width: 120px;
+            max-width: 200px;
+            background: var(--tab-inactive-bg);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .os-tab:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .os-tab.active {
+            background: var(--tab-active-bg);
+            color: var(--text-main);
+            font-weight: 600;
+            border-color: rgba(139, 92, 246, 0.5);
+            border-bottom: 2px solid var(--bg-os); /* connects visual to workspace */
+            height: 34px;
+        }
+
+        .os-tab-close, .os-tab-reload {
+            font-size: 14px;
+            opacity: 0.5;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        .os-tab-close:hover {
+            opacity: 1;
+            color: #ef4444;
+        }
+        .os-tab-reload:hover {
+            opacity: 1;
+            color: #38bdf8;
+        }
+        .os-tab-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* WORKSPACE IFRAME CONTAINER */
+        .os-workspace {
+            flex: 1;
+            position: relative;
+            background: var(--tab-active-bg);
+        }
+
+        .os-app-frame {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: none;
+            display: none;
+            background: #020617; /* Default background for apps */
+        }
+
+        .os-app-frame.active {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- OS TOPBAR -->
+    <header class="os-topbar">
+        <div class="os-logo" style="cursor: pointer;" onclick="openAppTab('hub.html', '🏠 Hub Central', false)" title="Voltar ao Hub">
+            <span>🚀</span> APOLLO OS
+        </div>
+        
+        <div class="os-topbar-right" style="display: flex; gap: 15px; align-items: center;">
+            <select id="lang-selector" onchange="setLanguage && setLanguage(this.value)" style="background: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; height: 35px;">
+                <option value="pt">🇧🇷 PT</option>
+                <option value="en">🇺🇸 EN</option>
+                <option value="es">🇪🇸 ES</option>
+            </select>
+            
+            <div class="credits-badge" style="display: flex; align-items: center; gap: 8px; border-color: #9B59B6;">
+                <span class="gas-icon" style="font-size: 1.2rem;">💎</span>
+                <span><strong id="user-cristais" style="color: #e0b0ff;">0</strong> Cristais</span>
+            </div>
+
+            <div class="credits-badge" style="display: flex; align-items: center; gap: 8px;">
+                <span class="gas-icon" style="font-size: 1.2rem;">⛽</span>
+                <span><strong id="user-credits" style="color: #ec4899;">...</strong> Gasolina</span>
+            </div>
+            
+            <a href="#" onclick="openAppTab('perfil.html', '👨‍🚀 Meu Perfil', true); return false;" style="text-decoration: none; color: inherit;">
+                <div class="avatar-container" style="display:flex; align-items:center; gap:10px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <div class="avatar" style="width:40px; height:40px; border-radius:50%; background:#333; border:2px solid #FFD32A;"></div>
+                    <span class="user-name" id="user-name" style="display:flex; flex-direction:column;">
+                        <strong style="font-size:14px;">Jogador #1</strong>
+                        <span style="color: #FFD32A; font-size:11px;">Piloto de Elite</span>
+                    </span>
+                </div>
+            </a>
+        </div>
+    </header>
+
+    <!-- OS TABS BAR -->
+    <nav class="os-tabs-bar" id="os-tabs-bar">
+        <!-- Tabs injected by JS -->
+    </nav>
+
+    <!-- OS WORKSPACE (IFRAMES) -->
+    <main class="os-workspace" id="os-workspace">
+        <!-- Iframes injected by JS -->
+    </main>
+
+    <!-- INJEÇÃO DO MOTOR DO OS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="apollo_os_desktop.js?v=2"></script>
+    <script src="loading_widget.js"></script>
+    <script src="apollo_sfx.js"></script>
+    <script src="apollo_notifications.js"></script>
+    <script src="transfer_hud.js?v=11"></script>
+    <script src="copilot_hud.js"></script>
+    <script src="apollo_assistant.js"></script>
+</body>
+</html>

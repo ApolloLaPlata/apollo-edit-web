@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding-bottom: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;">
+    <h2 style="color: var(--accent); display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 24px;">🎬</span> Gerador de Vídeo do Narrador
+    </h2>
+</div>
+
+<div style="max-width: 600px; margin: 0 auto; margin-top: 30px;">
+    <div class="group-box">
+        <div class="group-title">👤 Configurações do Narrador</div>
+        
+        <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
+            <label style="width: 150px;">Selecione o Narrador:</label>
+            <select class="flex-1" id="narrador_personagem">
+                <option>Rafael Descargas</option>
+                <option>Mona Cansada</option>
+            </select>
+        </div>
+
+        <div class="row" style="margin-bottom: 25px;">
+            <label style="width: 150px;">Estado Emocional:</label>
+            <select class="flex-1" id="narrador_emocao">
+                <option value="normal">Normal</option>
+                <option value="feliz">Feliz</option>
+                <option value="raiva">Raiva</option>
+                <option value="triste">Triste</option>
+            </select>
+        </div>
+
+        <div class="row" style="flex-direction: column; align-items: flex-start; gap: 10px; border-top: 1px solid #333; padding-top: 20px;">
+            <label>Upload do Áudio:</label>
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <button type="button" class="btn primary" style="background: #1E3A8A; color: white; border-color: #1E3A8A; font-weight: bold; padding: 8px 15px;" onclick="browseFile('narrador_audio_path', 'audio')">
+                    📁 Carregar Arquivo de Áudio (.mp3)
+                </button>
+                <input type="text" id="narrador_audio_path" class="flex-1" readonly placeholder="Nenhum áudio carregado.">
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <button type="button" class="primary" style="padding: 12px 30px; font-size: 16px; background-color: #FFD700; color: #000; border-color: #FFD700;">
+                ▶ Gerar Vídeo do Narrador
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function browseFile(inputId, fileType = 'all') {
+        try {
+            const response = await fetch(`/api/browse_file?type=${fileType}`);
+            const data = await response.json();
+            if (data.path) {
+                document.getElementById(inputId).value = data.path;
+            }
+        } catch (error) {
+            console.error("Erro ao buscar arquivo:", error);
+        }
+    }
+</script>
+{% endblock %}

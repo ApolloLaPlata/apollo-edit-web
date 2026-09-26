@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control</title>
+    <style>
+        :root { --bg:#0a0a0c; --surface:#131316; --accent:#ff2a5f; --text:#e0e0e0; --text-dim:#888; --border:#2a2a35; --success:#00e676; }
+        body { background:var(--bg); color:var(--text); font-family:sans-serif; margin:0; padding:20px; }
+        header { display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:20px;}
+        h1 { margin:0; font-size:24px; color:var(--accent); }
+        .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .panel { background:var(--surface); padding:20px; border:1px solid var(--border); border-radius:8px; }
+        table { width:100%; border-collapse:collapse; margin-top:15px; }
+        th, td { text-align:left; padding:10px; border-bottom:1px solid var(--border); }
+        .login-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:999; }
+        .login-box { background:var(--surface); padding:30px; border-radius:8px; text-align:center; width:300px; }
+        input { width:100%; padding:10px; margin:15px 0; background:var(--bg); border:1px solid var(--border); color:white; }
+        button { background:var(--accent); color:white; border:none; padding:10px; cursor:pointer; width:100%; font-weight:bold; }
+    </style>
+</head>
+<body>
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-box">
+            <h2>Acesso Restrito</h2>
+            <input type="password" id="pass" placeholder="Senha">
+            <button id="btn-login">Desbloquear</button>
+        </div>
+    </div>
+    <header><h1>Mission Control</h1><div id="status">Conectando...</div></header>
+    <div class="grid">
+        <div class="panel"><h2>?? Galp?o (HF 2)</h2><table id="t-hf"><tr><td>Carregando...</td></tr></table></div>
+        <div class="panel"><h2>?? Prateleira (Oracle 2)</h2><table id="t-oracle"><tr><td>Carregando...</td></tr></table></div>
+    </div>
+    <script>
+        const API = 'https://roxingo-apollo-edit-web.hf.space/api/broadcaster/admin';
+        document.getElementById('btn-login').addEventListener('click', () => {
+            const pass = document.getElementById('pass').value || 'darktrap247';
+            window.auth = 'Basic ' + btoa('admin:' + pass);
+            document.getElementById('login-overlay').style.display = 'none';
+            fetchData();
+        });
+
+        async function fetchData() {
+            try {
+                const resInv = await fetch(API + '/inventory', {headers: {'Authorization': window.auth}});
+                if(!resInv.ok) throw new Error('Auth');
+                const dataHF = await resInv.json();
+                document.getElementById('status').innerText = 'Online';
+                document.getElementById('status').style.color = '#00e676';
+                
+                let hfHtml = '<tr><th>Arquivo</th><th>MB</th></tr>';
+                if(dataHF.hf_galpao && dataHF.hf_galpao.length > 0) {
+                    dataHF.hf_galpao.forEach(f => hfHtml += <tr><td></td><td></td></tr>);
+                } else { hfHtml += '<tr><td colspan="2">Vazio</td></tr>'; }
+                document.getElementById('t-hf').innerHTML = hfHtml;
+
+                const resOra = await fetch(API + '/oracle-status', {headers: {'Authorization': window.auth}});
+                const dataOra = await resOra.json();
+                document.getElementById('t-oracle').innerHTML = <tr><th>Atual</th><th>Status</th></tr><tr><td></td><td>Transmitindo</td></tr>;
+            } catch(e) {
+                alert('Acesso Negado ou Servidor Offline');
+                document.getElementById('login-overlay').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>

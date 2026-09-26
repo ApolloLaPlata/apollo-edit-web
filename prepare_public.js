@@ -23,7 +23,7 @@ const vercelJson = {
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api.apolloedit.com/api/:path*"
+      "destination": "/api/:path*"
     }
   ],
   "redirects": [

@@ -124,7 +124,7 @@
                 // Em ambiente de producao isso viria do Auth
                 const userId = "master_user_1"; 
                 
-                const response = await fetch("https://filosofiadocodigo--apollo-render-router-apollo-api.modal.run/train_lora", {
+                const response = await fetch("https://api.v5apollo.com/api/train_lora", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -160,3 +160,4 @@
     </script>
 </body>
 </html>
+
