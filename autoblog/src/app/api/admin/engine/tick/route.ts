@@ -103,9 +103,9 @@ export async function POST(req: Request) {
     // =============================================
     // FASE 63: ROBÔ DIRETOR E FASE 77: AGENTE SOCIAL
     // =============================================
-    const blogs = db.prepare('SELECT id, name FROM Blog').all() as any[];
+    const blogs = await db.prepare('SELECT id, name FROM Blog').all() as any[];
     for (const blog of blogs) {
-      const queueCount = db.prepare(`SELECT COUNT(*) as c FROM ContentQueue WHERE blogId = ? AND status = 'pending'`).get(blog.id) as any;
+      const queueCount = await db.prepare(`SELECT COUNT(*) as c FROM ContentQueue WHERE blogId = ? AND status = 'pending'`).get(blog.id) as any;
       if (queueCount.c === 0) {
         // console.log(`[ROBÔ DIRETOR] Fila do canal ${blog.name} está VAZIA. Acordando o Oráculo...`);
         await runOracleAgent(blog.id); 
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
     // =============================================
     // Se alguma pauta ficou travada em 'writing' por mais de 1 hora (crash da IA), volta para 'pending'
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const healed = db.prepare(`UPDATE ContentQueue SET status = 'pending' WHERE status = 'writing' AND createdAt < ?`).run(oneHourAgo);
+    const healed = await db.prepare(`UPDATE ContentQueue SET status = 'pending' WHERE status = 'writing' AND createdAt < ?`).run(oneHourAgo);
     if (healed.changes > 0) {
       console.log(`[SELF-HEALING] 🩺 ${healed.changes} pautas travadas foram destravadas e voltaram para a fila.`);
     }
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
 
     // 1. Procura na Fila de Pautas (ContentQueue) alguma pauta pendente
     //    com verificação de Drip-Feed por canal
-    const pendingTask = db.prepare(`SELECT * FROM ContentQueue WHERE status = 'pending' ORDER BY createdAt ASC LIMIT 1`).get() as any;
+    const pendingTask = await db.prepare(`SELECT * FROM ContentQueue WHERE status = 'pending' ORDER BY createdAt ASC LIMIT 1`).get() as any;
 
     if (!pendingTask) {
       return NextResponse.json({ success: true, message: 'Nenhuma pauta na fila.' });
@@ -149,11 +149,11 @@ export async function POST(req: Request) {
     // =============================================
     // FASE 36: MÁQUINA DO TEMPO (DRIP-FEED CHECK)
     // =============================================
-    const agentCfg = db.prepare(`SELECT postIntervalHours FROM AgentConfig WHERE blogId = ?`).get(pendingTask.blogId) as any;
+    const agentCfg = await db.prepare(`SELECT postIntervalHours FROM AgentConfig WHERE blogId = ?`).get(pendingTask.blogId) as any;
     const intervalHours = agentCfg?.postIntervalHours ?? 4;
     
     // Último post publicado deste canal
-    const lastPost = db.prepare(`SELECT createdAt FROM Post WHERE blogId = ? ORDER BY createdAt DESC LIMIT 1`).get(pendingTask.blogId) as any;
+    const lastPost = await db.prepare(`SELECT createdAt FROM Post WHERE blogId = ? ORDER BY createdAt DESC LIMIT 1`).get(pendingTask.blogId) as any;
     
     if (lastPost) {
       const lastPostTime = new Date(lastPost.createdAt).getTime();
@@ -170,23 +170,23 @@ export async function POST(req: Request) {
     }
 
     // Marca como 'writing' para evitar execuções simultâneas
-    db.prepare(`UPDATE ContentQueue SET status = 'writing' WHERE id = ?`).run(pendingTask.id);
+    await db.prepare(`UPDATE ContentQueue SET status = 'writing' WHERE id = ?`).run(pendingTask.id);
 
     // Pega o prompt/persona do Blog correspondente
-    const blog = db.prepare(`SELECT * FROM Blog WHERE id = ?`).get(pendingTask.blogId) as any;
+    const blog = await db.prepare(`SELECT * FROM Blog WHERE id = ?`).get(pendingTask.blogId) as any;
     if (!blog) {
-      db.prepare(`UPDATE ContentQueue SET status = 'error' WHERE id = ?`).run(pendingTask.id);
+      await db.prepare(`UPDATE ContentQueue SET status = 'error' WHERE id = ?`).run(pendingTask.id);
       return NextResponse.json({ success: false, error: 'Blog da pauta não encontrado.' });
     }
 
     // Dispara o Enxame Assincronamente (Não damos await para não segurar o request e dar timeout)
     executeSwarmPipeline(pendingTask.topic, blog.id, blog.personaPrompt)
-      .then(() => {
-        db.prepare(`UPDATE ContentQueue SET status = 'published' WHERE id = ?`).run(pendingTask.id);
+      .then(async () => {
+        await db.prepare(`UPDATE ContentQueue SET status = 'published' WHERE id = ?`).run(pendingTask.id);
         console.log(`[TICK] Pauta "${pendingTask.topic}" concluída com sucesso!`);
       })
-      .catch(err => {
-        db.prepare(`UPDATE ContentQueue SET status = 'pending' WHERE id = ?`).run(pendingTask.id);
+      .catch(async err => {
+        await db.prepare(`UPDATE ContentQueue SET status = 'pending' WHERE id = ?`).run(pendingTask.id);
         console.error(`[TICK] Erro ao executar pauta:`, err);
       });
 

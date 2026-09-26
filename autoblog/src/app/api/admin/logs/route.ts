@@ -58,7 +58,7 @@ export async function GET(req: Request) {
     const logs = generateMockLogs(logCount);
 
     // Let's also fetch the last 3 REAL posts to inject as [PUBLISHER] logs
-    const recentPosts = db.prepare('SELECT title, createdAt FROM Post ORDER BY createdAt DESC LIMIT 3').all() as any[];
+    const recentPosts = await db.prepare('SELECT title, createdAt FROM Post ORDER BY createdAt DESC LIMIT 3').all() as any[];
     
     if (!lastId && recentPosts.length > 0) {
         recentPosts.forEach((p, idx) => {

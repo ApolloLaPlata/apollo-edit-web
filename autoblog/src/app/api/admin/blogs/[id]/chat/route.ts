@@ -12,7 +12,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const blogId = params.id;
 
     // Busca o blog atual e sua configuração de agente
-    const blogRaw = db.prepare(`
+    const blogRaw = await db.prepare(`
       SELECT 
         Blog.*, 
         AgentConfig.id as agentConfig_id, 
@@ -36,7 +36,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
 
     if (!blog.agentConfig) {
       // Cria a configuração padrão se não existir
-      db.prepare('INSERT INTO AgentConfig (id, blogId, personaPrompt, imageStylePrompt, isActive, postFrequency) VALUES (?, ?, ?, ?, 1, 3)').run(crypto.randomUUID(), blogId, 'Sou uma IA Editora padrão. Foco em clareza e engajamento.', 'photorealistic, cinematic, highly detailed');
+      await db.prepare('INSERT INTO AgentConfig (id, blogId, personaPrompt, imageStylePrompt, isActive, postFrequency) VALUES (?, ?, ?, ?, 1, 3)').run(crypto.randomUUID(), blogId, 'Sou uma IA Editora padrão. Foco em clareza e engajamento.', 'photorealistic, cinematic, highly detailed');
       blog.agentConfig = { personaPrompt: 'Sou uma IA Editora padrão. Foco em clareza e engajamento.' };
     }
 
@@ -90,7 +90,7 @@ Sua tarefa é classificar a ordem e retornar OBRIGATORIAMENTE um JSON válido ne
 
     // Só atualiza a persona no banco de dados se a action for update_persona
     if (action === 'update_persona' && newPrompt) {
-      db.prepare('UPDATE AgentConfig SET personaPrompt = ? WHERE blogId = ?').run(newPrompt, blogId);
+      await db.prepare('UPDATE AgentConfig SET personaPrompt = ? WHERE blogId = ?').run(newPrompt, blogId);
     }
 
     if (action === 'generate_post' && topic) {

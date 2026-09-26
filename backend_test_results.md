@@ -1,0 +1,5 @@
+- [x] Consertar roteamento da imagem (adicionar hunyuan, omnigen, z-image à lista de permitidos do `apollo_modal_engine.py`)
+- [x] Desacoplar a injeção global de dependências no Modal (remover import circular que quebrava o startup das funções menores porque dependiam do FastAPI no root)
+- [x] Fazer o deploy completo atualizado das rotas da API Modal.
+- [x] Desenvolver script de teste end-to-end simulando a conexão do backend (para Hunyuan e Flux).
+- [x] Executar testes localmente batendo na nuvem Modal real para provar o status das requisições.

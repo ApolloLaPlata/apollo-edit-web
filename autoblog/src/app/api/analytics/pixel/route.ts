@@ -15,9 +15,9 @@ export async function GET(request: Request) {
       // Atualiza a taxa de abertura
       // Isso indica que o usuário abriu o e-mail no cliente dele
       if (blogId) {
-        db.prepare('UPDATE Subscriber SET opens = opens + 1 WHERE email = ? AND blogId = ?').run(email, blogId);
+        await db.prepare('UPDATE Subscriber SET opens = opens + 1 WHERE email = ? AND blogId = ?').run(email, blogId);
       } else {
-        db.prepare('UPDATE Subscriber SET opens = opens + 1 WHERE email = ?').run(email);
+        await db.prepare('UPDATE Subscriber SET opens = opens + 1 WHERE email = ?').run(email);
       }
       console.log(`[NEWSLETTER-TRACKER] 👁️ Abertura registrada para o lead: ${email}`);
     }

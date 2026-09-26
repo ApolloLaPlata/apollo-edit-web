@@ -10,7 +10,7 @@ export default async function RelatedPosts({
   domain: string;
 }) {
   // Puxa 3 posts diferentes deste mesmo portal para reter o leitor
-  const relatedRaw = db
+  const relatedRaw = await db
     .prepare(`
     SELECT Post.id, Post.title, Post.slug, Post.coverImage, Post.createdAt, Blog.name as blogName
     FROM Post

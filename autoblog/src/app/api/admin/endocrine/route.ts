@@ -10,24 +10,24 @@ export async function GET(request: Request) {
 
     let logs = [];
     if (blogId && blogId !== 'all') {
-      logs = db.prepare(`SELECT * FROM EndocrineLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
+      logs = await db.prepare(`SELECT * FROM EndocrineLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
     } else {
-      logs = db.prepare(`SELECT * FROM EndocrineLog ORDER BY createdAt DESC LIMIT 50`).all();
+      logs = await db.prepare(`SELECT * FROM EndocrineLog ORDER BY createdAt DESC LIMIT 50`).all();
     }
 
-    const totalHomeostasisQuery = db.prepare(`
+    const totalHomeostasisQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM EndocrineLog WHERE actionType = 'hormone_homeostasis'
     `).get() as any;
 
-    const totalFactCheckQuery = db.prepare(`
+    const totalFactCheckQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM EndocrineLog WHERE actionType = 'fact_checking'
     `).get() as any;
 
-    const totalViralQuery = db.prepare(`
+    const totalViralQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM EndocrineLog WHERE actionType = 'viral_boost'
     `).get() as any;
 
-    const auditedPostsQuery = db.prepare(`
+    const auditedPostsQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM Post WHERE contentMd LIKE '%[✔ Auditado por Inteligência Editorial]%'
     `).get() as any;
 
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     }
 
     if (action === 'clear_logs') {
-      db.prepare(`DELETE FROM EndocrineLog`).run();
+      await db.prepare(`DELETE FROM EndocrineLog`).run();
       return NextResponse.json({ success: true, message: 'Telemetria do Sistema Endócrino limpa com sucesso.' });
     }
 

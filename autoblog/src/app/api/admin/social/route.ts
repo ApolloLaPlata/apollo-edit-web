@@ -8,9 +8,9 @@ export async function GET(req: Request) {
 
     let config;
     if (blogId) {
-       config = db.prepare('SELECT id, telegramBotToken, telegramChatId, discordWebhookUrl, whatsappApiUrl, whatsappGroupId FROM AgentConfig WHERE blogId = ?').get(blogId);
+       config = await db.prepare('SELECT id, telegramBotToken, telegramChatId, discordWebhookUrl, whatsappApiUrl, whatsappGroupId FROM AgentConfig WHERE blogId = ?').get(blogId);
     } else {
-       config = db.prepare('SELECT id, telegramBotToken, telegramChatId, discordWebhookUrl, whatsappApiUrl, whatsappGroupId FROM AgentConfig LIMIT 1').get();
+       config = await db.prepare('SELECT id, telegramBotToken, telegramChatId, discordWebhookUrl, whatsappApiUrl, whatsappGroupId FROM AgentConfig LIMIT 1').get();
     }
 
     if (!config) {

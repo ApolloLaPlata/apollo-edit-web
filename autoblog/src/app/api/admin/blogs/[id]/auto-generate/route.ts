@@ -8,8 +8,8 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const blogId = params.id;
     
     // 1. Verificar se o blog existe e está ativo
-    const blogMeta = db.prepare('SELECT name, domain FROM Blog WHERE id = ?').get(blogId) as any;
-    const agentConfig = db.prepare('SELECT isActive FROM AgentConfig WHERE blogId = ?').get(blogId) as any;
+    const blogMeta = await db.prepare('SELECT name, domain FROM Blog WHERE id = ?').get(blogId) as any;
+    const agentConfig = await db.prepare('SELECT isActive FROM AgentConfig WHERE blogId = ?').get(blogId) as any;
 
     if (!blogMeta) {
       return NextResponse.json({ success: false, error: 'Blog não encontrado.' }, { status: 404 });

@@ -8,9 +8,9 @@ export async function GET(
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
 
-  let blog = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
+  let blog = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
   if (!blog && domain.includes('localhost')) {
-    blog = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blog = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   if (!blog) return new NextResponse('Blog not found', { status: 404 });
 

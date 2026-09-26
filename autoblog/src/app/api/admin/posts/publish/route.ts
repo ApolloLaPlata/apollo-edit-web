@@ -9,7 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Post ID is required' }, { status: 400 });
     }
 
-    db.prepare('UPDATE Post SET isPublished = 1 WHERE id = ?').run(postId);
+    await db.prepare('UPDATE Post SET isPublished = 1 WHERE id = ?').run(postId);
 
     return NextResponse.json({ success: true, message: 'Post liberado e publicado com sucesso!' });
   } catch (error: any) {

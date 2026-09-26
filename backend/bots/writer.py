@@ -4,25 +4,26 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
-# Aqui a chave vira LIGHTNING_API_KEY mas como no nosso .env a gente puxou do Apollo, pode estar como OPENROUTER ou LIGHTNING.
-# O Maestro diz que a Lightning AI é OpenAI compatível.
-# Vou priorizar a LIGHTNING_API_KEY se existir, senão pego o OPENROUTER_API_KEY.
-LIGHTNING_KEY = os.getenv("LIGHTNING_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+# Diretriz de Arquitetura do Apollo Edit: BACKGROUND BOTS NUNCA USAM OPENROUTER.
+# O OpenRouter é sagrado e restrito ao uso direto do CEO.
+# Todos os Agentes de Redação devem bater exclusivamente no Lightning AI (Pool Gratuito).
+LIGHTNING_KEY = os.getenv("LIGHTNING_API_KEY")
 
-# Conectando na infraestrutura correta fornecida pelo Maestro
-if os.getenv("LIGHTNING_API_KEY"):
+if not LIGHTNING_KEY:
+    print("[WRITER] ALERTA CRÍTICO: LIGHTNING_API_KEY não encontrada no ambiente!")
+    print("[WRITER] Abortando inicialização do motor de escrita para proteger o cofre do OpenRouter.")
+    # Falha seca para não onerar
+    client = None
+else:
     client = OpenAI(
         api_key=LIGHTNING_KEY,
         base_url="https://api.lightning.ai/v1"
     )
-else:
-    # Fallback para OpenRouter caso o user não tenha posto a Lightning
-    client = OpenAI(
-        api_key=LIGHTNING_KEY,
-        base_url="https://openrouter.ai/api/v1"
-    )
 
 def escrever_artigo(pauta, persona_prompt):
+    if not client:
+        return {"markdown": "# Erro de Sistema\nAPI Lightning não configurada.", "image_prompt": "Error", "audio_script": "Error"}
+
     print(f"[WRITER] Escrevendo artigo baseado em: {pauta['title']}")
     
     prompt = f"""
@@ -52,9 +53,9 @@ def escrever_artigo(pauta, persona_prompt):
     """
 
     try:
-        # Usa o modelo Qwen como sugerido pelo Maestro
+        # Usa o modelo Qwen (ou similar robusto) estritamente hospedado na Lightning AI
         response = client.chat.completions.create(
-            model="Qwen/Qwen2.5-72B-Instruct" if os.getenv("LIGHTNING_API_KEY") else "meta-llama/llama-3.1-8b-instruct",
+            model="Qwen/Qwen2.5-72B-Instruct",
             messages=[
                 {"role": "system", "content": "Você é um jornalista de alto nível focado em SEO."},
                 {"role": "user", "content": prompt}
@@ -99,9 +100,10 @@ def gerar_comentarios_fantasmas(titulo, quantidade=5):
       ...
     ]
     """
+    if not client: return []
     try:
         response = client.chat.completions.create(
-            model="Qwen/Qwen2.5-72B-Instruct" if os.getenv("LIGHTNING_API_KEY") else "meta-llama/llama-3.1-8b-instruct",
+            model="Qwen/Qwen2.5-72B-Instruct",
             messages=[
                 {"role": "system", "content": "Você é um gerador de dados JSON. Retorne APENAS o JSON solicitado, sem blocos de markdown ou texto adicional."},
                 {"role": "user", "content": prompt}

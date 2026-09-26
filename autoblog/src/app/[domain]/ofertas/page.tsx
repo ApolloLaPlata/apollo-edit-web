@@ -7,7 +7,7 @@ import NavbarMaster from '@/components/ui/NavbarMaster';
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata> {
   const params = await props.params;
   const decodedDomain = decodeURIComponent(params.domain);
-  const blog = db.prepare('SELECT name FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  const blog = await db.prepare('SELECT name FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   return { title: `Oferta Exclusiva | ${blog?.name || decodedDomain}`, robots: { index: false, follow: false } };
 }
 
@@ -15,7 +15,7 @@ export default async function OfertasPage(props: { params: Promise<{ domain: str
   const params = await props.params;
   const decodedDomain = decodeURIComponent(params.domain);
   
-  const blog = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  const blog = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blog && !decodedDomain.includes('localhost')) {
     notFound();
   }

@@ -24,15 +24,15 @@ export async function GET(request: Request) {
     // Buscar CPC estimado do link
     let estimatedRevenue = 0.50;
     if (affiliateLinkId) {
-      const link = db.prepare('SELECT estimatedCpc FROM AffiliateLink WHERE id = ?').get(affiliateLinkId) as any;
+      const link = await db.prepare('SELECT estimatedCpc FROM AffiliateLink WHERE id = ?').get(affiliateLinkId) as any;
       if (link?.estimatedCpc) estimatedRevenue = link.estimatedCpc;
       // Incrementar contador
-      db.prepare('UPDATE AffiliateLink SET totalClicks = totalClicks + 1 WHERE id = ?').run(affiliateLinkId);
+      await db.prepare('UPDATE AffiliateLink SET totalClicks = totalClicks + 1 WHERE id = ?').run(affiliateLinkId);
     }
 
     // Registrar clique
     const clickId = crypto.randomUUID();
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO AffiliateClick (id, blogId, postId, affiliateLinkId, linkUrl, linkLabel, ipHash, revenue)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `).run(clickId, blogId, postId, affiliateLinkId, url, label, ipHash, estimatedRevenue);

@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 export async function GET() {
   try {
-    const links = db.prepare('SELECT * FROM AffiliateLink ORDER BY createdAt DESC').all();
+    const links = await db.prepare('SELECT * FROM AffiliateLink ORDER BY createdAt DESC').all();
     return NextResponse.json({ links: links.map((link: any) => ({
       ...link,
       isActive: Boolean(link.isActive)
@@ -12,7 +12,7 @@ export async function GET() {
   } catch (error: any) {
     if (error.message.includes('no such table')) {
       // Cria a tabela se não existir (Fail-safe Fase 115)
-      db.prepare(`
+      await db.prepare(`
         CREATE TABLE IF NOT EXISTS AffiliateLink (
           id TEXT PRIMARY KEY,
           keyword TEXT NOT NULL,
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     const id = crypto.randomUUID();
 
     // Garante tabela
-    db.prepare(`
+    await db.prepare(`
       CREATE TABLE IF NOT EXISTS AffiliateLink (
         id TEXT PRIMARY KEY,
         keyword TEXT NOT NULL,
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       )
     `).run();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO AffiliateLink (id, keyword, url, isActive)
       VALUES (?, ?, ?, ?)
     `).run(id, keyword.toLowerCase(), url, isActive ? 1 : 0);
@@ -60,7 +60,7 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const { id, isActive } = body;
 
-    db.prepare('UPDATE AffiliateLink SET isActive = ? WHERE id = ?').run(isActive ? 1 : 0, id);
+    await db.prepare('UPDATE AffiliateLink SET isActive = ? WHERE id = ?').run(isActive ? 1 : 0, id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

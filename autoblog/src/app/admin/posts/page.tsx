@@ -2,8 +2,8 @@ import React from 'react';
 import db from '@/lib/db';
 import PostsClient from './PostsClient';
 
-export default function AdminPosts() {
-  const postsRaw = db.prepare(`
+export default async function AdminPosts() {
+  const postsRaw = await db.prepare(`
     SELECT Post.id, Post.title, Post.slug, Post.createdAt, Post.isPublished, Post.author, Post.views, Blog.name as blogName, Blog.domain as blogDomain
     FROM Post
     LEFT JOIN Blog ON Post.blogId = Blog.id

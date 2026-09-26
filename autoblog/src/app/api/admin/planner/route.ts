@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     
     query += ` ORDER BY ContentQueue.createdAt DESC`;
 
-    const tasks = db.prepare(query).all(...params);
+    const tasks = await db.prepare(query).all(...params);
     return NextResponse.json({ success: true, tasks });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     if (!blogId || !topic) throw new Error('Dados incompletos');
 
     const id = crypto.randomUUID();
-    db.prepare(`INSERT INTO ContentQueue (id, blogId, topic) VALUES (?, ?, ?)`).run(id, blogId, topic);
+    await db.prepare(`INSERT INTO ContentQueue (id, blogId, topic) VALUES (?, ?, ?)`).run(id, blogId, topic);
 
     return NextResponse.json({ success: true, id });
   } catch (error: any) {
@@ -47,7 +47,7 @@ export async function DELETE(request: Request) {
     const { id } = await request.json();
     if (!id) throw new Error('ID ausente');
 
-    db.prepare(`DELETE FROM ContentQueue WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM ContentQueue WHERE id = ?`).run(id);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

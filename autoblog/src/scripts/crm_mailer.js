@@ -19,7 +19,7 @@ async function sendDailyNewsletter() {
   console.log('[CRM] 📨 Preparando Newsletter Diária de Fofocas...');
 
   // Pega as 3 matérias mais recentes
-  const topPosts = db.prepare(`SELECT id, title, slug, coverImage FROM Post ORDER BY createdAt DESC LIMIT 3`).all();
+  const topPosts = await db.prepare(`SELECT id, title, slug, coverImage FROM Post ORDER BY createdAt DESC LIMIT 3`).all();
   
   if (topPosts.length === 0) {
     console.log('[CRM] ⚠️ Sem matérias para enviar hoje.');

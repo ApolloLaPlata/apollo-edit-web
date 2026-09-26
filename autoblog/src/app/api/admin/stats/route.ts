@@ -24,16 +24,16 @@ export async function GET(request: Request) {
     const last14Days = getLastNDays(14);
 
     if (blogId === 'global') {
-      const totalBlogs = db.prepare('SELECT COUNT(*) as count FROM Blog').get() as any;
-      const totalPosts = db.prepare('SELECT COUNT(*) as count FROM Post').get() as any;
-      const totalViews = db.prepare('SELECT SUM(views) as count FROM Post').get() as any;
-      const totalLeads = db.prepare('SELECT COUNT(*) as count FROM Subscriber').get() as any;
-      const totalOpens = db.prepare('SELECT SUM(opens) as count FROM Subscriber').get() as any;
-      const totalClicks = db.prepare('SELECT COUNT(*) as count FROM AffiliateClick').get() as any;
-      const totalRevenue = db.prepare('SELECT SUM(revenue) as count FROM AffiliateClick').get() as any;
+      const totalBlogs = await db.prepare('SELECT COUNT(*) as count FROM Blog').get() as any;
+      const totalPosts = await db.prepare('SELECT COUNT(*) as count FROM Post').get() as any;
+      const totalViews = await db.prepare('SELECT SUM(views) as count FROM Post').get() as any;
+      const totalLeads = await db.prepare('SELECT COUNT(*) as count FROM Subscriber').get() as any;
+      const totalOpens = await db.prepare('SELECT SUM(opens) as count FROM Subscriber').get() as any;
+      const totalClicks = await db.prepare('SELECT COUNT(*) as count FROM AffiliateClick').get() as any;
+      const totalRevenue = await db.prepare('SELECT SUM(revenue) as count FROM AffiliateClick').get() as any;
 
       // Ranking de Canais
-      const channelStats = db.prepare(`
+      const channelStats = await db.prepare(`
         SELECT 
           Blog.id,
           Blog.name,
@@ -47,14 +47,14 @@ export async function GET(request: Request) {
       `).all() as any[];
 
       for (const channel of channelStats) {
-        const leads = db.prepare('SELECT COUNT(*) as count FROM Subscriber WHERE blogId = ?').get(channel.id) as any;
+        const leads = await db.prepare('SELECT COUNT(*) as count FROM Subscriber WHERE blogId = ?').get(channel.id) as any;
         channel.leadsCount = leads.count || 0;
         channel.totalViews = channel.totalViews || 0;
       }
 
       // Gráficos Diários
-      const getChartData = (table: string, dateCol: string) => {
-        const query = db.prepare(`
+      const getChartData = async (table: string, dateCol: string) => {
+        const query = await db.prepare(`
           SELECT substr(${dateCol}, 1, 10) as date, COUNT(*) as count
           FROM ${table}
           WHERE ${dateCol} >= date('now', '-14 days')
@@ -79,23 +79,23 @@ export async function GET(request: Request) {
           totalClicks: totalClicks.count || 0,
           totalRevenue: totalRevenue.count || 0,
           leaderboard: channelStats,
-          postsChart: getChartData('Post', 'createdAt'),
-          leadsChart: getChartData('Subscriber', 'createdAt'),
-          clicksChart: getChartData('AffiliateClick', 'clickedAt'),
+          postsChart: await getChartData('Post', 'createdAt'),
+          leadsChart: await getChartData('Subscriber', 'createdAt'),
+          clicksChart: await getChartData('AffiliateClick', 'clickedAt'),
         }
       });
     } else {
-      const blog = db.prepare('SELECT * FROM Blog WHERE id = ?').get(blogId) as any;
+      const blog = await db.prepare('SELECT * FROM Blog WHERE id = ?').get(blogId) as any;
       if (!blog) return NextResponse.json({ success: false, error: 'Blog not found' });
 
-      const postsCount = db.prepare('SELECT COUNT(*) as count FROM Post WHERE blogId = ?').get(blogId) as any;
-      const viewsCount = db.prepare('SELECT SUM(views) as count FROM Post WHERE blogId = ?').get(blogId) as any;
-      const leadsCount = db.prepare('SELECT COUNT(*) as count FROM Subscriber WHERE blogId = ?').get(blogId) as any;
-      const opensCount = db.prepare('SELECT SUM(opens) as count FROM Subscriber WHERE blogId = ?').get(blogId) as any;
-      const clicksCount = db.prepare('SELECT COUNT(*) as count FROM AffiliateClick WHERE blogId = ?').get(blogId) as any;
-      const revCount = db.prepare('SELECT SUM(revenue) as count FROM AffiliateClick WHERE blogId = ?').get(blogId) as any;
+      const postsCount = await db.prepare('SELECT COUNT(*) as count FROM Post WHERE blogId = ?').get(blogId) as any;
+      const viewsCount = await db.prepare('SELECT SUM(views) as count FROM Post WHERE blogId = ?').get(blogId) as any;
+      const leadsCount = await db.prepare('SELECT COUNT(*) as count FROM Subscriber WHERE blogId = ?').get(blogId) as any;
+      const opensCount = await db.prepare('SELECT SUM(opens) as count FROM Subscriber WHERE blogId = ?').get(blogId) as any;
+      const clicksCount = await db.prepare('SELECT COUNT(*) as count FROM AffiliateClick WHERE blogId = ?').get(blogId) as any;
+      const revCount = await db.prepare('SELECT SUM(revenue) as count FROM AffiliateClick WHERE blogId = ?').get(blogId) as any;
 
-      const topPosts = db.prepare(`
+      const topPosts = await db.prepare(`
         SELECT id, title, slug, views, createdAt, language
         FROM Post
         WHERE blogId = ?
@@ -104,7 +104,7 @@ export async function GET(request: Request) {
       `).all(blogId) as any[];
 
       // Top Links Afiliados (Performance)
-      const topLinks = db.prepare(`
+      const topLinks = await db.prepare(`
         SELECT 
           AffiliateLink.keyword as name, 
           COUNT(AffiliateClick.id) as clicks,
@@ -117,8 +117,8 @@ export async function GET(request: Request) {
         LIMIT 5
       `).all(blogId) as any[];
 
-      const getChartData = (table: string, dateCol: string) => {
-        const query = db.prepare(`
+      const getChartDataInd = async (table: string, dateCol: string) => {
+        const query = await db.prepare(`
           SELECT substr(${dateCol}, 1, 10) as date, COUNT(*) as count
           FROM ${table}
           WHERE blogId = ? AND ${dateCol} >= date('now', '-14 days')
@@ -131,7 +131,7 @@ export async function GET(request: Request) {
         }));
       };
 
-      const langDist = db.prepare(`SELECT language, COUNT(*) as count FROM Post WHERE blogId = ? GROUP BY language`).all(blogId) as any[];
+      const langDist = await db.prepare(`SELECT language, COUNT(*) as count FROM Post WHERE blogId = ? GROUP BY language`).all(blogId) as any[];
 
       return NextResponse.json({
         success: true,
@@ -146,9 +146,9 @@ export async function GET(request: Request) {
           totalRevenue: revCount.count || 0,
           topPosts,
           topLinks,
-          postsChart: getChartData('Post', 'createdAt'),
-          leadsChart: getChartData('Subscriber', 'createdAt'),
-          clicksChart: getChartData('AffiliateClick', 'clickedAt'),
+          postsChart: await getChartDataInd('Post', 'createdAt'),
+          leadsChart: await getChartDataInd('Subscriber', 'createdAt'),
+          clicksChart: await getChartDataInd('AffiliateClick', 'clickedAt'),
           langDist
         }
       });

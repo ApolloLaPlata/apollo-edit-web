@@ -20,9 +20,9 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const decodedDomain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
 
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   if (!blogMeta) return { title: 'Autor não encontrado' };
 
@@ -44,9 +44,9 @@ export default async function AuthorPage(props: { params: Promise<{ domain: stri
   const slug = decodeURIComponent(params.slug);
   const lang = (typeof searchParams.lang === 'string') ? searchParams.lang : 'pt';
   
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   const themeClass = blogMeta?.theme ? `theme-${blogMeta.theme}` : 'theme-dark';
 
@@ -57,7 +57,7 @@ export default async function AuthorPage(props: { params: Promise<{ domain: stri
 
   let posts = [] as any[];
   if (slug.includes('redacao')) {
-     posts = db.prepare(`
+     posts = await db.prepare(`
         SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
         FROM Post 
         LEFT JOIN Blog ON Post.blogId = Blog.id 
@@ -66,7 +66,7 @@ export default async function AuthorPage(props: { params: Promise<{ domain: stri
         ORDER BY Post.createdAt DESC LIMIT 20
       `).all(blogMeta?.id, lang) as any[];
   } else {
-     posts = db.prepare(`
+     posts = await db.prepare(`
         SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
         FROM Post 
         LEFT JOIN Blog ON Post.blogId = Blog.id 
@@ -76,7 +76,7 @@ export default async function AuthorPage(props: { params: Promise<{ domain: stri
       `).all(blogMeta?.id, lang, `%${authorName}%`) as any[];
   }
 
-  const categories = db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogMeta?.id) as any[];
+  const categories = await db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogMeta?.id) as any[];
 
   // JSON-LD Schema for Google SEO (BreadcrumbList)
   const jsonLd = {

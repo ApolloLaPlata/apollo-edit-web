@@ -5,7 +5,7 @@ import AppearanceClient from './AppearanceClient';
 export const dynamic = 'force-dynamic';
 
 export default async function AppearancePage() {
-  const blogsRaw = db.prepare('SELECT * FROM Blog ORDER BY name ASC').all() as any[];
+  const blogsRaw = await db.prepare('SELECT * FROM Blog ORDER BY name ASC').all() as any[];
 
   const blogs = blogsRaw.map((b) => ({
     id: String(b.id),

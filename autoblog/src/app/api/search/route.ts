@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     let posts: any[];
 
     if (blogId && blogId !== 'all') {
-      posts = db.prepare(`
+      posts = await db.prepare(`
         SELECT id, title, slug, coverImage, createdAt, author, language
         FROM Post
         WHERE blogId = ?
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
         LIMIT 15
       `).all(blogId, lang, pattern, pattern);
     } else {
-      posts = db.prepare(`
+      posts = await db.prepare(`
         SELECT Post.id, Post.title, Post.slug, Post.coverImage, Post.createdAt, Post.author, Post.language,
                Blog.name as blogName, Blog.domain as blogDomain
         FROM Post

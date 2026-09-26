@@ -16,7 +16,7 @@ async function processSocialQueue() {
   console.log('[SOCIAL-PUBLISHER] 📡 Sondando vídeos recém-saídos da fábrica para distribuição...');
   
   // Pega um vídeo concluído e pronto para ser publicado
-  const task = db.prepare(`
+  const task = await db.prepare(`
     SELECT v.*, p.title as postTitle, p.blogId, p.slug, p.coverImage, b.domain
     FROM video_render_queue v
     JOIN Post p ON p.id = v.post_id
@@ -34,7 +34,7 @@ async function processSocialQueue() {
   console.log(`[SOCIAL-PUBLISHER] 🚀 Engatilhando postagem do vídeo do Post: ${task.post_id}`);
 
   // Busca os roteiros (Snippets) gerados pela IA no Swarm (Tiktok, Twitter, etc)
-  const snippets = db.prepare(`SELECT platform, content FROM SocialSnippet WHERE postId = ?`).all(task.post_id);
+  const snippets = await db.prepare(`SELECT platform, content FROM SocialSnippet WHERE postId = ?`).all(task.post_id);
   
   let telegramCaption = `🔥 *Novo Vídeo Renderizado!*\n\n*${task.postTitle}*\n\n`;
   let hasTikTok = false;
@@ -52,7 +52,7 @@ async function processSocialQueue() {
 
   // 1. Postar via Telegram (como nossa central de controle / provador)
   try {
-    const config = db.prepare(`SELECT telegramBotToken, telegramChatId FROM AgentConfig WHERE blogId = ?`).get(task.blogId);
+    const config = await db.prepare(`SELECT telegramBotToken, telegramChatId FROM AgentConfig WHERE blogId = ?`).get(task.blogId);
     
     // Descobrir o nome do arquivo de vídeo local.
     // O video_maker salva como short_{post_id}_{timestamp}.mp4
@@ -177,7 +177,7 @@ async function processSocialQueue() {
     }
 
     // 5. Atualiza a fila
-    db.prepare(`UPDATE video_render_queue SET status = 'published', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
+    await db.prepare(`UPDATE video_render_queue SET status = 'published', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
     console.log(`[SOCIAL-PUBLISHER] 🎉 Fase 7 Completa! Distribuição Omni-Channel Executada.`);
   } catch (error) {
     console.error(`[SOCIAL-PUBLISHER] 🚨 Falha ao publicar vídeo ${task.id}:`, error.message);

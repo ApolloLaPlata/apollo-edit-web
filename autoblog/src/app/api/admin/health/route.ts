@@ -25,9 +25,9 @@ export async function GET() {
     const processMemPerc = Math.min(100, Math.round((processMem / totalMem) * 100));
 
     const startDb = performance.now();
-    const totalPosts = (db.prepare('SELECT COUNT(*) as c FROM Post').get() as any)?.c || 0;
-    const pendingQueue = (db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('pending') as any)?.c || 0;
-    const activeLeads = (db.prepare('SELECT COUNT(*) as c FROM Subscriber').get() as any)?.c || 0;
+    const totalPosts = (await db.prepare('SELECT COUNT(*) as c FROM Post').get() as any)?.c || 0;
+    const pendingQueue = (await db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('pending') as any)?.c || 0;
+    const activeLeads = (await db.prepare('SELECT COUNT(*) as c FROM Subscriber').get() as any)?.c || 0;
     const dbLatency = Math.round((performance.now() - startDb) * 100) / 100;
 
     return NextResponse.json({

@@ -3,7 +3,7 @@ import db from '@/lib/db';
 import BlogsClient from './BlogsClient';
 
 export default async function BlogsManager() {
-  const blogsRaw = db.prepare(`
+  const blogsRaw = await db.prepare(`
     SELECT 
       Blog.*, 
       AgentConfig.id as agentConfig_id, 

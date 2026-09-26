@@ -21,7 +21,7 @@ const columnMap: Record<string, string> = {
 
 export async function GET(request: Request) {
   try {
-    const queue = db.prepare('SELECT * FROM ContentQueue ORDER BY createdAt DESC').all() as any[];
+    const queue = await db.prepare('SELECT * FROM ContentQueue ORDER BY createdAt DESC').all() as any[];
     
     // Converte ContentQueue para o formato do Kanban
     const tasks = queue.map(q => ({
@@ -52,10 +52,10 @@ export async function POST(request: Request) {
     const status = statusMap[columnId || 'ideias'] || 'pending';
 
     // Pega o primeiro blog disponível
-    const blog = db.prepare('SELECT id FROM Blog LIMIT 1').get() as any;
+    const blog = await db.prepare('SELECT id FROM Blog LIMIT 1').get() as any;
     const blogId = blog ? blog.id : 'global';
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO ContentQueue (id, blogId, topic, status, createdAt)
       VALUES (?, ?, ?, ?, ?)
     `).run(id, blogId, title, status, createdAt);
@@ -77,7 +77,7 @@ export async function PUT(request: Request) {
 
     const status = statusMap[columnId] || 'pending';
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE ContentQueue SET status = ? WHERE id = ?
     `).run(status, id);
 
@@ -96,7 +96,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, error: 'ID é obrigatório.' }, { status: 400 });
     }
 
-    db.prepare('DELETE FROM ContentQueue WHERE id = ?').run(id);
+    await db.prepare('DELETE FROM ContentQueue WHERE id = ?').run(id);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

@@ -13,12 +13,12 @@ export async function POST(req: Request) {
     const id = crypto.randomUUID();
 
     try {
-      db.prepare('INSERT INTO Subscriber (id, email, blogId) VALUES (?, ?, ?)').run(id, email, blogId);
+      await db.prepare('INSERT INTO Subscriber (id, email, blogId) VALUES (?, ?, ?)').run(id, email, blogId);
       
       // Fase 88: Compartilhamento Global de Leads (Retargeting)
       try {
         const globalId = crypto.randomUUID();
-        db.prepare('INSERT INTO GlobalLead (id, email, sourceBlogId) VALUES (?, ?, ?)').run(globalId, email, blogId);
+        await db.prepare('INSERT INTO GlobalLead (id, email, sourceBlogId) VALUES (?, ?, ?)').run(globalId, email, blogId);
       } catch (globalErr: any) {
         // Se já estiver na rede global (UNIQUE email), ignora
       }

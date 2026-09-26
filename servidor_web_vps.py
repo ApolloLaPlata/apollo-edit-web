@@ -1985,6 +1985,10 @@ def tts_gerar(req: TTSRequest):
         
         if req.engine.lower() == "moss":
             params["_modelo_override"] = 2
+        elif req.engine.lower() == "qwen":
+            params["_modelo_override"] = 5
+        elif req.engine.lower() == "xtts":
+            params["_modelo_override"] = 6
             
         success = api.generate_audio(req.personagem, req.texto, output_path, **params)
         

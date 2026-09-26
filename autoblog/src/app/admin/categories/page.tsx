@@ -5,7 +5,7 @@ import CategoriesClient from './CategoriesClient';
 export const dynamic = 'force-dynamic';
 
 export default async function CategoriesPage() {
-  const categories = db
+  const categories = await db
     .prepare(`
     SELECT Category.*, Blog.name as blogName, Blog.domain as blogDomain,
            (SELECT COUNT(*) FROM Post WHERE Post.categoryId = Category.id) as postCount
@@ -15,7 +15,7 @@ export default async function CategoriesPage() {
   `)
     .all() as any[];
 
-  const blogs = db.prepare('SELECT id, name, domain FROM Blog ORDER BY name ASC').all() as any[];
+  const blogs = await db.prepare('SELECT id, name, domain FROM Blog ORDER BY name ASC').all() as any[];
 
   return (
     <div className="max-w-[1440px] mx-auto space-y-8 pb-16 animate-in fade-in duration-500">

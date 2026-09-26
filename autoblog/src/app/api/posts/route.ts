@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const posts = db.prepare(`
+    const posts = await db.prepare(`
       SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
       FROM Post
       LEFT JOIN Blog ON Post.blogId = Blog.id

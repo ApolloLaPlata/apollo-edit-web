@@ -3,6 +3,8 @@ import asyncio
 import time
 import sqlite3
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 from typing import Dict, Any
 from backend.agents.base_agent import BaseAgent
 from backend.router.waterfall_router import router_instance
@@ -50,7 +52,7 @@ class MarketAnalystAgent(BaseAgent):
         logger.debug("[MarketAnalyst] Coletando métricas do banco SQLite (economy.db)...")
         
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=0.1)
+            conn = get_db_connection("economy.db")
             c = conn.cursor()
             
             # Conta o total de moedas no sistema (dinheiro em circulação)

@@ -1,0 +1,31 @@
+name: Deploy AutoBlog CMS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH no VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd /var/www/autoblog
+            git pull origin main
+            
+            # Rebuilda o Docker com Zero Downtime
+            docker compose build
+            docker compose up -d --no-deps --build autoblog
+            
+            echo "✅ Deploy concluído com sucesso!"

@@ -55,7 +55,7 @@ const canais = [
 let added = 0;
 
 try {
-  db.prepare('BEGIN').run();
+  await db.prepare('BEGIN').run();
 
   const insertBlog = db.prepare(`
     INSERT INTO Blog (id, name, domain, niche, theme, primaryColor, layoutStyle, createdAt, updatedAt)
@@ -105,9 +105,9 @@ try {
     }
   }
 
-  db.prepare('COMMIT').run();
+  await db.prepare('COMMIT').run();
   console.log(`\nConcluído! ${added} novas franquias injetadas.`);
 } catch (err) {
-  db.prepare('ROLLBACK').run();
+  await db.prepare('ROLLBACK').run();
   console.error('Erro na injeção:', err);
 }

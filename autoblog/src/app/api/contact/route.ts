@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     // Garante que a tabela existe
-    db.exec(`
+    await db.exec(`
       CREATE TABLE IF NOT EXISTS ContactMessage (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,

@@ -10,7 +10,7 @@ const migrations = [
 
 migrations.forEach((sql) => {
   try {
-    db.prepare(sql).run();
+    await db.prepare(sql).run();
     const match = sql.match(/ADD COLUMN (\w+)/);
     console.log('OK:', match ? match[1] : sql);
   } catch (e) {
@@ -19,10 +19,10 @@ migrations.forEach((sql) => {
   }
 });
 
-const postCols = db.prepare('PRAGMA table_info(Post)').all();
+const postCols = await db.prepare('PRAGMA table_info(Post)').all();
 console.log('\nPost columns:', postCols.map(c => c.name).join(', '));
 
-const blogCols = db.prepare('PRAGMA table_info(Blog)').all();
+const blogCols = await db.prepare('PRAGMA table_info(Blog)').all();
 console.log('Blog columns:', blogCols.map(c => c.name).join(', '));
 
 db.close();

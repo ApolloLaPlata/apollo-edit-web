@@ -5,11 +5,11 @@ import Link from 'next/link';
 // Componente Cliente Interno para lidar com o voto
 import DaoVoteClient from './DaoVoteClient';
 
-export default function DaoPage({ params }: { params: { domain: string } }) {
+export default async function DaoPage({ params }: { params: { domain: string } }) {
   // Buscar os tópicos pendentes do banco
   let topics: any[] = [];
   try {
-    topics = db.prepare(`SELECT * FROM DaoTopic WHERE status = 'pending' ORDER BY votes DESC`).all();
+    topics = await db.prepare(`SELECT * FROM DaoTopic WHERE status = 'pending' ORDER BY votes DESC`).all();
   } catch (err) {
     console.error('Erro ao buscar DAO Topics:', err);
   }

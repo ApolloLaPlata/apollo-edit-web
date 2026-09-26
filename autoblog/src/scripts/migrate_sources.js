@@ -7,7 +7,7 @@ const db = new Database(dbPath);
 console.log('Iniciando Migração V5: Criação do ContentSource...');
 
 try {
-  db.prepare(`
+  await db.prepare(`
     CREATE TABLE IF NOT EXISTS ContentSource (
       id TEXT PRIMARY KEY,
       blogId TEXT NOT NULL,
@@ -22,10 +22,10 @@ try {
   console.log('✔ Tabela ContentSource criada com sucesso!');
 
   // Injetar Fontes Padrão Iniciais para o Blog Principal
-  const blog = db.prepare('SELECT id FROM Blog LIMIT 1').get();
+  const blog = await db.prepare('SELECT id FROM Blog LIMIT 1').get();
   
   if (blog) {
-    const checkSource = db.prepare('SELECT COUNT(*) as count FROM ContentSource').get();
+    const checkSource = await db.prepare('SELECT COUNT(*) as count FROM ContentSource').get();
     if (checkSource.count === 0) {
       const insert = db.prepare(`INSERT INTO ContentSource (id, blogId, name, rssUrl, niche) VALUES (?, ?, ?, ?, ?)`);
       

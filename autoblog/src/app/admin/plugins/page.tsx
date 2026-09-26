@@ -6,7 +6,7 @@ import WatcherForm from './WatcherForm';
 export const dynamic = 'force-dynamic';
 
 export default async function PluginsPage() {
-  const blogs = db
+  const blogs = await db
     .prepare(`
     SELECT Blog.id, Blog.name, Blog.domain, AgentConfig.isActive 
     FROM Blog 

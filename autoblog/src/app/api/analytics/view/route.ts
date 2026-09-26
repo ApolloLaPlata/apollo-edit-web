@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     // Incrementa a contagem de views
-    db.prepare('UPDATE Post SET views = COALESCE(views, 0) + 1 WHERE id = ?').run(postId);
+    await db.prepare('UPDATE Post SET views = COALESCE(views, 0) + 1 WHERE id = ?').run(postId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

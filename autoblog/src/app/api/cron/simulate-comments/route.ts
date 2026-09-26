@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     }
 
     // Seleciona um Post Alvo aleatório que receberá o comentário (Post A)
-    const postA = db.prepare('SELECT id, blogId, title, contentMd FROM Post WHERE isPublished = 1 ORDER BY RANDOM() LIMIT 1').get() as any;
+    const postA = await db.prepare('SELECT id, blogId, title, contentMd FROM Post WHERE isPublished = 1 ORDER BY RANDOM() LIMIT 1').get() as any;
     
     if (!postA) {
       return NextResponse.json({ error: 'Nenhum post publicado encontrado' }, { status: 400 });
@@ -24,9 +24,9 @@ export async function GET(request: Request) {
 
     if (isCrossLinking) {
       // Busca um Post de outro domínio para fazer Backlink orgânico
-      postB = db.prepare('SELECT id, blogId, title, slug, contentMd FROM Post WHERE isPublished = 1 AND blogId != ? ORDER BY RANDOM() LIMIT 1').get(postA.blogId) as any;
+      postB = await db.prepare('SELECT id, blogId, title, slug, contentMd FROM Post WHERE isPublished = 1 AND blogId != ? ORDER BY RANDOM() LIMIT 1').get(postA.blogId) as any;
       if (postB) {
-        blogB = db.prepare('SELECT domain FROM Blog WHERE id = ?').get(postB.blogId) as any;
+        blogB = await db.prepare('SELECT domain FROM Blog WHERE id = ?').get(postB.blogId) as any;
         if (!blogB) {
           isCrossLinking = false;
         } else {
@@ -91,7 +91,7 @@ Faça isso parecer espontâneo. Exemplo: "Nossa, isso me lembrou muito um outro 
       const avatarUrl = `https://ui-avatars.com/api/?name=${encodedName}&background=random&color=fff&size=128`;
       const id = crypto.randomUUID();
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO Comment (id, postId, authorName, authorAvatar, content, createdAt) 
         VALUES (?, ?, ?, ?, ?, ?)
       `).run(id, postA.id, parsed.name, avatarUrl, parsed.comment, new Date().toISOString());

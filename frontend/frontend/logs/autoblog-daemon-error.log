@@ -1,0 +1,322 @@
+2026-07-06 21:33:25: Error: Cannot find module 'node-fetch'
+2026-07-06 21:33:25: Require stack:
+2026-07-06 21:33:25: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:33:25:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:33:25:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:33:25:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:33:25:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:33:25:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:33:25:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:33:25:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:33:25: }
+2026-07-06 21:33:25: Error: Cannot find module 'node-fetch'
+2026-07-06 21:33:25: Require stack:
+2026-07-06 21:33:25: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:33:25:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:33:25:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:33:25:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:33:25:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:33:25:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:25:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:25:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:33:25:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:33:25:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:33:25:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:33:25:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:33:25:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:33:25: }
+2026-07-06 21:33:26: Error: Cannot find module 'node-fetch'
+2026-07-06 21:33:26: Require stack:
+2026-07-06 21:33:26: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:33:26:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:33:26:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:33:26:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:33:26:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:33:26:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:26:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:26:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:33:26:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:33:26:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:33:26:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:33:26:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:33:26:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:33:26: }
+2026-07-06 21:33:26: Error: Cannot find module 'node-fetch'
+2026-07-06 21:33:26: Require stack:
+2026-07-06 21:33:26: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:33:26:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:33:26:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:33:26:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:33:26:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:33:26:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:26:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:26:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:33:26:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:33:26:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:33:26:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:33:26:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:33:26:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:33:26: }
+2026-07-06 21:33:26: Error: Cannot find module 'node-fetch'
+2026-07-06 21:33:26: Require stack:
+2026-07-06 21:33:26: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:33:26:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:33:26:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:33:26:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:33:26:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:33:26:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:33:26:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:33:26:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:33:26:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:33:26:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:33:26:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:33:26:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:33:26:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:33:26: }
+2026-07-06 21:35:27: Error: Cannot find module 'node-fetch'
+2026-07-06 21:35:27: Require stack:
+2026-07-06 21:35:27: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:35:27:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:35:27:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:35:27:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:35:27:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:35:27:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:35:27:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:35:27:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:35:27:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:35:27:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:35:27:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:35:27:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:35:27:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:35:27: }
+2026-07-06 21:35:28: Error: Cannot find module 'node-fetch'
+2026-07-06 21:35:28: Require stack:
+2026-07-06 21:35:28: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:35:28:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:35:28:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:35:28:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:35:28:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:35:28:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:35:28:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:35:28:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:35:28:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:35:28:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:35:28:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:35:28: }
+2026-07-06 21:35:28: Error: Cannot find module 'node-fetch'
+2026-07-06 21:35:28: Require stack:
+2026-07-06 21:35:28: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:35:28:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:35:28:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:35:28:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:35:28:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:35:28:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:35:28:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:35:28:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:35:28:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:35:28:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:35:28:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:35:28: }
+2026-07-06 21:35:28: Error: Cannot find module 'node-fetch'
+2026-07-06 21:35:28: Require stack:
+2026-07-06 21:35:28: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:35:28:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:35:28:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:35:28:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:35:28:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:35:28:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:35:28:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:35:28:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:35:28:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:35:28:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:35:28:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:35:28: }
+2026-07-06 21:35:28: Error: Cannot find module 'node-fetch'
+2026-07-06 21:35:28: Require stack:
+2026-07-06 21:35:28: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:35:28:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:35:28:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:35:28:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:35:28:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:35:28:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:35:28:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:35:28:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:35:28:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:35:28:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:35:28:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:35:28:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:35:28:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:35:28: }
+2026-07-06 21:36:14: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:14: Require stack:
+2026-07-06 21:36:14: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:14:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:14:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:14:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:14:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:14:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:14:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:14:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:14:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:14:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:14: }
+2026-07-06 21:36:14: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:14: Require stack:
+2026-07-06 21:36:14: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:14:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:14:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:14:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:14:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:14:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:14:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:14:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:14:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:14:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:14: }
+2026-07-06 21:36:14: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:14: Require stack:
+2026-07-06 21:36:14: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:14:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:14:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:14:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:14:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:14:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:14:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:14:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:14:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:14:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:14:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:14:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:14:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:14: }
+2026-07-06 21:36:15: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:15: Require stack:
+2026-07-06 21:36:15: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:15:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:15:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:15:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:15:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:15:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:15:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:15:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:15:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:15:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:15:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:15:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:15:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:15: }
+2026-07-06 21:36:15: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:15: Require stack:
+2026-07-06 21:36:15: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:15:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:15:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:15:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:15:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:15:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:15:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:15:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:15:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:15:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:15:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:15:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:15:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:15: }
+2026-07-06 21:36:50: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:50: Require stack:
+2026-07-06 21:36:50: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:50:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:50:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:50:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:50:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:50:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:50:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:50:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:50:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:50:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:50:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:50:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:50:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:50: }
+2026-07-06 21:36:51: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:51: Require stack:
+2026-07-06 21:36:51: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:51:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:51:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:51:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:51:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:51:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:51:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:51:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:51:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:51:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:51:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:51:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:51:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:51: }
+2026-07-06 21:36:51: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:51: Require stack:
+2026-07-06 21:36:51: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:51:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:51:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:51:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:51:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:51:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:51:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:51:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:51:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:51:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:51:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:51:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:51:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:51: }
+2026-07-06 21:36:51: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:51: Require stack:
+2026-07-06 21:36:51: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:51:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:51:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:51:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:51:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:51:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:51:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:51:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:51:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:51:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:51:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:51:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:51:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:51: }
+2026-07-06 21:36:51: Error: Cannot find module 'node-fetch'
+2026-07-06 21:36:51: Require stack:
+2026-07-06 21:36:51: - E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js
+2026-07-06 21:36:51:     at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+2026-07-06 21:36:51:     at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+2026-07-06 21:36:51:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+2026-07-06 21:36:51:     at Module._load (node:internal/modules/cjs/loader:1227:37)
+2026-07-06 21:36:51:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+2026-07-06 21:36:51:     at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+2026-07-06 21:36:51:     at Module.require (node:internal/modules/cjs/loader:1504:12)
+2026-07-06 21:36:51:     at require (node:internal/modules/helpers:152:16)
+2026-07-06 21:36:51:     at Object.<anonymous> (E:\MEUS PROGRAMAS\AUTO_BLOG_CMS\frontend\daemon.js:1:15)
+2026-07-06 21:36:51:     at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+2026-07-06 21:36:51:   code: 'MODULE_NOT_FOUND',
+2026-07-06 21:36:51:   requireStack: [ 'E:\\MEUS PROGRAMAS\\AUTO_BLOG_CMS\\frontend\\daemon.js' ]
+2026-07-06 21:36:51: }
+2026-07-06 21:37:50: [DAEMON] ❌ Falha de Conexão com o CMS (Servidor pode estar offline)
+2026-07-06 21:40:03: [DAEMON] ❌ Falha de Conexão com o CMS (Servidor pode estar offline)

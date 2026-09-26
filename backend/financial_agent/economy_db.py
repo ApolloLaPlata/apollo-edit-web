@@ -1,11 +1,10 @@
-import sqlite3
 import os
 import json
-
-DB_PATH = os.path.join(os.path.dirname(__file__), 'economy.db')
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -52,7 +51,7 @@ def init_db():
     conn.close()
 
 def get_balance(user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('SELECT coins, crystals, fuel FROM users WHERE user_id = ?', (user_id,))
     row = c.fetchone()
@@ -62,7 +61,7 @@ def get_balance(user_id="default_user"):
     return {"coins": 0, "crystals": 0, "fuel": 0}
 
 def get_inventory(user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('SELECT item_id, quantity FROM inventory WHERE user_id = ? AND quantity > 0', (user_id,))
     rows = c.fetchall()
@@ -73,7 +72,7 @@ def get_inventory(user_id="default_user"):
     return inventory
 
 def deduct_currency(amount, currency_type="coins", user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute(f'SELECT {currency_type} FROM users WHERE user_id = ?', (user_id,))
     row = c.fetchone()
@@ -87,7 +86,7 @@ def deduct_currency(amount, currency_type="coins", user_id="default_user"):
     return True
 
 def add_currency(amount, currency_type="coins", user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute(f'UPDATE users SET {currency_type} = {currency_type} + ? WHERE user_id = ?', (amount, user_id))
     conn.commit()
@@ -95,7 +94,7 @@ def add_currency(amount, currency_type="coins", user_id="default_user"):
     return True
 
 def add_item(item_id, quantity=1, user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('INSERT INTO inventory (user_id, item_id, quantity) VALUES (?, ?, ?) ON CONFLICT(user_id, item_id) DO UPDATE SET quantity = quantity + ?', 
               (user_id, item_id, quantity, quantity))
@@ -104,7 +103,7 @@ def add_item(item_id, quantity=1, user_id="default_user"):
     return True
 
 def use_item(item_id, user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('SELECT quantity FROM inventory WHERE user_id = ? AND item_id = ?', (user_id, item_id))
     row = c.fetchone()
@@ -118,7 +117,7 @@ def use_item(item_id, user_id="default_user"):
     return True
 
 def get_all_users_stats():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('SELECT COUNT(*), SUM(coins), SUM(crystals) FROM users')
     row = c.fetchone()
@@ -133,7 +132,7 @@ def get_all_users_stats():
 
 # Job Management Functions
 def create_job(job_id, user_id, job_type, parameters):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('''
         INSERT INTO jobs (job_id, user_id, status, job_type, parameters) 
@@ -143,7 +142,7 @@ def create_job(job_id, user_id, job_type, parameters):
     conn.close()
 
 def update_job_status(job_id, status, progress=None, result_url=None):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     query = 'UPDATE jobs SET status = ?, updated_at = CURRENT_TIMESTAMP'
     params = [status]
@@ -164,7 +163,7 @@ def update_job_status(job_id, status, progress=None, result_url=None):
     conn.close()
 
 def get_job(job_id):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('SELECT job_id, status, job_type, result_url, progress, created_at, parameters FROM jobs WHERE job_id = ?', (job_id,))
     row = c.fetchone()
@@ -182,7 +181,7 @@ def get_job(job_id):
     return None
 
 def get_user_jobs(user_id="default_user", limit=20):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute('SELECT job_id, status, job_type, result_url, progress, created_at, parameters FROM jobs WHERE user_id = ? ORDER BY created_at DESC LIMIT ?', (user_id, limit))
     rows = c.fetchall()
@@ -201,7 +200,7 @@ def get_user_jobs(user_id="default_user", limit=20):
     return jobs
 
 def get_unnotified_jobs(user_id="default_user"):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute("SELECT job_id, job_type, result_url FROM jobs WHERE user_id = ? AND status = 'COMPLETED' AND notified = 0", (user_id,))
     rows = c.fetchall()
@@ -217,7 +216,7 @@ def get_unnotified_jobs(user_id="default_user"):
 
 def mark_jobs_notified(job_ids):
     if not job_ids: return
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     placeholders = ','.join('?' * len(job_ids))
     c.execute(f"UPDATE jobs SET notified = 1 WHERE job_id IN ({placeholders})", tuple(job_ids))

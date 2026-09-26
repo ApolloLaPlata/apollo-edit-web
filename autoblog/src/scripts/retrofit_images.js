@@ -9,7 +9,7 @@ console.log('--- INICIANDO RETROFIT DE IMAGENS PARA WEBP (AUTO-BLOG CMS) ---');
 
 try {
   // Buscar todas as imagens de capa que não estejam em WEBP
-  const posts = db.prepare(`SELECT id, title, coverImage FROM Post WHERE coverImage IS NOT NULL AND coverImage NOT LIKE '%webp%'`).all();
+  const posts = await db.prepare(`SELECT id, title, coverImage FROM Post WHERE coverImage IS NOT NULL AND coverImage NOT LIKE '%webp%'`).all();
   
   if (posts.length === 0) {
     console.log('✅ Tudo Limpo! Nenhuma imagem antiga encontrada. Todas as imagens já estão comprimidas ou em formatos modernos.');

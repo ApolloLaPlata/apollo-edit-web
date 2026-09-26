@@ -11,7 +11,7 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const params = await props.params;
   const decodedDomain = decodeURIComponent(params.domain);
   const tagName = decodeURIComponent(params.slug).replace(/-/g, ' ');
-  const blog = db.prepare('SELECT name FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  const blog = await db.prepare('SELECT name FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   
   return {
     title: `Arquivo da Tag: ${tagName.toUpperCase()} | ${blog?.name || decodedDomain}`,
@@ -25,20 +25,20 @@ export default async function TagPage(props: { params: Promise<{ domain: string;
   const tagSlug = decodeURIComponent(params.slug);
   const tagName = tagSlug.replace(/-/g, ' ');
 
-  const blog = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  const blog = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blog && !decodedDomain.includes('localhost')) notFound();
   
   // Buscar posts que contenham a tag no título ou no conteúdo, simulando relacionamento (ou na tabela de tags se houver, mas assumindo SQLite flat text lookup)
   // Utilizaremos Like para SEO Long-tail
-  const posts = db.prepare(`
+  const posts = await db.prepare(`
     SELECT Post.* 
     FROM Post 
     WHERE blogId = ? AND isPublished = 1 AND (title LIKE ? OR contentMd LIKE ?)
     ORDER BY createdAt DESC LIMIT 30
   `).all(blog?.id || 0, `%${tagName}%`, `%${tagName}%`) as any[];
 
-  const categories = db.prepare('SELECT * FROM Category WHERE blogId = ?').all(blog?.id || 0) as any[];
-  const recentPosts = db.prepare('SELECT title, slug FROM Post WHERE blogId = ? AND isPublished = 1 ORDER BY createdAt DESC LIMIT 5').all(blog?.id || 0) as any[];
+  const categories = await db.prepare('SELECT * FROM Category WHERE blogId = ?').all(blog?.id || 0) as any[];
+  const recentPosts = await db.prepare('SELECT title, slug FROM Post WHERE blogId = ? AND isPublished = 1 ORDER BY createdAt DESC LIMIT 5').all(blog?.id || 0) as any[];
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">

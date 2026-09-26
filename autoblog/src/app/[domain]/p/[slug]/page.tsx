@@ -8,9 +8,9 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const decodedDomain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
 
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   
   const titleMap: any = {
@@ -33,9 +33,9 @@ export default async function InstitutionalPage(props: { params: Promise<{ domai
   const decodedDomain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
   
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   const themeClass = blogMeta?.theme ? `theme-${blogMeta.theme}` : 'theme-dark';
   const blogName = blogMeta?.name || 'O Portal';

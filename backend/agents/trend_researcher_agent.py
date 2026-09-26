@@ -3,6 +3,8 @@ import asyncio
 import time
 import sqlite3
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 import random
 from backend.agents.base_agent import BaseAgent
 from backend.router.waterfall_router import router_instance
@@ -66,7 +68,7 @@ class TrendResearcherAgent(BaseAgent):
         ]
         
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=0.1)
+            conn = get_db_connection("economy.db")
             cursor = conn.cursor()
             
             cursor.execute("""

@@ -5,6 +5,38 @@ import ReadStatusEnforcer from '@/components/blog/ReadStatusEnforcer';
 import MobileBottomNav from '@/components/blog/MobileBottomNav';
 import LeadTracker from '@/components/blog/LeadTracker';
 
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata> {
+  const { domain } = await params;
+  const decodedDomain = decodeURIComponent(domain);
+  
+  const blog = await db.prepare('SELECT name, description, niche, logoUrl FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  if (!blog) return { title: 'Site Not Found' };
+
+  return {
+    title: {
+      template: `%s | ${blog.name}`,
+      default: blog.name,
+    },
+    description: blog.description || `O melhor conteúdo sobre ${blog.niche}`,
+    openGraph: {
+      title: blog.name,
+      description: blog.description || `O melhor conteúdo sobre ${blog.niche}`,
+      siteName: blog.name,
+      images: blog.logoUrl ? [{ url: blog.logoUrl }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.name,
+      description: blog.description,
+    },
+    alternates: {
+      canonical: `https://${decodedDomain}`,
+    }
+  };
+}
+
 export default async function DomainLayout({
   children,
   params
@@ -18,7 +50,7 @@ export default async function DomainLayout({
   const decodedDomain = decodeURIComponent(domain);
   
   // Busca as configurações visuais avançadas do Blog
-  const blog = db.prepare('SELECT primaryColor, secondaryColor, layoutStyle, bgPrimary, bgSurface, fontHeading, fontBody, bannerUrl FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  const blog = await db.prepare('SELECT primaryColor, secondaryColor, layoutStyle, bgPrimary, bgSurface, fontHeading, fontBody, bannerUrl FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   
   if (!blog) {
     return children; // Falldown para layout padrão se não achar

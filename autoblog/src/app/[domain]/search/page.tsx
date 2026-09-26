@@ -21,9 +21,9 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const decodedDomain = decodeURIComponent(params.domain);
   const q = (typeof searchParams.q === 'string') ? searchParams.q : '';
 
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
 
   return {
@@ -40,9 +40,9 @@ export default async function SearchPage(props: { params: Promise<{ domain: stri
   const lang = (typeof searchParams.lang === 'string') ? searchParams.lang : 'pt';
   const q = (typeof searchParams.q === 'string') ? searchParams.q : '';
   
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   const themeClass = blogMeta?.theme ? `theme-${blogMeta.theme}` : 'theme-dark';
 
@@ -50,7 +50,7 @@ export default async function SearchPage(props: { params: Promise<{ domain: stri
   
   if (q.trim().length >= 2) {
       const searchTerm = `%${q}%`;
-      posts = db.prepare(`
+      posts = await db.prepare(`
         SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
         FROM Post 
         LEFT JOIN Blog ON Post.blogId = Blog.id 
@@ -60,11 +60,11 @@ export default async function SearchPage(props: { params: Promise<{ domain: stri
       `).all(blogMeta?.id, lang, searchTerm, searchTerm) as any[];
   }
 
-  const categories = db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogMeta?.id) as any[];
+  const categories = await db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogMeta?.id) as any[];
 
   return (
     <main className={`flex min-h-screen flex-col items-center bg-theme-bg theme-transition text-theme-text ${themeClass}`}>
-      
+
       {/* HEADER NAVBAR PREMIUM */}
       <nav className="sticky top-0 w-full z-50 transition-all duration-300 bg-theme-bg/50 backdrop-blur-md border-b border-theme-border/50 py-4 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">

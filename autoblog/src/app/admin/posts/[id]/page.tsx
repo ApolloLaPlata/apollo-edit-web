@@ -5,9 +5,9 @@ import PostEditForm from './PostEditForm';
 
 export default async function AdminPostEdit(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const post = db.prepare(`SELECT * FROM Post WHERE id = ?`).get(params.id) as any;
-  const categories = db.prepare(`SELECT * FROM Category WHERE blogId = ?`).all(post?.blogId);
-  const socialSnippets = db.prepare(`SELECT * FROM SocialSnippet WHERE postId = ?`).all(params.id) as any[];
+  const post = await db.prepare(`SELECT * FROM Post WHERE id = ?`).get(params.id) as any;
+  const categories = await db.prepare(`SELECT * FROM Category WHERE blogId = ?`).all(post?.blogId);
+  const socialSnippets = await db.prepare(`SELECT * FROM SocialSnippet WHERE postId = ?`).all(params.id) as any[];
 
   if (!post) {
     notFound();

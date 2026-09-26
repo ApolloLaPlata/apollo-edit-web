@@ -64,11 +64,11 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const decodedDomain = rawDomain.split(':')[0];
   const slug = decodeURIComponent(params.slug);
 
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
-  const postRaw = db.prepare(`SELECT title, contentMd, coverImage FROM Post WHERE slug = ? AND blogId = ?`).get(slug, blogMeta?.id) as any;
+  const postRaw = await db.prepare(`SELECT title, contentMd, coverImage FROM Post WHERE slug = ? AND blogId = ?`).get(slug, blogMeta?.id) as any;
   
   if (!postRaw) return { title: 'Artigo não encontrado' };
 
@@ -114,6 +114,70 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   };
 }
 
+import { unstable_cache } from 'next/cache';
+
+const getCachedBlog = unstable_cache(
+  async (domain: string) => {
+    let blog = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
+    if (!blog && domain.includes('localhost')) {
+      blog = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    }
+    return blog;
+  },
+  ['blog-config-slug'],
+  { revalidate: 3600 }
+);
+
+const getCachedPost = unstable_cache(
+  async (slug: string, blogId: string) => {
+    return await db.prepare(`
+      SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
+      FROM Post 
+      LEFT JOIN Blog ON Post.blogId = Blog.id 
+      WHERE Post.slug = ? AND Post.blogId = ?
+    `).get(slug, blogId) as any;
+  },
+  ['blog-post-slug'],
+  { revalidate: 3600 }
+);
+
+const getCachedRecentPosts = unstable_cache(
+  async (postId: string) => {
+    return await db.prepare(`SELECT * FROM Post WHERE id != ? LIMIT 4`).all(postId) as any[];
+  },
+  ['blog-recent-posts'],
+  { revalidate: 3600 }
+);
+
+const getCachedCategories = unstable_cache(
+  async (blogId: string) => {
+    return await db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogId) as any[];
+  },
+  ['blog-slug-categories'],
+  { revalidate: 3600 }
+);
+
+const getCachedPostCategory = unstable_cache(
+  async (postId: string) => {
+    return await db.prepare(`
+      SELECT Category.name 
+      FROM Category 
+      JOIN PostCategory ON Category.id = PostCategory.categoryId 
+      WHERE PostCategory.postId = ?
+    `).get(postId) as any;
+  },
+  ['post-category'],
+  { revalidate: 3600 }
+);
+
+const getCachedComments = unstable_cache(
+  async (postId: string) => {
+    return await db.prepare(`SELECT * FROM Comment WHERE postId = ? ORDER BY createdAt ASC`).all(postId) as any[];
+  },
+  ['post-comments'],
+  { revalidate: 60 } // Comentários atualizam mais rápido
+);
+
 export default async function BlogPost(
   props: { params: Promise<{ domain: string, slug: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ) {
@@ -123,18 +187,10 @@ export default async function BlogPost(
   const slug = decodeURIComponent(params.slug);
   const lang = (typeof searchParams.lang === 'string') ? searchParams.lang : 'pt';
 
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
-  if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
-  }
+  const blogMeta = await getCachedBlog(decodedDomain);
   const themeClass = blogMeta?.theme ? `theme-${blogMeta.theme}` : 'theme-dark';
 
-  const postRaw = db.prepare(`
-    SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
-    FROM Post 
-    LEFT JOIN Blog ON Post.blogId = Blog.id 
-    WHERE Post.slug = ? AND Post.blogId = ?
-  `).get(slug, blogMeta?.id) as any;
+  const postRaw = await getCachedPost(slug, blogMeta?.id);
 
   if (!postRaw) {
     notFound();
@@ -146,22 +202,17 @@ export default async function BlogPost(
     blog: { name: postRaw.blog_name, domain: postRaw.blog_domain }
   };
 
-  // Pegar recentes para o Ticker
-  const recentPosts = db.prepare(`SELECT * FROM Post LIMIT 5`).all();
-  const otherPosts = db.prepare(`SELECT * FROM Post WHERE id != ? LIMIT 4`).all(post.id) as any[];
+  // Pegar recentes para o Ticker e Sidebar
+  const recentPosts = await getCachedRecentPosts("0"); // Reusamos para o ticker ignorando o próprio post para cache global do ticker se possível, ou puxar separado. Para simplificar mantemos do DB
+  const otherPosts = await getCachedRecentPosts(post.id);
 
-  const categories = db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogMeta?.id) as any[];
+  const categories = await getCachedCategories(blogMeta?.id);
 
   // Pegar Categoria do Post Atual
-  const postCategory = db.prepare(`
-    SELECT Category.name 
-    FROM Category 
-    JOIN PostCategory ON Category.id = PostCategory.categoryId 
-    WHERE PostCategory.postId = ?
-  `).get(post.id) as any;
+  const postCategory = await getCachedPostCategory(post.id);
 
   // Pegar Comentários Fantasmas
-  const comments = db.prepare(`SELECT * FROM Comment WHERE postId = ? ORDER BY createdAt ASC`).all(post.id) as any[];
+  const comments = await getCachedComments(post.id);
 
   // Extração do Resumo IA (TLDR)
   const tldrRegex = /\[TLDR\]([\s\S]*?)\[\/TLDR\]/i;
@@ -181,7 +232,7 @@ export default async function BlogPost(
   let affiliateOffer: any = null;
   try {
     // A tabela AffiliateLink (Fase 115) é global na Máfia
-    const affiliateLinks = db.prepare('SELECT keyword, url FROM AffiliateLink WHERE isActive = 1').all() as any[];
+    const affiliateLinks = await db.prepare('SELECT keyword, url FROM AffiliateLink WHERE isActive = 1').all() as any[];
     if (affiliateLinks && affiliateLinks.length > 0) {
       // Pega uma oferta aleatória para o Highlight Box
       affiliateOffer = affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
@@ -201,7 +252,7 @@ export default async function BlogPost(
   // FASE 108: AUTO-LINKAGEM INTERNA (PROGRAMMATIC SEO)
   try {
     // Busca até 10 outros posts recentes do mesmo blog para fazer cross-link
-    const allBlogPosts = db.prepare('SELECT title, slug FROM Post WHERE blogId = ? AND id != ? ORDER BY createdAt DESC LIMIT 10').all(blogMeta?.id, post.id) as any[];
+    const allBlogPosts = await db.prepare('SELECT title, slug FROM Post WHERE blogId = ? AND id != ? ORDER BY createdAt DESC LIMIT 10').all(blogMeta?.id, post.id) as any[];
     
     if (allBlogPosts && allBlogPosts.length > 0) {
       allBlogPosts.forEach(targetPost => {
@@ -238,10 +289,10 @@ export default async function BlogPost(
   });
 
   // FASE 114: Buscar blocos de AdBlock do painel de monetização (Global)
-  const inArticleAdRaw = db.prepare(`SELECT scriptCode FROM AdBlock WHERE position = 'article_middle' AND isActive = 1 LIMIT 1`).get() as any;
+  const inArticleAdRaw = await db.prepare(`SELECT scriptCode FROM AdBlock WHERE position = 'article_middle' AND isActive = 1 LIMIT 1`).get() as any;
   const inTextAdHtml = inArticleAdRaw?.scriptCode || null;
   
-  const stickyMobileRaw = db.prepare(`SELECT scriptCode FROM AdBlock WHERE position = 'popup' AND isActive = 1 LIMIT 1`).get() as any;
+  const stickyMobileRaw = await db.prepare(`SELECT scriptCode FROM AdBlock WHERE position = 'popup' AND isActive = 1 LIMIT 1`).get() as any;
   const stickyMobileHtml = stickyMobileRaw?.scriptCode || null;
 
   // JSON-LD Schema for Google SEO (NewsArticle + BreadcrumbList)
@@ -305,9 +356,9 @@ export default async function BlogPost(
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <ViewTracker postId={post.id} />
-      
+
       <FloatingShare title={post.title} url={`https://${decodedDomain}/blog/${slug}`} />
-      
+
       {/* HEADER NAVBAR (PREMIUM) */}
       <NavbarMaster blog={blogMeta} categories={categories} lang={lang} domain={decodedDomain} />
 
@@ -516,7 +567,7 @@ export default async function BlogPost(
         </aside>
 
       </div>
-      
+
       <ArticleChatbot articleContext={post.contentMd} />
       <ExitIntentPopup blogId={blogMeta?.id || ''} />
       <MobileStickyAd adHtml={stickyMobileHtml} />

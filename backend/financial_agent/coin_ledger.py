@@ -56,7 +56,7 @@ from contextlib import contextmanager
 
 @contextmanager
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH, timeout=10.0)
+    conn = get_db_connection("economy.db")
     conn.row_factory = sqlite3.Row
     # Enable foreign keys and WAL mode for better concurrency
     conn.execute('PRAGMA foreign_keys = ON')
@@ -73,6 +73,8 @@ def get_db_connection():
 
 
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 
 
 
@@ -436,7 +438,7 @@ def init_ledger():
 
 
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
 
 
 
@@ -610,7 +612,7 @@ def get_wallet(user_id: str) -> dict:
 
 
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
 
 
 
@@ -862,7 +864,7 @@ def charge_operation(user_id: str, operation: str, metadata: Optional[dict] = No
 
 
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
 
 
 
@@ -974,7 +976,7 @@ def credit_user(user_id: str, currency: str, amount: int, reason: str = "credit"
 
 
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
 
 
 
@@ -1138,7 +1140,7 @@ def get_transaction_history(user_id: str, limit: int = 50) -> list:
 
 
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
 
 
 

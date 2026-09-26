@@ -17,18 +17,18 @@ export async function GET(request: Request) {
 
     // Métricas agrupadas por plataforma
     const metricsQuery = blogId && blogId !== 'all'
-      ? db.prepare(`SELECT platform, metricType, SUM(value) as total, AVG(delta) as avgDelta, trend FROM ChannelMetric WHERE blogId = ? GROUP BY platform, metricType`).all(blogId)
-      : db.prepare(`SELECT platform, metricType, SUM(value) as total, AVG(delta) as avgDelta, trend FROM ChannelMetric GROUP BY platform, metricType`).all();
+      ? await db.prepare(`SELECT platform, metricType, SUM(value) as total, AVG(delta) as avgDelta, trend FROM ChannelMetric WHERE blogId = ? GROUP BY platform, metricType`).all(blogId)
+      : await db.prepare(`SELECT platform, metricType, SUM(value) as total, AVG(delta) as avgDelta, trend FROM ChannelMetric GROUP BY platform, metricType`).all();
 
     // Insights estratégicos mais recentes
     const insightsQuery = blogId && blogId !== 'all'
-      ? db.prepare(`SELECT * FROM CrossChannelInsight WHERE blogId = ? ORDER BY createdAt DESC LIMIT 5`).all(blogId)
-      : db.prepare(`SELECT * FROM CrossChannelInsight ORDER BY createdAt DESC LIMIT 10`).all();
+      ? await db.prepare(`SELECT * FROM CrossChannelInsight WHERE blogId = ? ORDER BY createdAt DESC LIMIT 5`).all(blogId)
+      : await db.prepare(`SELECT * FROM CrossChannelInsight ORDER BY createdAt DESC LIMIT 10`).all();
 
     // Totais gerais
-    const totalImpressions = (db.prepare(`SELECT SUM(value) as s FROM ChannelMetric WHERE metricType = 'impressions'`).get() as any)?.s || 0;
-    const totalClicks = (db.prepare(`SELECT SUM(value) as s FROM ChannelMetric WHERE metricType = 'clicks'`).get() as any)?.s || 0;
-    const totalEngagement = (db.prepare(`SELECT SUM(value) as s FROM ChannelMetric WHERE metricType = 'engagement'`).get() as any)?.s || 0;
+    const totalImpressions = (await db.prepare(`SELECT SUM(value) as s FROM ChannelMetric WHERE metricType = 'impressions'`).get() as any)?.s || 0;
+    const totalClicks = (await db.prepare(`SELECT SUM(value) as s FROM ChannelMetric WHERE metricType = 'clicks'`).get() as any)?.s || 0;
+    const totalEngagement = (await db.prepare(`SELECT SUM(value) as s FROM ChannelMetric WHERE metricType = 'engagement'`).get() as any)?.s || 0;
 
     // Monta objeto de métricas por plataforma
     const platformData: Record<string, any> = {};
@@ -79,8 +79,8 @@ export async function POST(request: Request) {
       return NextResponse.json(res);
     }
     if (action === 'clear_metrics') {
-      db.prepare(`DELETE FROM ChannelMetric`).run();
-      db.prepare(`DELETE FROM CrossChannelInsight`).run();
+      await db.prepare(`DELETE FROM ChannelMetric`).run();
+      await db.prepare(`DELETE FROM CrossChannelInsight`).run();
       return NextResponse.json({ success: true, message: 'Métricas e insights de cross-channel limpos com sucesso.' });
     }
 

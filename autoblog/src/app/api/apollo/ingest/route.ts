@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     `;
 
     // 2. Selecionar o Blog destino (default para o primeiro)
-    const firstBlog = db.prepare('SELECT id FROM Blog LIMIT 1').get() as { id: string };
+    const firstBlog = await db.prepare('SELECT id FROM Blog LIMIT 1').get() as { id: string };
     const blogId = firstBlog ? firstBlog.id : 'master';
 
     // 3. Checagem de Quarentena (YMYL) - FASE 113

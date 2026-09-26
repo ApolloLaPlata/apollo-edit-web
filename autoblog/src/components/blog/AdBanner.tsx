@@ -17,7 +17,7 @@ export default async function AdBanner({ type = 'horizontal', domain }: { type?:
   if (type === 'horizontal') mappedPosition = 'article_top';
   if (type === 'in_feed') mappedPosition = 'article_middle';
 
-  const adRaw = db.prepare(`
+  const adRaw = await db.prepare(`
     SELECT scriptCode 
     FROM AdBlock
     WHERE position = ? AND isActive = 1

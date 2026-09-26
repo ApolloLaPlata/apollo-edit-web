@@ -10,21 +10,21 @@ export async function GET(request: Request) {
 
     let logs = [];
     if (blogId && blogId !== 'all') {
-      logs = db.prepare(`SELECT * FROM AutonomousLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
+      logs = await db.prepare(`SELECT * FROM AutonomousLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
     } else {
-      logs = db.prepare(`SELECT * FROM AutonomousLog ORDER BY createdAt DESC LIMIT 50`).all();
+      logs = await db.prepare(`SELECT * FROM AutonomousLog ORDER BY createdAt DESC LIMIT 50`).all();
     }
 
     // Pega estatísticas gerais de autogestão hoje
-    const totalTodayQuery = db.prepare(`
+    const totalTodayQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM AutonomousLog WHERE date(createdAt) = date('now', 'localtime')
     `).get() as any;
 
-    const repostsTodayQuery = db.prepare(`
+    const repostsTodayQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM AutonomousLog WHERE decisionType = 'publish_repost' AND date(createdAt) = date('now', 'localtime')
     `).get() as any;
 
-    const avgScoreQuery = db.prepare(`
+    const avgScoreQuery = await db.prepare(`
       SELECT AVG(evaluationScore) as avgScore FROM AutonomousLog WHERE evaluationScore > 0
     `).get() as any;
 
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     }
 
     if (action === 'clear_logs') {
-      db.prepare(`DELETE FROM AutonomousLog`).run();
+      await db.prepare(`DELETE FROM AutonomousLog`).run();
       return NextResponse.json({ success: true, message: 'Telemetria autônoma limpa com sucesso.' });
     }
 

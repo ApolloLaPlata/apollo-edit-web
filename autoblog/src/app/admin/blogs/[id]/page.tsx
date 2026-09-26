@@ -6,7 +6,7 @@ import ChatInterface from './ChatInterface';
 
 export default async function BlogChatPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const blogRaw = db.prepare(`
+  const blogRaw = await db.prepare(`
     SELECT 
       Blog.*, 
       AgentConfig.id as agentConfig_id, 
@@ -34,7 +34,7 @@ export default async function BlogChatPage(props: { params: Promise<{ id: string
     const defaultPrompt = `Você é o Editor IA do portal ${blog.name}. Foco em clareza, SEO e engajamento no nicho de ${blog.niche}.`;
     const defaultImagePrompt = 'photorealistic, cinematic, highly detailed 8k';
     const now = new Date().toISOString();
-    db.prepare('INSERT INTO AgentConfig (id, blogId, personaPrompt, imageStylePrompt, isActive, postFrequency, createdAt, updatedAt) VALUES (?, ?, ?, ?, 1, 3, ?, ?)').run(newConfigId, blog.id, defaultPrompt, defaultImagePrompt, now, now);
+    await db.prepare('INSERT INTO AgentConfig (id, blogId, personaPrompt, imageStylePrompt, isActive, postFrequency, createdAt, updatedAt) VALUES (?, ?, ?, ?, 1, 3, ?, ?)').run(newConfigId, blog.id, defaultPrompt, defaultImagePrompt, now, now);
     blog.agentConfig = {
       id: newConfigId,
       isActive: true,

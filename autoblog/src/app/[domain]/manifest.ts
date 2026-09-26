@@ -9,7 +9,7 @@ export default async function manifest(props: { params: Promise<{ domain: string
   let primaryColor = '#dc2626';
 
   try {
-     const blog = db.prepare('SELECT name, primaryColor FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+     const blog = await db.prepare('SELECT name, primaryColor FROM Blog WHERE domain = ?').get(decodedDomain) as any;
      if (blog) {
        blogName = blog.name;
        primaryColor = blog.primaryColor || '#dc2626';

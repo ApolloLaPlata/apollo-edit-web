@@ -1,6 +1,6 @@
 const db = require('./node_modules/better-sqlite3')('./dev.db');
 
-const blogs = db.prepare('SELECT id, domain, name FROM Blog').all();
+const blogs = await db.prepare('SELECT id, domain, name FROM Blog').all();
 if (blogs.length === 0) {
   console.log('Nenhum blog encontrado.');
   process.exit(0);
@@ -10,10 +10,10 @@ const blog = blogs[0]; // Portal principal
 console.log(`Inserindo posts interativos para o blog: ${blog.name} (${blog.domain})`);
 
 // Pegar categoria ou criar uma
-let category = db.prepare('SELECT id FROM Category WHERE blogId = ? LIMIT 1').get(blog.id);
+let category = await db.prepare('SELECT id FROM Category WHERE blogId = ? LIMIT 1').get(blog.id);
 if (!category) {
   const catId = 'cat-interact-' + Date.now();
-  db.prepare('INSERT INTO Category (id, name, slug, blogId) VALUES (?, ?, ?, ?)').run(catId, 'Mídia & Interatividade', 'midia-interativa', blog.id);
+  await db.prepare('INSERT INTO Category (id, name, slug, blogId) VALUES (?, ?, ?, ?)').run(catId, 'Mídia & Interatividade', 'midia-interativa', blog.id);
   category = { id: catId };
 }
 

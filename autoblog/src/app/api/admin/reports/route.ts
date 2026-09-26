@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     const type = url.searchParams.get('type') || 'all';
 
     // 1. Relatório Editorial (Artigos & SEO)
-    const posts = db
+    const posts = await db
       .prepare(`
       SELECT Post.id, Post.title, Post.slug, Post.author, Post.isPublished, Post.createdAt, Post.language, Blog.name as blogName, Blog.domain as blogDomain
       FROM Post
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     // 2. Auditoria de Monetização & Afiliados
     let clicks: any[] = [];
     try {
-      clicks = db
+      clicks = await db
         .prepare(`
         SELECT AffiliateClick.id, AffiliateClick.createdAt, AffiliateClick.ip, AffiliateLink.title as linkTitle, AffiliateLink.url, AffiliateLink.category
         FROM AffiliateClick
@@ -35,7 +35,7 @@ export async function GET(req: Request) {
       clicks = [];
     }
 
-    const affiliateLinks = db.prepare('SELECT id, title, url, category, clicks, isActive FROM AffiliateLink ORDER BY clicks DESC').all();
+    const affiliateLinks = await db.prepare('SELECT id, title, url, category, clicks, isActive FROM AffiliateLink ORDER BY clicks DESC').all();
 
     // 3. Telemetria de Sindicância & Cross-Channel
     const syndicatedPosts = posts.filter(
@@ -43,8 +43,8 @@ export async function GET(req: Request) {
     );
 
     // 4. Resumo Geral da Frota (Briefing Executivo)
-    const blogs = db.prepare('SELECT id, name, domain, theme, primaryColor, createdAt FROM Blog').all();
-    const categories = db.prepare('SELECT id, name, slug FROM Category').all();
+    const blogs = await db.prepare('SELECT id, name, domain, theme, primaryColor, createdAt FROM Blog').all();
+    const categories = await db.prepare('SELECT id, name, slug FROM Category').all();
 
     const briefing = {
       timestamp: new Date().toISOString(),

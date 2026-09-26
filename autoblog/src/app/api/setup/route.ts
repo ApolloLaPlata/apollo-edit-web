@@ -3,7 +3,7 @@ import db from '@/lib/db';
 
 export async function GET(req: Request) {
   try {
-    db.exec(`
+    await db.exec(`
       CREATE TABLE IF NOT EXISTS Ads (
         id TEXT PRIMARY KEY,
         blogId TEXT NOT NULL,

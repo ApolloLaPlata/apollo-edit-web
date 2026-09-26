@@ -108,7 +108,7 @@ async function processQueue() {
   
   // Usar JOIN se a tabela de post tiver coverImage, ou apenas buscar na fila
   // Note: swarm.ts grava id no post_id.
-  const task = db.prepare(`
+  const task = await db.prepare(`
     SELECT v.*, p.coverImage 
     FROM video_render_queue v
     JOIN Post p ON p.id = v.post_id
@@ -125,7 +125,7 @@ async function processQueue() {
   console.log(`[VIDEO-MAKER] 🚀 Iniciando tarefa ID: ${task.id} | Post: ${task.title}`);
 
   // 1. Muda status para 'processing' para evitar duplicidade se rodar múltiplos crons
-  db.prepare(`UPDATE video_render_queue SET status = 'processing', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
+  await db.prepare(`UPDATE video_render_queue SET status = 'processing', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
 
   try {
     const coverPath = path.resolve(process.cwd(), 'public' + task.coverImage.replace(/https?:\/\/[^\/]+/, ''));
@@ -176,7 +176,7 @@ async function processQueue() {
           }]
        };
        // Promove o post para um Audio Track e salva o payload
-       db.prepare(`UPDATE Post SET postType = 'audio_track', mediaPayload = ? WHERE id = ?`).run(JSON.stringify(payloadObj), task.post_id);
+       await db.prepare(`UPDATE Post SET postType = 'audio_track', mediaPayload = ? WHERE id = ?`).run(JSON.stringify(payloadObj), task.post_id);
        console.log(`[VIDEO-MAKER] 🎧 Áudio MP3 preservado e Post promovido para 'audio_track' (Pronto para RSS Podcast!).`);
     } catch(e) {
        console.error(`[VIDEO-MAKER] Erro ao atualizar o payload de áudio do Post:`, e.message);
@@ -220,12 +220,12 @@ async function processQueue() {
       console.log(`[VIDEO-MAKER] 🎉 Fila processada! Vídeo final salvo localmente em: ${videoUrl}`);
     }
 
-    db.prepare(`UPDATE video_render_queue SET status = 'completed', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
+    await db.prepare(`UPDATE video_render_queue SET status = 'completed', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
     // Aqui você também pode fazer um UPDATE no Post para salvar a URL real.
 
   } catch (error) {
     console.error(`[VIDEO-MAKER] 🚨 Falha ao processar tarefa ${task.id}:`, error.message);
-    db.prepare(`UPDATE video_render_queue SET status = 'failed', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
+    await db.prepare(`UPDATE video_render_queue SET status = 'failed', updated_at = CURRENT_TIMESTAMP WHERE id = ?`).run(task.id);
   }
 }
 

@@ -10,6 +10,8 @@ Gerencia os planos Free / Pro / Master:
 
 import sqlite3
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 import logging
 from datetime import datetime, timedelta
 from typing import Optional
@@ -40,7 +42,7 @@ PLAN_LABELS = {
 # INICIALIZAÇÃO
 # ─────────────────────────────────────────
 def init_subscription_tables():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
 
     # Tabela de assinaturas
@@ -92,7 +94,7 @@ def activate_plan(user_id: str, plan: str, payment_ref: Optional[str] = None) ->
     expires = now + timedelta(days=30)
     grants = PLAN_MONTHLY_GRANTS[plan]
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
 
     # Atualiza o plano na tabela users
@@ -143,7 +145,7 @@ def activate_plan(user_id: str, plan: str, payment_ref: Optional[str] = None) ->
 
 def get_plan_info(user_id: str) -> dict:
     """Retorna as informações de plano e limites do usuário."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
 
     c.execute(
@@ -213,7 +215,7 @@ def get_plan_info(user_id: str) -> dict:
 
 def check_channel_limit(user_id: str) -> dict:
     """Verifica se o usuário pode criar mais canais."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute(
         "SELECT channels_used, max_channels FROM usage_limits WHERE user_id = ?",
@@ -236,7 +238,7 @@ def check_channel_limit(user_id: str) -> dict:
 
 def increment_channel_count(user_id: str):
     """Incrementa o contador de canais ao criar um novo."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection("economy.db")
     c = conn.cursor()
     c.execute(
         "UPDATE usage_limits SET channels_used = channels_used + 1 WHERE user_id = ?",

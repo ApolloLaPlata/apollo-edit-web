@@ -75,3 +75,64 @@ COPIA BACKUP TUTORIAL DAS COISAS/
 
 *14rar*
 .vercel
+# ==========================================
+# ESCUDO DE PROTEÇÃO APOLLO (GERADO PELO MAESTRO)
+# Bloqueia a subida de lixo e scripts de backup para o GitHub/Vercel
+# ==========================================
+
+# 1. Ignorar todos os scripts Python soltos na raiz (ferramentas, testes, backups)
+/*.py
+
+# Exceções (Scripts Python que PRECISAM subir para a nuvem, se existirem na raiz)
+!main.py
+!app.py
+!requirements.txt
+
+# 2. Ignorar arquivos HTML/CSS soltos na raiz (Testes)
+/*.html
+/*.css
+/*.js
+
+# Exceções
+!package.json
+!tailwind.config.js
+!postcss.config.js
+!next.config.js
+!vite.config.js
+
+# 3. Dependências e Builds
+node_modules/
+.next/
+out/
+build/
+dist/
+.vercel/
+
+# 4. Variáveis de Ambiente (Segurança)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 5. Logs e Caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+__pycache__/
+*.py[cod]
+*.class
+
+# 6. Pastas de backups velhos ou lixo temporário na raiz
+Workspaces/
+Workspaces2/
+temp_backup_deploy/
+temp_pulid_repo/
+temp_render/
+tmp/
+tmp_pulid_ll/
+VERSAO_MASTER_VALIDADA/
+scratch/
+__tests__/
+testes/

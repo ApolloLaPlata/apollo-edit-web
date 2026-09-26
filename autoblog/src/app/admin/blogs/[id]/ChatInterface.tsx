@@ -102,7 +102,7 @@ export default function ChatInterface({ blog, agentConfig }: any) {
 
   return (
     <div className="flex-1 bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-800/80 flex flex-col shadow-2xl overflow-hidden min-h-[500px]">
-      
+
       {/* BARRA SUPERIOR DO CHAT */}
       <div className="bg-slate-950/80 px-6 py-3.5 border-b border-slate-800 flex justify-between items-center text-xs text-slate-400 font-medium">
         <div className="flex items-center gap-2">

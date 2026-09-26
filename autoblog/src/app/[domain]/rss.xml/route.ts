@@ -9,9 +9,9 @@ export async function GET(
   const decodedDomain = decodeURIComponent(domain);
   
   // Buscar os dados do Blog
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   
   if (!blogMeta) {
@@ -19,7 +19,7 @@ export async function GET(
   }
 
   // Buscar últimos 20 posts aprovados
-  const posts = db.prepare(`
+  const posts = await db.prepare(`
     SELECT title, slug, contentMd, coverImage, author, createdAt 
     FROM Post 
     WHERE blogId = ? AND isPublished = 1 

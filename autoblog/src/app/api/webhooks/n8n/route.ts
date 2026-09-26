@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
       case 'DELETE_POST':
         const { targetSlug } = payload;
-        db.prepare('DELETE FROM Post WHERE slug = ?').run(targetSlug);
+        await db.prepare('DELETE FROM Post WHERE slug = ?').run(targetSlug);
         return NextResponse.json({ success: true, message: `Post deletado: ${targetSlug}` });
 
       default:

@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 export async function GET() {
   try {
-    const ads = db.prepare('SELECT * FROM AdBlock ORDER BY createdAt DESC').all();
+    const ads = await db.prepare('SELECT * FROM AdBlock ORDER BY createdAt DESC').all();
     return NextResponse.json({ ads: ads.map((ad: any) => ({
       ...ad,
       isActive: Boolean(ad.isActive)
@@ -12,7 +12,7 @@ export async function GET() {
   } catch (error: any) {
     if (error.message.includes('no such table')) {
       // Cria a tabela se não existir (Fail-safe para Fase 114)
-      db.prepare(`
+      await db.prepare(`
         CREATE TABLE IF NOT EXISTS AdBlock (
           id TEXT PRIMARY KEY,
           name TEXT NOT NULL,
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const id = crypto.randomUUID();
 
     // Garante que a tabela existe
-    db.prepare(`
+    await db.prepare(`
       CREATE TABLE IF NOT EXISTS AdBlock (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       )
     `).run();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO AdBlock (id, name, position, scriptCode, isActive)
       VALUES (?, ?, ?, ?, ?)
     `).run(id, name, position, scriptCode, isActive ? 1 : 0);
@@ -62,7 +62,7 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const { id, isActive } = body;
 
-    db.prepare('UPDATE AdBlock SET isActive = ? WHERE id = ?').run(isActive ? 1 : 0, id);
+    await db.prepare('UPDATE AdBlock SET isActive = ? WHERE id = ?').run(isActive ? 1 : 0, id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

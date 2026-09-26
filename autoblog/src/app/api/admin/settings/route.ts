@@ -8,15 +8,15 @@ export async function GET(request: Request) {
 
     if (!blogId) return NextResponse.json({ success: false, error: 'blogId is required' });
 
-    let config = db.prepare(`SELECT * FROM AgentConfig WHERE blogId = ?`).get(blogId) as any;
+    let config = await db.prepare(`SELECT * FROM AgentConfig WHERE blogId = ?`).get(blogId) as any;
     
     // Se o canal ainda não tem config, a gente cria uma vazia
     if (!config) {
-      db.prepare(`INSERT INTO AgentConfig (id, blogId, isActive) VALUES (?, ?, 0)`).run(crypto.randomUUID(), blogId);
-      config = db.prepare(`SELECT * FROM AgentConfig WHERE blogId = ?`).get(blogId);
+      await db.prepare(`INSERT INTO AgentConfig (id, blogId, isActive) VALUES (?, ?, 0)`).run(crypto.randomUUID(), blogId);
+      config = await db.prepare(`SELECT * FROM AgentConfig WHERE blogId = ?`).get(blogId);
     }
 
-    const blogColors = db.prepare('SELECT primaryColor, secondaryColor, layoutStyle FROM Blog WHERE id = ?').get(blogId) as any;
+    const blogColors = await db.prepare('SELECT primaryColor, secondaryColor, layoutStyle FROM Blog WHERE id = ?').get(blogId) as any;
     if (blogColors) {
       config = { ...config, ...blogColors };
     }
@@ -45,16 +45,16 @@ export async function POST(request: Request) {
       WHERE blogId = ?
     `);
     
-    const result = stmt.run(youtubeChannelId || '', instagramHandle || '', twitterHandle || '', localMemory || '', rssSniperUrl || '', telegramBotToken || '', telegramChatId || '', discordWebhookUrl || '', whatsappApiUrl || '', whatsappGroupId || '', activeInt, postIntervalHours ?? 4, blogId);
+    const result = await stmt.run(youtubeChannelId || '', instagramHandle || '', twitterHandle || '', localMemory || '', rssSniperUrl || '', telegramBotToken || '', telegramChatId || '', discordWebhookUrl || '', whatsappApiUrl || '', whatsappGroupId || '', activeInt, postIntervalHours ?? 4, blogId);
 
     // Se não atualizou nada, significa que não tinha a linha.
     if (result.changes === 0) {
-      db.prepare(`INSERT INTO AgentConfig (id, blogId, youtubeChannelId, instagramHandle, twitterHandle, localMemory, rssSniperUrl, telegramBotToken, telegramChatId, discordWebhookUrl, whatsappApiUrl, whatsappGroupId, isActive, postIntervalHours) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(crypto.randomUUID(), blogId, youtubeChannelId || '', instagramHandle || '', twitterHandle || '', localMemory || '', rssSniperUrl || '', telegramBotToken || '', telegramChatId || '', discordWebhookUrl || '', whatsappApiUrl || '', whatsappGroupId || '', activeInt, postIntervalHours ?? 4);
+      await db.prepare(`INSERT INTO AgentConfig (id, blogId, youtubeChannelId, instagramHandle, twitterHandle, localMemory, rssSniperUrl, telegramBotToken, telegramChatId, discordWebhookUrl, whatsappApiUrl, whatsappGroupId, isActive, postIntervalHours) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(crypto.randomUUID(), blogId, youtubeChannelId || '', instagramHandle || '', twitterHandle || '', localMemory || '', rssSniperUrl || '', telegramBotToken || '', telegramChatId || '', discordWebhookUrl || '', whatsappApiUrl || '', whatsappGroupId || '', activeInt, postIntervalHours ?? 4);
     }
 
     // Salva Variáveis Visuais no Blog
     if (primaryColor !== undefined) {
-      db.prepare(`UPDATE Blog SET primaryColor = ?, secondaryColor = ?, layoutStyle = ? WHERE id = ?`).run(primaryColor, secondaryColor, layoutStyle, blogId);
+      await db.prepare(`UPDATE Blog SET primaryColor = ?, secondaryColor = ?, layoutStyle = ? WHERE id = ?`).run(primaryColor, secondaryColor, layoutStyle, blogId);
     }
 
     return NextResponse.json({ success: true });

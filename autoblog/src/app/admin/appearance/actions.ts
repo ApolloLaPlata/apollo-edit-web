@@ -27,7 +27,7 @@ export async function saveAppearance(formData: FormData) {
   }
 
   try {
-    db.prepare(`
+    await db.prepare(`
       UPDATE Blog 
       SET name = ?, theme = ?, description = ?, primaryColor = ?, secondaryColor = ?,
           bgPrimary = ?, bgSurface = ?, fontHeading = ?, fontBody = ?, bannerUrl = ?,

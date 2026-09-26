@@ -9,11 +9,11 @@ interface FooterProps {
   blogName?: string;
 }
 
-export default function Footer({ domain = '', name, blogName }: FooterProps) {
+export default async function Footer({ domain = '', name, blogName }: FooterProps) {
   const siteName = name || blogName || 'Portal Colmeia';
-  let blogMeta = db.prepare('SELECT socialLinks, primaryColor FROM Blog WHERE domain = ?').get(domain) as any;
+  let blogMeta = await db.prepare('SELECT socialLinks, primaryColor FROM Blog WHERE domain = ?').get(domain) as any;
   if (!blogMeta && (domain.includes('localhost') || !domain)) {
-    blogMeta = db.prepare('SELECT socialLinks, primaryColor FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT socialLinks, primaryColor FROM Blog LIMIT 1').get() as any;
   }
 
   return (

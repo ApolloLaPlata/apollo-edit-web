@@ -7,9 +7,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const domain = headersList.get('host') || 'localhost:3000';
   
   // Localhost fallback
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
   if (!blogMeta && domain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
 
   const baseUrl = `https://${domain}`;
@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (blogMeta) {
     // Busca os posts
-    const posts = db.prepare(`SELECT slug, updatedAt, createdAt FROM Post WHERE blogId = ?`).all(blogMeta.id) as any[];
+    const posts = await db.prepare(`SELECT slug, updatedAt, createdAt FROM Post WHERE blogId = ?`).all(blogMeta.id) as any[];
     posts.forEach(post => {
       routes.push({
         url: `${baseUrl}/blog/${post.slug}`,
@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     // Busca as categorias
-    const categories = db.prepare(`SELECT slug FROM Category WHERE blogId = ?`).all(blogMeta.id) as any[];
+    const categories = await db.prepare(`SELECT slug FROM Category WHERE blogId = ?`).all(blogMeta.id) as any[];
     categories.forEach(cat => {
       routes.push({
         url: `${baseUrl}/category/${cat.slug}`,

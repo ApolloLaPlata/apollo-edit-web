@@ -61,7 +61,7 @@ async function processTwitterQueue() {
   
   // Pegamos um Snippet do Twitter não publicado
   // OBS: Em bancos antigos, isPublished pode vir como NULL, então checamos IFNULL
-  const task = db.prepare(`
+  const task = await db.prepare(`
     SELECT * 
     FROM SocialSnippet 
     WHERE platform = 'twitter' AND IFNULL(isPublished, 0) = 0
@@ -88,7 +88,7 @@ async function processTwitterQueue() {
     console.log(`[TWITTER-BOT] ⚠️ API Keys do Twitter ausentes no .env.`);
     console.log(`[TWITTER-BOT] ⚠️ Simulação de publicação realizada com sucesso.`);
     // Marca como publicado mesmo na simulação para não travar a fila
-    db.prepare(`UPDATE SocialSnippet SET isPublished = 1 WHERE id = ?`).run(task.id);
+    await db.prepare(`UPDATE SocialSnippet SET isPublished = 1 WHERE id = ?`).run(task.id);
     return;
   }
 
@@ -109,7 +109,7 @@ async function processTwitterQueue() {
     await rwClient.v2.tweetThread(tweets);
     
     console.log('[TWITTER-BOT] ✅ Thread Publicada Oficialmente!');
-    db.prepare(`UPDATE SocialSnippet SET isPublished = 1 WHERE id = ?`).run(task.id);
+    await db.prepare(`UPDATE SocialSnippet SET isPublished = 1 WHERE id = ?`).run(task.id);
   } catch (error) {
     console.error(`[TWITTER-BOT] 🚨 Falha na API do Twitter:`, error.message);
     if (error.data) console.error(error.data);

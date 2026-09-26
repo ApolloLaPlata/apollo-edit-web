@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 
 export default async function AdminSources() {
-  const blogs = db.prepare('SELECT id, name FROM Blog').all() as {id: string, name: string}[];
-  const sources = db.prepare(`
+  const blogs = await db.prepare('SELECT id, name FROM Blog').all() as {id: string, name: string}[];
+  const sources = await db.prepare(`
     SELECT ContentSource.*, Blog.name as blogName 
     FROM ContentSource 
     JOIN Blog ON ContentSource.blogId = Blog.id
@@ -22,7 +22,7 @@ export default async function AdminSources() {
 
     if (!blogId || !name || !rssUrl) return;
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO ContentSource (id, blogId, name, rssUrl, niche)
       VALUES (?, ?, ?, ?, ?)
     `).run(crypto.randomUUID(), blogId, name, rssUrl, niche || 'geral');
@@ -33,7 +33,7 @@ export default async function AdminSources() {
   async function handleDeleteSource(formData: FormData) {
     'use server';
     const id = formData.get('id') as string;
-    db.prepare('DELETE FROM ContentSource WHERE id = ?').run(id);
+    await db.prepare('DELETE FROM ContentSource WHERE id = ?').run(id);
     revalidatePath('/admin/sources');
   }
 

@@ -16,7 +16,7 @@ console.log('⚔️ [AI WAR] Iniciando simulação de agentes competitivos...');
 
 try {
   // Pega uma trend pendente (se não houver, pega uma keyword aleatória do Planner)
-  let trend = db.prepare(`SELECT * FROM PlannerKeyword WHERE status = 'pending' ORDER BY searchVolume DESC LIMIT 1`).get();
+  let trend = await db.prepare(`SELECT * FROM PlannerKeyword WHERE status = 'pending' ORDER BY searchVolume DESC LIMIT 1`).get();
   
   if (!trend) {
     console.log('⚔️ [AI WAR] Nenhuma pauta de alto tráfego no Radar.');
@@ -24,7 +24,7 @@ try {
   }
 
   // Seleciona 2 a 3 blogs aleatórios para competirem pela pauta
-  const combatants = db.prepare(`SELECT id, name, domain FROM Blog ORDER BY RANDOM() LIMIT 3`).all();
+  const combatants = await db.prepare(`SELECT id, name, domain FROM Blog ORDER BY RANDOM() LIMIT 3`).all();
   
   if (combatants.length < 2) {
     console.log('⚔️ [AI WAR] Não há blogs suficientes para uma guerra de tráfego. (Mínimo 2)');
@@ -44,13 +44,13 @@ try {
       // Para simular, chamamos o CLI de seed_impire.js ou gerador.
       try {
         // Marcamos a trend como processada para o primeiro que atirar
-        const currentTrend = db.prepare(`SELECT status FROM PlannerKeyword WHERE id = ?`).get(trend.id);
+        const currentTrend = await db.prepare(`SELECT status FROM PlannerKeyword WHERE id = ?`).get(trend.id);
         if (currentTrend.status === 'pending') {
-          db.prepare(`UPDATE PlannerKeyword SET status = 'in_progress' WHERE id = ?`).run(trend.id);
+          await db.prepare(`UPDATE PlannerKeyword SET status = 'in_progress' WHERE id = ?`).run(trend.id);
           console.log(`🏆 [AI WAR] ${blog.name} pegou a exclusividade (First Mover Advantage)!`);
           
           // Inserimos a task de geração no banco pro daemon pegar
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO GenerationTask (blogId, sourceUrl, prompt, status, createdAt, updatedAt)
             VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           `).run(blog.id, '', `Escreva uma notícia bombástica e exclusiva sobre: ${trend.keyword}. Tema do Blog: ${blog.name}`, 'pending');

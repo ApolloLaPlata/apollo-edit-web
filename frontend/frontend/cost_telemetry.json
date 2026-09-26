@@ -1,0 +1,444 @@
+[
+  {
+    "timestamp": "2026-07-08T12:31:38.899Z",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 664,
+    "output_tokens": 864,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-08T12:31:41.903Z",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1193,
+    "output_tokens": 971,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-08T12:32:32.924Z",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 664,
+    "output_tokens": 849,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-08T12:32:36.468Z",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1178,
+    "output_tokens": 963,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-08T12:35:39.345Z",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 664,
+    "output_tokens": 778,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-08T12:35:42.162Z",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1107,
+    "output_tokens": 879,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-08T12:36:41.423Z",
+    "provider": "lightning_1",
+    "model": "openai/gpt-4.1",
+    "input_tokens": 545,
+    "output_tokens": 853,
+    "cost_usd": 0.003044
+  },
+  {
+    "timestamp": "2026-07-08T12:36:46.981Z",
+    "provider": "lightning_2",
+    "model": "openai/gpt-4.1",
+    "input_tokens": 1125,
+    "output_tokens": 969,
+    "cost_usd": 0.003908
+  },
+  {
+    "timestamp": "2026-07-08T13:42:13.761Z",
+    "role": "writer",
+    "provider": "lightning_1",
+    "model": "anthropic/claude-sonnet-4-6",
+    "input_tokens": 677,
+    "output_tokens": 2809,
+    "cost_usd": 0.044166
+  },
+  {
+    "timestamp": "2026-07-08T13:42:23.973Z",
+    "role": "editor",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 2900,
+    "output_tokens": 124,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:05.756Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1520,
+    "output_tokens": 160,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:08.157Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 676,
+    "output_tokens": 144,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:10.417Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1072,
+    "output_tokens": 94,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:13.369Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1131,
+    "output_tokens": 179,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:15.899Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 372,
+    "output_tokens": 114,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:17.495Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 807,
+    "output_tokens": 98,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:20.109Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1087,
+    "output_tokens": 805,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:22.490Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 259,
+    "output_tokens": 280,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:24.934Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 654,
+    "output_tokens": 378,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:27.017Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 323,
+    "output_tokens": 174,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:34.845Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 3920,
+    "output_tokens": 676,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:45.073Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 4480,
+    "output_tokens": 676,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:57:59.505Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1658,
+    "output_tokens": 754,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:58:03.745Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 151,
+    "output_tokens": 386,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:58:09.782Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 508,
+    "output_tokens": 340,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:58:31.013Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 3909,
+    "output_tokens": 681,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:58:54.323Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 4439,
+    "output_tokens": 363,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:59:03.752Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1345,
+    "output_tokens": 444,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:59:06.798Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 153,
+    "output_tokens": 344,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:59:14.775Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1342,
+    "output_tokens": 152,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:59:17.254Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 504,
+    "output_tokens": 88,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:59:22.670Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 591,
+    "output_tokens": 234,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T11:59:43.119Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 3851,
+    "output_tokens": 716,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:05.567Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1403,
+    "output_tokens": 969,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:07.651Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 272,
+    "output_tokens": 163,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:11.428Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 209,
+    "output_tokens": 397,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:14.406Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 633,
+    "output_tokens": 126,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:17.506Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 619,
+    "output_tokens": 148,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:23.817Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 619,
+    "output_tokens": 127,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:27.628Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 623,
+    "output_tokens": 125,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:29.151Z",
+    "role": "default",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "input_tokens": 3637,
+    "output_tokens": 573,
+    "cost_usd": 0.000889
+  },
+  {
+    "timestamp": "2026-07-09T12:00:30.425Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 622,
+    "output_tokens": 148,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:32.461Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1681,
+    "output_tokens": 797,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:37.276Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 154,
+    "output_tokens": 463,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:40.529Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 619,
+    "output_tokens": 109,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:44.672Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 620,
+    "output_tokens": 137,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:47.696Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 615,
+    "output_tokens": 304,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:00:56.441Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1195,
+    "output_tokens": 985,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:01:08.269Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 1520,
+    "output_tokens": 151,
+    "cost_usd": 0
+  },
+  {
+    "timestamp": "2026-07-09T12:01:11.667Z",
+    "role": "default",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "input_tokens": 747,
+    "output_tokens": 351,
+    "cost_usd": 0
+  }
+]

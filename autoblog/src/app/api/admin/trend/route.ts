@@ -18,13 +18,13 @@ export async function GET(request: Request) {
       : `SELECT * FROM TrendForecast ORDER BY scheduledFor ASC LIMIT 50`;
 
     const forecasts = blogId && blogId !== 'all'
-      ? db.prepare(sql).all(blogId)
-      : db.prepare(sql).all();
+      ? await db.prepare(sql).all(blogId)
+      : await db.prepare(sql).all();
 
     const stats = {
-      queued: (db.prepare(`SELECT COUNT(*) as c FROM TrendForecast WHERE status = 'queued'`).get() as any)?.c || 0,
-      published: (db.prepare(`SELECT COUNT(*) as c FROM TrendForecast WHERE status = 'published'`).get() as any)?.c || 0,
-      expired: (db.prepare(`SELECT COUNT(*) as c FROM TrendForecast WHERE status = 'expired'`).get() as any)?.c || 0,
+      queued: (await db.prepare(`SELECT COUNT(*) as c FROM TrendForecast WHERE status = 'queued'`).get() as any)?.c || 0,
+      published: (await db.prepare(`SELECT COUNT(*) as c FROM TrendForecast WHERE status = 'published'`).get() as any)?.c || 0,
+      expired: (await db.prepare(`SELECT COUNT(*) as c FROM TrendForecast WHERE status = 'expired'`).get() as any)?.c || 0,
     };
 
     return NextResponse.json({ success: true, forecasts, stats });
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       return NextResponse.json(res);
     }
     if (action === 'clear_expired') {
-      db.prepare(`DELETE FROM TrendForecast WHERE status = 'expired'`).run();
+      await db.prepare(`DELETE FROM TrendForecast WHERE status = 'expired'`).run();
       return NextResponse.json({ success: true, message: 'Previsões expiradas apagadas do Oráculo.' });
     }
 

@@ -4,6 +4,8 @@ import time
 import httpx
 import sqlite3
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 from backend.agents.base_agent import BaseAgent
 
 logger = logging.getLogger("PricingScraper")
@@ -61,7 +63,7 @@ class PricingScraperAgent(BaseAgent):
             return
 
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=0.1)
+            conn = get_db_connection("economy.db")
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             

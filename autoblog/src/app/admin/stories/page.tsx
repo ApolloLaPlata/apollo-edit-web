@@ -7,10 +7,10 @@ export const metadata = {
   description: 'Gerenciador de Vídeos e Web Stories',
 };
 
-export default function AdminStoriesPage() {
+export default async function AdminStoriesPage() {
   let stories = [];
   try {
-    stories = db.prepare('SELECT WebStory.*, Blog.name as blogName FROM WebStory LEFT JOIN Blog ON WebStory.blogId = Blog.id ORDER BY WebStory.createdAt DESC LIMIT 50').all() as any[];
+    stories = await db.prepare('SELECT WebStory.*, Blog.name as blogName FROM WebStory LEFT JOIN Blog ON WebStory.blogId = Blog.id ORDER BY WebStory.createdAt DESC LIMIT 50').all() as any[];
   } catch (error) {
     console.error("Erro ao puxar WebStories", error);
   }

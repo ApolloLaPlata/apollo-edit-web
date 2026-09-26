@@ -13,9 +13,9 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const params = await props.params;
   const rawDomain = decodeURIComponent(params.domain);
   const decodedDomain = rawDomain.split(':')[0];
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   if (!blogMeta) return { title: 'Blog não encontrado' };
 
@@ -54,6 +54,56 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   };
 }
 
+import { unstable_cache } from 'next/cache';
+
+// Funções Cacheadas (ISR Dinâmico) para proteger o Banco de Dados
+const getCachedBlog = unstable_cache(
+  async (domain: string) => {
+    let blog = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
+    if (!blog && domain.includes('localhost')) {
+      blog = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    }
+    return blog;
+  },
+  ['blog-config'],
+  { revalidate: 60 }
+);
+
+const getCachedPosts = unstable_cache(
+  async (blogId: string, lang: string, limit: number, offset: number) => {
+    return await db.prepare(`
+      SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
+      FROM Post
+      LEFT JOIN Blog ON Post.blogId = Blog.id
+      WHERE Post.blogId = ? AND Post.language = ? AND Post.isPublished = 1
+      ORDER BY Post.createdAt DESC LIMIT ? OFFSET ?
+    `).all(blogId, lang, limit, offset) as any[];
+  },
+  ['blog-posts'],
+  { revalidate: 60 }
+);
+
+const getCachedStories = unstable_cache(
+  async (blogId: string) => {
+    return await db.prepare(`
+      SELECT id, title, slug, coverImage, videoUrl, blogId
+      FROM Post
+      WHERE blogId = ? AND isPublished = 1 AND videoUrl IS NOT NULL
+      ORDER BY createdAt DESC LIMIT 10
+    `).all(blogId) as any[];
+  },
+  ['blog-stories'],
+  { revalidate: 120 }
+);
+
+const getCachedCategories = unstable_cache(
+  async (blogId: string) => {
+    return await db.prepare('SELECT name, slug FROM Category WHERE blogId = ? LIMIT 8').all(blogId) as any[];
+  },
+  ['blog-categories'],
+  { revalidate: 300 }
+);
+
 export default async function Home(props: {
   params: Promise<{ domain: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -61,14 +111,11 @@ export default async function Home(props: {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const rawDomain = decodeURIComponent(params.domain);
-  const decodedDomain = rawDomain.split(':')[0]; // Remove porta :3000 se existir
+  const decodedDomain = rawDomain.split(':')[0];
   const lang = (typeof searchParams.lang === 'string') ? searchParams.lang : 'pt';
 
-  // ─── Carregar dados do blog ───────────────────────────────
-  let blogRaw = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
-  if (!blogRaw && decodedDomain.includes('localhost')) {
-    blogRaw = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
-  }
+  // ─── Carregar dados do blog (Cacheados) ──────────────────────
+  const blogRaw = await getCachedBlog(decodedDomain);
 
   const blog: BlogData = {
     id: String(blogRaw?.id || ''),
@@ -91,15 +138,7 @@ export default async function Home(props: {
   const postsPerPage = 6;
   const offset = (currentPage - 1) * postsPerPage;
 
-  // Busca posts + 1 (para saber se existe próxima página)
-  const recentPostsRaw = db.prepare(`
-    SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
-    FROM Post
-    LEFT JOIN Blog ON Post.blogId = Blog.id
-    WHERE Post.blogId = ? AND Post.language = ? AND Post.isPublished = 1
-    ORDER BY Post.createdAt DESC LIMIT ? OFFSET ?
-  `).all(blogRaw?.id, lang, postsPerPage + 1, offset) as any[];
-
+  const recentPostsRaw = await getCachedPosts(blogRaw?.id, lang, postsPerPage + 1, offset);
   const hasNextPage = recentPostsRaw.length > postsPerPage;
   const postsToRender = recentPostsRaw.slice(0, postsPerPage);
 
@@ -115,14 +154,8 @@ export default async function Home(props: {
     blog: { name: p.blog_name, domain: p.blog_domain },
   }));
 
-  // ─── Buscar Web Stories (Posts com videoUrl) ────────────────
-  const webStoriesRaw = db.prepare(`
-    SELECT id, title, slug, coverImage, videoUrl, blogId
-    FROM Post
-    WHERE blogId = ? AND isPublished = 1 AND videoUrl IS NOT NULL
-    ORDER BY createdAt DESC LIMIT 10
-  `).all(blogRaw?.id) as any[];
-
+  // ─── Buscar Web Stories ───────────────────────────────────
+  const webStoriesRaw = await getCachedStories(blogRaw?.id);
   const webStories = webStoriesRaw.map((s: any) => ({
     id: String(s.id),
     title: s.title,
@@ -132,16 +165,11 @@ export default async function Home(props: {
     blogName: blog.name
   }));
 
-  // Se estivermos na página 1, o primeiro post é o Hero. 
-  // Se for página > 1, não há hero, e os 6 posts caem direto no grid.
   const heroPost: PostData | null = currentPage === 1 ? (recentPosts[0] || null) : null;
   const otherPosts: PostData[] = currentPage === 1 ? recentPosts.slice(1) : recentPosts;
 
   // ─── Carregar categorias ──────────────────────────────────
-  const categoriesRaw = db.prepare(
-    'SELECT name, slug FROM Category WHERE blogId = ? LIMIT 8'
-  ).all(blogRaw?.id) as any[];
-
+  const categoriesRaw = await getCachedCategories(blogRaw?.id);
   const categories: CategoryData[] = categoriesRaw.map((c: any) => ({
     name: c.name,
     slug: c.slug,

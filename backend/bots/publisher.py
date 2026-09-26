@@ -3,6 +3,8 @@ import uuid
 import datetime
 import re
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Banco temporário para a aprovação biométrica do Pocket Director
@@ -11,7 +13,7 @@ APPROVAL_DB_PATH = os.path.join(BASE_DIR, "approval_queue.db")
 NEXT_DB_PATH = os.path.join(BASE_DIR, "..", "frontend", "dev.db")
 
 def init_approval_db():
-    conn = sqlite3.connect(APPROVAL_DB_PATH)
+    conn = get_db_connection("economy.db")
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS approval_queue (
@@ -44,7 +46,7 @@ def publicar_artigo(titulo, markdown, image_url, blog_name="Observador Econômic
     print(f"[PUBLISHER] Redirecionando artigo '{titulo}' para a Fila de Aprovação Biométrica...")
     
     try:
-        conn = sqlite3.connect(APPROVAL_DB_PATH)
+        conn = get_db_connection("economy.db")
         cursor = conn.cursor()
         
         post_id = "draft_" + str(uuid.uuid4()).replace("-", "")[:16]

@@ -16,7 +16,7 @@ function generateEbook() {
   const db = new Database(DB_PATH);
   
   // Pega os 50 posts mais acessados
-  const topPosts = db.prepare(`
+  const topPosts = await db.prepare(`
     SELECT title, author, contentMd, publishedAt 
     FROM Post 
     WHERE isPublished = 1 AND isDeleted = 0

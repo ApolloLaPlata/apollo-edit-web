@@ -10,7 +10,7 @@ export async function GET(request: Request, props: { params: Promise<{ domain: s
   let adsTxtContent = "";
 
   try {
-     const blog = db.prepare('SELECT id FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+     const blog = await db.prepare('SELECT id FROM Blog WHERE domain = ?').get(decodedDomain) as any;
      if (!blog) {
        return new NextResponse('Blog não encontrado', { status: 404 });
      }

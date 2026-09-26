@@ -16,7 +16,7 @@ export async function addCategory(formData: FormData) {
   const id = crypto.randomUUID();
 
   try {
-    db.prepare('INSERT INTO Category (id, name, slug, blogId) VALUES (?, ?, ?, ?)').run(id, name, slug, blogId);
+    await db.prepare('INSERT INTO Category (id, name, slug, blogId) VALUES (?, ?, ?, ?)').run(id, name, slug, blogId);
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error: any) {
@@ -26,7 +26,7 @@ export async function addCategory(formData: FormData) {
 
 export async function deleteCategory(id: string) {
   try {
-    db.prepare('DELETE FROM Category WHERE id = ?').run(id);
+    await db.prepare('DELETE FROM Category WHERE id = ?').run(id);
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error: any) {

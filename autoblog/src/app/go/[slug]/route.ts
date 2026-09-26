@@ -12,14 +12,14 @@ export async function GET(request: Request, props: { params: Promise<{ slug: str
   try {
     // Busca o Link de Afiliado dinamicamente
     // Compara o keyword do banco (ignorando case) com o slug tratado.
-    const affiliate = db.prepare(`SELECT * FROM AffiliateLink WHERE LOWER(keyword) = ? OR LOWER(REPLACE(keyword, ' ', '-')) = ?`).get(decodedSlug, slug.toLowerCase()) as any;
+    const affiliate = await db.prepare(`SELECT * FROM AffiliateLink WHERE LOWER(keyword) = ? OR LOWER(REPLACE(keyword, ' ', '-')) = ?`).get(decodedSlug, slug.toLowerCase()) as any;
 
     if (affiliate && affiliate.url) {
       targetUrl = affiliate.url;
 
       // Fase 66: Tracking Invisível de Cliques
       // Incrementar métrica para sabermos exatamente qual link converte mais
-      db.prepare('UPDATE AffiliateLink SET totalClicks = COALESCE(totalClicks, 0) + 1 WHERE id = ?').run(affiliate.id);
+      await db.prepare('UPDATE AffiliateLink SET totalClicks = COALESCE(totalClicks, 0) + 1 WHERE id = ?').run(affiliate.id);
     }
   } catch (error) {
     console.error(`[CLOAKING ERROR] Falha ao processar /go/${slug}:`, error);

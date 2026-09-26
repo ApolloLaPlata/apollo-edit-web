@@ -10,13 +10,13 @@ export async function GET(request: Request) {
     const baseUrl = `${protocol}://${host}`;
 
     // Get the primary blog info
-    const blog = db.prepare('SELECT id, name, description, domain, primaryColor, logoUrl FROM Blog LIMIT 1').get() as any;
+    const blog = await db.prepare('SELECT id, name, description, domain, primaryColor, logoUrl FROM Blog LIMIT 1').get() as any;
     if (!blog) {
       return new NextResponse('Blog not found', { status: 404 });
     }
 
     // Get posts that are audio_track
-    const posts = db.prepare(`
+    const posts = await db.prepare(`
       SELECT p.*, c.name as categoryName
       FROM Post p
       LEFT JOIN Category c ON p.categoryId = c.id

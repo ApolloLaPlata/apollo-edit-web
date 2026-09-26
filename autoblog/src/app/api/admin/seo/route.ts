@@ -6,11 +6,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const blogId = searchParams.get('blogId');
 
-    const blogs = db.prepare('SELECT id, name, domain, niche, theme FROM Blog').all() as any[];
+    const blogs = await db.prepare('SELECT id, name, domain, niche, theme FROM Blog').all() as any[];
     
     let posts = [];
     if (blogId && blogId !== 'all') {
-      posts = db.prepare(`
+      posts = await db.prepare(`
         SELECT id, title, slug, excerpt, postType, blogId, views, updatedAt 
         FROM Post 
         WHERE blogId = ? 
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
         LIMIT 30
       `).all(blogId) as any[];
     } else {
-      posts = db.prepare(`
+      posts = await db.prepare(`
         SELECT Post.id, Post.title, Post.slug, Post.excerpt, Post.postType, Post.blogId, Post.views, Post.updatedAt, Blog.name as blogName, Blog.domain as blogDomain 
         FROM Post 
         LEFT JOIN Blog ON Post.blogId = Blog.id 
@@ -28,8 +28,8 @@ export async function GET(request: Request) {
     }
 
     // Calcula Core Web Vitals e SEO Score por Blog
-    const vitalsByBlog = blogs.map((b) => {
-      const blogPosts = db.prepare('SELECT COUNT(*) as c, SUM(views) as v FROM Post WHERE blogId = ?').get(b.id) as any;
+    const vitalsByBlog = await Promise.all(blogs.map(async (b) => {
+      const blogPosts = await db.prepare('SELECT COUNT(*) as c, SUM(views) as v FROM Post WHERE blogId = ?').get(b.id) as any;
       const postCount = blogPosts?.c || 0;
       const totalViews = blogPosts?.v || 0;
 
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
           robotsUrl: `https://${b.domain}/robots.txt`
         }
       };
-    });
+    }));
 
     // Auditoria de Meta-Tags dos Posts
     const auditedPosts = posts.map((p) => {
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     const { action, blogId } = await request.json();
 
     if (action === 'optimize_seo') {
-      const posts = db.prepare("SELECT id, title, excerpt FROM Post WHERE title LIKE '%...%' OR length(title) < 35 OR length(title) > 75 OR length(excerpt) < 80").all() as any[];
+      const posts = await db.prepare("SELECT id, title, excerpt FROM Post WHERE title LIKE '%...%' OR length(title) < 35 OR length(title) > 75 OR length(excerpt) < 80").all() as any[];
 
       const updateStmt = db.prepare("UPDATE Post SET title = ?, excerpt = ?, updatedAt = ? WHERE id = ?");
       

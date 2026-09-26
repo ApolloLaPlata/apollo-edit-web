@@ -8,7 +8,7 @@ console.log("🛠️ Iniciando a migração do Banco de Dados para Integração 
 
 try {
   // Tabela para o Motor de Exportação de Roteiros (Cross-channel)
-  db.exec(`
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS video_render_queue (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       post_id INTEGER NOT NULL,

@@ -8,11 +8,11 @@ export default async function sitemap({ params }: { params: Promise<{ domain: st
   const baseUrl = `https://${decodedDomain}`;
 
   // Busca ID do blog
-  const blog = db.prepare('SELECT id FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  const blog = await db.prepare('SELECT id FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   const blogId = blog ? blog.id : 0;
 
   // Busca os últimos 5.000 posts (limite recomendável do Google Search Console)
-  const posts = db.prepare(`
+  const posts = await db.prepare(`
     SELECT slug, updatedAt 
     FROM Post 
     WHERE blogId = ? AND isPublished = 1 
@@ -27,7 +27,7 @@ export default async function sitemap({ params }: { params: Promise<{ domain: st
   }));
 
   // Busca as Categorias
-  const categories = db.prepare('SELECT slug FROM Category WHERE blogId = ?').all(blogId) as any[];
+  const categories = await db.prepare('SELECT slug FROM Category WHERE blogId = ?').all(blogId) as any[];
   const categoryUrls = categories.map((cat) => ({
     url: `${baseUrl}/category/${cat.slug}`,
     lastModified: new Date(),
@@ -36,7 +36,7 @@ export default async function sitemap({ params }: { params: Promise<{ domain: st
   }));
 
   // Busca Autores (SEO E-E-A-T)
-  const authorsRaw = db.prepare(`SELECT DISTINCT author FROM Post WHERE blogId = ? AND author IS NOT NULL AND author != ''`).all(blogId) as any[];
+  const authorsRaw = await db.prepare(`SELECT DISTINCT author FROM Post WHERE blogId = ? AND author IS NOT NULL AND author != ''`).all(blogId) as any[];
   const authorUrls = authorsRaw.map((row) => ({
     url: `${baseUrl}/author/${row.author.toLowerCase().replace(/\s+/g, '-')}`,
     lastModified: new Date(),

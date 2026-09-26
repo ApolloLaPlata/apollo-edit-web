@@ -1,6 +1,6 @@
 const db = require('better-sqlite3')('dev.db');
 
-db.exec(`
+await db.exec(`
   CREATE TABLE IF NOT EXISTS WebStory (
     id TEXT PRIMARY KEY,
     blogId TEXT,
@@ -14,7 +14,7 @@ db.exec(`
 `);
 
 // Injetar dados Mock
-const blog = db.prepare('SELECT id FROM Blog LIMIT 1').get();
+const blog = await db.prepare('SELECT id FROM Blog LIMIT 1').get();
 if (blog) {
   const stmt = db.prepare('INSERT OR IGNORE INTO WebStory (id, blogId, title, imageUrl, content) VALUES (?, ?, ?, ?, ?)');
   stmt.run('s1', blog.id, 'O futuro do Bitcoin', 'https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg?auto=compress&cs=tinysrgb&w=800', 'Descubra como o Bitcoin ultrapassou a barreira dos 100k e o que esperar do próximo halving.');

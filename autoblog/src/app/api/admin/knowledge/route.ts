@@ -40,9 +40,9 @@ export async function GET(request: Request) {
     let rows = [];
 
     if (channelId) {
-      rows = db.prepare(`SELECT id, channelId, sourceName, content, createdAt FROM knowledge_base WHERE channelId = ? ORDER BY createdAt DESC LIMIT 50`).all(channelId);
+      rows = await db.prepare(`SELECT id, channelId, sourceName, content, createdAt FROM knowledge_base WHERE channelId = ? ORDER BY createdAt DESC LIMIT 50`).all(channelId);
     } else {
-      rows = db.prepare(query).all();
+      rows = await db.prepare(query).all();
     }
 
     return NextResponse.json({ status: 'success', data: rows }, { status: 200 });
@@ -56,7 +56,7 @@ export async function DELETE(request: Request) {
     const { id } = await request.json();
     if (!id) return NextResponse.json({ error: 'ID ausente' }, { status: 400 });
 
-    db.prepare(`DELETE FROM knowledge_base WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM knowledge_base WHERE id = ?`).run(id);
 
     return NextResponse.json({ status: 'success', message: 'Memória vetorial apagada com sucesso.' }, { status: 200 });
   } catch (error: any) {

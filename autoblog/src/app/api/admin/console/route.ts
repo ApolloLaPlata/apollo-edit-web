@@ -55,7 +55,7 @@ Digite um comando e pressione Enter.`
   // ─── PING ───────────────────────────────────────────
   if (cmd === 'ping') {
     try {
-      db.prepare('SELECT 1').get();
+      await db.prepare('SELECT 1').get();
       return { type: 'success', output: 'PONG — Banco de dados: ONLINE ✅ | Latência: <1ms' };
     } catch {
       return { type: 'error', output: 'ERRO: Banco de dados inacessível ❌' };
@@ -76,19 +76,19 @@ Digite um comando e pressione Enter.`
   if (cmd === 'status') {
     try {
       const blog = blogId !== 'global'
-        ? db.prepare('SELECT * FROM Blog WHERE id = ?').get(blogId) as any
+        ? await db.prepare('SELECT * FROM Blog WHERE id = ?').get(blogId) as any
         : null;
-      const totalPosts = db.prepare(blogId !== 'global'
+      const totalPosts = await db.prepare(blogId !== 'global'
         ? 'SELECT COUNT(*) as c FROM Post WHERE blogId = ?'
         : 'SELECT COUNT(*) as c FROM Post').get(...(blogId !== 'global' ? [blogId] : [])) as any;
-      const pendingQueue = db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('pending') as any;
-      const writingQueue = db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('writing') as any;
-      const totalLeads = db.prepare(blogId !== 'global'
+      const pendingQueue = await db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('pending') as any;
+      const writingQueue = await db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('writing') as any;
+      const totalLeads = await db.prepare(blogId !== 'global'
         ? 'SELECT COUNT(*) as c FROM Subscriber WHERE blogId = ?'
         : 'SELECT COUNT(*) as c FROM Subscriber').get(...(blogId !== 'global' ? [blogId] : [])) as any;
 
       const agentConfig = blogId !== 'global'
-        ? db.prepare('SELECT isActive, postIntervalHours FROM AgentConfig WHERE blogId = ?').get(blogId) as any
+        ? await db.prepare('SELECT isActive, postIntervalHours FROM AgentConfig WHERE blogId = ?').get(blogId) as any
         : null;
 
       return {
@@ -112,7 +112,7 @@ Digite um comando e pressione Enter.`
 
   // ─── FILA ───────────────────────────────────────────
   if (cmd === 'fila' || cmd === 'queue') {
-    const items = db.prepare('SELECT topic, status, createdAt FROM ContentQueue ORDER BY createdAt DESC LIMIT 10').all() as any[];
+    const items = await db.prepare('SELECT topic, status, createdAt FROM ContentQueue ORDER BY createdAt DESC LIMIT 10').all() as any[];
     if (items.length === 0) return { type: 'info', output: 'A fila de pautas está vazia.' };
     const lines = items.map((i, idx) =>
       `  ${idx + 1}. [${i.status.toUpperCase().padEnd(8)}] ${i.topic.substring(0, 55)}`
@@ -126,7 +126,7 @@ Digite um comando e pressione Enter.`
     const limit = parseInt(parts[2]) || 10;
     const filter = blogId !== 'global' ? 'WHERE blogId = ?' : '';
     const params: any[] = blogId !== 'global' ? [blogId, limit] : [limit];
-    const posts = db.prepare(`SELECT title, views, createdAt, language FROM Post ${filter} ORDER BY createdAt DESC LIMIT ?`).all(...params) as any[];
+    const posts = await db.prepare(`SELECT title, views, createdAt, language FROM Post ${filter} ORDER BY createdAt DESC LIMIT ?`).all(...params) as any[];
     if (posts.length === 0) return { type: 'info', output: 'Nenhum artigo publicado ainda.' };
     const lines = posts.map((p, i) =>
       `  ${String(i + 1).padStart(2)}. [${(p.language || 'pt').toUpperCase()}] ${p.title.substring(0, 45).padEnd(45)} │ ${p.views || 0} views`
@@ -141,7 +141,7 @@ Digite um comando e pressione Enter.`
     if (blogId === 'global') return { type: 'error', output: 'Selecione um canal específico antes de criar pautas.\nDica: Use o Workspace Switcher no topo do menu.' };
 
     const id = crypto.randomUUID();
-    db.prepare('INSERT INTO ContentQueue (id, blogId, topic, status, createdAt) VALUES (?, ?, ?, ?, ?)').run(id, blogId, topic, 'pending', new Date().toISOString());
+    await db.prepare('INSERT INTO ContentQueue (id, blogId, topic, status, createdAt) VALUES (?, ?, ?, ?, ?)').run(id, blogId, topic, 'pending', new Date().toISOString());
     return { type: 'success', output: `✅ Pauta criada com sucesso!\n   Tema: "${topic}"\n   ID: ${id.split('-')[0]}\n   Status: PENDENTE → Será escrita no próximo tick.` };
   }
 
@@ -149,7 +149,7 @@ Digite um comando e pressione Enter.`
   if (cmd === 'deletar fila' || cmd === 'limpar fila') {
     const filter = blogId !== 'global' ? 'AND blogId = ?' : '';
     const params: any[] = blogId !== 'global' ? [blogId] : [];
-    const result = db.prepare(`DELETE FROM ContentQueue WHERE status = 'pending' ${filter}`).run(...params);
+    const result = await db.prepare(`DELETE FROM ContentQueue WHERE status = 'pending' ${filter}`).run(...params);
     return { type: 'success', output: `🗑️ ${result.changes} pauta(s) removida(s) da fila.` };
   }
 
@@ -157,8 +157,8 @@ Digite um comando e pressione Enter.`
   if (cmd === 'contar posts' || cmd === 'count posts') {
     const filter = blogId !== 'global' ? 'WHERE blogId = ?' : '';
     const params: any[] = blogId !== 'global' ? [blogId] : [];
-    const total = db.prepare(`SELECT COUNT(*) as c FROM Post ${filter}`).get(...params) as any;
-    const langs = db.prepare(`SELECT language, COUNT(*) as c FROM Post ${filter} GROUP BY language`).all(...params) as any[];
+    const total = await db.prepare(`SELECT COUNT(*) as c FROM Post ${filter}`).get(...params) as any;
+    const langs = await db.prepare(`SELECT language, COUNT(*) as c FROM Post ${filter} GROUP BY language`).all(...params) as any[];
     const langStr = langs.map((l: any) => `${l.language?.toUpperCase() || 'PT'}: ${l.c}`).join(' | ');
     return { type: 'data', output: `📊 Total de artigos: ${total?.c || 0}\n   Por idioma: ${langStr}` };
   }
@@ -167,8 +167,8 @@ Digite um comando e pressione Enter.`
   if (cmd === 'leads') {
     const filter = blogId !== 'global' ? 'WHERE blogId = ?' : '';
     const params: any[] = blogId !== 'global' ? [blogId] : [];
-    const total = db.prepare(`SELECT COUNT(*) as c FROM Subscriber ${filter}`).get(...params) as any;
-    const hoje = db.prepare(`SELECT COUNT(*) as c FROM Subscriber ${filter ? filter + ' AND' : 'WHERE'} date(createdAt) = date('now')`).get(...params) as any;
+    const total = await db.prepare(`SELECT COUNT(*) as c FROM Subscriber ${filter}`).get(...params) as any;
+    const hoje = await db.prepare(`SELECT COUNT(*) as c FROM Subscriber ${filter ? filter + ' AND' : 'WHERE'} date(createdAt) = date('now')`).get(...params) as any;
     return { type: 'data', output: `📬 Leads capturados:\n   Total: ${total?.c || 0}\n   Hoje: ${hoje?.c || 0}` };
   }
 
@@ -176,7 +176,7 @@ Digite um comando e pressione Enter.`
   if (cmd === 'top posts') {
     const filter = blogId !== 'global' ? 'WHERE blogId = ?' : '';
     const params: any[] = blogId !== 'global' ? [blogId, 5] : [5];
-    const posts = db.prepare(`SELECT title, views FROM Post ${filter} ORDER BY views DESC LIMIT ?`).all(...params) as any[];
+    const posts = await db.prepare(`SELECT title, views FROM Post ${filter} ORDER BY views DESC LIMIT ?`).all(...params) as any[];
     if (posts.length === 0) return { type: 'info', output: 'Nenhum post com views ainda.' };
     const lines = posts.map((p: any, i: number) => `  ${i + 1}. ${p.title.substring(0, 50).padEnd(50)} │ ${p.views || 0} views`).join('\n');
     return { type: 'data', output: `🔥 TOP 5 ARTIGOS MAIS LIDOS:\n\n${lines}` };
@@ -186,15 +186,15 @@ Digite um comando e pressione Enter.`
   if (cmd === 'cliques' || cmd === 'clicks') {
     const filter = blogId !== 'global' ? 'WHERE blogId = ?' : '';
     const params: any[] = blogId !== 'global' ? [blogId] : [];
-    const total = db.prepare(`SELECT COUNT(*) as c, SUM(revenue) as r FROM AffiliateClick ${filter}`).get(...params) as any;
+    const total = await db.prepare(`SELECT COUNT(*) as c, SUM(revenue) as r FROM AffiliateClick ${filter}`).get(...params) as any;
     return { type: 'data', output: `💰 Cliques em afiliados:\n   Total: ${total?.c || 0}\n   Receita estimada: R$ ${Number(total?.r || 0).toFixed(2)}` };
   }
 
   // ─── MOTOR ───────────────────────────────────────────
   if (cmd === 'motor' || cmd === 'engine') {
-    const pending = db.prepare("SELECT COUNT(*) as c FROM ContentQueue WHERE status = 'pending'").get() as any;
-    const writing = db.prepare("SELECT COUNT(*) as c FROM ContentQueue WHERE status = 'writing'").get() as any;
-    const done = db.prepare("SELECT COUNT(*) as c FROM ContentQueue WHERE status = 'done'").get() as any;
+    const pending = await db.prepare("SELECT COUNT(*) as c FROM ContentQueue WHERE status = 'pending'").get() as any;
+    const writing = await db.prepare("SELECT COUNT(*) as c FROM ContentQueue WHERE status = 'writing'").get() as any;
+    const done = await db.prepare("SELECT COUNT(*) as c FROM ContentQueue WHERE status = 'done'").get() as any;
     return {
       type: 'data',
       output: `⚙️ STATUS DO MOTOR NEURAL:\n\n  Pautas pendentes: ${pending?.c || 0}\n  Em escrita:       ${writing?.c || 0}\n  Concluídas:       ${done?.c || 0}\n\n  Motor Tick: Ativo (POST /api/admin/engine/tick)\n  Frequência: A cada 60s (cron job na VPS)`
@@ -233,7 +233,7 @@ Digite um comando e pressione Enter.`
   // ─── BROADCAST / DISPARO VIP ───────────────────────────────────────────
   if (cmd === 'broadcast' || cmd === 'disparo' || cmd === 'disparo massa') {
     try {
-      const result = db.prepare('SELECT COUNT(*) as total FROM Lead').get() as { total: number };
+      const result = await db.prepare('SELECT COUNT(*) as total FROM Lead').get() as { total: number };
       const count = result?.total || 1480;
       return {
         type: 'success',
@@ -247,8 +247,8 @@ Digite um comando e pressione Enter.`
   // ─── BACKUP / SNAPSHOT ───────────────────────────────────────────
   if (cmd === 'backup' || cmd === 'snapshot' || cmd === 'backup --snapshot' || cmd === 'sqlite --snapshot') {
     try {
-      const stats = db.prepare('SELECT COUNT(*) as posts FROM Post').get() as any;
-      const leads = db.prepare('SELECT COUNT(*) as leads FROM Subscriber').get() as any;
+      const stats = await db.prepare('SELECT COUNT(*) as posts FROM Post').get() as any;
+      const leads = await db.prepare('SELECT COUNT(*) as leads FROM Subscriber').get() as any;
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
       
       return {

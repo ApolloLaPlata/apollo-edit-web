@@ -73,9 +73,9 @@ Regras:
     // =============================================
     
     if (aiResponse.intent === 'status') {
-      const blogs = db.prepare('SELECT COUNT(*) as c FROM Blog').get() as any;
-      const queue = db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('pending') as any;
-      const posts = db.prepare('SELECT COUNT(*) as c FROM Post').get() as any;
+      const blogs = await db.prepare('SELECT COUNT(*) as c FROM Blog').get() as any;
+      const queue = await db.prepare('SELECT COUNT(*) as c FROM ContentQueue WHERE status = ?').get('pending') as any;
+      const posts = await db.prepare('SELECT COUNT(*) as c FROM Post').get() as any;
       
       finalReply += `\n\n📊 *Status da Colmeia*\n🌐 Sites Ativos: ${blogs.c}\n📝 Pautas na Fila: ${queue.c}\n✅ Artigos Publicados: ${posts.c}`;
     } 
@@ -86,7 +86,7 @@ Regras:
       
       if (aiResponse.domainHint) {
         // Tenta achar um blog que o nome ou nicho contenha a hint (case insensitive simples)
-        const possibleBlogs = db.prepare('SELECT id, name, niche FROM Blog').all() as any[];
+        const possibleBlogs = await db.prepare('SELECT id, name, niche FROM Blog').all() as any[];
         const hint = aiResponse.domainHint.toLowerCase();
         const found = possibleBlogs.find(b => b.name.toLowerCase().includes(hint) || b.niche.toLowerCase().includes(hint));
         if (found) {
@@ -96,12 +96,12 @@ Regras:
       }
       
       if (!targetBlogId) {
-        const fallback = db.prepare('SELECT id, name FROM Blog LIMIT 1').get() as any;
+        const fallback = await db.prepare('SELECT id, name FROM Blog LIMIT 1').get() as any;
         targetBlogId = fallback ? fallback.id : 'global';
         targetBlogName = fallback ? fallback.name : 'Desconhecido';
       }
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO ContentQueue (id, blogId, topic, status, createdAt)
         VALUES (?, ?, ?, ?, ?)
       `).run(crypto.randomUUID(), targetBlogId, aiResponse.topic, 'pending', new Date().toISOString());

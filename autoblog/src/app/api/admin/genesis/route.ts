@@ -10,24 +10,24 @@ export async function GET(request: Request) {
 
     let logs = [];
     if (blogId && blogId !== 'all') {
-      logs = db.prepare(`SELECT * FROM GenesisLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
+      logs = await db.prepare(`SELECT * FROM GenesisLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
     } else {
-      logs = db.prepare(`SELECT * FROM GenesisLog ORDER BY createdAt DESC LIMIT 50`).all();
+      logs = await db.prepare(`SELECT * FROM GenesisLog ORDER BY createdAt DESC LIMIT 50`).all();
     }
 
-    const totalGenesisQuery = db.prepare(`
+    const totalGenesisQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM GenesisLog WHERE actionType = 'category_genesis'
     `).get() as any;
 
-    const totalColonizationQuery = db.prepare(`
+    const totalColonizationQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM GenesisLog WHERE actionType = 'niche_colonization'
     `).get() as any;
 
-    const totalMonetizationQuery = db.prepare(`
+    const totalMonetizationQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM GenesisLog WHERE actionType = 'monetization_injection'
     `).get() as any;
 
-    const totalCategoriesQuery = db.prepare(`SELECT COUNT(*) as c FROM Category`).get() as any;
+    const totalCategoriesQuery = await db.prepare(`SELECT COUNT(*) as c FROM Category`).get() as any;
 
     return NextResponse.json({
       success: true,
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     }
 
     if (action === 'clear_logs') {
-      db.prepare(`DELETE FROM GenesisLog`).run();
+      await db.prepare(`DELETE FROM GenesisLog`).run();
       return NextResponse.json({ success: true, message: 'Telemetria de Gênese e Expansão limpa com sucesso.' });
     }
 

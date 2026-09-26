@@ -8,7 +8,7 @@ console.log("🧠 Iniciando migração da Base de Conhecimento RAG (Vector Data)
 
 try {
   // Criando a tabela de Conhecimento que vai alimentar as Mentes Sêniores do Autoblog
-  db.exec(`
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS knowledge_base (
       id TEXT PRIMARY KEY,
       channelId TEXT NOT NULL,         -- Nome do canal ou nicho (Ex: 'Descarga News', 'Global')
@@ -20,7 +20,7 @@ try {
   `);
 
   // Opcional: Índice para buscar mais rapidamente todos os contextos de um canal específico
-  db.exec(`CREATE INDEX IF NOT EXISTS idx_channel ON knowledge_base (channelId)`);
+  await db.exec(`CREATE INDEX IF NOT EXISTS idx_channel ON knowledge_base (channelId)`);
 
   console.log("✅ Tabela 'knowledge_base' criada com sucesso! O cérebro vetorial do Apollo Blog nasceu.");
 } catch (error) {

@@ -3,7 +3,7 @@ const crypto = require('crypto');
 
 console.log('Semeando Iscas Sociais Omni-Channel para os 4 artigos interativos...');
 
-const posts = db.prepare("SELECT id, title, slug, blogId, postType FROM Post WHERE postType IN ('audio_track', 'video_series', 'photo_gallery', 'news_timeline')").all();
+const posts = await db.prepare("SELECT id, title, slug, blogId, postType FROM Post WHERE postType IN ('audio_track', 'video_series', 'photo_gallery', 'news_timeline')").all();
 
 if (posts.length === 0) {
   console.log('Nenhum post interativo encontrado no banco. Execute seed_interactive_posts.js primeiro.');

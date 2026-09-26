@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 export async function GET() {
   try {
-    const blogsRaw = db.prepare(`
+    const blogsRaw = await db.prepare(`
       SELECT 
         Blog.*, 
         AgentConfig.id as agentConfig_id, 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const now = new Date().toISOString();
     
     // Inserção da Franquia no Banco SQLite
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO Blog (id, domain, name, niche, description, theme, primaryColor, secondaryColor, layoutStyle, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     const defaultPrompt = `Você é o Diretor Editorial de Inteligência Artificial do portal ${name}. Seu objetivo é escrever artigos profundos, virais e otimizados em SEO no nicho de ${niche}.`;
     const defaultImagePrompt = "photorealistic, cinematic lighting, 8k resolution, highly detailed, editorial style";
     
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO AgentConfig (id, blogId, personaPrompt, imageStylePrompt, isActive, postFrequency, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, 1, ?, ?, ?)
     `).run(configId, blogId, defaultPrompt, defaultImagePrompt, Number(postFrequency || 3), now, now);

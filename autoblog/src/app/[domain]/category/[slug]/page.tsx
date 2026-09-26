@@ -22,13 +22,13 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const decodedDomain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
 
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   if (!blogMeta) return { title: 'Blog não encontrado' };
 
-  const category = db.prepare('SELECT name FROM Category WHERE slug = ? AND blogId = ?').get(slug, blogMeta.id) as any;
+  const category = await db.prepare('SELECT name FROM Category WHERE slug = ? AND blogId = ?').get(slug, blogMeta.id) as any;
   if (!category) return { title: 'Categoria não encontrada' };
 
   return {
@@ -40,6 +40,50 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   };
 }
 
+import { unstable_cache } from 'next/cache';
+
+const getCachedBlog = unstable_cache(
+  async (domain: string) => {
+    let blog = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(domain) as any;
+    if (!blog && domain.includes('localhost')) {
+      blog = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    }
+    return blog;
+  },
+  ['blog-config-category'],
+  { revalidate: 3600 }
+);
+
+const getCachedCategoryInfo = unstable_cache(
+  async (slug: string, blogId: string) => {
+    return await db.prepare('SELECT id, name, slug FROM Category WHERE slug = ? AND blogId = ?').get(slug, blogId) as any;
+  },
+  ['blog-category-info'],
+  { revalidate: 3600 }
+);
+
+const getCachedCategoryPosts = unstable_cache(
+  async (blogId: string, categoryId: string, lang: string) => {
+    return await db.prepare(`
+      SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
+      FROM Post 
+      LEFT JOIN Blog ON Post.blogId = Blog.id 
+      WHERE Post.blogId = ? AND Post.categoryId = ? AND Post.language = ? AND Post.isPublished = 1
+      ORDER BY Post.createdAt DESC LIMIT 20
+    `).all(blogId, categoryId, lang) as any[];
+  },
+  ['blog-category-posts'],
+  { revalidate: 60 }
+);
+
+const getCachedCategoriesList = unstable_cache(
+  async (blogId: string) => {
+    return await db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogId) as any[];
+  },
+  ['blog-sidebar-categories'],
+  { revalidate: 3600 }
+);
+
 export default async function CategoryPage(props: { params: Promise<{ domain: string, slug: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const params = await props.params;
   const searchParams = await props.searchParams;
@@ -47,26 +91,17 @@ export default async function CategoryPage(props: { params: Promise<{ domain: st
   const slug = decodeURIComponent(params.slug);
   const lang = (typeof searchParams.lang === 'string') ? searchParams.lang : 'pt';
   
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
-  if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
-  }
+  const blogMeta = await getCachedBlog(decodedDomain);
   const themeClass = blogMeta?.theme ? `theme-${blogMeta.theme}` : 'theme-dark';
 
-  const category = db.prepare('SELECT id, name, slug FROM Category WHERE slug = ? AND blogId = ?').get(slug, blogMeta?.id) as any;
+  const category = await getCachedCategoryInfo(slug, blogMeta?.id);
 
   let posts = [] as any[];
   if (category) {
-    posts = db.prepare(`
-      SELECT Post.*, Blog.name as blog_name, Blog.domain as blog_domain
-      FROM Post 
-      LEFT JOIN Blog ON Post.blogId = Blog.id 
-      WHERE Post.blogId = ? AND Post.categoryId = ? AND Post.language = ? AND Post.isPublished = 1
-      ORDER BY Post.createdAt DESC LIMIT 20
-    `).all(blogMeta?.id, category.id, lang) as any[];
+    posts = await getCachedCategoryPosts(blogMeta?.id, category.id, lang);
   }
 
-  const categories = db.prepare(`SELECT name, slug FROM Category WHERE blogId = ? LIMIT 4`).all(blogMeta?.id) as any[];
+  const categories = await getCachedCategoriesList(blogMeta?.id);
 
   // JSON-LD Schema for Google SEO (BreadcrumbList)
   const jsonLd = {
@@ -90,7 +125,7 @@ export default async function CategoryPage(props: { params: Promise<{ domain: st
 
   return (
     <main className={`flex min-h-screen flex-col items-center bg-theme-bg theme-transition text-theme-text ${themeClass}`}>
-      
+
       {/* HEADER NAVBAR (Estética Glassmorphism Premium) */}
       <nav className="sticky top-0 w-full z-50 transition-all duration-300 bg-theme-bg/50 backdrop-blur-md border-b border-theme-border/50 py-4 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -208,7 +243,7 @@ export default async function CategoryPage(props: { params: Promise<{ domain: st
         </aside>
 
       </div>
-      
+
       <Footer domain={decodedDomain} name={blogMeta?.name} />
     </main>
   );

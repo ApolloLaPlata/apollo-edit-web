@@ -3,6 +3,8 @@ import asyncio
 import time
 import sqlite3
 import os
+import sqlite3
+from backend.utils.db_connector import get_db_connection
 from backend.agents.base_agent import BaseAgent
 
 logger = logging.getLogger("TrafficManager")
@@ -40,7 +42,7 @@ class TrafficManagerAgent(BaseAgent):
         """Analisa views e clicks das campanhas na tabela ad_campaigns."""
         logger.debug("[TrafficManager] Calculando métricas de conversão...")
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=0.1)
+            conn = get_db_connection("economy.db")
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             

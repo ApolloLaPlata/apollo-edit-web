@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const client = getLightningClient();
     
     // Pega contexto do banco (sites existentes, métricas básicas) para o LLM entender do que estamos falando
-    const blogsRaw = db.prepare('SELECT id, name, domain FROM Blog').all() as any[];
+    const blogsRaw = await db.prepare('SELECT id, name, domain FROM Blog').all() as any[];
     const blogsContext = blogsRaw.map(b => `- ${b.name} (ID: ${b.id}, Domínio: ${b.domain})`).join('\n');
 
     const systemPrompt = `Você é o "Maestro", o Cérebro Central (IA) que gerencia todo este CMS Autônomo.
@@ -61,7 +61,7 @@ EXEMPLO DE RESPOSTA NORMAL:
 
     if (parsed.action === 'CREATE_POST' && parsed.blogId && parsed.topic) {
       const queueId = crypto.randomUUID();
-      db.prepare(`INSERT INTO ContentQueue (id, blogId, topic, status) VALUES (?, ?, ?, 'pending')`)
+      await db.prepare(`INSERT INTO ContentQueue (id, blogId, topic, status) VALUES (?, ?, ?, 'pending')`)
         .run(queueId, parsed.blogId, parsed.topic);
       
       return NextResponse.json({ 

@@ -6,9 +6,9 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   const params = await props.params;
   const decodedDomain = decodeURIComponent(params.domain);
   
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
 
   return {
@@ -24,16 +24,16 @@ export default async function StoriesPage(props: { params: Promise<{ domain: str
   const params = await props.params;
   const decodedDomain = decodeURIComponent(params.domain);
   
-  let blogMeta = db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
+  let blogMeta = await db.prepare('SELECT * FROM Blog WHERE domain = ?').get(decodedDomain) as any;
   if (!blogMeta && decodedDomain.includes('localhost')) {
-    blogMeta = db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
+    blogMeta = await db.prepare('SELECT * FROM Blog LIMIT 1').get() as any;
   }
   const themeClass = blogMeta?.theme ? `theme-${blogMeta.theme}` : 'theme-dark';
 
   // Buscar os stories no Banco de Dados
   let stories = [];
   try {
-    stories = db.prepare(`
+    stories = await db.prepare(`
       SELECT * FROM WebStory 
       WHERE blogId = ? 
       ORDER BY createdAt DESC LIMIT 20

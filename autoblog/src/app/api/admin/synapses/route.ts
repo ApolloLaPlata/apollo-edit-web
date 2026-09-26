@@ -10,20 +10,20 @@ export async function GET(request: Request) {
 
     let logs = [];
     if (blogId && blogId !== 'all') {
-      logs = db.prepare(`SELECT * FROM SynapseLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
+      logs = await db.prepare(`SELECT * FROM SynapseLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
     } else {
-      logs = db.prepare(`SELECT * FROM SynapseLog ORDER BY createdAt DESC LIMIT 50`).all();
+      logs = await db.prepare(`SELECT * FROM SynapseLog ORDER BY createdAt DESC LIMIT 50`).all();
     }
 
-    const totalLinksQuery = db.prepare(`
+    const totalLinksQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM SynapseLog WHERE actionType = 'internal_linkage'
     `).get() as any;
 
-    const totalOptQuery = db.prepare(`
+    const totalOptQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM SynapseLog WHERE actionType = 'title_optimization'
     `).get() as any;
 
-    const totalMegaQuery = db.prepare(`
+    const totalMegaQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM SynapseLog WHERE actionType = 'megaphone_dispatch'
     `).get() as any;
 
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     }
 
     if (action === 'clear_logs') {
-      db.prepare(`DELETE FROM SynapseLog`).run();
+      await db.prepare(`DELETE FROM SynapseLog`).run();
       return NextResponse.json({ success: true, message: 'Telemetria de sinapses limpa com sucesso.' });
     }
 

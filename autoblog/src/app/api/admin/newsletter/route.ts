@@ -8,7 +8,7 @@ const MODEL = "llama-3.3-70b-versatile";
 
 // Garantir que as tabelas necessárias para o Carteiro Neural existam no SQLite
 try {
-  db.prepare(`
+  await db.prepare(`
     CREATE TABLE IF NOT EXISTS NewsletterCampaign (
       id TEXT PRIMARY KEY,
       blogId TEXT NOT NULL,
@@ -19,7 +19,7 @@ try {
     )
   `).run();
 
-  db.prepare(`
+  await db.prepare(`
     CREATE TABLE IF NOT EXISTS Lead (
       id TEXT PRIMARY KEY,
       blogId TEXT NOT NULL,
@@ -30,7 +30,7 @@ try {
     )
   `).run();
 
-  db.prepare(`
+  await db.prepare(`
     CREATE TABLE IF NOT EXISTS AffiliateLink (
       id TEXT PRIMARY KEY,
       blogId TEXT NOT NULL,
@@ -59,7 +59,7 @@ export async function GET(req: Request) {
       params.push(blogId);
     }
 
-    const campaigns = db.prepare(`
+    const campaigns = await db.prepare(`
       SELECT NewsletterCampaign.*, Blog.name as blogName, Blog.domain as blogDomain 
       FROM NewsletterCampaign 
       LEFT JOIN Blog ON NewsletterCampaign.blogId = Blog.id
@@ -68,9 +68,9 @@ export async function GET(req: Request) {
       LIMIT 20
     `).all(...params);
 
-    const totalSent = db.prepare(`SELECT SUM(sentCount) as total FROM NewsletterCampaign ${blogId && blogId !== 'all' ? 'WHERE blogId = ?' : ''}`).get(...params) as { total: number };
-    const totalLeads = db.prepare(`SELECT COUNT(*) as total FROM Lead ${blogId && blogId !== 'all' ? 'WHERE blogId = ?' : ''}`).get(...params) as { total: number };
-    const totalAffiliates = db.prepare(`SELECT COUNT(*) as total FROM AffiliateLink ${blogId && blogId !== 'all' ? 'WHERE blogId = ? OR blogId = "global"' : ''}`).get(...params) as { total: number };
+    const totalSent = await db.prepare(`SELECT SUM(sentCount) as total FROM NewsletterCampaign ${blogId && blogId !== 'all' ? 'WHERE blogId = ?' : ''}`).get(...params) as { total: number };
+    const totalLeads = await db.prepare(`SELECT COUNT(*) as total FROM Lead ${blogId && blogId !== 'all' ? 'WHERE blogId = ?' : ''}`).get(...params) as { total: number };
+    const totalAffiliates = await db.prepare(`SELECT COUNT(*) as total FROM AffiliateLink ${blogId && blogId !== 'all' ? 'WHERE blogId = ? OR blogId = "global"' : ''}`).get(...params) as { total: number };
 
     return NextResponse.json({
       success: true,
@@ -98,7 +98,7 @@ export async function POST(req: Request) {
     // 1. Buscar portal alvo
     let blog: any = null;
     if (blogId) {
-      blog = db.prepare('SELECT id, name, domain, niche FROM Blog WHERE id = ?').get(blogId);
+      blog = await db.prepare('SELECT id, name, domain, niche FROM Blog WHERE id = ?').get(blogId);
     }
     if (!blog) {
       blog = { id: 'dark-trap', name: 'Dark Trap Radio • Frota Colmeia', domain: 'darktrapradio.com', niche: 'Conhecimento & Tendências' };
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
     const postsSql = blogId 
       ? 'SELECT title, slug, excerpt, contentMd FROM Post WHERE blogId = ? ORDER BY createdAt DESC LIMIT 4'
       : 'SELECT Post.title, Post.slug, Post.excerpt, Post.contentMd, Blog.domain FROM Post LEFT JOIN Blog ON Post.blogId = Blog.id ORDER BY Post.createdAt DESC LIMIT 4';
-    const posts = db.prepare(postsSql).all(blogId ? [blogId] : []) as any[];
+    const posts = await db.prepare(postsSql).all(blogId ? [blogId] : []) as any[];
 
     if (posts.length === 0) {
       return NextResponse.json({ success: false, error: `Nenhum artigo encontrado no portal ${blog.name} para compor a newsletter.` }, { status: 400 });
@@ -118,7 +118,7 @@ export async function POST(req: Request) {
     const affiliateSql = blogId
       ? 'SELECT keyword, url FROM AffiliateLink WHERE blogId = ? OR blogId = "global" ORDER BY RANDOM() LIMIT 1'
       : 'SELECT keyword, url FROM AffiliateLink ORDER BY RANDOM() LIMIT 1';
-    const affiliate: any = db.prepare(affiliateSql).get(blogId ? [blogId] : []) as any;
+    const affiliate: any = await db.prepare(affiliateSql).get(blogId ? [blogId] : []) as any;
 
     // 4. Montar o prompt da IA
     const abstracts = posts.map((p, i) => {
@@ -235,7 +235,7 @@ export async function PUT(req: Request) {
     }
 
     // 1. Buscar leads elegíveis
-    const leads = db.prepare(`SELECT email, name, blogId FROM Lead ${whereClause}`).all(...params) as any[];
+    const leads = await db.prepare(`SELECT email, name, blogId FROM Lead ${whereClause}`).all(...params) as any[];
 
     if (leads.length === 0) {
       return NextResponse.json({ 
@@ -274,7 +274,7 @@ export async function PUT(req: Request) {
     const now = new Date().toISOString();
     const targetBlogId = blogId && blogId !== 'all' ? blogId : 'global';
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO NewsletterCampaign (id, blogId, subject, contentHtml, sentCount, createdAt)
       VALUES (?, ?, ?, ?, ?, ?)
     `).run(campaignId, targetBlogId, subject, html, leads.length, now);

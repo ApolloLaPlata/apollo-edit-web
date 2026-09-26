@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
     let niche = 'Tecnologia & Inteligência Artificial';
     if (blogId !== 'global') {
-      const blog = db.prepare('SELECT name, niche, personaPrompt FROM Blog WHERE id = ?').get(blogId) as any;
+      const blog = await db.prepare('SELECT name, niche, personaPrompt FROM Blog WHERE id = ?').get(blogId) as any;
       if (blog && blog.niche) niche = blog.niche;
       else if (blog && blog.name) niche = blog.name;
     }

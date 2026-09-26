@@ -10,7 +10,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const { topic } = await req.json();
     const blogId = params.id;
 
-    const blog = db.prepare('SELECT *, activeFeatures FROM Blog WHERE id = ?').get(blogId) as any;
+    const blog = await db.prepare('SELECT *, activeFeatures FROM Blog WHERE id = ?').get(blogId) as any;
     if (!blog) {
       return NextResponse.json({ success: false, error: 'Blog não encontrado' }, { status: 404 });
     }
@@ -31,7 +31,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const postType = article.postType || 'article';
     const mediaPayload = article.mediaPayload ? JSON.stringify(article.mediaPayload) : null;
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO Post (id, blogId, title, slug, contentMd, coverImage, author, isPublished, postType, mediaPayload, createdAt)
       VALUES (?, ?, ?, ?, ?, ?, 'Redação IA', 1, ?, ?, ?)
     `).run(postId, blogId, article.title, slug, article.contentMd, imageUrl, postType, mediaPayload, new Date().toISOString());

@@ -10,22 +10,22 @@ export async function GET(request: Request) {
 
     let logs = [];
     if (blogId && blogId !== 'all') {
-      logs = db.prepare(`SELECT * FROM ImmuneLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
+      logs = await db.prepare(`SELECT * FROM ImmuneLog WHERE blogId = ? ORDER BY createdAt DESC LIMIT 50`).all(blogId);
     } else {
-      logs = db.prepare(`SELECT * FROM ImmuneLog ORDER BY createdAt DESC LIMIT 50`).all();
+      logs = await db.prepare(`SELECT * FROM ImmuneLog ORDER BY createdAt DESC LIMIT 50`).all();
     }
 
-    const totalRegenQuery = db.prepare(`
+    const totalRegenQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM ImmuneLog WHERE actionType = 'regeneration'
     `).get() as any;
 
-    const totalAdaptQuery = db.prepare(`
+    const totalAdaptQuery = await db.prepare(`
       SELECT COUNT(*) as c FROM ImmuneLog WHERE actionType = 'audience_adaptation'
     `).get() as any;
 
     // Calcula o Escore Médio de Saúde do Acervo
-    const totalPostsQuery = db.prepare(`SELECT COUNT(*) as c FROM Post WHERE status = 'published'`).get() as any;
-    const healthyPostsQuery = db.prepare(`SELECT COUNT(*) as c FROM Post WHERE status = 'published' AND LENGTH(contentMd) >= 1200 AND mediaUrl IS NOT NULL`).get() as any;
+    const totalPostsQuery = await db.prepare(`SELECT COUNT(*) as c FROM Post WHERE status = 'published'`).get() as any;
+    const healthyPostsQuery = await db.prepare(`SELECT COUNT(*) as c FROM Post WHERE status = 'published' AND LENGTH(contentMd) >= 1200 AND mediaUrl IS NOT NULL`).get() as any;
     
     const totalPosts = totalPostsQuery?.c || 1;
     const healthyPosts = healthyPostsQuery?.c || 1;
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
     }
 
     if (action === 'clear_logs') {
-      db.prepare(`DELETE FROM ImmuneLog`).run();
+      await db.prepare(`DELETE FROM ImmuneLog`).run();
       return NextResponse.json({ success: true, message: 'Telemetria do sistema imunológico limpa com sucesso.' });
     }
 

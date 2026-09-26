@@ -16,7 +16,7 @@ async function runSocialDistribution() {
 
   // Procura posts que ainda não foram distribuídos 
   // (Simulado: Pegaremos o último post gerado como exemplo)
-  const latestPost = db.prepare(`SELECT id, title, slug, contentMd, coverImage FROM Post ORDER BY createdAt DESC LIMIT 1`).get();
+  const latestPost = await db.prepare(`SELECT id, title, slug, contentMd, coverImage FROM Post ORDER BY createdAt DESC LIMIT 1`).get();
 
   if (!latestPost) {
     console.log('[SOCIAL-ENGINE] Nenhum post novo para distribuir.');

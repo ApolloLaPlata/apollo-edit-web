@@ -38,7 +38,7 @@ async function huntTrends() {
       console.log(`🔥 [HYPE DETECTADO]: ${keyword} (${searchVolume} buscas)`);
 
       // 1. Verifica se já não escrevemos sobre isso hoje
-      const existing = db.prepare('SELECT id FROM Post WHERE title LIKE ?').get(`%${keyword}%`);
+      const existing = await db.prepare('SELECT id FROM Post WHERE title LIKE ?').get(`%${keyword}%`);
       if (existing) {
          console.log(`⚠️ Já cobrimos "${keyword}". Pulando...`);
          continue;
@@ -61,7 +61,7 @@ async function huntTrends() {
       `);
 
       // BlogID padrão (Ajustar para pegar o primeiro blog ativo)
-      const firstBlog = db.prepare('SELECT id FROM Blog LIMIT 1').get();
+      const firstBlog = await db.prepare('SELECT id FROM Blog LIMIT 1').get();
       if(!firstBlog) {
           console.log('🚨 Nenhum blog encontrado no Banco. Crie um blog primeiro.');
           return;

@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const db = new Database(path.join(__dirname, 'dev.db'));
 
-db.exec(`
+await db.exec(`
 CREATE TABLE IF NOT EXISTS "SocialQueue" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "blogId" TEXT NOT NULL,

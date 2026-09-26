@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 // GET: Puxa todos os artigos recentes da rede e a lista de portais para sindicância
 export async function GET() {
   try {
-    const posts = db
+    const posts = await db
       .prepare(`
       SELECT Post.id, Post.title, Post.slug, Post.coverImage, Post.createdAt, Post.isPublished, Post.blogId, Blog.name as blogName, Blog.domain as blogDomain
       FROM Post
@@ -16,12 +16,12 @@ export async function GET() {
     `)
       .all();
 
-    const blogs = db.prepare('SELECT id, name, domain FROM Blog ORDER BY name ASC').all();
+    const blogs = await db.prepare('SELECT id, name, domain FROM Blog ORDER BY name ASC').all();
 
     const stats = {
       totalPosts: posts.length,
       totalBlogs: blogs.length,
-      syndicatedCount: db
+      syndicatedCount: await db
         .prepare("SELECT COUNT(*) as count FROM Post WHERE author = 'Sindicato Neural Apollo' OR contentMd LIKE '%sindicado via Rede Apollo%'")
         .get() as { count: number },
     };
@@ -46,9 +46,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const sourcePost = db.prepare('SELECT * FROM Post WHERE id = ?').get(sourcePostId) as any;
-    const targetBlog = db.prepare('SELECT * FROM Blog WHERE id = ?').get(targetBlogId) as any;
-    const sourceBlog = db.prepare('SELECT * FROM Blog WHERE id = ?').get(sourcePost?.blogId) as any;
+    const sourcePost = await db.prepare('SELECT * FROM Post WHERE id = ?').get(sourcePostId) as any;
+    const targetBlog = await db.prepare('SELECT * FROM Blog WHERE id = ?').get(targetBlogId) as any;
+    const sourceBlog = await db.prepare('SELECT * FROM Blog WHERE id = ?').get(sourcePost?.blogId) as any;
 
     if (!sourcePost || !targetBlog) {
       return NextResponse.json({ success: false, error: 'Artigo ou Portal destino não encontrado no banco SQLite.' }, { status: 404 });
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     const adaptedContent = `${sourcePost.contentMd}\n\n---\n\n> [!NOTE]\n> **Sindicato Neural Apollo**: Este conteúdo foi selecionado e republicado via cross-channel network. [Acesse a reportagem original em ${sourceBlog?.name || 'Portal de Origem'}](${canonicalLink}).`;
 
     // Inserir no banco
-    const info = db
+    const info = await db
       .prepare(`
       INSERT INTO Post (blogId, language, title, slug, contentMd, coverImage, author, isPublished, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))

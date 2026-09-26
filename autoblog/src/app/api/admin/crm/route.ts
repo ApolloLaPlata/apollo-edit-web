@@ -15,13 +15,13 @@ export async function GET(req: Request) {
     };
 
     if (blogId && blogId !== 'global') {
-      leads = db.prepare('SELECT * FROM Subscriber WHERE blogId = ? ORDER BY createdAt DESC LIMIT 100').all(blogId) as any[];
-      stats.total = (db.prepare('SELECT COUNT(*) as c FROM Subscriber WHERE blogId = ?').get(blogId) as any).c;
-      stats.today = (db.prepare("SELECT COUNT(*) as c FROM Subscriber WHERE blogId = ? AND createdAt >= date('now')").get(blogId) as any).c;
+      leads = await db.prepare('SELECT * FROM Subscriber WHERE blogId = ? ORDER BY createdAt DESC LIMIT 100').all(blogId) as any[];
+      stats.total = (await db.prepare('SELECT COUNT(*) as c FROM Subscriber WHERE blogId = ?').get(blogId) as any).c;
+      stats.today = (await db.prepare("SELECT COUNT(*) as c FROM Subscriber WHERE blogId = ? AND createdAt >= date('now')").get(blogId) as any).c;
     } else {
-      leads = db.prepare('SELECT Subscriber.*, Blog.name as blogName FROM Subscriber LEFT JOIN Blog ON Subscriber.blogId = Blog.id ORDER BY Subscriber.createdAt DESC LIMIT 100').all() as any[];
-      stats.total = (db.prepare('SELECT COUNT(*) as c FROM Subscriber').get() as any).c;
-      stats.today = (db.prepare("SELECT COUNT(*) as c FROM Subscriber WHERE createdAt >= date('now')").get() as any).c;
+      leads = await db.prepare('SELECT Subscriber.*, Blog.name as blogName FROM Subscriber LEFT JOIN Blog ON Subscriber.blogId = Blog.id ORDER BY Subscriber.createdAt DESC LIMIT 100').all() as any[];
+      stats.total = (await db.prepare('SELECT COUNT(*) as c FROM Subscriber').get() as any).c;
+      stats.today = (await db.prepare("SELECT COUNT(*) as c FROM Subscriber WHERE createdAt >= date('now')").get() as any).c;
     }
 
     // Mock active and bounced based on total just for presentation until real SMTP webhooks are implemented
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
      if (action === 'seed') {
         // Mocking some data for the UI
         const mockBlogId = 'e22e9e62-c0ff-4f46-b631-4c66e94db6e5'; // Will just pick an existing blog ID if possible
-        const existingBlog = db.prepare('SELECT id FROM Blog LIMIT 1').get() as any;
+        const existingBlog = await db.prepare('SELECT id FROM Blog LIMIT 1').get() as any;
         const targetBlog = existingBlog ? existingBlog.id : mockBlogId;
         
         const stmt = db.prepare('INSERT INTO Subscriber (id, email, blogId) VALUES (?, ?, ?)');
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
      }
 
      if (action === 'delete') {
-         db.prepare('DELETE FROM Subscriber WHERE email = ?').run(email);
+         await db.prepare('DELETE FROM Subscriber WHERE email = ?').run(email);
          return NextResponse.json({ success: true, message: 'Lead removido com sucesso.' });
      }
 
