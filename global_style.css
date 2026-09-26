@@ -1989,3 +1989,21 @@ header h1 {
     letter-spacing: 1px;
 }
 
+/* MOBILE ADAPTATION FOR THE BOX */
+.editor-layout {
+    display: flex;
+    flex-direction: column;
+}
+.side-panel {
+    display: none; /* Hide sidebar in mobile box, everything in grid */
+}
+.main-area {
+    padding: 10px;
+}
+.rpg-item-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 10px !important;
+}
+.os-topbar-right a {
+    display: none !important; /* Hide giant mobile studio link on topbar if no space */
+}

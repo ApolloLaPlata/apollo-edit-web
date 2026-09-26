@@ -82,15 +82,9 @@
             --tab-inactive-bg: #0b1120;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100vh;
-            background: var(--bg-os);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; /* OS should not scroll */
-            display: flex;
-            flex-direction: column;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100vh; background: #000; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+#mobile-app-container { width: 100%; max-width: 450px; height: 100%; background: #05070A; background-image: radial-gradient(circle at top, #0A111F 0%, #030406 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+@media (min-width: 451px) { #mobile-app-container { height: 90vh; max-height: 900px; border-radius: 20px; border: 1px solid rgba(0,229,255,0.3); box-shadow: 0 10px 40px rgba(0,229,255,0.1); } }
 
         /* TOPBAR DO OS */
         .os-topbar {
@@ -212,7 +206,7 @@
 
     </style>
 </head>
-<body>
+<body><div id="mobile-app-container">
 
     <!-- OS TOPBAR -->
     <header class="os-topbar">
@@ -270,7 +264,9 @@
     <script src="transfer_hud.js?v=11"></script>
     <script src="copilot_hud.js"></script>
     <script src="apollo_assistant.js"></script>
-</body>
+</div></body>
 </html>
+
+
 
 
